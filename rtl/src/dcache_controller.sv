@@ -1,4 +1,4 @@
-// dcache_controller.v
+// dcache_controller.sv
 `timescale 1ns / 1ps
 
 `include "header.vh"

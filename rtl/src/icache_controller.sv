@@ -1,4 +1,4 @@
-// icache_controller.v
+// icache_controller.sv
 `timescale 1ns / 1ps
 
 `include "header.vh"
