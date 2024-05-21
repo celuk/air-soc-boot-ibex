@@ -7,15 +7,7 @@ module teknofest_wrapper(
   output prog_mode_led_o,
 
   output uart_tx_o,
-  input  uart_rx_i,
-
-  output spi_cs_o,
-  output spi_sck_o,
-  output spi_mosi_o,
-  input  spi_miso_i,
-
-  output pwm0_o,
-  output pwm1_o
+  input  uart_rx_i
 );
 
 localparam RAM_DELAY = 16;
@@ -53,22 +45,16 @@ wire   rst_n;
 assign rst_n = prog_system_reset & rst_ni;
 
 air_soc soc (
-  .clk           (clk_i    ),
-  .resetn        (rst_n        ),
+  .clk_i         (clk_i    ),
+  .rst_ni        (rst_n        ),
   .iomem_valid   (iomem_valid  ),
   .iomem_ready   (iomem_ready  ),
   .iomem_wstrb   (iomem_wstrb  ),
   .iomem_addr    (iomem_addr   ),
   .iomem_wdata   (iomem_wdata  ),
   .iomem_rdata   (iomem_rdata  ),
-  .spi_cs_o      (spi_cs_o     ),
-  .spi_sck_o     (spi_sck_o    ),
-  .spi_mosi_o    (spi_mosi_o   ),
-  .spi_miso_i    (spi_miso_i   ),
   .uart_tx_o     (uart_tx_o    ),
-  .uart_rx_i     (uart_rx_i    ),
-  .pwm0_o        (pwm0_o       ),
-  .pwm1_o        (pwm1_o       )
+  .uart_rx_i     (uart_rx_i    )
 );
 
 reg [RAM_DELAY-1:0] ram_shift_q;
@@ -103,14 +89,11 @@ assign main_mem_wstrb = iomem_valid & ((iomem_addr & ~RAM_MASK_ADDR) == RAM_BASE
 
 assign main_mem_rd_en = iomem_valid & ((iomem_addr & ~RAM_MASK_ADDR) == RAM_BASE_ADDR) & ~(|iomem_wstrb);
 
-
-
-
 teknofest_ram #(
   .NB_COL(4),
   .COL_WIDTH(8),
   .RAM_DEPTH(RAM_DEPTH),
-  .INIT_FILE("")  //Yüklenecek program?n yolu
+  .INIT_FILE("")
 ) main_memory
 (
   .clk_i           (clk_i),

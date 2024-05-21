@@ -18,10 +18,10 @@ module veriyolu(
    output uart_tx_o,
    input  uart_rx_i,
    
-   output qspi_cs_o,
-   output qspi_sck_o,
-   output qspi_mosi_o,
-   input  qspi_miso_i,
+   output       qspi_cs_o,
+   output       qspi_sck_o,
+   output [3:0] qspi_mosi_o,
+   input  [3:0] qspi_miso_i,
 
    input  sda_i,
    output sda_o,

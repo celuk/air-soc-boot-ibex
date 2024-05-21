@@ -16,10 +16,10 @@ module qspi_controller (
    output reg         wb_ack_o,
    output reg  [31:0] wb_dat_o,
 
-   output qspi_cs_o,
-   output qspi_sck_o,
-   output qspi_mosi_o,
-   input  qspi_miso_i,
+   output       qspi_cs_o,
+   output       qspi_sck_o,
+   output [3:0] qspi_mosi_o,
+   input  [3:0] qspi_miso_i,
 );
 
 
