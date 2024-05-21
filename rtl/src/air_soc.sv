@@ -44,10 +44,46 @@ wire scl_o;
 reg [15:0] gpio_i = 16'h0;
 wire [15:0] gpio_o;
 
-wire       data_we_o;
-wire [3:0] data_be_o;
+wire        yol0_EN0;
+wire        yol1_EN0;
+wire [ 7:0] yol_A0 ;
+wire [40:0] yol_Di0;
+wire [40:0] yol0_Do0;
+wire [40:0] yol1_Do0;
+wire [ 3:0] yol_WE0;
 
-assign iomem_wstrb = data_we_o ? data_be_o : 4'h0;
+wire lru_din;
+wire lru_ddo;
+wire yol0_valid_din;
+wire yol0_valid_ddo;
+wire yol0_dirty_din;
+wire yol0_dirty_ddo;
+wire yol1_valid_din;
+wire yol1_valid_ddo;
+wire yol1_dirty_din;
+wire yol1_dirty_ddo;
+
+wire  we0;
+wire [7:0] adr0;
+wire [7:0] datai0;
+wire [7:0] datao0;
+
+wire  we1;
+wire [7:0] adr1;
+wire [7:0] datai1;
+wire [7:0] datao1;
+
+wire        ram512d0_we0;
+wire [ 8:0] ram512d0_adr0;
+wire [15:0] ram512d0_datai0;
+wire [15:0] ram512d0_datao0;
+
+wire        ram512d1_we0;
+wire [ 8:0] ram512d1_adr0;
+wire [15:0] ram512d1_datai0;
+wire [15:0] ram512d1_datao0;
+
+wire [7:0] l1b_tag_adr;,
 
 wire rst_i = ~rst_ni;
 
@@ -62,6 +98,8 @@ wire        l1i_wait;
 wire [31:0] l1i_val;
 wire [18:1] l1i_addr;
 
+assign l1b_tag_adr = l1i_addr[18:11];
+
 wire [31:0] l1d_rd_data;
 wire        l1d_sel;
 wire        l1d_stall;
@@ -72,7 +110,6 @@ wire        dp_stall;
 
 wire [31:0] tmr_rd_data;
 wire        tmr_sel;
-wire        tmr_stall;
 
 wire        l1d_iomem_valid;
 wire        l1d_iomem_ready;
@@ -85,6 +122,24 @@ wire        l1i_iomem_valid;
 wire        l1i_iomem_ready;
 wire [18:2] l1i_iomem_addr;
 wire [31:0] l1i_iomem_rdata;
+
+/*
+cekirdek cek (
+   .clk_i (clk_i),
+   .rst_i (rst_i),
+   //
+   .l1b_bekle_i        (l1b_bekle          ),
+   .l1b_deger_i        (l1b_deger          ),
+   .l1b_adres_o        (l1b_adres          ),
+   //
+   .bib_veri_i       (bib_oku_veri     ),
+   .bib_durdur_i     (bib_durdur       ),
+   .bib_veri_o       (bib_yaz_veri     ),
+   .bib_adr_o        (bib_adr          ),
+   .bib_veri_maske_o (bib_mask         ),
+   .bib_sec_o        (bib_sec          )
+);
+*/
 
 cv32e40p_top #(
     .COREV_PULP               ( `COREV_PULP ),
@@ -146,122 +201,251 @@ cv32e40p_core_ip (
     .core_sleep_o             ()
 );
 
-    /*
-    core core_dut (
-        .clk_i (clk_i),
-        .rst_i (rst_i),
-        //
-        .l1i_wait_i        (l1i_wait          ),
-        .l1i_val_i        (l1i_val          ),
-        .l1i_addr_o        (l1i_addr          ),
-        //
-        .mpu_data_i       (mpu_rd_data     ),
-        .mpu_stall_i     (mpu_stall       ),
-        .mpu_data_o       (mpu_wr_data     ),
-        .mpu_addr_o        (mpu_addr          ),
-        .mpu_data_mask_o (mpu_mask         ),
-        .mpu_req_o        (mpu_req          )
-    );
-    */
+icache_controller icache_controller_dut (
+   .clk_i (clk_i ),
+   .rst_i (rst_i ),
+   
+   .iomem_valid   (l1i_iomem_valid),
+   .iomem_ready   (l1i_iomem_ready),
+   .iomem_addr    (l1i_iomem_addr ),
+   .iomem_rdata   (l1i_iomem_rdata),
 
-    icache_controller icache_controller_dut (
-        .clk_i (clk_i ),
-        .rst_i (rst_i ),
+   .l1i_wait_o   (l1i_wait),
+   .l1i_val_o   (l1i_val),
+   .l1i_addr_i   (l1i_addr),
+   
+   .we0_o    (we0    ),
+   .adr0_o   (adr0   ),
+   .datao0_i (datao0 ),
+   
+   .we1_o    (we1    ),
+   .adr1_o   (adr1   ),
+   .datao1_i (datao1 ),
+   
+   .ram512d0_we0_o    (ram512d0_we0    ),
+   .ram512d0_adr0_o   (ram512d0_adr0   ),
+   .ram512d0_datao0_i (ram512d0_datao0 ),
+   
+   .ram512d1_we0_o    (ram512d1_we0    ),
+   .ram512d1_adr0_o   (ram512d1_adr0   ),
+   .ram512d1_datao0_i (ram512d1_datao0 )
+);
 
-        .iomem_valid   (l1i_iomem_valid),
-        .iomem_ready   (l1i_iomem_ready),
-        .iomem_addr    (l1i_iomem_addr ),
-        .iomem_rdata   (l1i_iomem_rdata),
+assign l1d_sel = mpu_addr[30]                ? mpu_req : 1'b0;
+assign dp_sel  = mpu_addr[29]&&~mpu_addr[28] ? mpu_req : 1'b0;
+assign tmr_sel = mpu_addr[28]                ? mpu_req : 1'b0;
 
-        .l1i_wait_o   (l1i_wait),
-        .l1i_val_o   (l1i_val),
-        .l1i_addr_i   (l1i_addr)
-    );
+assign mpu_stall = mpu_addr[30] ? l1d_stall :
+                   mpu_addr[28] ? 1'b0      :
+                                  dp_stall  ;
 
-    assign l1d_sel = mpu_addr[30]                ? mpu_req : 1'b0;
-    assign dp_sel  = mpu_addr[29]&&~mpu_addr[28] ? mpu_req : 1'b0;
-    assign tmr_sel = mpu_addr[28]                ? mpu_req : 1'b0;
+assign mpu_rd_data  = mpu_addr[30] ? l1d_rd_data :
+                      mpu_addr[28] ? tmr_rd_data :
+                                     dp_rd_data  ;
 
-    assign mpu_stall = mpu_addr[30] ? l1d_stall :
-                       mpu_addr[28] ? 1'b0      :
-                                     dp_stall  ;
+dcache_controller dcache_controller_dut (
+   .clk_i (clk_i ),
+   .rst_i (rst_i ),
+   
+   .l1d_data_o      (l1d_rd_data   ),
+   .l1d_stall_o     (l1d_stall     ),
+   .l1d_data_i      (mpu_wr_data   ),
+   .l1d_addr_i      (mpu_addr[18:2]),
+   .l1d_data_mask_i (mpu_mask      ),
+   .l1d_sel_i       (l1d_sel       ),
 
-    assign mpu_rd_data  = mpu_addr[30] ? l1d_rd_data :
-                          mpu_addr[28] ? tmr_rd_data :
-                                         dp_rd_data  ;
+   .iomem_ready_i (l1d_iomem_ready ),
+   .iomem_valid_o (l1d_iomem_valid ),
+   .iomem_wstrb_o (l1d_iomem_wstrb ),
+   .iomem_addr_o  (l1d_iomem_addr  ),
+   .iomem_wdata_o (l1d_iomem_wdata ),
+   .iomem_rdata_i (l1d_iomem_rdata ),
+   
+   .yol0_EN0 (yol0_EN0 ),
+   .yol1_EN0 (yol1_EN0 ),
+   .yol_A0   (yol_A0   ),
+   .yol_Di0  (yol_Di0  ),
+   .yol0_Do0 (yol0_Do0 ),
+   .yol1_Do0 (yol1_Do0 ),
+   .yol_WE0  (yol_WE0  ),
+   
+   .lru_i (lru_din ),
+   .lru_o (lru_ddo ),
+   .yol0_valid_i (yol0_valid_din ),
+   .yol0_valid_o (yol0_valid_ddo ),
+   .yol0_dirty_i (yol0_dirty_din ),
+   .yol0_dirty_o (yol0_dirty_ddo ),
+   .yol1_valid_i (yol1_valid_din ),
+   .yol1_valid_o (yol1_valid_ddo ),
+   .yol1_dirty_i (yol1_dirty_din ),
+   .yol1_dirty_o  ( yol1_dirty_ddo)
+);
 
-    dcache_controller dcache_controller_dut (
-        .clk_i (clk_i ),
-        .rst_i (rst_i ),
+main_memory_controller main_memory_controller_dut (
+   .clk_i (clk_i ),
+   .rst_i (rst_i ),
+   
+   .iomem_valid (iomem_valid ),
+   .iomem_ready (iomem_ready ),
+   .iomem_wstrb (iomem_wstrb ),
+   .iomem_addr  (iomem_addr  ),
+   .iomem_wdata (iomem_wdata ),
+   .iomem_rdata (iomem_rdata ),
 
-        .l1d_data_o        (l1d_rd_data   ),
-        .l1d_stall_o      (l1d_stall     ),
-        .l1d_data_i        (mpu_wr_data   ),
-        .l1d_addr_i         (mpu_addr[18:2]  ),
-        .l1d_data_mask_i  (mpu_mask       ),
-        .l1d_sel_i         (l1d_sel        ),
+   .timer_iomem_valid (tmr_sel    ),
+   .timer_iomem_addr  (mpu_addr   ),
+   .timer_iomem_rdata (tmr_rd_data),
 
-        .iomem_ready_i (l1d_iomem_ready ),
-        .iomem_valid_o (l1d_iomem_valid ),
-        .iomem_wstrb_o (l1d_iomem_wstrb ),
-        .iomem_addr_o  (l1d_iomem_addr  ),
-        .iomem_wdata_o (l1d_iomem_wdata ),
-        .iomem_rdata_i (l1d_iomem_rdata )
-    );
+   .l1i_iomem_valid (l1i_iomem_valid ),
+   .l1i_iomem_ready (l1i_iomem_ready ),
+   .l1i_iomem_addr  (l1i_iomem_addr  ),
+   .l1i_iomem_rdata (l1i_iomem_rdata ),
 
-    main_memory_controller main_memory_controller_dut (
-        .clk_i (clk_i ),
-        .rst_i (rst_i ),
+   .l1d_iomem_valid (l1d_iomem_valid ),
+   .l1d_iomem_ready (l1d_iomem_ready ),
+   .l1d_iomem_wstrb (l1d_iomem_wstrb ),
+   .l1d_iomem_addr  (l1d_iomem_addr  ),
+   .l1d_iomem_wdata (l1d_iomem_wdata ),
+   .l1d_iomem_rdata (l1d_iomem_rdata )
+);
 
-        .iomem_valid (iomem_valid ),
-        .iomem_ready (iomem_ready ),
-        .iomem_wstrb (iomem_wstrb ),
-        .iomem_addr  (iomem_addr  ),
-        .iomem_wdata (iomem_wdata ),
-        .iomem_rdata (iomem_rdata ),
+datapath  datapath_dut (
+    .clk_i (clk_i ),
+    .rst_i (rst_i ),
+    .dp_data_o        (dp_rd_data     ),
+    .dp_stall_o       (dp_stall       ),
+    .dp_data_i        (mpu_wr_data    ),
+    .dp_addr_i        (mpu_addr       ),
+    .dp_data_mask_i   (mpu_mask       ),
+    .dp_sel_i         (dp_sel         ),
 
-        .timer_iomem_valid (tmr_sel     ),
-        .timer_iomem_addr  (mpu_addr     ),
-        .timer_iomem_rdata (tmr_rd_data),
+    .uart_tx_o  (uart_tx_o ),
+    .uart_rx_i  (uart_rx_i ),
 
-        .l1i_iomem_valid (l1i_iomem_valid ),
-        .l1i_iomem_ready (l1i_iomem_ready ),
-        .l1i_iomem_addr  (l1i_iomem_addr  ),
-        .l1i_iomem_rdata (l1i_iomem_rdata ),
+    .qspi_cs_o   (qspi_cs_o   ),
+    .qspi_sck_o  (qspi_sck_o  ),
+    .qspi_mosi_o (qspi_mosi_o ),
+    .qspi_miso_i (qspi_miso_i ),
 
-        .l1d_iomem_valid (l1d_iomem_valid ),
-        .l1d_iomem_ready (l1d_iomem_ready ),
-        .l1d_iomem_wstrb (l1d_iomem_wstrb ),
-        .l1d_iomem_addr  (l1d_iomem_addr  ),
-        .l1d_iomem_wdata (l1d_iomem_wdata ),
-        .l1d_iomem_rdata (l1d_iomem_rdata )
-    );
+    .sda_i (sda_i),
+    .sda_o (sda_o),
+    .scl_i (scl_i),
+    .scl_o (scl_o),
 
-    datapath  datapath_dut (
-        .clk_i (clk_i ),
-        .rst_i (rst_i ),
-        .dp_data_o        (dp_rd_data   ),
-        .dp_stall_o       (dp_stall       ),
-        .dp_data_i        (mpu_wr_data    ),
-        .dp_addr_i       (mpu_addr        ),
-        .dp_data_mask_i   (mpu_mask       ),
-        .dp_sel_i         (dp_sel         ),
+    .gpio_i (gpio_i),
+    .gpio_o (gpio_o)
+);
 
-        .uart_tx_o  (uart_tx_o ),
-        .uart_rx_i  (uart_rx_i ),
+RAM512x16_ASYNC`GATE RAM512_d0 (
+   .CLK(clk),
+   .A0(ram512d0_adr0),
+   .Di0(iomem_rdata[15:0]),
+   .Do0(ram512d0_datao0),
+   .WE0({ram512d0_we0,ram512d0_we0})
+);
 
-        .qspi_cs_o   (qspi_cs_o   ),
-        .qspi_sck_o  (qspi_sck_o  ),
-        .qspi_mosi_o (qspi_mosi_o ),
-        .qspi_miso_i (qspi_miso_i ),
+RAM512x16_ASYNC`GATE RAM512_d1 (
+   .CLK(clk),
+   .A0(ram512d1_adr0),
+   .Di0(iomem_rdata[31:16]),
+   .Do0(ram512d1_datao0),
+   .WE0({ram512d1_we0,ram512d1_we0})
+);
 
-        .sda_i (sda_i),
-        .sda_o (sda_o),
-        .scl_i (scl_i),
-        .scl_o (scl_o),
+RAM256x8_ASYNC`GATE bffram_t0( // even
+   .CLK(clk),
+   .A0(adr0),
+   .Di0(l1b_tag_adr),
+   .Do0(datao0),
+   .WE0(we0)
+);
 
-        .gpio_i (gpio_i),
-        .gpio_o (gpio_o)
-    );
+RAM256x8_ASYNC`GATE bffram_t1( // odd
+   .CLK(clk),
+   .A0(adr1),
+   .Di0(l1b_tag_adr),
+   .Do0(datao1),
+   .WE0(we1)
+);
+
+RAM256x8_ASYNC`GATE vffram_t0_0(
+   .CLK(clk),
+   .A0 (yol_A0  ),
+   .Di0(yol_Di0 [39:32]),
+   .Do0(yol0_Do0[39:32]),
+   .WE0(yol0_EN0)
+);
+
+RAM256x8_ASYNC`GATE vffram_t1_0(
+   .CLK(clk),
+   .A0 (yol_A0  ),
+   .Di0(yol_Di0 [39:32]),
+   .Do0(yol1_Do0[39:32]),
+   .WE0(yol1_EN0)
+);
+
+
+RAM256x16_ASYNC`GATE vffram_d0_0(
+   .CLK(clk),
+   .A0 (yol_A0  ),
+   .Di0(yol_Di0 [15:0]),
+   .Do0(yol0_Do0[15:0]),
+   .WE0(yol_WE0[1:0] & {yol0_EN0,yol0_EN0})
+);
+
+RAM256x16_ASYNC`GATE vffram_d0_1(
+   .CLK(clk),
+   .A0 (yol_A0  ),
+   .Di0(yol_Di0 [31:16]),
+   .Do0(yol0_Do0[31:16]),
+   .WE0(yol_WE0[3:2] & {yol0_EN0,yol0_EN0})
+);
+
+RAM256x16_ASYNC`GATE vffram_d1_0(
+   .CLK(clk),
+   .A0 (yol_A0  ),
+   .Di0(yol_Di0 [15:0]),
+   .Do0(yol1_Do0[15:0]),
+   .WE0(yol_WE0[1:0] & {yol1_EN0,yol1_EN0})
+);
+
+RAM256x16_ASYNC`GATE vffram_d1_1(
+   .CLK(clk),
+   .A0 (yol_A0  ),
+   .Di0(yol_Di0 [31:16]),
+   .Do0(yol1_Do0[31:16]),
+   .WE0(yol_WE0[3:2] & {yol1_EN0,yol1_EN0})
+);
+
+// t1_d1_v1_x_lru_t0_d0_v0
+wire [7:0] combined_data_yeni;
+wire [7:0] combined_data_okunan;
+
+assign combined_data_yeni[0] =  yol0_EN0             ? yol0_valid_ddo : combined_data_okunan[0];
+assign combined_data_yeni[1] =  yol0_EN0             ? yol0_dirty_ddo : combined_data_okunan[1];
+assign combined_data_yeni[2] =  yol0_EN0             ? yol_Di0 [40]   : combined_data_okunan[2];
+assign combined_data_yeni[3] = (yol0_EN0 | yol1_EN0) ? lru_ddo        : combined_data_okunan[3];
+assign combined_data_yeni[4] = 1'bx;
+assign combined_data_yeni[5] =  yol1_EN0             ? yol1_valid_ddo : combined_data_okunan[5];
+assign combined_data_yeni[6] =  yol1_EN0             ? yol1_dirty_ddo : combined_data_okunan[6];
+assign combined_data_yeni[7] =  yol1_EN0             ? yol_Di0 [40]   : combined_data_okunan[7];
+
+assign yol0_valid_din = combined_data_okunan[0];
+assign yol0_dirty_din = combined_data_okunan[1];
+assign yol0_Do0[40]   = combined_data_okunan[2];
+assign lru_din        = combined_data_okunan[3];
+
+assign yol1_valid_din = combined_data_okunan[5];
+assign yol1_dirty_din = combined_data_okunan[6];
+assign yol1_Do0[40]   = combined_data_okunan[7];
+
+
+RAM256x8_ASYNC`GATE vffram_combined(
+   .CLK(clk),
+   .A0 (yol_A0  ),
+   .Di0(combined_data_yeni),
+   .Do0(combined_data_okunan),
+   .WE0(yol0_EN0 | yol1_EN0)
+);
 
 endmodule
