@@ -65,7 +65,6 @@ wire yol1_dirty_ddo;
 
 wire  we0;
 wire [7:0] adr0;
-wire [7:0] datai0;
 wire [7:0] datao0;
 
 wire  we1;
@@ -75,12 +74,10 @@ wire [7:0] datao1;
 
 wire        ram512d0_we0;
 wire [ 8:0] ram512d0_adr0;
-wire [15:0] ram512d0_datai0;
 wire [15:0] ram512d0_datao0;
 
 wire        ram512d1_we0;
 wire [ 8:0] ram512d1_adr0;
-wire [15:0] ram512d1_datai0;
 wire [15:0] ram512d1_datao0;
 
 wire [7:0] l1i_tag_adr;
@@ -168,7 +165,7 @@ cv32e40p_core_ip (
     // Instruction memory interface
     .instr_req_o              (),
     .instr_gnt_i              (~l1i_wait),
-    .instr_rvalid_i           (1'b1),
+    .instr_rvalid_i           (1'b1), // l1i_iomem_valid
     .instr_addr_o             (l1i_addr),
     .instr_rdata_i            (l1i_val),
 
@@ -176,7 +173,7 @@ cv32e40p_core_ip (
     // Data memory interface
     .data_req_o               (mpu_req),
     .data_gnt_i               (~mpu_stall),
-    .data_rvalid_i            (1'b1),
+    .data_rvalid_i            (1'b1), // l1d_iomem_valid
     .data_we_o                (data_we_o),
     .data_be_o                (mpu_mask),
     .data_addr_o              (mpu_addr),
@@ -197,7 +194,7 @@ cv32e40p_core_ip (
 
     // TODO
     // CPU Control Signals
-    .fetch_enable_i           (1'b1),
+    .fetch_enable_i           (rst_ni),
     .core_sleep_o             ()
 );
 
@@ -336,7 +333,7 @@ datapath  datapath_dut (
 );
 
 RAM512x16_ASYNC RAM512_d0 (
-   .CLK(clk),
+   .CLK(clk_i),
    .A0(ram512d0_adr0),
    .Di0(iomem_rdata[15:0]),
    .Do0(ram512d0_datao0),
@@ -344,7 +341,7 @@ RAM512x16_ASYNC RAM512_d0 (
 );
 
 RAM512x16_ASYNC RAM512_d1 (
-   .CLK(clk),
+   .CLK(clk_i),
    .A0(ram512d1_adr0),
    .Di0(iomem_rdata[31:16]),
    .Do0(ram512d1_datao0),
@@ -352,7 +349,7 @@ RAM512x16_ASYNC RAM512_d1 (
 );
 
 RAM256x8_ASYNC bffram_t0( // even
-   .CLK(clk),
+   .CLK(clk_i),
    .A0(adr0),
    .Di0(l1i_tag_adr),
    .Do0(datao0),
@@ -360,7 +357,7 @@ RAM256x8_ASYNC bffram_t0( // even
 );
 
 RAM256x8_ASYNC bffram_t1( // odd
-   .CLK(clk),
+   .CLK(clk_i),
    .A0(adr1),
    .Di0(l1i_tag_adr),
    .Do0(datao1),
@@ -368,7 +365,7 @@ RAM256x8_ASYNC bffram_t1( // odd
 );
 
 RAM256x8_ASYNC vffram_t0_0(
-   .CLK(clk),
+   .CLK(clk_i),
    .A0 (yol_A0  ),
    .Di0(yol_Di0 [39:32]),
    .Do0(yol0_Do0[39:32]),
@@ -376,7 +373,7 @@ RAM256x8_ASYNC vffram_t0_0(
 );
 
 RAM256x8_ASYNC vffram_t1_0(
-   .CLK(clk),
+   .CLK(clk_i),
    .A0 (yol_A0  ),
    .Di0(yol_Di0 [39:32]),
    .Do0(yol1_Do0[39:32]),
@@ -385,7 +382,7 @@ RAM256x8_ASYNC vffram_t1_0(
 
 
 RAM256x16_ASYNC vffram_d0_0(
-   .CLK(clk),
+   .CLK(clk_i),
    .A0 (yol_A0  ),
    .Di0(yol_Di0 [15:0]),
    .Do0(yol0_Do0[15:0]),
@@ -393,7 +390,7 @@ RAM256x16_ASYNC vffram_d0_0(
 );
 
 RAM256x16_ASYNC vffram_d0_1(
-   .CLK(clk),
+   .CLK(clk_i),
    .A0 (yol_A0  ),
    .Di0(yol_Di0 [31:16]),
    .Do0(yol0_Do0[31:16]),
@@ -401,7 +398,7 @@ RAM256x16_ASYNC vffram_d0_1(
 );
 
 RAM256x16_ASYNC vffram_d1_0(
-   .CLK(clk),
+   .CLK(clk_i),
    .A0 (yol_A0  ),
    .Di0(yol_Di0 [15:0]),
    .Do0(yol1_Do0[15:0]),
@@ -409,7 +406,7 @@ RAM256x16_ASYNC vffram_d1_0(
 );
 
 RAM256x16_ASYNC vffram_d1_1(
-   .CLK(clk),
+   .CLK(clk_i),
    .A0 (yol_A0  ),
    .Di0(yol_Di0 [31:16]),
    .Do0(yol1_Do0[31:16]),
@@ -440,7 +437,7 @@ assign yol1_Do0[40]   = combined_data_okunan[7];
 
 
 RAM256x8_ASYNC vffram_combined(
-   .CLK(clk),
+   .CLK(clk_i),
    .A0 (yol_A0  ),
    .Di0(combined_data_yeni),
    .Do0(combined_data_okunan),

@@ -38,7 +38,7 @@ module icache_controller (
    wire [15:0] data1;
    
    // Hizasiz erisimlerde 16 bitlerin yerini degistir.
-   assign l1i_val = l1i_addr_i[1] ? {data0,data1} : {data1,data0};
+   assign l1i_val_o = l1i_addr_i[1] ? {data0,data1} : {data1,data0};
    
    localparam  READMEM0   = 3'd0,
                READMEM1   = 3'd1,
