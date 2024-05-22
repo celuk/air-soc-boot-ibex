@@ -3,7 +3,7 @@
 
 `include "header.vh"
 
-module veriyolu(
+module datapath(
    input clk_i,
    input rst_i,
    
@@ -129,6 +129,7 @@ module veriyolu(
       .uart_tx_o  (uart_tx_o )
    );
    
+   /*
    qspi_controller qspi_controller_dut (
       .clk_i(clk_i),
       .rst_i(rst_i),
@@ -226,5 +227,6 @@ module veriyolu(
        .wb_ack_o (jtag_ack_i),
        .wb_dat_o (jtag_dat_i)
    );
+   */
 
 endmodule

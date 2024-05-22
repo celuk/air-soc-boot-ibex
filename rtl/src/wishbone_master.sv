@@ -36,9 +36,9 @@ module wishbone_master(
    input      [0:0]  uart_ack_i,
    input      [31:0] uart_dat_i,
    // QSPI
-   output     [0:0]  spi_cyc_o,
-   input      [0:0]  spi_ack_i,
-   input      [31:0] spi_dat_i,
+   output     [0:0]  qspi_cyc_o,
+   input      [0:0]  qspi_ack_i,
+   input      [31:0] qspi_dat_i,
    // I2C
    output     [0:0]  i2c_cyc_o,
    input      [0:0]  i2c_ack_i,

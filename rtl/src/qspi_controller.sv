@@ -19,7 +19,7 @@ module qspi_controller (
    output       qspi_cs_o,
    output       qspi_sck_o,
    output [3:0] qspi_mosi_o,
-   input  [3:0] qspi_miso_i,
+   input  [3:0] qspi_miso_i
 );
 
 

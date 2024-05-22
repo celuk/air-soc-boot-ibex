@@ -83,7 +83,7 @@ wire [ 8:0] ram512d1_adr0;
 wire [15:0] ram512d1_datai0;
 wire [15:0] ram512d1_datao0;
 
-wire [7:0] l1b_tag_adr;,
+wire [7:0] l1i_tag_adr;
 
 wire rst_i = ~rst_ni;
 
@@ -98,7 +98,7 @@ wire        l1i_wait;
 wire [31:0] l1i_val;
 wire [18:1] l1i_addr;
 
-assign l1b_tag_adr = l1i_addr[18:11];
+assign l1i_tag_adr = l1i_addr[18:11];
 
 wire [31:0] l1d_rd_data;
 wire        l1d_sel;
@@ -193,7 +193,7 @@ cv32e40p_core_ip (
     .debug_req_i              (1'b0),
     .debug_havereset_o        (),
     .debug_running_o          (),
-    .debug_halted_o           ()
+    .debug_halted_o           (),
 
     // TODO
     // CPU Control Signals
@@ -208,10 +208,9 @@ icache_controller icache_controller_dut (
    .iomem_valid   (l1i_iomem_valid),
    .iomem_ready   (l1i_iomem_ready),
    .iomem_addr    (l1i_iomem_addr ),
-   .iomem_rdata   (l1i_iomem_rdata),
 
    .l1i_wait_o   (l1i_wait),
-   .l1i_val_o   (l1i_val),
+   .l1i_val_o    (l1i_val),
    .l1i_addr_i   (l1i_addr),
    
    .we0_o    (we0    ),
@@ -336,7 +335,7 @@ datapath  datapath_dut (
     .gpio_o (gpio_o)
 );
 
-RAM512x16_ASYNC`GATE RAM512_d0 (
+RAM512x16_ASYNC RAM512_d0 (
    .CLK(clk),
    .A0(ram512d0_adr0),
    .Di0(iomem_rdata[15:0]),
@@ -344,7 +343,7 @@ RAM512x16_ASYNC`GATE RAM512_d0 (
    .WE0({ram512d0_we0,ram512d0_we0})
 );
 
-RAM512x16_ASYNC`GATE RAM512_d1 (
+RAM512x16_ASYNC RAM512_d1 (
    .CLK(clk),
    .A0(ram512d1_adr0),
    .Di0(iomem_rdata[31:16]),
@@ -352,23 +351,23 @@ RAM512x16_ASYNC`GATE RAM512_d1 (
    .WE0({ram512d1_we0,ram512d1_we0})
 );
 
-RAM256x8_ASYNC`GATE bffram_t0( // even
+RAM256x8_ASYNC bffram_t0( // even
    .CLK(clk),
    .A0(adr0),
-   .Di0(l1b_tag_adr),
+   .Di0(l1i_tag_adr),
    .Do0(datao0),
    .WE0(we0)
 );
 
-RAM256x8_ASYNC`GATE bffram_t1( // odd
+RAM256x8_ASYNC bffram_t1( // odd
    .CLK(clk),
    .A0(adr1),
-   .Di0(l1b_tag_adr),
+   .Di0(l1i_tag_adr),
    .Do0(datao1),
    .WE0(we1)
 );
 
-RAM256x8_ASYNC`GATE vffram_t0_0(
+RAM256x8_ASYNC vffram_t0_0(
    .CLK(clk),
    .A0 (yol_A0  ),
    .Di0(yol_Di0 [39:32]),
@@ -376,7 +375,7 @@ RAM256x8_ASYNC`GATE vffram_t0_0(
    .WE0(yol0_EN0)
 );
 
-RAM256x8_ASYNC`GATE vffram_t1_0(
+RAM256x8_ASYNC vffram_t1_0(
    .CLK(clk),
    .A0 (yol_A0  ),
    .Di0(yol_Di0 [39:32]),
@@ -385,7 +384,7 @@ RAM256x8_ASYNC`GATE vffram_t1_0(
 );
 
 
-RAM256x16_ASYNC`GATE vffram_d0_0(
+RAM256x16_ASYNC vffram_d0_0(
    .CLK(clk),
    .A0 (yol_A0  ),
    .Di0(yol_Di0 [15:0]),
@@ -393,7 +392,7 @@ RAM256x16_ASYNC`GATE vffram_d0_0(
    .WE0(yol_WE0[1:0] & {yol0_EN0,yol0_EN0})
 );
 
-RAM256x16_ASYNC`GATE vffram_d0_1(
+RAM256x16_ASYNC vffram_d0_1(
    .CLK(clk),
    .A0 (yol_A0  ),
    .Di0(yol_Di0 [31:16]),
@@ -401,7 +400,7 @@ RAM256x16_ASYNC`GATE vffram_d0_1(
    .WE0(yol_WE0[3:2] & {yol0_EN0,yol0_EN0})
 );
 
-RAM256x16_ASYNC`GATE vffram_d1_0(
+RAM256x16_ASYNC vffram_d1_0(
    .CLK(clk),
    .A0 (yol_A0  ),
    .Di0(yol_Di0 [15:0]),
@@ -409,7 +408,7 @@ RAM256x16_ASYNC`GATE vffram_d1_0(
    .WE0(yol_WE0[1:0] & {yol1_EN0,yol1_EN0})
 );
 
-RAM256x16_ASYNC`GATE vffram_d1_1(
+RAM256x16_ASYNC vffram_d1_1(
    .CLK(clk),
    .A0 (yol_A0  ),
    .Di0(yol_Di0 [31:16]),
@@ -440,7 +439,7 @@ assign yol1_dirty_din = combined_data_okunan[6];
 assign yol1_Do0[40]   = combined_data_okunan[7];
 
 
-RAM256x8_ASYNC`GATE vffram_combined(
+RAM256x8_ASYNC vffram_combined(
    .CLK(clk),
    .A0 (yol_A0  ),
    .Di0(combined_data_yeni),

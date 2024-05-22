@@ -14,9 +14,9 @@ module icache_controller (
    input  wire        iomem_ready,
    output reg  [18:2] iomem_addr,
    
-   output reg         l1b_bekle_o,
-   output wire [31:0] l1b_deger_o,
-   input  wire [18:1] l1b_adres_i,
+   output reg         l1i_wait_o,
+   output wire [31:0] l1i_val_o,
+   input  wire [18:1] l1i_addr_i,
    // RAM256_T0
    output wire       we0_o,
    output wire [7:0] adr0_o,
@@ -38,7 +38,7 @@ module icache_controller (
    wire [15:0] data1;
    
    // Hizasiz erisimlerde 16 bitlerin yerini degistir.
-   assign l1b_deger_o = l1b_adres_i[1] ? {data0,data1} : {data1,data0};
+   assign l1i_val = l1i_addr_i[1] ? {data0,data1} : {data1,data0};
    
    localparam  READMEM0   = 3'd0,
                READMEM1   = 3'd1,
@@ -49,8 +49,8 @@ module icache_controller (
    
    reg  [ 8:0] d_addr0, d_addr0_next;
    reg  [ 8:0] d_addr1, d_addr1_next;
-   wire [ 8:0] data_addr0 = l1b_adres_i[`ADR] + {{8{1'b0}},l1b_adres_i[1]}; // Eger hizasiz erisim ise 1 yukardaki satira eris.
-   wire [ 8:0] data_addr1 = l1b_adres_i[`ADR];
+   wire [ 8:0] data_addr0 = l1i_addr_i[`ADR] + {{8{1'b0}},l1i_addr_i[1]}; // Eger hizasiz erisim ise 1 yukardaki satira eris.
+   wire [ 8:0] data_addr1 = l1i_addr_i[`ADR];
    
    wire valid0;
    wire valid1;
@@ -58,8 +58,8 @@ module icache_controller (
    wire [7:0] tag1;
    
    reg wen, wen_next;
-   wire data0_ready = (l1b_adres_i[`TAG] === tag0) && valid0;
-   wire data1_ready = (l1b_adres_i[`TAG] === tag1) && valid1;
+   wire data0_ready = (l1i_addr_i[`TAG] === tag0) && valid0;
+   wire data1_ready = (l1i_addr_i[`TAG] === tag1) && valid1;
    
    always @(posedge clk_i) begin
        if(rst_i) begin
@@ -105,27 +105,27 @@ module icache_controller (
        endcase
        case(state)
            READMEM0: begin
-              iomem_addr  = {l1b_adres_i[`TAG],data_addr0};
+              iomem_addr  = {l1i_addr_i[`TAG],data_addr0};
               iomem_valid = 1'b1;
               d_addr0_next = iomem_addr[`ADR];
               d_addr1_next = iomem_addr[`ADR];
-              l1b_bekle_o = 1'b1;
+              l1i_wait_o = 1'b1;
               wen_next = iomem_ready;
            end
            READMEM1: begin
-              iomem_addr  = {l1b_adres_i[`TAG],data_addr1};
+              iomem_addr  = {l1i_addr_i[`TAG],data_addr1};
               iomem_valid = 1'b1;
               d_addr0_next = iomem_addr[`ADR];
               d_addr1_next = iomem_addr[`ADR];
-              l1b_bekle_o = 1'b1;
+              l1i_wait_o = 1'b1;
               wen_next = iomem_ready;
            end
            READCACHE: begin
-              iomem_addr  = l1b_adres_i[18:2];
+              iomem_addr  = l1i_addr_i[18:2];
               iomem_valid = 1'b0;
               d_addr0_next = data_addr0;
               d_addr1_next = data_addr1;
-              l1b_bekle_o = ~(data0_ready && data1_ready);
+              l1i_wait_o = ~(data0_ready && data1_ready);
               wen_next = 1'b0;
            end
            default: begin
