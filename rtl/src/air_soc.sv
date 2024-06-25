@@ -69,7 +69,6 @@ wire [7:0] datao0;
 
 wire  we1;
 wire [7:0] adr1;
-wire [7:0] datai1;
 wire [7:0] datao1;
 
 wire        ram512d0_we0;
@@ -78,6 +77,7 @@ wire [15:0] ram512d0_datao0;
 
 wire        ram512d1_we0;
 wire [ 8:0] ram512d1_adr0;
+wire [15:0] ram512d1_datai0;
 wire [15:0] ram512d1_datao0;
 
 wire [7:0] l1i_tag_adr;
@@ -93,7 +93,9 @@ wire        mpu_req;
 
 wire        l1i_wait;
 wire [31:0] l1i_val;
-wire [18:1] l1i_addr;
+
+wire [31:0] l1i_addr_w;
+wire [18:1] l1i_addr = l1i_addr_w[18:1];
 
 assign l1i_tag_adr = l1i_addr[18:11];
 
@@ -119,6 +121,10 @@ wire        l1i_iomem_valid;
 wire        l1i_iomem_ready;
 wire [18:2] l1i_iomem_addr;
 wire [31:0] l1i_iomem_rdata;
+
+wire instr_req;
+
+wire [31:0] data_wdata;
 
 /*
 cekirdek cek (
@@ -163,21 +169,21 @@ cv32e40p_core_ip (
     
     // TODO: Always valid?
     // Instruction memory interface
-    .instr_req_o              (),
-    .instr_gnt_i              (~l1i_wait),
-    .instr_rvalid_i           (1'b1), // l1i_iomem_valid
-    .instr_addr_o             (l1i_addr),
+    .instr_req_o              (instr_req),
+    .instr_gnt_i              (~l1i_wait && instr_req),
+    .instr_rvalid_i           (~l1i_wait && instr_req),
+    .instr_addr_o             (l1i_addr_w),
     .instr_rdata_i            (l1i_val),
 
     // TODO: Always valid?
     // Data memory interface
     .data_req_o               (mpu_req),
-    .data_gnt_i               (~mpu_stall),
-    .data_rvalid_i            (1'b1), // l1d_iomem_valid
+    .data_gnt_i               (~mpu_stall && mpu_req),
+    .data_rvalid_i            (~mpu_stall && mpu_req),
     .data_we_o                (data_we_o),
     .data_be_o                (mpu_mask),
     .data_addr_o              (mpu_addr),
-    .data_wdata_o             (mpu_wr_data),
+    .data_wdata_o             (data_wdata), //(mpu_wr_data),
     .data_rdata_i             (mpu_rd_data),
 
     // Interrupt interface
@@ -198,12 +204,27 @@ cv32e40p_core_ip (
     .core_sleep_o             ()
 );
 
+assign mpu_wr_data = (mpu_mask == 4'b0001 || mpu_mask == 4'b0010 || mpu_mask == 4'b0100 || mpu_mask == 4'b1000 ) ? (data_wdata << (mylog2(mpu_mask)*8)) :
+                     (mpu_mask == 4'b0011 || mpu_mask == 4'b1100) ? ((mpu_mask[3]) ? (data_wdata << 16) : mpu_mask ) :
+                      mpu_mask == 4'b1111  ?  data_wdata :
+                                              data_wdata ;
+
+function automatic [1:0] mylog2;
+      input [3:0] data;
+      begin
+          mylog2 = data[0] ? 2'd0 :
+                   data[1] ? 2'd1 :
+                   data[2] ? 2'd2 :
+                             2'd3 ;
+      end
+endfunction
+
 icache_controller icache_controller_dut (
    .clk_i (clk_i ),
    .rst_i (rst_i ),
    
    .iomem_valid   (l1i_iomem_valid),
-   .iomem_ready   (l1i_iomem_ready),
+   .iomem_ready   (l1i_iomem_ready), // && instr_req
    .iomem_addr    (l1i_iomem_addr ),
 
    .l1i_wait_o   (l1i_wait),
