@@ -226,7 +226,6 @@ module datapath(
        .wb_cyc_i (jtag_cyc_o),
        .wb_ack_o (jtag_ack_i),
        .wb_dat_o (jtag_dat_i)
-   );
-   */
+   );*/
 
 endmodule

@@ -1,13 +1,26 @@
 `timescale 1ns / 1ps
 
 module teknofest_wrapper(
-  input  clk_i,
+  input  clk_p,
+  input  clk_n,
   input  rst_ni,
   input  program_rx_i,
   output prog_mode_led_o,
 
-  output uart_tx_o,
-  input  uart_rx_i
+  output uart_tx_o
+  //input  uart_rx_i
+);
+
+wire uart_rx_i;
+
+wire clk_i;
+wire dummy;
+clk_wiz_0 dutclk (
+  .clk_out1(clk_i),
+  .clk_in1_p(clk_p),
+  .clk_in1_n(clk_n),
+  .reset(~rst_ni),
+  .locked(dummy)
 );
 
 localparam RAM_DELAY = 16;
@@ -45,8 +58,10 @@ wire   rst_n;
 assign rst_n = prog_system_reset & rst_ni;
 
 air_soc soc (
-  .clk_i         (clk_i    ),
-  .rst_ni        (rst_n        ),
+  //.clk_i         (clk_i    ),
+  //.rst_ni        (rst_n        ),
+  .clk         (clk_i    ),
+  .resetn        (rst_n        ),
   .iomem_valid   (iomem_valid  ),
   .iomem_ready   (iomem_ready  ),
   .iomem_wstrb   (iomem_wstrb  ),

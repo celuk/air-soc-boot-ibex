@@ -131,18 +131,31 @@ cekirdek cek (
    .clk_i (clk_i),
    .rst_i (rst_i),
    //
-   .l1b_bekle_i        (l1b_bekle          ),
-   .l1b_deger_i        (l1b_deger          ),
-   .l1b_adres_o        (l1b_adres          ),
+   .l1b_bekle_i        (l1i_wait          ),
+   .l1b_deger_i        (l1i_val          ),
+   .l1b_adres_o        (l1i_addr_w[18:1]          ),
    //
-   .bib_veri_i       (bib_oku_veri     ),
-   .bib_durdur_i     (bib_durdur       ),
-   .bib_veri_o       (bib_yaz_veri     ),
-   .bib_adr_o        (bib_adr          ),
-   .bib_veri_maske_o (bib_mask         ),
-   .bib_sec_o        (bib_sec          )
+   .bib_veri_i       (mpu_rd_data     ),
+   .bib_durdur_i     (mpu_stall       ),
+   .bib_veri_o       (data_wdata     ),
+   .bib_adr_o        (mpu_addr          ),
+   .bib_veri_maske_o (mpu_mask         ),
+   .bib_sec_o        (mpu_req          )
 );
 */
+
+reg [11:0] counter;
+reg fetch_enable_i;
+always @ (posedge clk_i) begin
+    if(!rst_ni) begin
+        counter     <= 0;
+        fetch_enable_i <= 0;
+    end
+    else begin
+        counter <= (counter != 12'hfff) ? (counter + 8'b1) : counter;
+        fetch_enable_i <= 1; //&counter;                        
+    end
+end
 
 cv32e40p_top #(
     .COREV_PULP               ( `COREV_PULP ),
@@ -171,15 +184,15 @@ cv32e40p_core_ip (
     // Instruction memory interface
     .instr_req_o              (instr_req),
     .instr_gnt_i              (~l1i_wait && instr_req),
-    .instr_rvalid_i           (~l1i_wait && instr_req),
+    .instr_rvalid_i           (~l1i_wait),
     .instr_addr_o             (l1i_addr_w),
     .instr_rdata_i            (l1i_val),
 
     // TODO: Always valid?
     // Data memory interface
     .data_req_o               (mpu_req),
-    .data_gnt_i               (~mpu_stall && mpu_req),
-    .data_rvalid_i            (~mpu_stall && mpu_req),
+    .data_gnt_i               (~mpu_stall),
+    .data_rvalid_i            (~mpu_stall),
     .data_we_o                (data_we_o),
     .data_be_o                (mpu_mask),
     .data_addr_o              (mpu_addr),
@@ -200,11 +213,11 @@ cv32e40p_core_ip (
 
     // TODO
     // CPU Control Signals
-    .fetch_enable_i           (rst_ni),
+    .fetch_enable_i           (fetch_enable_i),
     .core_sleep_o             ()
 );
 
-assign mpu_wr_data = (mpu_mask == 4'b0001 || mpu_mask == 4'b0010 || mpu_mask == 4'b0100 || mpu_mask == 4'b1000 ) ? (data_wdata << (mylog2(mpu_mask)*8)) :
+assign mpu_wr_data = data_wdata; /*(mpu_mask == 4'b0001 || mpu_mask == 4'b0010 || mpu_mask == 4'b0100 || mpu_mask == 4'b1000 ) ? (data_wdata << (mylog2(mpu_mask)*8)) :
                      (mpu_mask == 4'b0011 || mpu_mask == 4'b1100) ? ((mpu_mask[3]) ? (data_wdata << 16) : mpu_mask ) :
                       mpu_mask == 4'b1111  ?  data_wdata :
                                               data_wdata ;
@@ -217,7 +230,7 @@ function automatic [1:0] mylog2;
                    data[2] ? 2'd2 :
                              2'd3 ;
       end
-endfunction
+endfunction*/
 
 icache_controller icache_controller_dut (
    .clk_i (clk_i ),
