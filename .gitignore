@@ -1,0 +1,7 @@
+**.direnv/
+*/modelsim/*
+**/sim_build
+*_prove/
+**_pycache_*
+**/transcript
+
