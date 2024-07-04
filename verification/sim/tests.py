@@ -5,7 +5,7 @@ SCRIPT_DIR = Path(os.path.realpath(__file__)).parent.absolute()
 print("SCRIPT_DIR ", SCRIPT_DIR)
 hello_world = {
     "hello_world": {
-        "TEST_FILE": f"{SCRIPT_DIR}/../../tests/hello_world/build/main.hex",
+        "TEST_FILE": f"{SCRIPT_DIR}/../../tests/example_tb/core/custom/hello_world.hex",
         "fail_adr": 0x40F00060,
         "pass_adr": 0x40F00078,
         "instructions": [],

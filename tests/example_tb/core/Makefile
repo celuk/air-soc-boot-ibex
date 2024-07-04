@@ -64,11 +64,14 @@ RTLSRC_VLOG_TB_TOP	:= $(basename $(notdir $(RTLSRC_TB_TOP)))
 RTLSRC_VOPT_TB_TOP	:= $(addsuffix _vopt, $(RTLSRC_VLOG_TB_TOP))
 
 # riscv toolchain install path
-RISCV                    ?= /home/shc/projects/riscv-build
+#RISCV                    ?= /home/shc/projects/riscv-build
 #/home/shc/Downloads/v1.0.16-pulp-riscv-gcc-ubuntu-16
 #/home/shc/projects/riscv-tutel
 #~/.riscv
-RISCV_EXE_PREFIX         = $(RISCV)/bin/riscv32-unknown-elf-
+RISCV_EXE_PREFIX = $(RISCV_PREFIX)
+RISCV_CPU = none
+
+#$(RISCV)/bin/riscv32-unknown-elf-
 #/home/shc/projects/core-v-sdk/corev-openhw-gcc-ubuntu2204-20240530/bin/riscv32-corev-elf-
 
 # assume vsim if no target chosen
@@ -206,7 +209,7 @@ tb-clean-fp:
 %.bin: %.elf
 	$(RISCV_EXE_PREFIX)objcopy -O binary $< $@
 	python3 ../../../tools/bin2hex_little.py --binfile=$@
-	#$@ > $(basename $@).hex
+#	$@ > $(basename $@).hex
 	
 #%.hex: %.bin
 #	python3 bin2hex.py $< > $@
@@ -222,9 +225,9 @@ custom/hello_world.elf: custom/hello_world.c
 		-static \
 		custom/crt0.S \
 		$^ mem_stall/mem_stall.c custom/syscalls.c custom/vectors.S \
-		-I $(RISCV)/riscv32-unknown-elf/include \
+		-I $(RISCV)/riscv32-$(RISCV_CPU)-elf/include \
 		-I mem_stall \
-		-L $(RISCV)/riscv32-unknown-elf/lib \
+		-L $(RISCV)/riscv32-$(RISCV_CPU)-elf/lib \
 		-lc -lm -lgcc
 custom-clean:
 	rm -rf custom/hello_world.elf custom/hello_world.hex
@@ -250,8 +253,8 @@ custom_fp/main.elf: custom_fp/matmulNxN.c custom_fp/main.c
 		-static \
 		custom/crt0.S \
 		$^ custom/syscalls.c custom/vectors.S \
-		-I $(RISCV)/riscv32-unknown-elf/include \
-		-L $(RISCV)/riscv32-unknown-elf/lib \
+		-I $(RISCV)/riscv32-$(RISCV_CPU)-elf/include \
+		-L $(RISCV)/riscv32-$(RISCV_CPU)-elf/lib \
 		-lc -lm -lgcc
 custom-fp-clean:
 	rm -rf custom_fp/main.elf custom_fp/main.hex
@@ -275,9 +278,9 @@ interrupt/interrupt.elf: interrupt/interrupt.c
 		-static \
 		custom/crt0.S \
 		$^ mem_stall/mem_stall.c custom/syscalls.c interrupt/vectors.S \
-		-I $(RISCV)/riscv32-unknown-elf/include \
+		-I $(RISCV)/riscv32-$(RISCV_CPU)-elf/include \
 		-I mem_stall/ \
-		-L $(RISCV)/riscv32-unknown-elf/lib \
+		-L $(RISCV)/riscv32-$(RISCV_CPU)-elf/lib \
 		-lc -lm -lgcc
 interrupt-clean:
 	rm -rf interrupt/interrupt.elf interrupt/interrupt.hex
@@ -304,9 +307,9 @@ hwlp_test/hwlp_test.elf: hwlp_test/hwlp_test.c
 		-static \
 		custom/crt0.S \
 		$^ mem_stall/mem_stall.c custom/syscalls.c custom/vectors.S \
-		-I $(RISCV)/riscv32-unknown-elf/include \
+		-I $(RISCV)/riscv32-$(RISCV_CPU)-elf/include \
 		-I mem_stall \
-		-L $(RISCV)/riscv32-unknown-elf/lib \
+		-L $(RISCV)/riscv32-$(RISCV_CPU)-elf/lib \
 		-lc -lm -lgcc
 hwlp-clean:
 	rm -rf hwlp_test/hwlp_test.elf hwlp_test/hwlp_test.hex

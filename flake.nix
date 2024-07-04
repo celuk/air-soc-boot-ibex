@@ -20,15 +20,16 @@
 
           export CSMITH_INCLUDE=${pkgs.csmith}/include/${pkgs.csmith.name}
 
-          export RISCV_PREFIX=${pkgs.pkgsCross.riscv64-embedded.stdenv.cc}/bin/riscv64-none-elf-
+          export RISCV=${pkgs.pkgsCross.riscv32-embedded.stdenv.cc}
+          export RISCV_PREFIX=${pkgs.pkgsCross.riscv32-embedded.stdenv.cc}/bin/riscv32-none-elf-
         '';
         packages = [
           pkgs.bashInteractive # This is a must
 
-          (pkgs.pkgsCross.riscv64-embedded.buildPackages.gcc)
+          (pkgs.pkgsCross.riscv32-embedded.buildPackages.gcc)
 
           pkgs.autoconf
-          pkgs.pkgsCross.riscv64-embedded.stdenv.cc
+          pkgs.pkgsCross.riscv32-embedded.stdenv.cc
           pkgs.csmith
           (pkgs.spike.overrideAttrs
             (oldAttrs: {
