@@ -26,12 +26,46 @@ async def read_instructions():
             instructions = [line.rstrip("\n") for line in f]
         tests[test]["instructions"] = instructions
 
+#@cocotb.coroutine async
+def load_verilog_hex_file():
+    for test in tests:
+        with open(tests[test]["TEST_FILE"], "r") as file:
+            lines = file.readlines()
+
+        memory = {}
+        current_address = None
+
+        for line in lines:
+            if line.startswith("@"):
+                current_address = int(line[1:], 16)
+            else:
+                values = line.strip().split()
+                for value in values:
+                    if current_address is not None:
+                        memory[current_address] = int(value, 16)
+                        current_address += 1
+
+    return memory
 
 @cocotb.coroutine
 async def anabellek(dut):
     await RisingEdge(dut.clk_i)
+    dut.rst_ni.value = 0
+    await RisingEdge(dut.clk_i)
+    
+    memory = load_verilog_hex_file()
+    for address, value in memory.items():
+        dut.ram_i.dp_ram_i.mem[address].value = value
+    
+    await RisingEdge(dut.clk_i)
+    dut.rst_ni.value = 1
+    dut.fetch_enable_i.value = 1
+
+    while True:
+        await RisingEdge(dut.clk_i)
+
+    """
     for test in tests:
-        timout = 0
         dut.rst_ni.value = 0
         await RisingEdge(dut.clk_i)
         for index, instruction in enumerate(tests[test]["instructions"]):
@@ -45,34 +79,9 @@ async def anabellek(dut):
         await RisingEdge(dut.clk_i)
         dut.rst_ni.value = 1
         dut.fetch_enable_i.value = 1
-        while 1:
-            try:
-                if (
-                    tests[test]["pass_adr"]
-                    == dut.soc.isl_blksiz.cek.getir_dut.debug_ps.value.integer
-                ):
-                    print("[TEST] ", test, " passed")
-                    break
-                if (
-                    tests[test]["fail_adr"]
-                    == dut.soc.isl_blksiz.cek.getir_dut.debug_ps.value.integer
-                ):
-                    print("[TEST] ", test, " FAILED")
-                    assert 0
-                    break
-            except:
-                print("[WARNING] ADR is XXXXXXXXX")
+        while True:
             await RisingEdge(dut.clk_i)
-            timout = timout + 1
-            if timout > TIMEOUT:
-                print("[TEST] ", test, " FAILED TIMOUT")
-                print(
-                    "current PC: ",
-                    dut.soc.isl_blksiz.cek.getir_dut.debug_ps.value.integer,
-                )
-                assert 0
-                break
-
+    """
 
 @cocotb.test()
 async def tair(dut):

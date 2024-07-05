@@ -11,7 +11,7 @@ all:
 
 .PHONY: sim
 sim:
-	+@$(SUBMAKE) verify/sim/ $(ARGS)
+	+@$(SUBMAKE) verification/sim/ $(ARGS)
 
 .PHONY: clean
 clean:
@@ -19,6 +19,6 @@ clean:
 	-rm -rf ./sim_build
 	-+@$(SUBMAKE) synth/quartus/ clean
 	-+@$(SUBMAKE) synth/vivado/ clean
-	-+@$(SUBMAKE) verify/sim/ clean
-	-+@$(SUBMAKE) verify/prove/ clean
+	-+@$(SUBMAKE) verification/sim/ clean
+	-+@$(SUBMAKE) verification/prove/ clean
 	-+@$(SUBMAKE) software/tests/riscv-tests/ clean 

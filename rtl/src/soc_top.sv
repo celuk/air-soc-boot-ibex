@@ -13,6 +13,8 @@
 // Contributor: Robert Balas <balasr@student.ethz.ch>
 //              Jeremy Bennett <jeremy.bennett@embecosm.com>
 
+`include "header.vh"
+
 module soc_top #(
     parameter INSTR_RDATA_WIDTH = 32,
     parameter RAM_ADDR_WIDTH = 22,

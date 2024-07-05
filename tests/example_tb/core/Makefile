@@ -208,7 +208,7 @@ tb-clean-fp:
 
 %.bin: %.elf
 	$(RISCV_EXE_PREFIX)objcopy -O binary $< $@
-	python3 ../../../tools/bin2hex_little.py --binfile=$@
+	python3 ../../../tools/bin2hex_big.py --binfile=$@
 #	$@ > $(basename $@).hex
 	
 #%.hex: %.bin
