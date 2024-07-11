@@ -3,71 +3,72 @@
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   inputs.flake-utils.url = "github:numtide/flake-utils";
-  outputs = {
-    self,
-    nixpkgs,
-    flake-utils,
-  }:
-    flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-      };
-    in {
-      devShells.default = pkgs.mkShell {
-        shellHook = ''
-          export PORT_DIR=code/tests/coremark/wood
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        };
+      in
+      {
+        devShells.default = pkgs.mkShell {
+          shellHook = ''
+            export PORT_DIR=code/tests/coremark/wood
 
-          export CSMITH_INCLUDE=${pkgs.csmith}/include/${pkgs.csmith.name}
+            export CSMITH_INCLUDE=${pkgs.csmith}/include/${pkgs.csmith.name}
 
-          export RISCV=${pkgs.pkgsCross.riscv32-embedded.stdenv.cc}
-          export RISCV_PREFIX=${pkgs.pkgsCross.riscv32-embedded.stdenv.cc}/bin/riscv32-none-elf-
-        '';
-        packages = [
-          pkgs.bashInteractive # This is a must
+            export RISCV=${(pkgs.callPackage ./nix/riscv-gcc.nix { })}
+            export RISCV_PREFIX=${(pkgs.callPackage ./nix/riscv-gcc.nix { })}/bin/riscv32-unknown-elf-
+          '';
+          packages = [
+            pkgs.bashInteractive # This is a must
 
-          (pkgs.pkgsCross.riscv32-embedded.buildPackages.gcc)
-
-          pkgs.autoconf
-          pkgs.pkgsCross.riscv32-embedded.stdenv.cc
-          pkgs.csmith
-          (pkgs.spike.overrideAttrs
-            (oldAttrs: {
-              configureFlags = oldAttrs.configureFlags or [] ++ ["--enable-commitlog"];
+            pkgs.autoconf
+            pkgs.csmith
+            (pkgs.spike.overrideAttrs (oldAttrs: {
+              configureFlags = oldAttrs.configureFlags or [ ] ++ [ "--enable-commitlog" ];
             }))
-          pkgs.dtc
-          pkgs.gnumake
+            pkgs.dtc
+            pkgs.gnumake
 
-          pkgs.verilator
-          pkgs.verilog
-          pkgs.gtkwave
-          pkgs.yosys
-          pkgs.xdot
-          pkgs.netlistsvg
-          pkgs.inkscape
-          pkgs.sioyek
-          pkgs.symbiyosys
-          pkgs.boolector
-          pkgs.yices
-          pkgs.z3
-          pkgs.avy
-          pkgs.python311
-          (pkgs.python311Packages.cocotb.overrideAttrs
-            (oldAttrs: {
-              patches = oldAttrs.patches or [] ++ [./nix/cocotb_pre_cmd.patch];
+            pkgs.verilator
+            pkgs.verilog
+            pkgs.gtkwave
+            pkgs.yosys
+            pkgs.xdot
+            pkgs.netlistsvg
+            pkgs.inkscape
+            pkgs.sioyek
+            pkgs.symbiyosys
+            pkgs.boolector
+            pkgs.yices
+            pkgs.z3
+            pkgs.avy
+            pkgs.python311
+            (pkgs.python311Packages.cocotb.overrideAttrs (oldAttrs: {
+              patches = oldAttrs.patches or [ ] ++ [ ./nix/cocotb_pre_cmd.patch ];
             }))
 
-          pkgs.python311Packages.mypy
-          pkgs.python311Packages.pytest
-          pkgs.python311Packages.riscof
+            pkgs.python311Packages.mypy
+            pkgs.python311Packages.pytest
+            pkgs.python311Packages.riscof
 
-          # QuestaSim
-          (pkgs.callPackage ./nix/questa.nix {})
-          ## QuestaSim + Quartus
-          # (pkgs.quartus-prime-lite.override {
-          #   supportedDevices = ["Cyclone V"];
-          # })
-        ];
-      };
-    });
+            # QuestaSim
+            (pkgs.callPackage ./nix/questa.nix { })
+            (pkgs.callPackage ./nix/riscv-gcc.nix { })
+            ## QuestaSim + Quartus
+            # (pkgs.quartus-prime-lite.override {
+            #   supportedDevices = ["Cyclone V"];
+            # })
+          ];
+        };
+      }
+    );
 }

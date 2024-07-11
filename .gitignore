@@ -4,4 +4,6 @@
 *_prove/
 **_pycache_*
 **/transcript
+**.elf
+**.hex
 
