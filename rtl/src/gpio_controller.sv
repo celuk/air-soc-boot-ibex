@@ -18,44 +18,81 @@ module gpio_controller (
 
     input  [15:0] gpio_i,
     output [15:0] gpio_o
-
-    /*
-    input io1_i,
-    input io2_i,
-    input io3_i,
-    input io4_i,
-    input io5_i,
-    input io6_i,
-    input io7_i,
-    input io8_i,
-    input io9_i,
-    input io10_i,
-    input io11_i,
-    input io12_i,
-    input io13_i,
-    input io14_i,
-    input io15_i,
-    input io16_i,
-
-    output io1_o,
-    output io2_o,
-    output io3_o,
-    output io4_o,
-    output io5_o,
-    output io6_o,
-    output io7_o,
-    output io8_o,
-    output io9_o,
-    output io10_o,
-    output io11_o,
-    output io12_o,
-    output io13_o,
-    output io14_o,
-    output io15_o,
-    output io16_o
-    */
 );
 
+reg [31:0] wb_read_data_r = 0;
+reg [31:0] wb_read_data_next_r = 0;
+assign wb_dat_o = wb_read_data_r;
+
+reg wb_ack_r = 0;
+reg wb_ack_next_r = 0;
+assign wb_ack_o = wb_ack_r;
+
+reg [31:0] GPIO_ODR;
+reg [31:0] GPIO_ODR_NEXT;
+
+reg [31:0] GPIO_IDR;
+reg [31:0] GPIO_IDR_NEXT;
+
+assign gpio_o = GPIO_ODR[15:0];
+
+always @* begin
+   wb_ack_next_r = 0;
+   wb_read_data_next_r = 0;
+
+   GPIO_IDR_NEXT[15:0] = gpio_i;
+
+   if(wb_cyc_i) begin
+      if(wb_stb_i & wb_we_i & !wb_ack_o) begin // write
+         case(wb_adr_i)
+            8'h04: begin
+               GPIO_ODR_NEXT <= wb_sel_i[0] ? wb_dat_i[7:0] : GPIO_ODR;
+               GPIO_ODR_NEXT <= wb_sel_i[1] ? wb_dat_i[15:8] : GPIO_ODR;
+               GPIO_ODR_NEXT <= wb_sel_i[2] ? wb_dat_i[23:16] : GPIO_ODR;
+               GPIO_ODR_NEXT <= wb_sel_i[3] ? wb_dat_i[31:24] : GPIO_ODR;
+               wb_ack_next_r = 1'b1;
+            end
+            default: begin
+               wb_ack_next_r = 0;
+            end
+         endcase
+      end 
+      else if(~wb_we_i) begin // read
+         case(wb_adr_i)
+            8'h00: begin
+               wb_read_data_next_r = GPIO_IDR;
+               wb_ack_next_r = 1;
+            end
+            8'h04: begin
+               wb_read_data_next_r = GPIO_ODR;
+               wb_ack_next_r = 1;
+            end
+            default: begin
+               wb_ack_next_r = 0;
+            end
+         endcase
+
+      end
+   end
+
+end
+
+always @(posedge clk_i) begin
+   if (!rst_i) begin
+      wb_ack_r <= 0;
+      wb_read_data_r <= 0;
+
+      GPIO_IDR <= 0;
+      GPIO_ODR <= 0;      
+   end else begin
+      wb_ack_r <= wb_ack_next_r;
+      wb_read_data_r <= wb_read_data_next_r;
+
+      GPIO_IDR <= GPIO_IDR_NEXT;
+      GPIO_ODR <= GPIO_ODR_NEXT;
+   end 
+   
+end
 
 
 endmodule
