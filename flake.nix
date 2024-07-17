@@ -30,7 +30,10 @@
           packages = [
             pkgs.bashInteractive # This is a must
 
+            (pkgs.pkgsCross.riscv32-embedded.buildPackages.gcc)
+
             pkgs.autoconf
+            pkgs.pkgsCross.riscv32-embedded.stdenv.cc
             pkgs.csmith
             (pkgs.spike.overrideAttrs (oldAttrs: {
               configureFlags = oldAttrs.configureFlags or [ ] ++ [ "--enable-commitlog" ];
@@ -62,7 +65,6 @@
 
             # QuestaSim
             (pkgs.callPackage ./nix/questa.nix { })
-            (pkgs.callPackage ./nix/riscv-gcc.nix { })
             ## QuestaSim + Quartus
             # (pkgs.quartus-prime-lite.override {
             #   supportedDevices = ["Cyclone V"];

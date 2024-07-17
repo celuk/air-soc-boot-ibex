@@ -13,7 +13,6 @@ pkgs.stdenv.mkDerivation {
   configureFlags = [
     "--with-arch=rv32im"
     "--with-abi=ilp32"
-    "--enable-multilib"
   ];
 
   installPhase = ":"; # 'make' installs on its own
@@ -40,3 +39,4 @@ pkgs.stdenv.mkDerivation {
     expat
   ];
 }
+

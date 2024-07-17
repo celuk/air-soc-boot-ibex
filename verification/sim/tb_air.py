@@ -13,8 +13,7 @@ from cocotb.triggers import RisingEdge, FallingEdge, Edge
 from tests import coremark
 from tests import hello_world
 
-
-TIMEOUT = 200000
+TIMEOUT = 250000
 tests = {}
 tests.update(hello_world)
 
@@ -61,8 +60,12 @@ async def anabellek(dut):
     dut.rst_ni.value = 1
     dut.fetch_enable_i.value = 1
 
+    timeout = 0
     while True:
         await RisingEdge(dut.clk_i)
+        if timeout > TIMEOUT:
+            break
+        timeout += 1
 
     """
     for test in tests:

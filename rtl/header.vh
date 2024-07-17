@@ -6,7 +6,7 @@
 `define ZFINX            1'b0
 `define NUM_MHPMCOUNTERS 1'b1  
 
-`define BOOT_ADDR 32'h40000000
+`define BOOT_ADDR 32'h00000180
 `define MTVEC_ADDR 32'h0
 `define DM_HALT_ADDR 32'h1A110800
 

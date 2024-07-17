@@ -64,12 +64,14 @@ RTLSRC_VLOG_TB_TOP	:= $(basename $(notdir $(RTLSRC_TB_TOP)))
 RTLSRC_VOPT_TB_TOP	:= $(addsuffix _vopt, $(RTLSRC_VLOG_TB_TOP))
 
 # riscv toolchain install path
-#RISCV                    ?= /home/shc/projects/riscv-build
+RISCV ?= /home/shc/projects/riscvim/_install
+#/home/shc/projects/riscv-build
 #/home/shc/Downloads/v1.0.16-pulp-riscv-gcc-ubuntu-16
 #/home/shc/projects/riscv-tutel
 #~/.riscv
-RISCV_EXE_PREFIX = $(RISCV_PREFIX)
-RISCV_CPU = none
+#$(RISCV_PREFIX)
+RISCV_CPU = unknown
+RISCV_EXE_PREFIX = $(RISCV)/bin/riscv32-$(RISCV_CPU)-elf-
 
 #$(RISCV)/bin/riscv32-unknown-elf-
 #/home/shc/projects/core-v-sdk/corev-openhw-gcc-ubuntu2204-20240530/bin/riscv32-corev-elf-
@@ -219,7 +221,7 @@ tb-clean-fp:
 # We link with our custom crt0.s and syscalls.c against newlib so that we can
 # use the c standard library
 custom/hello_world.elf: custom/hello_world.c
-	$(RISCV_EXE_PREFIX)gcc -march=rv32imc -o $@ -w -Os -g -nostdlib \
+	$(RISCV_EXE_PREFIX)gcc -march=rv32im -o $@ -w -Os -g -nostdlib \
 		$(CUSTOM_GCC_FLAGS) \
 		-T custom/link.ld \
 		-static \
