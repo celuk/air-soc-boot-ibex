@@ -3,479 +3,293 @@
 
 `include "header.vh"
 
-module air_soc (
-    input wire clk_i,
-    input wire rst_ni,
-    
-    output wire        iomem_valid,
-    input  wire        iomem_ready,
-    output wire [ 3:0] iomem_wstrb,
-    output wire [31:0] iomem_addr,
-    output wire [31:0] iomem_wdata,
-    input  wire [31:0] iomem_rdata,
-    
-    output wire uart_tx_o,
-    input  wire uart_rx_i
-    
-    /*
-    output wire       qspi_cs_o,
-    output wire       qspi_sck_o,
-    output wire [3:0] qspi_mosi_o,
-    input  wire [3:0] qspi_miso_i,
+module air_soc #(
+        parameter int unsigned     MEM_W         = 32,  // memory bus width in bits
+        parameter int unsigned     ICACHE_SZ     = 0,   // instruction cache size in bytes
+        parameter int unsigned     ICACHE_LINE_W = 128, // instruction cache line width in bits
+        parameter int unsigned     DCACHE_SZ     = 0,   // data cache size in bytes
+        parameter int unsigned     DCACHE_LINE_W = 512  // data cache line width in bits
+    )(
+        input  logic               clk_i,
+        input  logic               rst_ni,
 
-    input  wire sda_i,
-    output wire sda_o,
-    input  wire scl_i,
-    output wire scl_o,
+        output logic               mem_req_o,
+        output logic [31:0]        mem_addr_o,
+        output logic               mem_we_o,
+        output logic [3:0] mem_be_o,
+        output logic [31:0] mem_wdata_o,
+        input  logic               mem_rvalid_i,
+        input  logic [31:0] mem_rdata_i
+    );
 
-    input  wire [15:0] gpio_i,
-    output wire [15:0] gpio_o
-    */
-);
+    // Instruction fetch interface
+    logic        instr_req;
+    logic [31:0] instr_addr;
+    logic        instr_gnt;
+    logic        instr_rvalid;
+    logic [31:0] instr_rdata;
 
-wire       qspi_cs_o;
-wire       qspi_sck_o;
-wire [3:0] qspi_mosi_o;
-reg [3:0] qspi_miso_i = 4'h0;
-reg sda_i = 1'b0;
-wire sda_o;
-reg scl_i = 1'b0;
-wire scl_o;
-reg [15:0] gpio_i = 16'h0;
-wire [15:0] gpio_o;
-
-wire        yol0_EN0;
-wire        yol1_EN0;
-wire [ 7:0] yol_A0 ;
-wire [40:0] yol_Di0;
-wire [40:0] yol0_Do0;
-wire [40:0] yol1_Do0;
-wire [ 3:0] yol_WE0;
-
-wire lru_din;
-wire lru_ddo;
-wire yol0_valid_din;
-wire yol0_valid_ddo;
-wire yol0_dirty_din;
-wire yol0_dirty_ddo;
-wire yol1_valid_din;
-wire yol1_valid_ddo;
-wire yol1_dirty_din;
-wire yol1_dirty_ddo;
-
-wire  we0;
-wire [7:0] adr0;
-wire [7:0] datao0;
-
-wire  we1;
-wire [7:0] adr1;
-wire [7:0] datao1;
-
-wire        ram512d0_we0;
-wire [ 8:0] ram512d0_adr0;
-wire [15:0] ram512d0_datao0;
-
-wire        ram512d1_we0;
-wire [ 8:0] ram512d1_adr0;
-wire [15:0] ram512d1_datai0;
-wire [15:0] ram512d1_datao0;
-
-wire [7:0] l1i_tag_adr;
-
-wire rst_i = ~rst_ni;
-
-wire [31:0] mpu_wr_data;
-wire [31:0] mpu_rd_data;
-wire [31:0] mpu_addr;
-wire [ 3:0] mpu_mask;
-wire        mpu_stall;
-wire        mpu_req;
-
-wire        l1i_wait;
-wire [31:0] l1i_val;
-
-wire [31:0] l1i_addr_w;
-wire [18:1] l1i_addr = l1i_addr_w[18:1];
-
-assign l1i_tag_adr = l1i_addr[18:11];
-
-wire [31:0] l1d_rd_data;
-wire        l1d_sel;
-wire        l1d_stall;
-
-wire [31:0] dp_rd_data;
-wire        dp_sel;
-wire        dp_stall;
-
-wire [31:0] tmr_rd_data;
-wire        tmr_sel;
-
-wire        l1d_iomem_valid;
-wire        l1d_iomem_ready;
-wire [ 3:0] l1d_iomem_wstrb;
-wire [18:2] l1d_iomem_addr;
-wire [31:0] l1d_iomem_wdata;
-wire [31:0] l1d_iomem_rdata;
-
-wire        l1i_iomem_valid;
-wire        l1i_iomem_ready;
-wire [18:2] l1i_iomem_addr;
-wire [31:0] l1i_iomem_rdata;
-
-wire instr_req;
-
-wire [31:0] data_wdata;
-
-/*
-cekirdek cek (
-   .clk_i (clk_i),
-   .rst_i (rst_i),
-   //
-   .l1b_bekle_i        (l1i_wait          ),
-   .l1b_deger_i        (l1i_val          ),
-   .l1b_adres_o        (l1i_addr_w[18:1]          ),
-   //
-   .bib_veri_i       (mpu_rd_data     ),
-   .bib_durdur_i     (mpu_stall       ),
-   .bib_veri_o       (data_wdata     ),
-   .bib_adr_o        (mpu_addr          ),
-   .bib_veri_maske_o (mpu_mask         ),
-   .bib_sec_o        (mpu_req          )
-);
-*/
-
-reg [11:0] counter;
-reg fetch_enable_i;
-always @ (posedge clk_i) begin
-    if(!rst_ni) begin
-        counter     <= 0;
-        fetch_enable_i <= 0;
-    end
-    else begin
-        counter <= (counter != 12'hfff) ? (counter + 8'b1) : counter;
-        fetch_enable_i <= 1; //&counter;                        
-    end
-end
+    // Data load & store interface
+    logic        sdata_req;
+    logic [31:0] sdata_addr;
+    logic        sdata_we;
+    logic  [3:0] sdata_be;
+    logic [31:0] sdata_wdata;
+    logic        sdata_gnt;
+    logic        sdata_rvalid;
+    logic [31:0] sdata_rdata;
 
 cv32e40p_top #(
-    .COREV_PULP               ( `COREV_PULP ),
-    .COREV_CLUSTER            ( `COREV_CLUSTER ),
-    .FPU                      ( `FPU ),
-    .FPU_ADDMUL_LAT           ( `FPU_ADDMUL_LAT ),
-    .FPU_OTHERS_LAT           ( `FPU_OTHERS_LAT ),
-    .ZFINX                    ( `ZFINX ),
-    .NUM_MHPMCOUNTERS         ( `NUM_MHPMCOUNTERS )
-)
-cv32e40p_core_ip (
-    .clk_i                    (clk_i),
+    .FPU                      ( 0 ),
+    .FPU_ADDMUL_LAT           ( 0 ),
+    .FPU_OTHERS_LAT           ( 0 ),
+    .ZFINX                    ( 0 ),
+    .COREV_PULP               ( 0 ),
+    .COREV_CLUSTER            ( 0 ),
+    .NUM_MHPMCOUNTERS         ( 1 )
+) u_core (
+    // Clock and reset
     .rst_ni                   (rst_ni),
+    .clk_i                    (clk_i),
+    .scan_cg_en_i             (1'b0),
 
-    .pulp_clock_en_i          (`PULP_CLOCK_EN), // PULP clock enable (only used if COREV_CLUSTER = 1)
-    .scan_cg_en_i             (`SCAN_CG_EN), // Enable all clock gates for testing
+    // Special control signals
+    .fetch_enable_i           (1),
+    .pulp_clock_en_i          (1'b0),
+    .core_sleep_o             (),
 
     // Configuration
-    .boot_addr_i              (`BOOT_ADDR),
-    .mtvec_addr_i             (`MTVEC_ADDR),
-    .dm_halt_addr_i           (`DM_HALT_ADDR),
-    .hart_id_i                (`HART_ID),
-    .dm_exception_addr_i      (`DM_EXCEPTION_ADDR),
-    
-    // TODO: Always valid?
-    // Instruction memory interface
-    .instr_req_o              (instr_req),
-    .instr_gnt_i              (~l1i_wait && instr_req),
-    .instr_rvalid_i           (~l1i_wait),
-    .instr_addr_o             (l1i_addr_w),
-    .instr_rdata_i            (l1i_val),
+    .boot_addr_i              (32'h0000_0080),
+    .mtvec_addr_i             (32'h0000_0000),
+    .dm_halt_addr_i           (32'h00000000),
+    .dm_exception_addr_i      (32'h00000000),
+    .hart_id_i                (32'b0),
 
-    // TODO: Always valid?
+    // Instruction memory interface
+    .instr_addr_o             (instr_addr),
+    .instr_req_o              (instr_req),
+    .instr_gnt_i              (instr_gnt),
+    .instr_rvalid_i           (instr_rvalid),
+    .instr_rdata_i            (instr_rdata),
+
     // Data memory interface
-    .data_req_o               (mpu_req),
-    .data_gnt_i               (~mpu_stall),
-    .data_rvalid_i            (~mpu_stall),
-    .data_we_o                (data_we_o),
-    .data_be_o                (mpu_mask),
-    .data_addr_o              (mpu_addr),
-    .data_wdata_o             (data_wdata), //(mpu_wr_data),
-    .data_rdata_i             (mpu_rd_data),
+    .data_addr_o              (sdata_addr),
+    .data_req_o               (sdata_req),
+    .data_gnt_i               (sdata_gnt),
+    .data_we_o                (sdata_we),
+    .data_be_o                (sdata_be),
+    .data_wdata_o             (sdata_wdata),
+    .data_rvalid_i            (sdata_rvalid),
+    .data_rdata_i             (sdata_rdata),
 
     // Interrupt interface
-    .irq_i                    (32'h0),
+    .irq_i                    (0), //({14'b0, timer_bus.irq, gpio_bus.irq, 16'b0}), //4'b0, 0, 3'b0, 0, 3'b0, 0, 3'b0}),
     .irq_ack_o                (),
     .irq_id_o                 (),
 
-    // TODO: JTAG Integration
     // Debug interface
     .debug_req_i              (1'b0),
     .debug_havereset_o        (),
     .debug_running_o          (),
-    .debug_halted_o           (),
-
-    // TODO
-    // CPU Control Signals
-    .fetch_enable_i           (fetch_enable_i),
-    .core_sleep_o             ()
-);
-
-assign mpu_wr_data = data_wdata; /*(mpu_mask == 4'b0001 || mpu_mask == 4'b0010 || mpu_mask == 4'b0100 || mpu_mask == 4'b1000 ) ? (data_wdata << (mylog2(mpu_mask)*8)) :
-                     (mpu_mask == 4'b0011 || mpu_mask == 4'b1100) ? ((mpu_mask[3]) ? (data_wdata << 16) : mpu_mask ) :
-                      mpu_mask == 4'b1111  ?  data_wdata :
-                                              data_wdata ;
-
-function automatic [1:0] mylog2;
-      input [3:0] data;
-      begin
-          mylog2 = data[0] ? 2'd0 :
-                   data[1] ? 2'd1 :
-                   data[2] ? 2'd2 :
-                             2'd3 ;
-      end
-endfunction*/
-
-icache_controller icache_controller_dut (
-   .clk_i (clk_i ),
-   .rst_i (rst_i ),
-   
-   .iomem_valid   (l1i_iomem_valid),
-   .iomem_ready   (l1i_iomem_ready), // && instr_req
-   .iomem_addr    (l1i_iomem_addr ),
-
-   .l1i_wait_o   (l1i_wait),
-   .l1i_val_o    (l1i_val),
-   .l1i_addr_i   (l1i_addr),
-   
-   .we0_o    (we0    ),
-   .adr0_o   (adr0   ),
-   .datao0_i (datao0 ),
-   
-   .we1_o    (we1    ),
-   .adr1_o   (adr1   ),
-   .datao1_i (datao1 ),
-   
-   .ram512d0_we0_o    (ram512d0_we0    ),
-   .ram512d0_adr0_o   (ram512d0_adr0   ),
-   .ram512d0_datao0_i (ram512d0_datao0 ),
-   
-   .ram512d1_we0_o    (ram512d1_we0    ),
-   .ram512d1_adr0_o   (ram512d1_adr0   ),
-   .ram512d1_datao0_i (ram512d1_datao0 )
-);
-
-assign l1d_sel = mpu_addr[30]                ? mpu_req : 1'b0;
-assign dp_sel  = mpu_addr[29]&&~mpu_addr[28] ? mpu_req : 1'b0;
-assign tmr_sel = mpu_addr[28]                ? mpu_req : 1'b0;
-
-assign mpu_stall = mpu_addr[30] ? l1d_stall :
-                   mpu_addr[28] ? 1'b0      :
-                                  dp_stall  ;
-
-assign mpu_rd_data  = mpu_addr[30] ? l1d_rd_data :
-                      mpu_addr[28] ? tmr_rd_data :
-                                     dp_rd_data  ;
-
-dcache_controller dcache_controller_dut (
-   .clk_i (clk_i ),
-   .rst_i (rst_i ),
-   
-   .l1d_data_o      (l1d_rd_data   ),
-   .l1d_stall_o     (l1d_stall     ),
-   .l1d_data_i      (mpu_wr_data   ),
-   .l1d_addr_i      (mpu_addr[18:2]),
-   .l1d_data_mask_i (mpu_mask      ),
-   .l1d_sel_i       (l1d_sel       ),
-
-   .iomem_ready_i (l1d_iomem_ready ),
-   .iomem_valid_o (l1d_iomem_valid ),
-   .iomem_wstrb_o (l1d_iomem_wstrb ),
-   .iomem_addr_o  (l1d_iomem_addr  ),
-   .iomem_wdata_o (l1d_iomem_wdata ),
-   .iomem_rdata_i (l1d_iomem_rdata ),
-   
-   .yol0_EN0 (yol0_EN0 ),
-   .yol1_EN0 (yol1_EN0 ),
-   .yol_A0   (yol_A0   ),
-   .yol_Di0  (yol_Di0  ),
-   .yol0_Do0 (yol0_Do0 ),
-   .yol1_Do0 (yol1_Do0 ),
-   .yol_WE0  (yol_WE0  ),
-   
-   .lru_i (lru_din ),
-   .lru_o (lru_ddo ),
-   .yol0_valid_i (yol0_valid_din ),
-   .yol0_valid_o (yol0_valid_ddo ),
-   .yol0_dirty_i (yol0_dirty_din ),
-   .yol0_dirty_o (yol0_dirty_ddo ),
-   .yol1_valid_i (yol1_valid_din ),
-   .yol1_valid_o (yol1_valid_ddo ),
-   .yol1_dirty_i (yol1_dirty_din ),
-   .yol1_dirty_o  ( yol1_dirty_ddo)
-);
-
-main_memory_controller main_memory_controller_dut (
-   .clk_i (clk_i ),
-   .rst_i (rst_i ),
-   
-   .iomem_valid (iomem_valid ),
-   .iomem_ready (iomem_ready ),
-   .iomem_wstrb (iomem_wstrb ),
-   .iomem_addr  (iomem_addr  ),
-   .iomem_wdata (iomem_wdata ),
-   .iomem_rdata (iomem_rdata ),
-
-   .timer_iomem_valid (tmr_sel    ),
-   .timer_iomem_addr  (mpu_addr   ),
-   .timer_iomem_rdata (tmr_rd_data),
-
-   .l1i_iomem_valid (l1i_iomem_valid ),
-   .l1i_iomem_ready (l1i_iomem_ready ),
-   .l1i_iomem_addr  (l1i_iomem_addr  ),
-   .l1i_iomem_rdata (l1i_iomem_rdata ),
-
-   .l1d_iomem_valid (l1d_iomem_valid ),
-   .l1d_iomem_ready (l1d_iomem_ready ),
-   .l1d_iomem_wstrb (l1d_iomem_wstrb ),
-   .l1d_iomem_addr  (l1d_iomem_addr  ),
-   .l1d_iomem_wdata (l1d_iomem_wdata ),
-   .l1d_iomem_rdata (l1d_iomem_rdata )
-);
-
-datapath  datapath_dut (
-    .clk_i (clk_i ),
-    .rst_i (rst_i ),
-    .dp_data_o        (dp_rd_data     ),
-    .dp_stall_o       (dp_stall       ),
-    .dp_data_i        (mpu_wr_data    ),
-    .dp_addr_i        (mpu_addr       ),
-    .dp_data_mask_i   (mpu_mask       ),
-    .dp_sel_i         (dp_sel         ),
-
-    .uart_tx_o  (uart_tx_o ),
-    .uart_rx_i  (uart_rx_i ),
-
-    .qspi_cs_o   (qspi_cs_o   ),
-    .qspi_sck_o  (qspi_sck_o  ),
-    .qspi_mosi_o (qspi_mosi_o ),
-    .qspi_miso_i (qspi_miso_i ),
-
-    .sda_i (sda_i),
-    .sda_o (sda_o),
-    .scl_i (scl_i),
-    .scl_o (scl_o),
-
-    .gpio_i (gpio_i),
-    .gpio_o (gpio_o)
-);
-
-RAM512x16_ASYNC RAM512_d0 (
-   .CLK(clk_i),
-   .A0(ram512d0_adr0),
-   .Di0(iomem_rdata[15:0]),
-   .Do0(ram512d0_datao0),
-   .WE0({ram512d0_we0,ram512d0_we0})
-);
-
-RAM512x16_ASYNC RAM512_d1 (
-   .CLK(clk_i),
-   .A0(ram512d1_adr0),
-   .Di0(iomem_rdata[31:16]),
-   .Do0(ram512d1_datao0),
-   .WE0({ram512d1_we0,ram512d1_we0})
-);
-
-RAM256x8_ASYNC bffram_t0( // even
-   .CLK(clk_i),
-   .A0(adr0),
-   .Di0(l1i_tag_adr),
-   .Do0(datao0),
-   .WE0(we0)
-);
-
-RAM256x8_ASYNC bffram_t1( // odd
-   .CLK(clk_i),
-   .A0(adr1),
-   .Di0(l1i_tag_adr),
-   .Do0(datao1),
-   .WE0(we1)
-);
-
-RAM256x8_ASYNC vffram_t0_0(
-   .CLK(clk_i),
-   .A0 (yol_A0  ),
-   .Di0(yol_Di0 [39:32]),
-   .Do0(yol0_Do0[39:32]),
-   .WE0(yol0_EN0)
-);
-
-RAM256x8_ASYNC vffram_t1_0(
-   .CLK(clk_i),
-   .A0 (yol_A0  ),
-   .Di0(yol_Di0 [39:32]),
-   .Do0(yol1_Do0[39:32]),
-   .WE0(yol1_EN0)
+    .debug_halted_o           ()
 );
 
 
-RAM256x16_ASYNC vffram_d0_0(
-   .CLK(clk_i),
-   .A0 (yol_A0  ),
-   .Di0(yol_Di0 [15:0]),
-   .Do0(yol0_Do0[15:0]),
-   .WE0(yol_WE0[1:0] & {yol0_EN0,yol0_EN0})
-);
+    // Data arbiter for main core
+    logic                sdata_hold;
+    logic                data_req;
+    logic [31:0]         data_addr;
+    logic                data_we;
+    logic [MEM_W/8-1:0] data_be;
+    logic [MEM_W  -1:0] data_wdata;
+    logic                data_gnt;
+    logic                data_rvalid;
+    logic [MEM_W  -1:0] data_rdata;
+    logic                sdata_waiting;
+    logic [31:0]         sdata_wait_addr;
+    assign sdata_hold = 0;
+    always_comb begin
+        data_req   = (sdata_req & ~sdata_hold);
+        data_addr  = sdata_addr;
+        data_we    = sdata_we;
+        data_be    = {{(MEM_W-32){1'b0}}, sdata_be} << (sdata_addr[$clog2(MEM_W/8)-1:0] & {{$clog2(MEM_W/32){1'b1}}, 2'b00});
+        data_wdata = '0;
+        for (int i = 0; i < MEM_W / 32; i++) begin
+            data_wdata[32*i +: 32] = sdata_wdata;
+        end
+    end
+    assign sdata_gnt = data_gnt & sdata_req & ~sdata_hold;
+    always_ff @(posedge clk_i or negedge rst_ni) begin
+        if (~rst_ni) begin
+            sdata_waiting   <= 1'b0;
+            sdata_wait_addr <= '0;
+        end else begin
+            if (sdata_gnt) begin
+                sdata_waiting   <= 1'b1;
+                sdata_wait_addr <= sdata_addr;
+            end
+            else if (sdata_rvalid) begin
+                sdata_waiting <= 1'b0;
+            end
+        end
+    end
+    assign sdata_rvalid = sdata_waiting & data_rvalid;
+    assign sdata_rdata  = data_rdata[(sdata_wait_addr[$clog2(MEM_W)-1:0] & {3'b000, {($clog2(MEM_W/8)-2){1'b1}}, 2'b00})*8 +: 32];
 
-RAM256x16_ASYNC vffram_d0_1(
-   .CLK(clk_i),
-   .A0 (yol_A0  ),
-   .Di0(yol_Di0 [31:16]),
-   .Do0(yol0_Do0[31:16]),
-   .WE0(yol_WE0[3:2] & {yol0_EN0,yol0_EN0})
-);
+    // instruction cache
+    logic             imem_req;
+    logic             imem_gnt;
+    logic [31:0]      imem_addr;
+    logic             imem_rvalid;
+    logic [MEM_W-1:0] imem_rdata;
+    generate
+        if (ICACHE_SZ != 0) begin
+            localparam int unsigned ICACHE_WAY_LEN = ICACHE_SZ / (ICACHE_LINE_W / 8) / 2;
+            cache #(
+                .ADDR_BIT_W   ( 32                ),
+                .CPU_BYTE_W   ( 4                 ),
+                .MEM_BYTE_W   ( MEM_W / 8         ),
+                .LINE_BYTE_W  ( ICACHE_LINE_W / 8 ),
+                .WAY_LEN      ( ICACHE_WAY_LEN    )
+            ) icache (
+                .clk_i        ( clk_i             ),
+                .rst_ni       ( rst_ni            ),
+                .hold_mem_i   ( 1'b0              ),
+                .cpu_req_i    ( instr_req         ),
+                .cpu_addr_i   ( instr_addr        ),
+                .cpu_we_i     ( '0                ),
+                .cpu_be_i     ( '0                ),
+                .cpu_wdata_i  ( '0                ),
+                .cpu_gnt_o    ( instr_gnt         ),
+                .cpu_rvalid_o ( instr_rvalid      ),
+                .cpu_rdata_o  ( instr_rdata       ),
+                .mem_req_o    ( imem_req          ),
+                .mem_addr_o   ( imem_addr         ),
+                .mem_we_o     (                   ),
+                .mem_wdata_o  (                   ),
+                .mem_gnt_i    ( imem_gnt          ),
+                .mem_rvalid_i ( imem_rvalid       ),
+                .mem_rdata_i  ( imem_rdata        )
+            );
+        end else begin
+            assign imem_req     = instr_req;
+            assign imem_addr    = instr_addr;
+            assign instr_gnt    = imem_gnt;
+            assign instr_rvalid = imem_rvalid;
+            assign instr_rdata  = imem_rdata[31:0];
+        end
+    endgenerate
 
-RAM256x16_ASYNC vffram_d1_0(
-   .CLK(clk_i),
-   .A0 (yol_A0  ),
-   .Di0(yol_Di0 [15:0]),
-   .Do0(yol1_Do0[15:0]),
-   .WE0(yol_WE0[1:0] & {yol1_EN0,yol1_EN0})
-);
+    // data cache
+    logic               dmem_req;
+    logic               dmem_gnt;
+    logic [31:0]        dmem_addr;
+    logic               dmem_we;
+    logic [MEM_W/8-1:0] dmem_be;
+    logic [MEM_W  -1:0] dmem_wdata;
+    logic               dmem_rvalid;
+    logic               dmem_wvalid;
+    logic [MEM_W  -1:0] dmem_rdata;
+    generate
+        if (DCACHE_SZ != 0) begin
+            localparam int unsigned DCACHE_WAY_LEN = DCACHE_SZ / (DCACHE_LINE_W / 8) / 2;
+            logic hold_mem = 0;
+            cache #(
+                .ADDR_BIT_W   ( 32                ),
+                .CPU_BYTE_W   ( MEM_W / 8        ),
+                .MEM_BYTE_W   ( MEM_W / 8         ),
+                .LINE_BYTE_W  ( DCACHE_LINE_W / 8 ),
+                .WAY_LEN      ( DCACHE_WAY_LEN    )
+            ) vcache (
+                .clk_i        ( clk_i             ),
+                .rst_ni       ( rst_ni            ),
+                .hold_mem_i   ( hold_mem          ),
+                .cpu_req_i    ( data_req          ),
+                .cpu_addr_i   ( data_addr         ),
+                .cpu_we_i     ( data_we           ),
+                .cpu_be_i     ( data_be           ),
+                .cpu_wdata_i  ( data_wdata        ),
+                .cpu_gnt_o    ( data_gnt          ),
+                .cpu_rvalid_o ( data_rvalid       ),
+                .cpu_rdata_o  ( data_rdata        ),
+                .mem_req_o    ( dmem_req          ),
+                .mem_we_o     ( dmem_we           ),
+                .mem_addr_o   ( dmem_addr         ),
+                .mem_wdata_o  ( dmem_wdata        ),
+                .mem_gnt_i    ( dmem_gnt          ),
+                .mem_rvalid_i ( dmem_rvalid       ),
+                .mem_rdata_i  ( dmem_rdata        )
+            );
+            assign dmem_be = '1;
+        end else begin
 
-RAM256x16_ASYNC vffram_d1_1(
-   .CLK(clk_i),
-   .A0 (yol_A0  ),
-   .Di0(yol_Di0 [31:16]),
-   .Do0(yol1_Do0[31:16]),
-   .WE0(yol_WE0[3:2] & {yol1_EN0,yol1_EN0})
-);
-
-// t1_d1_v1_x_lru_t0_d0_v0
-wire [7:0] combined_data_yeni;
-wire [7:0] combined_data_okunan;
-
-assign combined_data_yeni[0] =  yol0_EN0             ? yol0_valid_ddo : combined_data_okunan[0];
-assign combined_data_yeni[1] =  yol0_EN0             ? yol0_dirty_ddo : combined_data_okunan[1];
-assign combined_data_yeni[2] =  yol0_EN0             ? yol_Di0 [40]   : combined_data_okunan[2];
-assign combined_data_yeni[3] = (yol0_EN0 | yol1_EN0) ? lru_ddo        : combined_data_okunan[3];
-assign combined_data_yeni[4] = 1'bx;
-assign combined_data_yeni[5] =  yol1_EN0             ? yol1_valid_ddo : combined_data_okunan[5];
-assign combined_data_yeni[6] =  yol1_EN0             ? yol1_dirty_ddo : combined_data_okunan[6];
-assign combined_data_yeni[7] =  yol1_EN0             ? yol_Di0 [40]   : combined_data_okunan[7];
-
-assign yol0_valid_din = combined_data_okunan[0];
-assign yol0_dirty_din = combined_data_okunan[1];
-assign yol0_Do0[40]   = combined_data_okunan[2];
-assign lru_din        = combined_data_okunan[3];
-
-assign yol1_valid_din = combined_data_okunan[5];
-assign yol1_dirty_din = combined_data_okunan[6];
-assign yol1_Do0[40]   = combined_data_okunan[7];
+            assign dmem_req    = data_req;
+            assign dmem_addr   = data_addr;
+            assign dmem_we     = data_we;
+            assign dmem_be     = data_be;
+            assign dmem_wdata  = data_wdata;
+            assign data_gnt    = dmem_gnt;
+            assign data_rvalid = dmem_rvalid | dmem_wvalid;
+            assign data_rdata  = dmem_rdata;
+        end
+    endgenerate
 
 
-RAM256x8_ASYNC vffram_combined(
-   .CLK(clk_i),
-   .A0 (yol_A0  ),
-   .Di0(combined_data_yeni),
-   .Do0(combined_data_okunan),
-   .WE0(yol0_EN0 | yol1_EN0)
-);
+
+    ///////////////////////////////////////////////////////////////////////////
+    // MEMORY ARBITER
+
+    always_comb begin
+        mem_req_o   = imem_req | dmem_req;
+        mem_addr_o  = imem_addr;
+        mem_we_o    = 1'b0;
+        mem_be_o    = dmem_be;
+        mem_wdata_o = dmem_wdata;
+        if (dmem_req) begin
+            mem_we_o   = dmem_we;
+            mem_addr_o = dmem_addr;
+        end
+    end
+    assign imem_gnt = imem_req & ~dmem_req;
+    assign dmem_gnt =             dmem_req;
+
+    // shift register keeping track of the source of mem requests for up to 32 cycles
+    logic        req_sources  [32];
+    logic        req_write    [32]; // keeping track of whether the request was a write
+    logic [31:0] imem_req_addr[32]; // keeping track of address for instruction memory requests
+    logic [4:0]  req_count;
+    always_ff @(posedge clk_i or negedge rst_ni) begin
+        if (~rst_ni) begin
+            req_count <= '0;
+        end else begin
+            if (mem_rvalid_i) begin
+                for (int i = 0; i < 31; i++) begin
+                    req_sources  [i] <= req_sources  [i+1];
+                    req_write    [i] <= req_write    [i+1];
+                    imem_req_addr[i] <= imem_req_addr[i+1];
+                end
+                if (~imem_gnt & ~dmem_gnt) begin
+                    req_count <= req_count - 1;
+                end else begin
+                    req_sources  [req_count-1] <= dmem_gnt;
+                    req_write    [req_count-1] <= dmem_we;
+                    imem_req_addr[req_count-1] <= imem_addr;
+                end
+            end
+            else if (imem_gnt | dmem_gnt) begin
+                req_sources  [req_count] <= dmem_gnt;
+                req_write    [req_count] <= dmem_we;
+                imem_req_addr[req_count] <= imem_addr;
+                req_count                <= req_count + 1;
+            end
+        end
+    end
+    assign imem_rvalid = mem_rvalid_i & ~req_sources[0];
+    assign dmem_rvalid = mem_rvalid_i &  req_sources[0] & ~req_write[0];
+    assign dmem_wvalid = mem_rvalid_i &  req_sources[0] &  req_write[0];
+    assign imem_rdata  = (ICACHE_SZ != 0) ? mem_rdata_i : mem_rdata_i[
+        (imem_req_addr[0][$clog2(MEM_W)-1:0] & {3'b000, {($clog2(MEM_W/8)-2){1'b1}}, 2'b00})*8 +: 32];
+    assign dmem_rdata  = mem_rdata_i;
 
 endmodule
+
