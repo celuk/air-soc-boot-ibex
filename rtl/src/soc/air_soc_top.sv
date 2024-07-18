@@ -3,8 +3,8 @@
 `include "header.vh"
 
 module air_soc_top #(
-        parameter              RAM_FPATH      = "/home/shc/projects/airsoc_bitecek/coremark/coremark_baremetal_static.hex",
-        parameter int unsigned RAM_SIZE       = 262144, //131072*4,
+        parameter              RAM_FPATH      = "" //"/home/shc/projects/airsoc_bitecek/coremark/coremark_baremetal_static.hex",
+        parameter int unsigned RAM_SIZE       = 131072*4, //262144,
         parameter bit          DIFF_CLK       = 1'b0,
         parameter real         SYSCLK_PER     = 0.0,
         parameter int unsigned PLL_MUL        = 10,
@@ -71,6 +71,8 @@ module air_soc_top #(
     
     localparam int unsigned CLK_FREQ = 50_000_000;
     
+    logic clk;
+    /*
     logic dummy;
     clk_wiz_0 dutclk (
       .clk_out1(clk),
@@ -79,6 +81,8 @@ module air_soc_top #(
       .reset(~rst_ni),
       .locked(dummy)
     );
+    */
+    assign clk = clk_p;
     
     logic rst_n;
     
