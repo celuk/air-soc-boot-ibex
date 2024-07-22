@@ -11,31 +11,28 @@ from cocotb.triggers import RisingEdge, FallingEdge, Edge
 # ;(
 from tests import coremark
 #from tests import hello_world
-from tests import demo
-from tests import pikachu
+#from tests import demo
+#from tests import pikachu
 
 TIMEOUT = 250000
 tests = {}
 
 import os
 cfile = os.environ['CFILE']
+#variable = vars()[cfile]
+#tests.update(variable)
 
-#import importlib
-#module = importlib.import_module(f'tests.{cfile}')
-
-#tests.update(getattr(module, cfile))
-
-#import argparse
-#parser = argparse.ArgumentParser()
-#parser.add_argument(
-#    "--cfile", type=str, help="Test file to run"
-#)
-#args = parser.parse_args()
-
-variable = vars()[cfile]
-#eval(cfile)
-#globals()[cfile]
-tests.update(variable)
+from pathlib import Path
+SCRIPT_DIR = Path(os.path.realpath(__file__)).parent.absolute()
+test_hex = {
+    cfile: {
+        "TEST_FILE": f"{SCRIPT_DIR}/../../tests/{cfile}/{cfile}.hex",
+        "fail_adr": 0x40F00060,
+        "pass_adr": 0x40F00078,
+        "instructions": [],
+    }
+}
+tests.update(test_hex)
 
 @cocotb.coroutine
 async def read_instructions():
