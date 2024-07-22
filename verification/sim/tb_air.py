@@ -8,17 +8,34 @@ from cocotb.handle import SimHandleBase
 from cocotb.queue import Queue
 from cocotb.triggers import RisingEdge, FallingEdge, Edge
 
-
 # ;(
 from tests import coremark
-from tests import hello_world
+#from tests import hello_world
 from tests import demo
 from tests import pikachu
 
 TIMEOUT = 250000
 tests = {}
-tests.update(pikachu)
 
+import os
+cfile = os.environ['CFILE']
+
+#import importlib
+#module = importlib.import_module(f'tests.{cfile}')
+
+#tests.update(getattr(module, cfile))
+
+#import argparse
+#parser = argparse.ArgumentParser()
+#parser.add_argument(
+#    "--cfile", type=str, help="Test file to run"
+#)
+#args = parser.parse_args()
+
+variable = vars()[cfile]
+#eval(cfile)
+#globals()[cfile]
+tests.update(variable)
 
 @cocotb.coroutine
 async def read_instructions():

@@ -16,6 +16,7 @@ SRCS ?= $(CPATH).c $(DRIVERS) $(START_ASM)
 
 OUTNAME ?= $(CPATH).riscv
 
+.PHONY: all
 all:
 	$(CC) $(CFLAGS) $(SRCS) -o $(OUTNAME)
 #	$(CC) -S $(CFLAGS) $(SRCS)
@@ -27,6 +28,9 @@ all:
 	python3 ../tools/bin2hex.py $(CPATH).bin > $(CPATH).hex
 
 	$(RISCVTYPE)-objcopy -O verilog $(CPATH).riscv $(CPATH).vmem
+
+#.PHONY: $(CFILE)
+#$(CFILE): all
 
 .PHONY: clean
 clean:

@@ -7,7 +7,7 @@ from cocotb.runner import get_runner
 SCRIPT_DIR = Path(os.path.realpath(__file__)).parent.absolute()
 
 
-def run_test(simulator: str, test_file: Path, top_module: str, waves: bool):
+def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfile: str):
     hdl_dir = Path(SCRIPT_DIR / "../../rtl")
     verilog_files = hdl_dir.rglob("*.v")
     system_verilog_files = hdl_dir.rglob("*.sv")
@@ -59,6 +59,7 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool):
         extra_env={
             "COCOTB_HDL_TIMEUNIT": "1ns",
             "COCOTB_HDL_TIMEPRECISION": "1ps",
+            "CFILE": cfile
         },
         pre_cmd=[
             'set WildcardFilter {};set WildcardSizeThreshold "16777216"; coverage save -onexit covres.ucdb;'
@@ -79,6 +80,11 @@ if __name__ == "__main__":
         help="Python test file to run, all tests inside will be run",
     )
     parser.add_argument("--waves", type=bool, help="Dump waves? <true,false>")
+
+    parser.add_argument(
+        "--cfile", type=str, help="Test file to run"
+    )
+
     args = parser.parse_args()
 
     test_dir = Path(SCRIPT_DIR / "tb")
@@ -91,4 +97,4 @@ if __name__ == "__main__":
     # if args.test not in test_names:
     #     raise FileNotFoundError(f"Can't find <{args.test}> in <{tests}>")
 
-    run_test(args.sim, args.test, args.top, args.waves)
+    run_test(args.sim, args.test, args.top, args.waves, args.cfile)
