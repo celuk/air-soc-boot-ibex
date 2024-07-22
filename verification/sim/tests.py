@@ -20,3 +20,12 @@ coremark = {
         "instructions": [],
     }
 }
+
+pikachu = {
+    "pikachu": {
+        "TEST_FILE": f"{SCRIPT_DIR}/../../tests/pikachu/pikachu.hex",
+        "fail_adr": 0x40F00060,
+        "pass_adr": 0x40F00078,
+        "instructions": [],
+    }
+}

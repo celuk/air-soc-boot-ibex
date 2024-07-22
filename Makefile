@@ -17,7 +17,22 @@ sim:
 coremark:
 	+@$(SUBMAKE) tests/coremark clean
 	+@$(SUBMAKE) tests/coremark
-	
+
+.PHONY: test
+test:
+	+@$(SUBMAKE) tests clean CFILE=$(ARGS)
+	+@$(SUBMAKE) tests CFILE=$(ARGS)
+
+.PHONY: clean_test
+clean_test:
+	+@$(SUBMAKE) tests clean CFILE=$(ARGS)
+
+.PHONY: clean_all_tests
+clean_all_tests:
+	+@$(SUBMAKE) tests/coremark clean
+	+@$(SUBMAKE) tests clean CFILE=demo
+	+@$(SUBMAKE) tests clean CFILE=pikachu
+
 .PHONY: simc
 simc:
 	+@$(SUBMAKE) verification/sim clean
@@ -36,4 +51,4 @@ clean:
 	-+@$(SUBMAKE) synth/vivado/ clean
 	-+@$(SUBMAKE) verification/sim/ clean
 	-+@$(SUBMAKE) verification/prove/ clean
-	-+@$(SUBMAKE) software/tests/riscv-tests/ clean 
+	-+@$(SUBMAKE) software/tests/riscv-tests/ clean

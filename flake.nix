@@ -26,6 +26,8 @@
 
             export RISCV=${(pkgs.callPackage ./nix/riscv-gcc.nix { })}
             export RISCV_PREFIX=${(pkgs.callPackage ./nix/riscv-gcc.nix { })}/bin/riscv32-unknown-elf-
+            export RISCVTYPE=${(pkgs.callPackage ./nix/riscv-gcc.nix { })}/bin/riscv32-unknown-elf
+            export PATH=${(pkgs.callPackage ./nix/riscv-gcc.nix { })}/bin:$PATH
           '';
           packages = [
             pkgs.bashInteractive # This is a must
