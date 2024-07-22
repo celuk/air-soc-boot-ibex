@@ -15,7 +15,7 @@ from tests import hello_world
 
 TIMEOUT = 250000
 tests = {}
-tests.update(hello_world)
+tests.update(coremark)
 
 
 @cocotb.coroutine
@@ -52,13 +52,14 @@ async def anabellek(dut):
     dut.rst_ni.value = 0
     await RisingEdge(dut.clk_i)
     
+    """
     memory = load_verilog_hex_file()
     for address, value in memory.items():
-        dut.ram_i.dp_ram_i.mem[address].value = value
+        dut.u_ram.mem[address].value = value
     
     await RisingEdge(dut.clk_i)
     dut.rst_ni.value = 1
-    dut.fetch_enable_i.value = 1
+    #dut.fetch_enable_i.value = 1
 
     timeout = 0
     while True:
@@ -66,25 +67,26 @@ async def anabellek(dut):
         if timeout > TIMEOUT:
             break
         timeout += 1
-
     """
+        
+    
     for test in tests:
         dut.rst_ni.value = 0
         await RisingEdge(dut.clk_i)
         for index, instruction in enumerate(tests[test]["instructions"]):
             # fmt: off
-            dut.ram_i.dp_ram_i.mem[(index << 2) + 0].value = (int(instruction, 16) >>  0) & 0xFF
-            dut.ram_i.dp_ram_i.mem[(index << 2) + 1].value = (int(instruction, 16) >>  8) & 0xFF
-            dut.ram_i.dp_ram_i.mem[(index << 2) + 2].value = (int(instruction, 16) >> 16) & 0xFF
-            dut.ram_i.dp_ram_i.mem[(index << 2) + 3].value = (int(instruction, 16) >> 24) & 0xFF
+            #dut.ram_i.dp_ram_i.mem[(index << 2) + 0].value = (int(instruction, 16) >>  0) & 0xFF
+            #dut.ram_i.dp_ram_i.mem[(index << 2) + 1].value = (int(instruction, 16) >>  8) & 0xFF
+            #dut.ram_i.dp_ram_i.mem[(index << 2) + 2].value = (int(instruction, 16) >> 16) & 0xFF
+            #dut.ram_i.dp_ram_i.mem[(index << 2) + 3].value = (int(instruction, 16) >> 24) & 0xFF
             # fmt: on
+            dut.u_ram.mem[index].value = int(instruction, 16)
 
         await RisingEdge(dut.clk_i)
         dut.rst_ni.value = 1
-        dut.fetch_enable_i.value = 1
         while True:
             await RisingEdge(dut.clk_i)
-    """
+    
 
 @cocotb.test()
 async def tair(dut):

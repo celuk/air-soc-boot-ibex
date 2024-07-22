@@ -108,7 +108,7 @@ end
 //end
 
 always @(posedge clk_i) begin
-    İf(rst_i) begin
+    if(rst_i) begin
         TIM_CNT_R <= 0;
         TIM_EVN_R <= 0;
         sayac <= 0;

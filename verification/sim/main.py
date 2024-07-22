@@ -61,7 +61,7 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool):
             "COCOTB_HDL_TIMEPRECISION": "1ps",
         },
         pre_cmd=[
-            'set WildcardFilter {};set WildcardSizeThreshold "16777216"; coverage save -onexit covres.ucdb; do wave.do;'
+            'set WildcardFilter {};set WildcardSizeThreshold "16777216"; coverage save -onexit covres.ucdb;'
         ],
     )
 

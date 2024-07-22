@@ -46,7 +46,8 @@ module ram32
     end
 
     initial begin
-        $readmemh(INIT_FILE, mem);
+    	if(INIT_FILE != "")
+            $readmemh(INIT_FILE, mem);
     end
 endmodule
 

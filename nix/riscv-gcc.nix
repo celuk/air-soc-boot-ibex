@@ -11,7 +11,7 @@ pkgs.stdenv.mkDerivation {
   };
 
   configureFlags = [
-    "--with-arch=rv32im"
+    "--with-arch=rv32imc"
     "--with-abi=ilp32"
   ];
 

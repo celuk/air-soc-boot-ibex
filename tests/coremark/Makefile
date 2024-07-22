@@ -98,8 +98,8 @@ compile: $(OPATH) $(SRCS) $(HEADERS)
 	$(RISCVTYPE)-objdump -d -M numeric,no-aliases $(CFILE).riscv > $(CFILE)_disassembled.dump
 	$(RISCVTYPE)-objcopy -O binary $(CFILE).riscv $(CFILE).bin
 	python3 ./get_static_hex.py --binfile=$(CFILE).bin
-	$(RISCVTYPE)-objcopy -O verilog $(CFILE).riscv $(CFILE).vh
-	python3 ./vhtocoe.py --vhfile=$(CFILE).vh
+	$(RISCVTYPE)-objcopy -O verilog $(CFILE).riscv $(CFILE).vmem
+	python3 ./vhtocoe.py --vhfile=$(CFILE).vmem
 link: compile 
 	@echo "Link performed along with compile"
 

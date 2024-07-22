@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
-define HIGH 1'b1
-define LOW 1'b0
+`define HIGH 1'b1
+`define LOW 1'b0
 
 module i2c_master(
     input                   clk,

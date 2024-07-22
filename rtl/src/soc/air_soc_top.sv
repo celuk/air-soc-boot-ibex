@@ -2,18 +2,20 @@
 
 `include "header.vh"
 
-module air_soc_top #(
-        parameter              RAM_FPATH      = "" //"/home/shc/projects/airsoc_bitecek/coremark/coremark_baremetal_static.hex",
-        parameter int unsigned RAM_SIZE       = 131072*4, //262144,
-        parameter bit          DIFF_CLK       = 1'b0,
-        parameter real         SYSCLK_PER     = 0.0,
-        parameter int unsigned PLL_MUL        = 10,
-        parameter int unsigned PLL_DIV        = 20,
-        parameter int unsigned UART_BAUD_RATE = 9600
-    )
+module air_soc_top 
+//#(
+//        parameter              RAM_FPATH      = "", //"/home/shc/projects/airsoc_bitecek/coremark/coremark_baremetal_static.hex",
+//        parameter int unsigned RAM_SIZE       = 262144, //131072*4, //262144,
+//        parameter bit          DIFF_CLK       = 1'b0,
+//        parameter real         SYSCLK_PER     = 0.0,
+//        parameter int unsigned PLL_MUL        = 10,
+//        parameter int unsigned PLL_DIV        = 20,
+//        parameter int unsigned UART_BAUD_RATE = 9600
+//    )
     (
-        input  logic clk_p,
-        input  logic clk_n,
+        //input  logic clk_p,
+        //input  logic clk_n,
+        input  logic clk_i,
         input  logic rst_ni,
 
         //input  logic program_rx_i,
@@ -23,6 +25,9 @@ module air_soc_top #(
         output logic uart_tx_o
     );
 
+    localparam RAM_FPATH      = "";
+    localparam RAM_SIZE       = 262144;
+    localparam UART_BAUD_RATE = 9600;
 
     localparam logic [31:0] MEM_START = 32'h00000000;
     localparam logic [31:0] MEM_MASK  = RAM_SIZE-1;
@@ -82,7 +87,7 @@ module air_soc_top #(
       .locked(dummy)
     );
     */
-    assign clk = clk_p;
+    assign clk = clk_i; //clk_p;
     
     logic rst_n;
     

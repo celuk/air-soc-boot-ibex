@@ -20,7 +20,7 @@
       {
         devShells.default = pkgs.mkShell {
           shellHook = ''
-            export PORT_DIR=code/tests/coremark/wood
+            export PORT_DIR=riscv32-baremetal
 
             export CSMITH_INCLUDE=${pkgs.csmith}/include/${pkgs.csmith.name}
 
