@@ -12,10 +12,12 @@ from cocotb.triggers import RisingEdge, FallingEdge, Edge
 # ;(
 from tests import coremark
 from tests import hello_world
+from tests import demo
+from tests import pikachu
 
 TIMEOUT = 250000
 tests = {}
-tests.update(coremark)
+tests.update(pikachu)
 
 
 @cocotb.coroutine
