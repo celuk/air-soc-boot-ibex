@@ -20,22 +20,32 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
     submodule_system_verilog_files = submodule_dir.rglob("*.sv")
     submodule_verilog_headers = submodule_dir.rglob("*.vh")
     submodule_system_verilog_headers = submodule_dir.rglob("*.svh")
-    #submodule_include_dir = Path(SCRIPT_DIR / "../../cv32e40p/rtl/include")
-    #submodule_include_files = submodule_dir.rglob("*.sv")
+    # submodule_include_dir = Path(SCRIPT_DIR / "../../cv32e40p/rtl/include")
+    # submodule_include_files = submodule_dir.rglob("*.sv")
 
-    verilog_sources = list(verilog_files) + list(system_verilog_files) + list(submodule_verilog_files) + list(submodule_system_verilog_files)
+    verilog_sources = (
+        list(verilog_files)
+        + list(system_verilog_files)
+        + list(submodule_verilog_files)
+        + list(submodule_system_verilog_files)
+    )
     ## sort the sources to make sure that the pkg.sv files are at the beginning
     ## otherwise the simulator might not find the packages
+    mypath = "/home/emre/Downloads/air-soc/cv32e40p/rtl/vendor/pulp_platform_fpu_div_sqrt_mvp/hdl/defs_div_sqrt_mvp.sv"
     pkg_sv_paths = [path for path in verilog_sources if str(path).endswith("pkg.sv")]
     other_paths = [path for path in verilog_sources if not str(path).endswith("pkg.sv")]
-    verilog_sources = list(pkg_sv_paths) + list(other_paths)
+    verilog_sources = [mypath] + list(pkg_sv_paths) + list(other_paths)
 
     include_dirs = [
-        header.parent for header in list(verilog_headers) + list(system_verilog_headers) + list(submodule_verilog_headers) + list(submodule_system_verilog_headers)
+        header.parent
+        for header in list(verilog_headers)
+        + list(system_verilog_headers)
+        + list(submodule_verilog_headers)
+        + list(submodule_system_verilog_headers)
     ]
-    
-    #subdirectories = [x[0] for x in os.walk(hdl_dir)]
-    #include_dirs.extend(subdirectories)
+
+    # subdirectories = [x[0] for x in os.walk(hdl_dir)]
+    # include_dirs.extend(subdirectories)
 
     subdirectories = [x[0] for x in os.walk(submodule_dir)]
     include_dirs.extend(subdirectories)
@@ -55,16 +65,17 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
         hdl_toplevel=top_module,
         test_module=str(test_file),
         waves=waves,
-        plusargs=['+nowarnTSCALE'],
+        plusargs=["+nowarnTSCALE"],
         extra_env={
             "COCOTB_HDL_TIMEUNIT": "1ns",
             "COCOTB_HDL_TIMEPRECISION": "1ps",
-            "CFILE": cfile
+            "CFILE": cfile,
         },
         pre_cmd=[
             'set WildcardFilter {};set WildcardSizeThreshold "16777216"; coverage save -onexit covres.ucdb;'
         ],
     )
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -81,9 +92,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--waves", type=bool, help="Dump waves? <true,false>")
 
-    parser.add_argument(
-        "--cfile", type=str, help="Test file to run"
-    )
+    parser.add_argument("--cfile", type=str, help="Test file to run")
 
     args = parser.parse_args()
 

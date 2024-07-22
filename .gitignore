@@ -9,3 +9,10 @@
 **.bin
 **.dump
 
+
+**.o
+**.s
+**.riscv
+**.coe
+**.vmem
+
