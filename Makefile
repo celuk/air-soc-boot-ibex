@@ -35,7 +35,6 @@ clean_all_tests:
 
 .PHONY: simc
 simc:
-	+@$(SUBMAKE) verification/sim clean
 	+@$(SUBMAKE) verification/sim air CFILE=$(ARGS)
 
 .PHONY: show
