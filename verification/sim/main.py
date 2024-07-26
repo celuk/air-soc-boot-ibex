@@ -29,12 +29,12 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
         + list(submodule_verilog_files)
         + list(submodule_system_verilog_files)
     )
-    ## sort the sources to make sure that the pkg.sv files are at the beginning
+    ## sort the sources to make sure that the def and pkg.sv files are at the beginning
     ## otherwise the simulator might not find the packages
-    mypath = "/home/emre/Downloads/air-soc/cv32e40p/rtl/vendor/pulp_platform_fpu_div_sqrt_mvp/hdl/defs_div_sqrt_mvp.sv"
+    def_sv_paths = [path for path in verilog_sources if str(path).rsplit('/', 1)[-1].startswith("def")]
     pkg_sv_paths = [path for path in verilog_sources if str(path).endswith("pkg.sv")]
-    other_paths = [path for path in verilog_sources if not str(path).endswith("pkg.sv")]
-    verilog_sources = [mypath] + list(pkg_sv_paths) + list(other_paths)
+    other_paths = [path for path in verilog_sources if not str(path).rsplit('/', 1)[-1].startswith("def") and not str(path).endswith("pkg.sv")]
+    verilog_sources = list(def_sv_paths) + list(pkg_sv_paths) + list(other_paths)
 
     include_dirs = [
         header.parent
