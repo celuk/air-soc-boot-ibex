@@ -491,4 +491,75 @@ module air_soc #(
       //.prog_mode_led_o(prog_mode_led_o)
    );
 
+
+
+
+   // -----------------
+   // Peripheral buses
+   // -----------------
+   sbr_obi_req_t [NumPeriphs-1:0] all_periph_obi_req;
+   sbr_obi_rsp_t [NumPeriphs-1:0] all_periph_obi_rsp;
+   // ----------------------------------
+   // Subordinate buses out of crossbar
+   // ----------------------------------
+   // Main xbar subordinate buses, must align with addr map indices!
+   sbr_obi_req_t [NumSubordinates-1:0] all_sbr_obi_req;
+   sbr_obi_rsp_t [NumSubordinates-1:0] all_sbr_obi_rsp;
+
+   // user bus defined in module port
+
+   // mem bank buses
+   sbr_obi_req_t [NumBanks-1:0] xbar_mem_bank_obi_req;
+   sbr_obi_rsp_t [NumBanks-1:0] xbar_mem_bank_obi_rsp;
+   // periph bus
+   sbr_obi_req_t xbar_periph_obi_req;
+   sbr_obi_rsp_t xbar_periph_obi_rsp;
+
+   assign xbar_periph_obi_req         = all_sbr_obi_req[XbarPeriph];
+   assign all_sbr_obi_rsp[XbarPeriph] = xbar_periph_obi_rsp;
+
+
+
+
+   // -----------------
+   // Peripherals
+   // -----------------
+
+   // demultiplex to peripherals according to address map
+   logic [cf_math_pkg::idx_width(NumPeriphs)-1:0] periph_idx;
+
+   addr_decode #(
+      .NoIndices(NumPeriphs),
+      .NoRules  (NumPeriphRules),
+      .addr_t   (logic [SbrObiCfg.DataWidth-1:0]),
+      .rule_t   (addr_map_rule_t)
+      // .Napot    (1'b0)
+   ) i_addr_decode_periphs (
+      .addr_i          (xbar_periph_obi_req.a.addr),
+      .addr_map_i      (periph_addr_map),
+      .idx_o           (periph_idx),
+      .dec_valid_o     (),
+      .dec_error_o     (),
+      .en_default_idx_i(1'b1),
+      .default_idx_i   ('0)
+   );
+
+   obi_demux #(
+      .ObiCfg     (SbrObiCfg),
+      .obi_req_t  (sbr_obi_req_t),
+      .obi_rsp_t  (sbr_obi_rsp_t),
+      .NumMgrPorts(NumPeriphs),
+      .NumMaxTrans(2)
+   ) i_obi_demux (
+      .clk_i,
+      .rst_ni,
+
+      .sbr_port_select_i(periph_idx),
+      .sbr_port_req_i   (xbar_periph_obi_req),
+      .sbr_port_rsp_o   (xbar_periph_obi_rsp),
+
+      .mgr_ports_req_o(all_periph_obi_req),
+      .mgr_ports_rsp_i(all_periph_obi_rsp)
+   );
+
 endmodule
