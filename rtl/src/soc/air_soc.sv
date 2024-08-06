@@ -119,8 +119,8 @@ module air_soc #(
 
 
    // Peripheral address map
-   localparam bit [31:0] DebugAddrOffset = 32'h0000_0000;
-   localparam bit [31:0] DebugAddrRange = 32'h0004_0000;
+   localparam bit [31:0] DCacheAddrOffset = 32'h0000_0000;
+   localparam bit [31:0] DCacheAddrRange = 32'h0004_0000;
 
    localparam bit [31:0] SocCtrlAddrOffset = 32'h0300_0000;
    localparam bit [31:0] SocCtrlAddrRange = 32'h0000_1000;
@@ -137,7 +137,7 @@ module air_soc #(
    // Enum for bus indices
    typedef enum int {
       PeriphErrorSlv = 0,
-      PeriphDebug    = 1,
+      PeriphDCache   = 1,
       PeriphSocCtrl  = 2,
       PeriphUart     = 3,
       PeriphTimer    = 4
@@ -145,10 +145,10 @@ module air_soc #(
 
    localparam addr_map_rule_t [NumPeriphRules-1:0] periph_addr_map = '{  // 0: OBI Error (default)
       '{
-         idx: PeriphDebug,
-         start_addr: DebugAddrOffset,
-         end_addr: DebugAddrOffset + DebugAddrRange
-      },  // 1: Debug
+         idx: PeriphDCache,
+         start_addr: DCacheAddrOffset,
+         end_addr: DCacheAddrOffset + DCacheAddrRange
+      },  // 1: DCache
       '{
          idx: PeriphSocCtrl,
          start_addr: SocCtrlAddrOffset,
@@ -373,17 +373,20 @@ module air_soc #(
             .LINE_BYTE_W(DCACHE_LINE_W / 8),
             .WAY_LEN    (DCACHE_WAY_LEN)
          ) vcache (
-            .clk_i       (clk_i),
-            .rst_ni      (rst_ni),
-            .hold_mem_i  (hold_mem),
-            .cpu_req_i   (data_req),
-            .cpu_addr_i  (data_addr),
-            .cpu_we_i    (data_we),
-            .cpu_be_i    (data_be),
-            .cpu_wdata_i (data_wdata),
-            .cpu_gnt_o   (data_gnt),
-            .cpu_rvalid_o(data_rvalid),
-            .cpu_rdata_o (data_rdata),
+            .clk_i     (clk_i),
+            .rst_ni    (rst_ni),
+            .hold_mem_i(hold_mem),
+
+            // Data memory interface
+            .cpu_req_i(dcache_mem_obi_req.req),
+            .cpu_addr_i(dcache_mem_obi_req.a.addr),
+            .cpu_we_i(dcache_mem_obi_req.a.we),
+            .cpu_be_i(dcache_mem_obi_req.a.be),
+            .cpu_wdata_i(dcache_mem_obi_req.a.wdata),
+            .cpu_gnt_o(dcache_mem_obi_rsp.gnt),
+            .cpu_rvalid_o(dcache_mem_obi_rsp.rvalid),
+            .cpu_rdata_o(dcache_mem_obi_rsp.r.rdata),
+
             .mem_req_o   (dmem_req),
             .mem_we_o    (dmem_we),
             .mem_addr_o  (dmem_addr),
@@ -405,8 +408,6 @@ module air_soc #(
          assign data_rdata  = dmem_rdata;
       end
    endgenerate
-
-
 
    ///////////////////////////////////////////////////////////////////////////
    // MEMORY ARBITER
@@ -499,6 +500,40 @@ module air_soc #(
    // -----------------
    sbr_obi_req_t [NumPeriphs-1:0] all_periph_obi_req;
    sbr_obi_rsp_t [NumPeriphs-1:0] all_periph_obi_rsp;
+
+   // Error bus
+   sbr_obi_req_t error_obi_req;
+   sbr_obi_rsp_t error_obi_rsp;
+
+   // DCache mem bus
+   sbr_obi_req_t dcache_mem_obi_req;
+   sbr_obi_rsp_t dcache_mem_obi_rsp;
+
+   // SoC control bus
+   sbr_obi_req_t soc_ctrl_obi_req;
+   sbr_obi_rsp_t soc_ctrl_obi_rsp;
+
+   // UART periph bus
+   sbr_obi_req_t uart_obi_req;
+   sbr_obi_rsp_t uart_obi_rsp;
+
+   // Timer periph bus
+   sbr_obi_req_t timer_obi_req;
+   sbr_obi_rsp_t timer_obi_rsp;
+
+   assign error_obi_req                      = all_periph_obi_req[PeriphErrorSlv];
+   assign all_periph_obi_rsp[PeriphErrorSlv] = error_obi_rsp;
+   assign dcache_mem_obi_req                 = all_periph_obi_req[PeriphDCache];
+   assign all_periph_obi_rsp[PeriphDCache]   = dcache_mem_obi_rsp;
+   assign soc_ctrl_obi_req                   = all_periph_obi_req[PeriphSocCtrl];
+   assign all_periph_obi_rsp[PeriphSocCtrl]  = soc_ctrl_obi_rsp;
+   assign uart_obi_req                       = all_periph_obi_req[PeriphUart];
+   assign all_periph_obi_rsp[PeriphUart]     = uart_obi_rsp;
+   assign timer_obi_req                      = all_periph_obi_req[PeriphTimer];
+   assign all_periph_obi_rsp[PeriphTimer]    = timer_obi_rsp;
+
+
+
    // ----------------------------------
    // Subordinate buses out of crossbar
    // ----------------------------------
@@ -507,18 +542,6 @@ module air_soc #(
    sbr_obi_rsp_t [NumSubordinates-1:0] all_sbr_obi_rsp;
 
    // user bus defined in module port
-
-   // mem bank buses
-   sbr_obi_req_t [NumBanks-1:0] xbar_mem_bank_obi_req;
-   sbr_obi_rsp_t [NumBanks-1:0] xbar_mem_bank_obi_rsp;
-   // periph bus
-   sbr_obi_req_t xbar_periph_obi_req;
-   sbr_obi_rsp_t xbar_periph_obi_rsp;
-
-   assign xbar_periph_obi_req         = all_sbr_obi_req[XbarPeriph];
-   assign all_sbr_obi_rsp[XbarPeriph] = xbar_periph_obi_rsp;
-
-
 
 
    // -----------------
@@ -535,7 +558,7 @@ module air_soc #(
       .rule_t   (addr_map_rule_t)
       // .Napot    (1'b0)
    ) i_addr_decode_periphs (
-      .addr_i          (xbar_periph_obi_req.a.addr),
+      .addr_i          (core_data_obi_req.a.addr),
       .addr_map_i      (periph_addr_map),
       .idx_o           (periph_idx),
       .dec_valid_o     (),
@@ -555,8 +578,8 @@ module air_soc #(
       .rst_ni,
 
       .sbr_port_select_i(periph_idx),
-      .sbr_port_req_i   (xbar_periph_obi_req),
-      .sbr_port_rsp_o   (xbar_periph_obi_rsp),
+      .sbr_port_req_i   (core_data_obi_req),
+      .sbr_port_rsp_o   (core_data_obi_rsp),
 
       .mgr_ports_req_o(all_periph_obi_req),
       .mgr_ports_rsp_i(all_periph_obi_rsp)
