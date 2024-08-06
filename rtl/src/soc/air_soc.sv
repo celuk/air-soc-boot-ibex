@@ -40,16 +40,6 @@ module air_soc #(
    logic        instr_rvalid;
    logic [31:0] instr_rdata;
 
-   // Data load & store interface
-   logic        sdata_req;
-   logic [31:0] sdata_addr;
-   logic        sdata_we;
-   logic [ 3:0] sdata_be;
-   logic [31:0] sdata_wdata;
-   logic        sdata_gnt;
-   logic        sdata_rvalid;
-   logic [31:0] sdata_rdata;
-
    //////////////////////////////////
    // Copyright 2024 ETH Zurich and University of Bologna.
    // Solderpad Hardware License, Version 0.51, see LICENSE for details.
@@ -236,13 +226,13 @@ module air_soc #(
       // Instruction memory interface
       .instr_addr_o  (instr_addr),
       .instr_req_o   (instr_req),
-      .instr_gnt_i   (instr_gnt),
+      .instr_gnt_i   (instr_gnt & instr_req),
       .instr_rvalid_i(instr_rvalid),
       .instr_rdata_i (instr_rdata),
 
       // Data memory interface
       .data_req_o(core_data_obi_req.req),
-      .data_gnt_i(core_data_obi_rsp.gnt),
+      .data_gnt_i(core_data_obi_rsp.gnt & core_data_obi_req.req),
       .data_rvalid_i(core_data_obi_rsp.rvalid),
       .data_we_o(core_data_obi_req.a.we),
       .data_be_o(core_data_obi_req.a.be),
@@ -262,95 +252,41 @@ module air_soc #(
       .debug_halted_o   ()
    );
 
-
-   // Data arbiter for main core
-   logic               sdata_hold;
-   logic               data_req;
-   logic [       31:0] data_addr;
-   logic               data_we;
-   logic [MEM_W/8-1:0] data_be;
-   logic [MEM_W  -1:0] data_wdata;
-   logic               data_gnt;
-   logic               data_rvalid;
-   logic [MEM_W  -1:0] data_rdata;
-   logic               sdata_waiting;
-   logic [       31:0] sdata_wait_addr;
-   assign sdata_hold = 0;
-   always_comb begin
-      data_req = (sdata_req & ~sdata_hold);
-      data_addr = sdata_addr;
-      data_we = sdata_we;
-      data_be = {{(MEM_W - 32) {1'b0}}, sdata_be} <<
-         (sdata_addr[$clog2(MEM_W/8)-1:0] & {{$clog2(MEM_W / 32) {1'b1}}, 2'b00});
-      data_wdata = '0;
-      for (int i = 0; i < MEM_W / 32; i++) begin
-         data_wdata[32*i+:32] = sdata_wdata;
-      end
-   end
-   assign sdata_gnt = data_gnt & sdata_req & ~sdata_hold;
-   always_ff @(posedge clk_i or negedge rst_ni) begin
-      if (~rst_ni) begin
-         sdata_waiting   <= 1'b0;
-         sdata_wait_addr <= '0;
-      end else begin
-         if (sdata_gnt) begin
-            sdata_waiting   <= 1'b1;
-            sdata_wait_addr <= sdata_addr;
-         end else if (sdata_rvalid) begin
-            sdata_waiting <= 1'b0;
-         end
-      end
-   end
-   assign sdata_rvalid = sdata_waiting & data_rvalid;
-   assign sdata_rdata = data_rdata[(sdata_wait_addr[$clog2(
-      MEM_W
-   )-1:0]&{3'b000, {($clog2(
-      MEM_W/8
-   )-2) {1'b1}}, 2'b00})*8+:32];
-
    // instruction cache
    logic             imem_req;
    logic             imem_gnt;
    logic [     31:0] imem_addr;
    logic             imem_rvalid;
    logic [MEM_W-1:0] imem_rdata;
-   generate
-      if (ICACHE_SZ != 0) begin
-         localparam int unsigned ICACHE_WAY_LEN = ICACHE_SZ / (ICACHE_LINE_W / 8) / 2;
-         cache #(
-            .ADDR_BIT_W (32),
-            .CPU_BYTE_W (4),
-            .MEM_BYTE_W (MEM_W / 8),
-            .LINE_BYTE_W(ICACHE_LINE_W / 8),
-            .WAY_LEN    (ICACHE_WAY_LEN)
-         ) icache (
-            .clk_i       (clk_i),
-            .rst_ni      (rst_ni),
-            .hold_mem_i  (1'b0),
-            .cpu_req_i   (instr_req),
-            .cpu_addr_i  (instr_addr),
-            .cpu_we_i    ('0),
-            .cpu_be_i    ('0),
-            .cpu_wdata_i ('0),
-            .cpu_gnt_o   (instr_gnt),
-            .cpu_rvalid_o(instr_rvalid),
-            .cpu_rdata_o (instr_rdata),
-            .mem_req_o   (imem_req),
-            .mem_addr_o  (imem_addr),
-            .mem_we_o    (),
-            .mem_wdata_o (),
-            .mem_gnt_i   (imem_gnt),
-            .mem_rvalid_i(imem_rvalid),
-            .mem_rdata_i (imem_rdata)
-         );
-      end else begin
-         assign imem_req     = instr_req;
-         assign imem_addr    = instr_addr;
-         assign instr_gnt    = imem_gnt;
-         assign instr_rvalid = imem_rvalid;
-         assign instr_rdata  = imem_rdata[31:0];
-      end
-   endgenerate
+
+   localparam int unsigned ICACHE_WAY_LEN = ICACHE_SZ / (ICACHE_LINE_W / 8) / 2;
+
+   cache #(
+      .ADDR_BIT_W (32),
+      .CPU_BYTE_W (4),
+      .MEM_BYTE_W (MEM_W / 8),
+      .LINE_BYTE_W(ICACHE_LINE_W / 8),
+      .WAY_LEN    (ICACHE_WAY_LEN)
+   ) icache (
+      .clk_i       (clk_i),
+      .rst_ni      (rst_ni),
+      .hold_mem_i  (1'b0),
+      .cpu_req_i   (instr_req),
+      .cpu_addr_i  (instr_addr),
+      .cpu_we_i    ('0),
+      .cpu_be_i    ('0),
+      .cpu_wdata_i ('0),
+      .cpu_gnt_o   (instr_gnt),
+      .cpu_rvalid_o(instr_rvalid),
+      .cpu_rdata_o (instr_rdata),
+      .mem_req_o   (imem_req),
+      .mem_addr_o  (imem_addr),
+      .mem_we_o    (),
+      .mem_wdata_o (),
+      .mem_gnt_i   (imem_gnt),
+      .mem_rvalid_i(imem_rvalid),
+      .mem_rdata_i (imem_rdata)
+   );
 
    // data cache
    logic               dmem_req;
@@ -362,52 +298,39 @@ module air_soc #(
    logic               dmem_rvalid;
    logic               dmem_wvalid;
    logic [MEM_W  -1:0] dmem_rdata;
-   generate
-      if (DCACHE_SZ != 0) begin
-         localparam int unsigned DCACHE_WAY_LEN = DCACHE_SZ / (DCACHE_LINE_W / 8) / 2;
-         logic hold_mem = 0;
-         cache #(
-            .ADDR_BIT_W (32),
-            .CPU_BYTE_W (MEM_W / 8),
-            .MEM_BYTE_W (MEM_W / 8),
-            .LINE_BYTE_W(DCACHE_LINE_W / 8),
-            .WAY_LEN    (DCACHE_WAY_LEN)
-         ) vcache (
-            .clk_i     (clk_i),
-            .rst_ni    (rst_ni),
-            .hold_mem_i(hold_mem),
 
-            // Data memory interface
-            .cpu_req_i(dcache_mem_obi_req.req),
-            .cpu_addr_i(dcache_mem_obi_req.a.addr),
-            .cpu_we_i(dcache_mem_obi_req.a.we),
-            .cpu_be_i(dcache_mem_obi_req.a.be),
-            .cpu_wdata_i(dcache_mem_obi_req.a.wdata),
-            .cpu_gnt_o(dcache_mem_obi_rsp.gnt),
-            .cpu_rvalid_o(dcache_mem_obi_rsp.rvalid),
-            .cpu_rdata_o(dcache_mem_obi_rsp.r.rdata),
+   localparam int unsigned DCACHE_WAY_LEN = DCACHE_SZ / (DCACHE_LINE_W / 8) / 2;
 
-            .mem_req_o   (dmem_req),
-            .mem_we_o    (dmem_we),
-            .mem_addr_o  (dmem_addr),
-            .mem_wdata_o (dmem_wdata),
-            .mem_gnt_i   (dmem_gnt),
-            .mem_rvalid_i(dmem_rvalid),
-            .mem_rdata_i (dmem_rdata)
-         );
-         assign dmem_be = '1;
-      end else begin
+   cache #(
+      .ADDR_BIT_W (32),
+      .CPU_BYTE_W (MEM_W / 8),
+      .MEM_BYTE_W (MEM_W / 8),
+      .LINE_BYTE_W(DCACHE_LINE_W / 8),
+      .WAY_LEN    (DCACHE_WAY_LEN)
+   ) dcache (
+      .clk_i     (clk_i),
+      .rst_ni    (rst_ni),
+      .hold_mem_i(1'b0),
 
-         assign dmem_req    = data_req;
-         assign dmem_addr   = data_addr;
-         assign dmem_we     = data_we;
-         assign dmem_be     = data_be;
-         assign dmem_wdata  = data_wdata;
-         assign data_gnt    = dmem_gnt;
-         assign data_rvalid = dmem_rvalid | dmem_wvalid;
-         assign data_rdata  = dmem_rdata;
-      end
-   endgenerate
+      // Data memory interface
+      .cpu_req_i(dcache_mem_obi_req.req),
+      .cpu_addr_i(dcache_mem_obi_req.a.addr),
+      .cpu_we_i(dcache_mem_obi_req.a.we),
+      .cpu_be_i(dcache_mem_obi_req.a.be),
+      .cpu_wdata_i(dcache_mem_obi_req.a.wdata),
+      .cpu_gnt_o(dcache_mem_obi_rsp.gnt),
+      .cpu_rvalid_o(dcache_mem_obi_rsp.rvalid),
+      .cpu_rdata_o(dcache_mem_obi_rsp.r.rdata),
+
+      .mem_req_o   (dmem_req),
+      .mem_we_o    (dmem_we),
+      .mem_addr_o  (dmem_addr),
+      .mem_wdata_o (dmem_wdata),
+      .mem_gnt_i   (dmem_gnt),
+      .mem_rvalid_i(dmem_rvalid),
+      .mem_rdata_i (dmem_rdata)
+   );
+   assign dmem_be = '1;
 
    ///////////////////////////////////////////////////////////////////////////
    // MEMORY ARBITER
@@ -466,17 +389,10 @@ module air_soc #(
    )-2) {1'b1}}, 2'b00})*8+:32];
    assign dmem_rdata = mem_rdata;
 
-
-   logic        sram_rvalid;
-   logic [31:0] sram_rdata;
-   logic        hwreg_rvalid;
-   logic [31:0] hwreg_rdata;
-
-
    ram32 #(
       .SIZE     (RAM_SIZE / 4),
       .INIT_FILE(RAM_FPATH)
-   ) u_ram (
+   ) main_memory (
       .clk_i   (clk_i),
       .rst_ni  (rst_ni),
       .req_i   (mem_req),
@@ -491,8 +407,6 @@ module air_soc #(
       //.system_reset_o(system_reset_o),
       //.prog_mode_led_o(prog_mode_led_o)
    );
-
-
 
 
    // -----------------

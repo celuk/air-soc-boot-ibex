@@ -45,4 +45,3 @@ module ram32 #(
       if (INIT_FILE != "") $readmemh(INIT_FILE, mem);
    end
 endmodule
-

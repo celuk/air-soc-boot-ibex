@@ -97,7 +97,7 @@ async def anabellek(dut):
         #dut.ram_i.dp_ram_i.mem[(index << 2) + 2].value = (int(instruction, 16) >> 16) & 0xFF
         #dut.ram_i.dp_ram_i.mem[(index << 2) + 3].value = (int(instruction, 16) >> 24) & 0xFF
         # fmt: on
-        dut.u_ram.mem[index].value = int(instruction, 16)
+        dut.main_memory.mem[index].value = int(instruction, 16)
 
     await RisingEdge(dut.clk_i)
     dut.rst_ni.value = 1
