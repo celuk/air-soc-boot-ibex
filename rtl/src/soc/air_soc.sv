@@ -14,9 +14,14 @@ module air_soc #(
    parameter int unsigned DCACHE_LINE_W = 64     // data cache line width in bits
 ) (
    input wire clk_i,
-   input wire rst_ni
+   input wire rst_ni,
+
+   input  wire uart_rx_i,
+   output wire uart_tx_o
 );
 
+
+   localparam int unsigned CLK_FREQ = 50_000_000;
 
    localparam RAM_FPATH = "";
    localparam RAM_SIZE = 262144;
@@ -435,4 +440,20 @@ module air_soc #(
       .mgr_ports_rsp_i(all_periph_obi_rsp)
    );
 
+
+   uart_controller_obi #(
+      .CLK_FREQ      (CLK_FREQ),
+      .UART_BAUD_RATE(UART_BAUD_RATE)
+   ) uart (
+      .clk_i   (clk_i),
+      .rst_ni  (rst_ni),
+      .req_i   (uart_obi_req.req),
+      .we_i    (uart_obi_req.a.we),
+      .addr_i  (uart_obi_req.a.addr),
+      .wdata_i (uart_obi_req.a.wdata),
+      .rvalid_o(uart_obi_rsp.rvalid),
+      .rdata_o (uart_obi_rsp.r.rdata),
+      .rx_i    (uart_rx_i),
+      .tx_o    (uart_tx_o)
+   );
 endmodule
