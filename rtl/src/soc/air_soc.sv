@@ -24,7 +24,7 @@ module air_soc #(
    localparam int unsigned CLK_FREQ = 50_000_000;
 
    localparam RAM_FPATH = "";
-   localparam RAM_SIZE = 262144;
+   localparam RAM_SIZE = 256 * 1024;
    localparam UART_BAUD_RATE = 9600;
 
    localparam logic [31:0] MEM_START = 32'h00000000;
@@ -164,7 +164,7 @@ module air_soc #(
       .COREV_PULP      (0),
       .COREV_CLUSTER   (0),
       .NUM_MHPMCOUNTERS(1)
-   ) u_core (
+   ) core (
       // Clock and reset
       .rst_ni      (rst_ni),
       .clk_i       (clk_i),
@@ -427,7 +427,7 @@ module air_soc #(
       .obi_req_t  (sbr_obi_req_t),
       .obi_rsp_t  (sbr_obi_rsp_t),
       .NumMgrPorts(NumPeriphs),
-      .NumMaxTrans(2)
+      .NumMaxTrans(1)
    ) i_obi_demux (
       .clk_i,
       .rst_ni,

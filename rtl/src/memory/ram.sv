@@ -42,6 +42,10 @@ module ram32 #(
    end
 
    initial begin
+      // Set all memory elements to zero
+      for (int i = 0; i < SIZE; i++) begin
+         mem[i] = 32'h0;
+      end
       if (INIT_FILE != "") $readmemh(INIT_FILE, mem);
    end
 endmodule
