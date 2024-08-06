@@ -36,11 +36,20 @@ module air_soc #(
    localparam int unsigned ICACHE_WAY_LEN = ICACHE_SZ / (ICACHE_LINE_W / 8) / 2;
    localparam PERIPH_BASE_ADR = 32'hFF00_0000;
 
-   logic        core2icache_instr_req;
-   logic [31:0] core2icache_instr_addr;
-   logic        core2icache_instr_gnt;
-   logic        core2icache_instr_rvalid;
-   logic [31:0] core2icache_instr_rdata;
+   logic        core_data_req;
+   logic [31:0] core_data_addr;
+   logic        core_data_we;
+   logic [ 3:0] core_data_be;
+   logic [31:0] core_data_wdata;
+   logic        core_data_gnt;
+   logic        core_data_rvalid;
+   logic [31:0] core_data_rdata;
+
+   logic        core_instr_req;
+   logic [31:0] core_instr_addr;
+   logic        core_instr_gnt;
+   logic        core_instr_rvalid;
+   logic [31:0] core_instr_rdata;
 
    logic        core2dcache_data_req;
    logic [31:0] core2dcache_data_addr;
@@ -51,28 +60,10 @@ module air_soc #(
    logic        core2dcache_data_rvalid;
    logic [31:0] core2dcache_data_rdata;
 
-   logic        core_data_req;
-   logic [31:0] core_data_addr;
-   logic        core_data_we;
-   logic [ 3:0] core_data_be;
-   logic [31:0] core_data_wdata;
-   logic        core_data_gnt;
-   logic        core_data_rvalid;
-   logic [31:0] core_data_rdata;
-
-   logic        core2periph_data_req;
-   logic [31:0] core2periph_data_addr;
-   logic        core2periph_data_we;
-   logic [ 3:0] core2periph_data_be;
-   logic [31:0] core2periph_data_wdata;
-   logic        core2periph_data_gnt;
-   logic        core2periph_data_rvalid;
-   logic [31:0] core2periph_data_rdata;
-
    logic        dcache2mem_data_req;
    logic [31:0] dcache2mem_data_addr;
    logic        dcache2mem_data_we;
-   logic [ 3:0] dcache2mem_data_be;
+   // logic [ 3:0] dcache2mem_data_be;
    logic [31:0] dcache2mem_data_wdata;
    logic        dcache2mem_data_gnt;
    logic        dcache2mem_data_rvalid;
@@ -87,8 +78,7 @@ module air_soc #(
    typedef enum {
       IDLE,
       DCACHE,
-      ICACHE,
-      PERIPH
+      ICACHE
    } bus_state;
 
    bus_state switch;
@@ -120,20 +110,20 @@ module air_soc #(
       .hart_id_i          (32'b0),
 
       // Instruction memory interface
-      .instr_addr_o  (core2icache_instr_addr),
-      .instr_req_o   (core2icache_instr_req),
-      .instr_gnt_i   (core2icache_instr_gnt),
-      .instr_rvalid_i(core2icache_instr_rvalid),
-      .instr_rdata_i (core2icache_instr_rdata),
+      .instr_addr_o  (core_instr_addr),
+      .instr_req_o   (core_instr_req),
+      .instr_gnt_i   (core_instr_gnt & core_instr_req),
+      .instr_rvalid_i(core_instr_rvalid & core_instr_req),
+      .instr_rdata_i (core_instr_rdata),
 
       // Data memory interface
       .data_addr_o  (core_data_addr),
       .data_req_o   (core_data_req),
-      .data_gnt_i   (core_data_gnt),
+      .data_gnt_i   (core_data_gnt & core_data_req),
       .data_we_o    (core_data_we),
       .data_be_o    (core_data_be),
       .data_wdata_o (core_data_wdata),
-      .data_rvalid_i(core_data_rvalid),
+      .data_rvalid_i(core_data_rvalid & core_data_req),
       .data_rdata_i (core_data_rdata),
 
       // Interrupt interface
@@ -158,19 +148,21 @@ module air_soc #(
       .clk_i       (clk_i),
       .rst_ni      (rst_ni),
       .hold_mem_i  (1'b0),
-      .cpu_req_i   (core2icache_instr_req),
-      .cpu_addr_i  (core2icache_instr_addr),
+      //
+      .cpu_req_i   (core_instr_req),
+      .cpu_addr_i  (core_instr_addr),
       .cpu_we_i    ('0),
       .cpu_be_i    ('0),
       .cpu_wdata_i ('0),
-      .cpu_gnt_o   (core2icache_instr_gnt),
-      .cpu_rvalid_o(core2icache_instr_rvalid),
-      .cpu_rdata_o (core2icache_instr_rdata),
+      .cpu_gnt_o   (core_instr_gnt),
+      .cpu_rvalid_o(core_instr_rvalid),
+      .cpu_rdata_o (core_instr_rdata),
+      //
       .mem_req_o   (icache2mem_instr_req),
       .mem_addr_o  (icache2mem_instr_addr),
       .mem_we_o    (  /*unused*/),
       .mem_wdata_o (  /*unused*/),
-      .mem_gnt_i   (icache2mem_instr_gnt),
+      .mem_gnt_i   (icache2mem_instr_gnt & icache2mem_instr_req),
       .mem_rvalid_i(icache2mem_instr_rvalid),
       .mem_rdata_i (icache2mem_instr_rdata)
    );
@@ -181,10 +173,11 @@ module air_soc #(
       .MEM_BYTE_W (4),
       .LINE_BYTE_W(DCACHE_LINE_W / 8),
       .WAY_LEN    (DCACHE_WAY_LEN)
-   ) vcache (
+   ) dcache (
       .clk_i       (clk_i),
       .rst_ni      (rst_ni),
       .hold_mem_i  (1'b0),
+      //
       .cpu_req_i   (core2dcache_data_req),
       .cpu_addr_i  (core2dcache_data_addr),
       .cpu_we_i    (core2dcache_data_we),
@@ -193,114 +186,88 @@ module air_soc #(
       .cpu_gnt_o   (core2dcache_data_gnt),
       .cpu_rvalid_o(core2dcache_data_rvalid),
       .cpu_rdata_o (core2dcache_data_rdata),
+      //
       .mem_req_o   (dcache2mem_data_req),
       .mem_we_o    (dcache2mem_data_we),
       .mem_addr_o  (dcache2mem_data_addr),
       .mem_wdata_o (dcache2mem_data_wdata),
-      .mem_gnt_i   (dcache2mem_data_gnt),
+      .mem_gnt_i   (dcache2mem_data_gnt & dcache2mem_data_req),
       .mem_rvalid_i(dcache2mem_data_rvalid),
       .mem_rdata_i (dcache2mem_data_rdata)
    );
 
-   // verilog_format: off
-   assign core2mem_data_req    = (core_data_addr >= PERIPH_BASE_ADR) ? core_data_req : 1'b0;
-   assign core2mem_data_we     = (core_data_addr >= PERIPH_BASE_ADR) ? core_data_we  : 1'b0;
-   assign core2mem_data_be     = (core_data_addr >= PERIPH_BASE_ADR) ? core_data_be  : 4'b0;
-   assign core2mem_data_addr   = core_data_addr;
-   assign core2mem_data_wdata  = core_data_wdata;
+   wire periph_req = (core_data_addr >= PERIPH_BASE_ADR);
 
-   assign core2dcache_data_req    = (core_data_addr < PERIPH_BASE_ADR) ? core_data_req : 1'b0;
-   assign core2dcache_data_we     = (core_data_addr < PERIPH_BASE_ADR) ? core_data_we  : 1'b0;
-   assign core2dcache_data_be     = (core_data_addr < PERIPH_BASE_ADR) ? core_data_be  : 4'b0;
+   // verilog_format: off
+   assign core2dcache_data_req    = (!periph_req) ? core_data_req : 1'b0;
+   assign core2dcache_data_we     = (!periph_req) ? core_data_we  : 1'b0;
+   assign core2dcache_data_be     = (!periph_req) ? core_data_be  : 4'b0;
    assign core2dcache_data_addr   = core_data_addr;
    assign core2dcache_data_wdata  = core_data_wdata;
 
-   assign core_data_gnt    = (core_data_addr >= PERIPH_BASE_ADR) ? core2mem_data_gnt    : core2dcache_data_gnt;
-   assign core_data_rvalid = (core_data_addr >= PERIPH_BASE_ADR) ? core2mem_data_rvalid : core2dcache_data_rvalid;
-   assign core_data_rdata  = (core_data_addr >= PERIPH_BASE_ADR) ? core2mem_data_rdata  : core2dcache_data_rdata;
+   assign periph_req_o    = (periph_req) ? core_data_req  : 1'b0;
+   assign periph_we_o     = (periph_req) ? core_data_we  : 1'b0;
+   assign periph_be_o     = (periph_req) ? core_data_be  : 4'b0;
+   assign periph_addr_o   = core_data_addr;
+   assign periph_wdata_o  = core_data_wdata;
+
+   assign core_data_gnt    = (periph_req) ? 1'b1            : core2dcache_data_gnt;
+   assign core_data_rvalid = (periph_req) ? periph_rvalid_i : core2dcache_data_rvalid;
+   assign core_data_rdata  = (periph_req) ? periph_rdata_i  : core2dcache_data_rdata;
    // verilog_format: on
 
 
    assign mem_addr_o              = (switch == ICACHE) ? icache2mem_instr_addr:
                                     (switch == DCACHE) ? dcache2mem_data_addr :
-                                    (switch == PERIPH) ? core2mem_data_addr   :
                                                          icache2mem_instr_addr;
 
    assign mem_req_o               = (switch == ICACHE) ? icache2mem_instr_req:
                                     (switch == DCACHE) ? dcache2mem_data_req :
-                                    (switch == PERIPH) ? core2mem_data_req   :
                                                          icache2mem_instr_req;
 
    assign mem_we_o                = (switch == ICACHE) ? 1'b0:
                                     (switch == DCACHE) ? dcache2mem_data_we :
-                                    (switch == PERIPH) ? core2mem_data_we   :
                                                          1'b0;
 
-   assign mem_be_o                = (switch == ICACHE) ? 1'b0:
-                                    (switch == DCACHE) ? dcache2mem_data_be :
-                                    (switch == PERIPH) ? core2mem_data_be   :
-                                                         1'b0;
+   assign mem_be_o                = 4'b1111;
 
    assign mem_wdata_o             = (switch == ICACHE) ? 32'b0:
                                     (switch == DCACHE) ? dcache2mem_data_wdata :
-                                    (switch == PERIPH) ? core2mem_data_wdata   :
                                                          32'b0;
 
-   assign mem_wdata_o             = (switch == ICACHE) ? icache2mem_instr_gnt:
-                                    (switch == DCACHE) ? dcache2mem_data_gnt :
-                                    (switch == PERIPH) ? core2mem_data_gnt   :
-                                                         1'b0;
+   assign dcache2mem_data_gnt     =  (switch == DCACHE);
 
    assign dcache2mem_data_rvalid  = (switch == ICACHE) ? 1'b0:
                                     (switch == DCACHE) ? mem_rvalid_i:
-                                    (switch == PERIPH) ? 1'b0:
                                                          1'b0;
+
+   assign icache2mem_instr_gnt    =  (switch == ICACHE);
 
    assign icache2mem_instr_rvalid = (switch == ICACHE) ? mem_rvalid_i:
                                     (switch == DCACHE) ? 1'b0:
-                                    (switch == PERIPH) ? 1'b0:
-                                                         1'b0;
-
-   assign core2mem_data_rvalid    = (switch == ICACHE) ? 1'b0:
-                                    (switch == DCACHE) ? 1'b0:
-                                    (switch == PERIPH) ? mem_rvalid_i:
                                                          1'b0;
 
    // verilog_format: off
    assign dcache2mem_data_rdata  = mem_rdata_i;
    assign icache2mem_instr_rdata = mem_rdata_i;
-   assign core2mem_data_rdata    = mem_rdata_i;
    // verilog_format: on
 
-   wire core2mem_req = (core_data_addr >= 32'hFF00_0000);
-   wire [2:0] idp = {icache2mem_instr_req, dcache2mem_data_req, core2mem_req};
+   wire [1:0] id = {icache2mem_instr_req, dcache2mem_data_req};
+   logic req_sources[32];
+   logic req_write[32];  // keeping track of whether the request was a write
+   logic [31:0] imem_req_addr[32];  // keeping track of address for instruction memory requests
+   logic [4:0] req_count;
 
-   always @(posedge clk_i) begin
+   always_ff @(posedge clk_i or negedge rst_ni) begin
       if (!rst_ni) begin
          switch <= IDLE;
       end else begin
-         // verilog_format: off
-         case (switch)
-            {ICACHE} :begin case (idp)
-                  {3'b1??} : switch <= switch;
-                  {3'b0??} : switch <= IDLE;
-            endcase end
-            {DCACHE} :begin case (idp)
-                  {3'b?1?} : switch <= switch;
-                  {3'b?0?} : switch <= IDLE;
-            endcase end
-            {PERIPH} :begin case (idp)
-                  {3'b??1} : switch <= switch;
-                  {3'b??0} : switch <= IDLE;
-            endcase end
-            {IDLE} :begin case (idp)
-                  {3'b1??} : switch <= ICACHE;
-                  {3'b01?} : switch <= DCACHE;
-                  {3'b001} : switch <= PERIPH;
-                  {3'b000} : switch <= IDLE;
-            endcase end
+         case (id)
+            {2'b00} : switch <= ICACHE;
+            {2'b01} : switch <= DCACHE;
+            {2'b10} : switch <= ICACHE;
+            {2'b11} : switch <= switch;
          endcase
-         // verilog_format: on
       end
    end
 endmodule

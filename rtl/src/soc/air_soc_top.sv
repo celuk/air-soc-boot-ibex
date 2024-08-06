@@ -103,13 +103,22 @@ module air_soc_top
    logic        mem_rvalid;
    logic [31:0] mem_rdata;
 
-   always_ff @(posedge clk or negedge rst_n) begin
-      if (!rst_n) begin
-         mem_rvalid <= 1'b0;
-      end else begin
-         mem_rvalid <= mem_req;
-      end
-   end
+   // always_ff @(posedge clk or negedge rst_n) begin
+   //    if (!rst_n) begin
+   //       mem_rvalid <= 1'b0;
+   //    end else begin
+   //       mem_rvalid <= mem_req;
+   //    end
+   // end
+
+
+   wire         periph_req_o;
+   wire  [31:0] periph_addr_o;
+   wire         periph_we_o;
+   wire  [ 3:0] periph_be_o;
+   wire  [31:0] periph_wdata_o;
+   wire         periph_rvalid_i = 1'b1;
+   wire  [31:0] periph_rdata_i = 32'b1;
 
    air_soc #(
         .ICACHE_SZ    (8192)
@@ -117,15 +126,24 @@ module air_soc_top
       , .ICACHE_LINE_W(64)
       , .DCACHE_LINE_W(64)
    ) soc (
-      .clk_i       (clk),
-      .rst_ni      (rst_n),
-      .mem_req_o   (mem_req),
-      .mem_addr_o  (mem_addr),
-      .mem_we_o    (mem_we),
-      .mem_be_o    (mem_be),
-      .mem_wdata_o (mem_wdata),
-      .mem_rvalid_i(mem_rvalid),
-      .mem_rdata_i (mem_rdata)
+      .clk_i          (clk),
+      .rst_ni         (rst_n),
+      //
+      .mem_req_o      (mem_req),
+      .mem_addr_o     (mem_addr),
+      .mem_we_o       (mem_we),
+      .mem_be_o       (mem_be),
+      .mem_wdata_o    (mem_wdata),
+      .mem_rvalid_i   (mem_rvalid),
+      .mem_rdata_i    (mem_rdata),
+      //
+      .periph_req_o   (periph_req_o),
+      .periph_addr_o  (periph_addr_o),
+      .periph_we_o    (periph_we_o),
+      .periph_be_o    (periph_be_o),
+      .periph_wdata_o (periph_wdata_o),
+      .periph_rvalid_i(periph_rvalid_i),
+      .periph_rdata_i (periph_rdata_i)
    );
 
    logic        sram_rvalid;
@@ -133,7 +151,7 @@ module air_soc_top
    logic        hwreg_rvalid;
    logic [31:0] hwreg_rdata;
 
-   assign mem_rdata = hwreg_rvalid ? hwreg_rdata : sram_rdata;
+   // assign mem_rdata = hwreg_rvalid ? hwreg_rdata : sram_rdata;
 
    ram32 #(
       .SIZE     (RAM_SIZE / 4),
@@ -141,17 +159,13 @@ module air_soc_top
    ) u_ram (
       .clk_i   (clk),
       .rst_ni  (rst_ni),
-      .req_i   (mem_req & ((mem_addr & ~MEM_MASK) == MEM_START)),
+      .req_i   (mem_req),
       .we_i    (mem_req & mem_we),
       .be_i    (mem_be),
       .addr_i  (mem_addr),
       .wdata_i (mem_wdata),
-      .rvalid_o(sram_rvalid),
-      .rdata_o (sram_rdata)
-
-      //,.program_rx_i(program_rx_i),
-      //.system_reset_o(system_reset_o),
-      //.prog_mode_led_o(prog_mode_led_o)
+      .rvalid_o(mem_rvalid),
+      .rdata_o (mem_rdata)
    );
 
    hwreg_iface #(
@@ -246,21 +260,21 @@ module hwreg_iface #(
       .tx_o(tx_o)
    );
 
-   logic [31:0] rdata;
-   logic        rvalid;
+   // logic [31:0] rdata;
+   // logic        rvalid;
 
-   always_ff @(posedge clk_i) begin
-      unique case (addr_i[15:2])
-         ADDR_UART_DATA:   rdata <= uart_rvalid ? uart_rdata : 32'hFFFFFFFF;
-         ADDR_UART_STATUS: rdata <= {30'h0, uart_rvalid, uart_wbusy};
+   // always_ff @(posedge clk_i) begin
+   //    unique case (addr_i[15:2])
+   //       ADDR_UART_DATA:   rdata <= uart_rvalid ? uart_rdata : 32'hFFFFFFFF;
+   //       ADDR_UART_STATUS: rdata <= {30'h0, uart_rvalid, uart_wbusy};
 
-         default: rdata <= 0;
-      endcase
-      rvalid <= req_i;
-   end
+   //       default: rdata <= 0;
+   //    endcase
+   //    rvalid <= req_i;
+   // end
 
-   assign rdata_o  = rdata;
-   assign rvalid_o = rvalid;
+   // assign rdata_o  = rdata;
+   // assign rvalid_o = rvalid;
 endmodule
 
 
