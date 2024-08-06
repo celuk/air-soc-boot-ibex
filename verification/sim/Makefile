@@ -5,11 +5,11 @@ all:
 
 .PHONY: air
 air:
-	python3 ./main.py --sim questa --test tb_air --top  air_soc_top --waves true --cfile=$(CFILE)
+	python3 ./main.py --sim questa --test tb_air --top  air_soc --waves true --cfile=$(CFILE)
 
 .PHONY: air_icarus
 air_icarus:
-	python3 ./main.py --sim icarus --test tb_air --top  air_soc_top --waves true --cfile=$(CFILE)
+	python3 ./main.py --sim icarus --test tb_air --top  air_soc --waves true --cfile=$(CFILE)
 
 .PHONY: clean
 clean:
