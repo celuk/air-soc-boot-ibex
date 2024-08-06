@@ -72,45 +72,11 @@ module air_soc #(
 
    // Main interconnect addressing
    localparam bit [31:0] PeriphBaseAddr = 32'h0000_0000;
-   localparam bit [31:0] PeriphAddrRange = 32'h1000_0000;
-
-   localparam bit [31:0] MemBaseAddr = 32'h1000_0000;
-   localparam int unsigned BankNumWords = 512;
-   localparam int unsigned NumBanks = 32'd2;
-
-   // Enum for bus indices
-   typedef enum int {
-      XbarUser,
-      XbarPeriph,
-      XbarBank0
-   } xbar_outputs_e;
-   // User space is implicit as everything outside Periph and Memory ranges
-   localparam int unsigned NumRules = 1 + NumBanks;
-
-   function automatic addr_map_rule_t [NumRules-1:0] gen_xbar_addr_rules();
-      addr_map_rule_t [NumRules-1:0] ret;
-      ret[0] = '{
-         idx: XbarPeriph,
-         start_addr: PeriphBaseAddr,
-         end_addr: PeriphBaseAddr + PeriphAddrRange
-      };
-
-      for (int i = 0; i < NumBanks; i++) begin
-         ret[i+1] = '{
-            idx: XbarBank0 + i,
-            start_addr: MemBaseAddr + (i * BankNumWords * 4),
-            end_addr: MemBaseAddr + ((i + 1) * BankNumWords * 4)
-         };
-      end
-      return ret;
-   endfunction
-
-   localparam addr_map_rule_t [NumRules-1:0] main_addr_map = gen_xbar_addr_rules();
-
+   localparam bit [31:0] PeriphAddrRange = 32'h8000_0000;
 
    // Peripheral address map
    localparam bit [31:0] DCacheAddrOffset = 32'h0000_0000;
-   localparam bit [31:0] DCacheAddrRange = 32'h0004_0000;
+   localparam bit [31:0] DCacheAddrRange = 32'h0008_0000;
 
    localparam bit [31:0] SocCtrlAddrOffset = 32'h0300_0000;
    localparam bit [31:0] SocCtrlAddrRange = 32'h0000_1000;
@@ -159,7 +125,6 @@ module air_soc #(
 
    // OBI is configured as 32 bit data, 32 bit address width
    localparam int unsigned NumManagers = 3;  // DBG, Core Instr, Core Data
-   localparam int unsigned NumSubordinates = 2 + NumBanks;  // User + Periph + Memory
 
    // no optional bits in the OBI interconnect
    `OBI_TYPEDEF_MINIMAL_A_OPTIONAL(a_optional_t)
@@ -445,17 +410,6 @@ module air_soc #(
    assign all_periph_obi_rsp[PeriphUart]     = uart_obi_rsp;
    assign timer_obi_req                      = all_periph_obi_req[PeriphTimer];
    assign all_periph_obi_rsp[PeriphTimer]    = timer_obi_rsp;
-
-
-
-   // ----------------------------------
-   // Subordinate buses out of crossbar
-   // ----------------------------------
-   // Main xbar subordinate buses, must align with addr map indices!
-   sbr_obi_req_t [NumSubordinates-1:0] all_sbr_obi_req;
-   sbr_obi_rsp_t [NumSubordinates-1:0] all_sbr_obi_rsp;
-
-   // user bus defined in module port
 
 
    // -----------------
