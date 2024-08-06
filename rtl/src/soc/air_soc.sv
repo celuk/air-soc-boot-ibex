@@ -175,7 +175,7 @@ module air_soc #(
       .mtvec_addr_i       (32'h0000_0000),
       .dm_halt_addr_i     (32'h00000000),
       .dm_exception_addr_i(32'h00000000),
-      .hart_id_i          (32'b0),
+      .hart_id_i          (HartId),
 
       // Instruction memory interface
       .instr_addr_o  (instr_addr),
@@ -386,16 +386,12 @@ module air_soc #(
    sbr_obi_req_t timer_obi_req;
    sbr_obi_rsp_t timer_obi_rsp;
 
-   assign error_obi_req                      = all_periph_obi_req[PeriphErrorSlv];
-   assign all_periph_obi_rsp[PeriphErrorSlv] = error_obi_rsp;
-   assign dcache_mem_obi_req                 = all_periph_obi_req[PeriphDCache];
-   assign all_periph_obi_rsp[PeriphDCache]   = dcache_mem_obi_rsp;
-   assign soc_ctrl_obi_req                   = all_periph_obi_req[PeriphSocCtrl];
-   assign all_periph_obi_rsp[PeriphSocCtrl]  = soc_ctrl_obi_rsp;
-   assign uart_obi_req                       = all_periph_obi_req[PeriphUart];
-   assign all_periph_obi_rsp[PeriphUart]     = uart_obi_rsp;
-   assign timer_obi_req                      = all_periph_obi_req[PeriphTimer];
-   assign all_periph_obi_rsp[PeriphTimer]    = timer_obi_rsp;
+   assign dcache_mem_obi_req               = all_periph_obi_req[PeriphDCache];
+   assign all_periph_obi_rsp[PeriphDCache] = dcache_mem_obi_rsp;
+   assign uart_obi_req                     = all_periph_obi_req[PeriphUart];
+   assign all_periph_obi_rsp[PeriphUart]   = uart_obi_rsp;
+   assign timer_obi_req                    = all_periph_obi_req[PeriphTimer];
+   assign all_periph_obi_rsp[PeriphTimer]  = timer_obi_rsp;
 
 
    // -----------------
