@@ -78,53 +78,43 @@ module air_soc #(
    localparam bit [31:0] DCacheAddrOffset = 32'h0000_0000;
    localparam bit [31:0] DCacheAddrRange = 32'h0008_0000;
 
-   localparam bit [31:0] SocCtrlAddrOffset = 32'h0300_0000;
-   localparam bit [31:0] SocCtrlAddrRange = 32'h0000_1000;
-
-   localparam bit [31:0] UartAddrOffset = 32'h0300_2000;
+   localparam bit [31:0] UartAddrOffset = 32'h0300_0000;
    localparam bit [31:0] UartAddrRange = 32'h0000_1000;
 
-   localparam bit [31:0] TimerAddrOffset = 32'h0300_A000;
+   localparam bit [31:0] TimerAddrOffset = 32'h0300_2000;
    localparam bit [31:0] TimerAddrRange = 32'h0000_1000;
 
-   localparam int unsigned NumPeriphRules = 4;
-   localparam int unsigned NumPeriphs = NumPeriphRules + 1;  // additional OBI error
+   localparam int unsigned NumPeriphRules = 3;
+   localparam int unsigned NumPeriphs = NumPeriphRules;
 
    // Enum for bus indices
    typedef enum int {
-      PeriphErrorSlv = 0,
-      PeriphDCache   = 1,
-      PeriphSocCtrl  = 2,
-      PeriphUart     = 3,
-      PeriphTimer    = 4
+      PeriphDCache = 0,
+      PeriphUart   = 1,
+      PeriphTimer  = 2
    } periph_outputs_e;
 
-   localparam addr_map_rule_t [NumPeriphRules-1:0] periph_addr_map = '{  // 0: OBI Error (default)
+   localparam addr_map_rule_t [NumPeriphRules-1:0] periph_addr_map = '{
       '{
          idx: PeriphDCache,
          start_addr: DCacheAddrOffset,
          end_addr: DCacheAddrOffset + DCacheAddrRange
       },  // 1: DCache
       '{
-         idx: PeriphSocCtrl,
-         start_addr: SocCtrlAddrOffset,
-         end_addr: SocCtrlAddrOffset + SocCtrlAddrRange
-      },  // 2: SoC control
-      '{
          idx: PeriphUart,
          start_addr: UartAddrOffset,
          end_addr: UartAddrOffset + UartAddrRange
-      },  // 3: UART
+      },  // 2: UART
       '{
          idx: PeriphTimer,
          start_addr: TimerAddrOffset,
          end_addr: TimerAddrOffset + TimerAddrRange
-      }  // 4: Timer
+      }  // 3: Timer
    };
 
 
    // OBI is configured as 32 bit data, 32 bit address width
-   localparam int unsigned NumManagers = 3;  // DBG, Core Instr, Core Data
+   localparam int unsigned NumManagers = 1;  // core
 
    // no optional bits in the OBI interconnect
    `OBI_TYPEDEF_MINIMAL_A_OPTIONAL(a_optional_t)
@@ -150,7 +140,6 @@ module air_soc #(
 
    // Register Interface configured as 32 bit data, 32 bit address width (4 byte enable bits)
    // `REG_BUS_TYPEDEF_ALL(reg, logic[31:0], logic[31:0], logic[3:0]);
-
 
    /////////////////////////////////
 
@@ -206,9 +195,9 @@ module air_soc #(
       .data_rdata_i(core_data_obi_rsp.r.rdata),
 
       // Interrupt interface
-      .irq_i                    (0), //({14'b0, timer_bus.irq, gpio_bus.irq, 16'b0}), //4'b0, 0, 3'b0, 0, 3'b0, 0, 3'b0}),
+      .irq_i    (0),
       .irq_ack_o(),
-      .irq_id_o(),
+      .irq_id_o (),
 
       // Debug interface
       .debug_req_i      (1'b0),
@@ -344,15 +333,12 @@ module air_soc #(
          end
       end
    end
+
    assign imem_rvalid = mem_rvalid & ~req_sources[0];
    assign dmem_rvalid = mem_rvalid & req_sources[0] & ~req_write[0];
    assign dmem_wvalid = mem_rvalid & req_sources[0] & req_write[0];
-   assign imem_rdata = (ICACHE_SZ != 0) ? mem_rdata : mem_rdata[(imem_req_addr[0][$clog2(
-      MEM_W
-   )-1:0]&{3'b000, {($clog2(
-      MEM_W/8
-   )-2) {1'b1}}, 2'b00})*8+:32];
-   assign dmem_rdata = mem_rdata;
+   assign imem_rdata  = mem_rdata;
+   assign dmem_rdata  = mem_rdata;
 
    ram32 #(
       .SIZE     (RAM_SIZE / 4),
