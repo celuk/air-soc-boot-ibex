@@ -17,14 +17,8 @@ module air_soc #(
    output wire uart_tx_o
 );
 
-   localparam int unsigned CLK_FREQ = 50_000_000;
-
    localparam RAM_FPATH = "";
    localparam RAM_SIZE = 256 * 1024;
-   localparam UART_BAUD_RATE = 9600;
-
-   localparam logic [31:0] MEM_START = 32'h00000000;
-   localparam logic [31:0] MEM_MASK = RAM_SIZE - 1;
 
    logic               mem_req;
    logic [       31:0] mem_addr;
