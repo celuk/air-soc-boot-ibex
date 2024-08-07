@@ -81,8 +81,6 @@ module uart_iface (
 );
    reg [15:0] baud_div;
 
-   wire real_addr = wb_adr_i[3:2];
-
    reg tx_en;
    reg tx_we;
    wire tx_full;
@@ -132,8 +130,8 @@ module uart_iface (
          tx_we <= 1'b0;
          if (wb_cyc_i) begin
             wb_ack_o <= wb_stb_i & !wb_ack_o; // butun islemler 1 cycle surer ve ack sinyali cyc'dan hemen sonra gonderilir.
-            case (real_addr)
-               2'h0: begin
+            case (wb_adr_i[3:0])
+               4'h0: begin
                   if (wb_stb_i & wb_we_i & !wb_ack_o) begin  // SB,SH,SW buyruklarini destekle
                      tx_en    <= wb_sel_i[0] ? wb_dat_i[0] : tx_en;
                      rx_en    <= wb_sel_i[0] ? wb_dat_i[1] : rx_en;
@@ -141,10 +139,10 @@ module uart_iface (
                   end
                   wb_dat_o <= {baud_div, 14'b0, rx_en, tx_en};
                end
-               2'h1: begin
+               4'h4: begin
                   wb_dat_o <= {28'b0, rx_empty, rx_full, tx_empty, tx_full};
                end
-               2'h2: begin
+               4'h8: begin
                   if (wb_stb_i & !wb_ack_o) begin
                      if (~rx_empty) begin
                         wb_dat_o <= {24'b0, rx_data};
@@ -152,7 +150,7 @@ module uart_iface (
                      end
                   end
                end
-               2'h3: begin
+               4'hc: begin
                   if (wb_stb_i & wb_we_i & !wb_ack_o) begin
                      if (~tx_full) begin
                         tx_we <= wb_sel_i[0] ? 1'b1 : 1'b0;
