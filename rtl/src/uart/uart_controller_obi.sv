@@ -7,6 +7,7 @@ module uart_controller_obi #(
    input  logic        rst_ni,
    input  logic        req_i,
    input  logic        we_i,
+   output logic        gnt_o,
    input  logic [15:0] addr_i,
    input  logic [31:0] wdata_i,
    output logic        rvalid_o,
@@ -16,48 +17,27 @@ module uart_controller_obi #(
    output logic tx_o
 );
 
-   localparam logic [13:0] ADDR_UART_DATA = 16'h0000 >> 2;
-   localparam logic [13:0] ADDR_UART_STATUS = 16'h0004 >> 2;
-
-   logic       uart_req;
-   logic       uart_wbusy;
-   logic       uart_rvalid;
-   logic [7:0] uart_rdata;
-
-   assign uart_req = req_i && addr_i[15:2] == ADDR_UART_DATA;
-
+   wire busy;
    uart_iface #(
       .CLK_FREQ (CLK_FREQ),
       .BAUD_RATE(UART_BAUD_RATE)
    ) uart (
       .clk_i   (clk_i),
       .rst_ni  (rst_ni),
-      .we_i    (uart_req && we_i),
+      .we_i    (req_i && we_i),
       .wdata_i (wdata_i[7:0]),
-      .wbusy_o (uart_wbusy),
-      .read_i  (uart_req && !we_i),
-      .rvalid_o(uart_rvalid),
-      .rdata_o (uart_rdata),
+      .wbusy_o (busy),
+      .read_i  (req_i && !we_i),
+      .rvalid_o(rvalid_o),
+      .rdata_o (rdata_o),
 
       .rx_i(rx_i),
       .tx_o(tx_o)
    );
 
-   logic [31:0] rdata;
-   logic        rvalid;
+   assign gnt_o = !busy;
+   assign uart_req = req_i;
 
-   always_ff @(posedge clk_i) begin
-      unique case (addr_i[15:2])
-         ADDR_UART_DATA:   rdata <= uart_rvalid ? uart_rdata : 32'hFFFFFFFF;
-         ADDR_UART_STATUS: rdata <= {30'h0, uart_rvalid, uart_wbusy};
-
-         default: rdata <= 0;
-      endcase
-      rvalid <= req_i;
-   end
-
-   assign rdata_o  = rdata;
-   assign rvalid_o = rvalid;
 endmodule
 
 

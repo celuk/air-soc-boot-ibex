@@ -285,6 +285,7 @@ module air_soc #(
       .we_i    (uart_we),
       .addr_i  (uart_addr),
       .wdata_i (uart_wdata),
+      .gnt_o   (uart_gnt),
       .rvalid_o(uart_rvalid),
       .rdata_o (uart_rdata),
       .rx_i    (uart_rx_i),
