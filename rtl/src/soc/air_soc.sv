@@ -280,6 +280,7 @@ module air_soc #(
       .rst_ni  (rst_ni),
       .req_i   (uart_req),
       .we_i    (uart_we),
+      .be_i    (uart_be),
       .addr_i  (uart_addr),
       .wdata_i (uart_wdata),
       .gnt_o   (uart_gnt),
