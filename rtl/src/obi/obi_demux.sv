@@ -1,164 +1,142 @@
-// Copyright 2023 ETH Zurich and University of Bologna.
-// Solderpad Hardware License, Version 0.51, see LICENSE for details.
-// SPDX-License-Identifier: SHL-0.51
+// air_soc.sv
+`timescale 1ns / 1ps
+//
+`default_nettype none
 
-// Michael Rogenmoser <michaero@iis.ee.ethz.ch>
 
-module obi_demux #(
-   /// The OBI configuration for all ports.
-   parameter obi_pkg::obi_cfg_t ObiCfg      = obi_pkg::ObiDefaultConfig,
-   /// The request struct for all ports.
-   parameter type               obi_req_t   = logic,
-   /// The response struct for all ports.
-   parameter type               obi_rsp_t   = logic,
-   /// The number of manager ports.
-   parameter int unsigned       NumMgrPorts = 32'd0,
-   /// The maximum number of outstanding transactions.
-   parameter int unsigned       NumMaxTrans = 32'd0,
-   /// The type of the port select signal.
-   parameter type               select_t    = logic                     [$clog2(NumMgrPorts)-1:0]
-) (
-   input logic clk_i,
-   input logic rst_ni,
+module obi_demux (
+   input wire clk_i,
+   input wire rst_ni,
 
-   input  select_t  sbr_port_select_i,
-   input  obi_req_t sbr_port_req_i,
-   output obi_rsp_t sbr_port_rsp_o,
+   // CPU interface
+   input  wire        data_req_i,
+   output wire        data_gnt_o,
+   output wire        data_rvalid_o,
+   input  wire        data_we_i,
+   input  wire [ 3:0] data_be_i,
+   input  wire [31:0] data_addr_i,
+   input  wire [31:0] data_wdata_i,
+   output wire [31:0] data_rdata_o,
 
-   output obi_req_t [NumMgrPorts-1:0] mgr_ports_req_o,
-   input  obi_rsp_t [NumMgrPorts-1:0] mgr_ports_rsp_i
+   // DCache interface
+   output wire        cache_req_o,
+   output wire [31:0] cache_addr_o,
+   output wire        cache_we_o,
+   output wire [ 3:0] cache_be_o,
+   output wire [31:0] cache_wdata_o,
+   input  wire        cache_gnt_i,
+   input  wire        cache_rvalid_i,
+   input  wire [31:0] cache_rdata_i,
+
+   // UART interface
+   output wire        uart_req_o,
+   output wire [31:0] uart_addr_o,
+   output wire        uart_we_o,
+   output wire [ 3:0] uart_be_o,
+   output wire [31:0] uart_wdata_o,
+   input  wire        uart_gnt_i,
+   input  wire        uart_rvalid_i,
+   input  wire [31:0] uart_rdata_i
 );
 
-   if (ObiCfg.Integrity) begin : gen_integrity_err
-      $fatal(1, "unimplemented");
-   end
+   localparam [31:0] MEM_BASE_ADDR = 32'h0000_0000;
+   localparam [31:0] MEM_RANGE = 32'h0008_0000;
+   localparam [31:0] UART_BASE_ADDR = 32'h1000_0000;
+   localparam [31:0] UART_RANGE = 32'h0008_0000;
 
-   // stall requests to ensure in-order behavior (could be handled differently with rready)
-   localparam int unsigned CounterWidth = cf_math_pkg::idx_width(NumMaxTrans);
+   reg         data_req;
+   reg         data_we;
+   reg  [ 3:0] data_be;
+   reg  [31:0] data_addr;
+   reg  [31:0] data_wdata;
 
-   logic cnt_up, cnt_down, overflow;
-   logic [CounterWidth-1:0] in_flight;
-   logic sbr_port_rready;
+   wire        periph_gnt;
 
-   select_t select_d, select_q;
+   typedef enum {
+      ZZZZZ,
+      ERROR,
+      CACHE,
+      UART
+   } selected_periph_t;
 
-   always_comb begin : proc_req
-      select_d = select_q;
-      cnt_up   = 1'b0;
-      for (int i = 0; i < NumMgrPorts; i++) begin
-         mgr_ports_req_o[i].req = 1'b0;
-         mgr_ports_req_o[i].a   = '0;
-      end
+   typedef enum {
+      IDLE,
+      WAITING
+   } state_t;
 
-      if (!overflow) begin
-         if (sbr_port_select_i == select_q || in_flight == '0 || (in_flight == 1 && cnt_down)) begin
-            mgr_ports_req_o[sbr_port_select_i].req = sbr_port_req_i.req;
-            mgr_ports_req_o[sbr_port_select_i].a   = sbr_port_req_i.a;
-         end
-      end
+   state_t state;
+   selected_periph_t periph;
 
-      if (mgr_ports_req_o[sbr_port_select_i].req && mgr_ports_rsp_i[sbr_port_select_i].gnt) begin
-         select_d = sbr_port_select_i;
-         cnt_up   = 1'b1;
-      end
-   end
+   assign cache_addr_o = data_addr;
+   assign uart_addr_o = data_addr;
 
-   assign sbr_port_rsp_o.gnt    = mgr_ports_rsp_i[sbr_port_select_i].gnt;
-   assign sbr_port_rsp_o.r      = mgr_ports_rsp_i[select_q].r;
-   assign sbr_port_rsp_o.rvalid = mgr_ports_rsp_i[select_q].rvalid;
+   assign cache_wdata_o = data_wdata;
+   assign uart_wdata_o = data_wdata;
 
-   if (ObiCfg.UseRReady) begin : gen_rready
-      assign sbr_port_rready = sbr_port_req_i.rready;
-      for (genvar i = 0; i < NumMgrPorts; i++) begin : gen_rready
-         assign mgr_ports_req_o[i].rready = sbr_port_req_i.rready;
-      end
-   end else begin : gen_no_rready
-      assign sbr_port_rready = 1'b1;
-   end
+   assign cache_req_o = (MEM_BASE_ADDR + MEM_RANGE > data_addr) && (data_addr >= MEM_BASE_ADDR) ? data_req : 'h0;
+   assign cache_we_o =  (MEM_BASE_ADDR + MEM_RANGE > data_addr) && (data_addr >= MEM_BASE_ADDR) ? data_we : 'h0;
+   assign cache_be_o =  (MEM_BASE_ADDR + MEM_RANGE > data_addr) && (data_addr >= MEM_BASE_ADDR) ? data_be : 'h0;
 
-   assign cnt_down = mgr_ports_rsp_i[select_q].rvalid && sbr_port_rready;
+   assign uart_req_o = (UART_BASE_ADDR + UART_RANGE > data_addr) && (data_addr >= UART_BASE_ADDR) ? data_req : 'h0;
+   assign uart_we_o = (UART_BASE_ADDR + UART_RANGE > data_addr ) && (data_addr >= UART_BASE_ADDR) ? data_we : 'h0;
+   assign uart_be_o = (UART_BASE_ADDR + UART_RANGE > data_addr ) && (data_addr >= UART_BASE_ADDR) ? data_be : 'h0;
 
-   delta_counter #(
-      .WIDTH          (CounterWidth),
-      .STICKY_OVERFLOW(1'b0)
-   ) i_counter (
-      .clk_i,
-      .rst_ni,
 
-      .clear_i   (1'b0),
-      .en_i      (cnt_up ^ cnt_down),
-      .load_i    (1'b0),
-      .down_i    (cnt_down),
-      .delta_i   ({{CounterWidth - 1{1'b0}}, 1'b1}),
-      .d_i       ('0),
-      .q_o       (in_flight),
-      .overflow_o(overflow)
-   );
 
-   always_ff @(posedge clk_i or negedge rst_ni) begin : proc_select
+   assign data_rdata_o = (MEM_BASE_ADDR+MEM_RANGE   > data_addr) && (data_addr >= MEM_BASE_ADDR ) ? cache_rdata_i :
+                         (UART_BASE_ADDR+UART_RANGE > data_addr) && (data_addr >= UART_BASE_ADDR) ? uart_rdata_i  :
+                                                                                                    32'h0         ;
+
+   assign data_rvalid_o= (MEM_BASE_ADDR+MEM_RANGE   >= data_addr) && (data_addr >= MEM_BASE_ADDR ) ? cache_rvalid_i :
+                         (UART_BASE_ADDR+UART_RANGE >= data_addr) && (data_addr >= UART_BASE_ADDR) ? uart_rvalid_i  :
+                                                                                                      32'h0         ;
+
+   assign periph_gnt   = (MEM_BASE_ADDR+MEM_RANGE   > data_addr) && (data_addr >= MEM_BASE_ADDR ) ? cache_gnt_i :
+                         (UART_BASE_ADDR+UART_RANGE > data_addr) && (data_addr >= UART_BASE_ADDR) ? uart_gnt_i  :
+                                                                                                      'h0       ;
+
+   assign data_gnt_o = (state == IDLE) & periph_gnt;
+
+
+   always @(posedge clk_i) begin
       if (!rst_ni) begin
-         select_q <= '0;
+         state <= IDLE;
+         periph <= ZZZZZ;
+
+         data_req <= 0;
+         data_we <= 0;
+         data_be <= 0;
+         data_addr <= 0;
+         data_wdata <= 0;
+
       end else begin
-         select_q <= select_d;
+         case (state)
+            IDLE: begin
+               if (data_req_i & data_gnt_o) begin
+                  state <= WAITING;
+               end
+            end
+            WAITING: begin
+               if (data_rvalid_o) state <= IDLE;
+               if (data_req & periph_gnt) data_req <= 0;
+            end
+         endcase
+
+         case (state)
+            IDLE: begin
+               data_req <= data_req_i;
+               data_we <= data_we_i;
+               data_be <= data_be_i;
+               data_addr <= data_addr_i;
+               data_wdata <= data_wdata_i;
+            end
+            default: begin
+            end
+         endcase
+
+         periph  <= (MEM_BASE_ADDR+MEM_RANGE   > data_addr) && (data_addr >= MEM_BASE_ADDR ) ? CACHE :
+                    (UART_BASE_ADDR+UART_RANGE > data_addr) && (data_addr >= UART_BASE_ADDR) ? UART  :
+                                                                                               ERROR ;
       end
    end
-
 endmodule
-
-`include "typedef.svh"
-`include "assign.svh"
-
-module obi_demux_intf #(
-   /// The OBI configuration for all ports.
-   parameter obi_pkg::obi_cfg_t ObiCfg      = obi_pkg::ObiDefaultConfig,
-   /// The number of manager ports.
-   parameter int unsigned       NumMgrPorts = 32'd0,
-   /// The maximum number of outstanding transactions.
-   parameter int unsigned       NumMaxTrans = 32'd0,
-   /// The type of the port select signal.
-   parameter type               select_t    = logic                     [$clog2(NumMgrPorts)-1:0]
-) (
-   input logic clk_i,
-   input logic rst_ni,
-
-   input select_t            sbr_port_select_i,
-         OBI_BUS.Subordinate sbr_port,
-
-   OBI_BUS.Manager mgr_ports[NumMgrPorts]
-);
-
-   `OBI_TYPEDEF_ALL(obi, ObiCfg)
-
-   obi_req_t sbr_port_req;
-   obi_rsp_t sbr_port_rsp;
-
-   obi_req_t [NumMgrPorts-1:0] mgr_ports_req;
-   obi_rsp_t [NumMgrPorts-1:0] mgr_ports_rsp;
-
-   `OBI_ASSIGN_TO_REQ(sbr_port_req, sbr_port, ObiCfg)
-   `OBI_ASSIGN_FROM_RSP(sbr_port, sbr_port_rsp, ObiCfg)
-
-   for (genvar i = 0; i < NumMgrPorts; i++) begin : gen_mgr_ports_assign
-      `OBI_ASSIGN_FROM_REQ(mgr_ports[i], mgr_ports_req[i], ObiCfg)
-      `OBI_ASSIGN_TO_RSP(mgr_ports_rsp[i], mgr_ports[i], ObiCfg)
-   end
-
-   obi_demux #(
-      .ObiCfg     (ObiCfg),
-      .obi_req_t  (obi_req_t),
-      .obi_rsp_t  (obi_rsp_t),
-      .NumMgrPorts(NumMgrPorts),
-      .NumMaxTrans(NumMaxTrans),
-      .select_t   (select_t)
-   ) i_obi_demux (
-      .clk_i,
-      .rst_ni,
-      .sbr_port_select_i,
-      .sbr_port_req_i (sbr_port_req),
-      .sbr_port_rsp_o (sbr_port_rsp),
-      .mgr_ports_req_o(mgr_ports_req),
-      .mgr_ports_rsp_i(mgr_ports_rsp)
-   );
-
-endmodule
-

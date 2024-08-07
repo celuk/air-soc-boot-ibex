@@ -3,9 +3,6 @@
 //
 `default_nettype none
 
-`include "header.vh"
-`include "typedef.svh"
-
 module air_soc #(
    parameter int unsigned MEM_W         = 32,    // memory bus width in bits
    parameter int unsigned ICACHE_SZ     = 8192,  // instruction cache size in bytes
@@ -20,7 +17,6 @@ module air_soc #(
    output wire uart_tx_o
 );
 
-
    localparam int unsigned CLK_FREQ = 50_000_000;
 
    localparam RAM_FPATH = "";
@@ -30,131 +26,56 @@ module air_soc #(
    localparam logic [31:0] MEM_START = 32'h00000000;
    localparam logic [31:0] MEM_MASK = RAM_SIZE - 1;
 
-   logic        mem_req;
-   logic [31:0] mem_addr;
-   logic        mem_we;
-   logic [ 3:0] mem_be;
-   logic [31:0] mem_wdata;
-   logic        mem_rvalid;
-   logic [31:0] mem_rdata;
+   logic               mem_req;
+   logic [       31:0] mem_addr;
+   logic               mem_we;
+   logic [        3:0] mem_be;
+   logic [       31:0] mem_wdata;
+   logic               mem_rvalid;
+   logic [       31:0] mem_rdata;
 
    // Instruction fetch interface
-   logic        instr_req;
-   logic [31:0] instr_addr;
-   logic        instr_gnt;
-   logic        instr_rvalid;
-   logic [31:0] instr_rdata;
+   logic               instr_req;
+   logic [       31:0] instr_addr;
+   logic               instr_gnt;
+   logic               instr_rvalid;
+   logic [       31:0] instr_rdata;
 
-   //////////////////////////////////
-   // Copyright 2024 ETH Zurich and University of Bologna.
-   // Solderpad Hardware License, Version 0.51, see LICENSE for details.
-   // SPDX-License-Identifier: SHL-0.51
-   //
-   // Authors:
-   // - Philippe Sauter <phsauter@iis.ee.ethz.ch>
+   // Data arbiter for main core
+   logic               data_req;
+   logic [       31:0] data_addr;
+   logic               data_we;
+   logic [MEM_W/8-1:0] data_be;
+   logic [MEM_W  -1:0] data_wdata;
+   logic               data_gnt;
+   logic               data_rvalid;
+   logic [MEM_W  -1:0] data_rdata;
 
-   // `include "register_interface/typedef.svh"
+   logic               cache_req;
+   logic [       31:0] cache_addr;
+   logic               cache_we;
+   logic [MEM_W/8-1:0] cache_be;
+   logic [MEM_W  -1:0] cache_wdata;
+   logic               cache_gnt;
+   logic               cache_rvalid;
+   logic [MEM_W  -1:0] cache_rdata;
 
+   logic               uart_req;
+   logic [       31:0] uart_addr;
+   logic               uart_we;
+   logic [MEM_W/8-1:0] uart_be;
+   logic [MEM_W  -1:0] uart_wdata;
+   logic               uart_gnt;
+   logic               uart_rvalid;
+   logic [MEM_W  -1:0] uart_rdata;
 
-   localparam int unsigned HartId = 32'd0;
-   localparam int unsigned PulpJtagIdCode = 32'h1_0000_db3;
+   // instruction cache
+   logic               imem_req;
+   logic               imem_gnt;
+   logic [       31:0] imem_addr;
+   logic               imem_rvalid;
+   logic [  MEM_W-1:0] imem_rdata;
 
-   typedef enum logic {Jtag = 1'b0} bootmode_e;
-
-   localparam int unsigned NumExternalIrqs = 4;
-
-   // -----------------
-   // Address Map
-   // -----------------
-   // ideally compatible with: https://pulp-platform.github.io/cheshire/um/arch/#memory-map
-
-   // Address map data type
-   typedef struct packed {
-      logic [31:0] idx;
-      logic [31:0] start_addr;
-      logic [31:0] end_addr;
-   } addr_map_rule_t;
-
-   // Main interconnect addressing
-   localparam bit [31:0] PeriphBaseAddr = 32'h0000_0000;
-   localparam bit [31:0] PeriphAddrRange = 32'h8000_0000;
-
-   // Peripheral address map
-   localparam bit [31:0] DCacheAddrOffset = 32'h0000_0000;
-   localparam bit [31:0] DCacheAddrRange = 32'h0008_0000;
-
-   localparam bit [31:0] UartAddrOffset = 32'h0300_0000;
-   localparam bit [31:0] UartAddrRange = 32'h0000_1000;
-
-   localparam bit [31:0] TimerAddrOffset = 32'h0300_2000;
-   localparam bit [31:0] TimerAddrRange = 32'h0000_1000;
-
-   localparam int unsigned NumPeriphRules = 3;
-   localparam int unsigned NumPeriphs = NumPeriphRules;
-
-   // Enum for bus indices
-   typedef enum int {
-      PeriphDCache = 0,
-      PeriphUart   = 1,
-      PeriphTimer  = 2
-   } periph_outputs_e;
-
-   localparam addr_map_rule_t [NumPeriphRules-1:0] periph_addr_map = '{
-      '{
-         idx: PeriphDCache,
-         start_addr: DCacheAddrOffset,
-         end_addr: DCacheAddrOffset + DCacheAddrRange
-      },  // 1: DCache
-      '{
-         idx: PeriphUart,
-         start_addr: UartAddrOffset,
-         end_addr: UartAddrOffset + UartAddrRange
-      },  // 2: UART
-      '{
-         idx: PeriphTimer,
-         start_addr: TimerAddrOffset,
-         end_addr: TimerAddrOffset + TimerAddrRange
-      }  // 3: Timer
-   };
-
-
-   // OBI is configured as 32 bit data, 32 bit address width
-   localparam int unsigned NumManagers = 1;  // core
-
-   // no optional bits in the OBI interconnect
-   `OBI_TYPEDEF_MINIMAL_A_OPTIONAL(a_optional_t)
-   `OBI_TYPEDEF_MINIMAL_R_OPTIONAL(r_optional_t)
-
-   // Create types for OBI managers/masters (from a manager into the interconnect)
-   localparam obi_pkg::obi_cfg_t MgrObiCfg = obi_pkg::obi_default_cfg(
-      32, 32, 1, obi_pkg::ObiMinimalOptionalConfig
-   );
-   `OBI_TYPEDEF_A_CHAN_T(mgr_obi_a_chan_t, MgrObiCfg.AddrWidth, MgrObiCfg.DataWidth,
-                         MgrObiCfg.IdWidth, a_optional_t)
-   `OBI_TYPEDEF_DEFAULT_REQ_T(mgr_obi_req_t, mgr_obi_a_chan_t)
-   `OBI_TYPEDEF_R_CHAN_T(mgr_obi_r_chan_t, MgrObiCfg.DataWidth, MgrObiCfg.IdWidth, r_optional_t)
-   `OBI_TYPEDEF_RSP_T(mgr_obi_rsp_t, mgr_obi_r_chan_t)
-
-   // Create types for OBI subordinates/slaves (out of the interconnect, into the device)
-   localparam obi_pkg::obi_cfg_t SbrObiCfg = obi_pkg::mux_grow_cfg(MgrObiCfg, NumManagers);
-   `OBI_TYPEDEF_A_CHAN_T(sbr_obi_a_chan_t, SbrObiCfg.AddrWidth, SbrObiCfg.DataWidth,
-                         SbrObiCfg.IdWidth, a_optional_t)
-   `OBI_TYPEDEF_DEFAULT_REQ_T(sbr_obi_req_t, sbr_obi_a_chan_t)
-   `OBI_TYPEDEF_R_CHAN_T(sbr_obi_r_chan_t, SbrObiCfg.DataWidth, SbrObiCfg.IdWidth, r_optional_t)
-   `OBI_TYPEDEF_RSP_T(sbr_obi_rsp_t, sbr_obi_r_chan_t)
-
-   // Register Interface configured as 32 bit data, 32 bit address width (4 byte enable bits)
-   // `REG_BUS_TYPEDEF_ALL(reg, logic[31:0], logic[31:0], logic[3:0]);
-
-   /////////////////////////////////
-
-   // Core data bus
-   mgr_obi_req_t core_data_obi_req;
-   mgr_obi_rsp_t core_data_obi_rsp;
-   assign core_data_obi_req.a.aid = '0;
-   assign core_data_obi_req.a.a_optional = '0;
-
-   /////////////////////////////////
 
    cv32e40p_top #(
       .FPU             (0),
@@ -171,7 +92,7 @@ module air_soc #(
       .scan_cg_en_i(1'b0),
 
       // Special control signals
-      .fetch_enable_i (1'b1),
+      .fetch_enable_i (1),
       .pulp_clock_en_i(1'b0),
       .core_sleep_o   (),
 
@@ -180,29 +101,29 @@ module air_soc #(
       .mtvec_addr_i       (32'h0000_0000),
       .dm_halt_addr_i     (32'h00000000),
       .dm_exception_addr_i(32'h00000000),
-      .hart_id_i          (HartId),
+      .hart_id_i          (32'b0),
 
       // Instruction memory interface
       .instr_addr_o  (instr_addr),
       .instr_req_o   (instr_req),
-      .instr_gnt_i   (instr_gnt & instr_req),
+      .instr_gnt_i   (instr_gnt),
       .instr_rvalid_i(instr_rvalid),
       .instr_rdata_i (instr_rdata),
 
       // Data memory interface
-      .data_req_o(core_data_obi_req.req),
-      .data_gnt_i(core_data_obi_rsp.gnt & core_data_obi_req.req),
-      .data_rvalid_i(core_data_obi_rsp.rvalid),
-      .data_we_o(core_data_obi_req.a.we),
-      .data_be_o(core_data_obi_req.a.be),
-      .data_addr_o(core_data_obi_req.a.addr),
-      .data_wdata_o(core_data_obi_req.a.wdata),
-      .data_rdata_i(core_data_obi_rsp.r.rdata),
+      .data_addr_o  (data_addr),
+      .data_req_o   (data_req),
+      .data_gnt_i   (data_gnt),
+      .data_we_o    (data_we),
+      .data_be_o    (data_be),
+      .data_wdata_o (data_wdata),
+      .data_rvalid_i(data_rvalid),
+      .data_rdata_i (data_rdata),
 
       // Interrupt interface
-      .irq_i    (0),
+      .irq_i                    (0), //({14'b0, timer_bus.irq, gpio_bus.irq, 16'b0}), //4'b0, 0, 3'b0, 0, 3'b0, 0, 3'b0}),
       .irq_ack_o(),
-      .irq_id_o (),
+      .irq_id_o(),
 
       // Debug interface
       .debug_req_i      (1'b0),
@@ -210,13 +131,6 @@ module air_soc #(
       .debug_running_o  (),
       .debug_halted_o   ()
    );
-
-   // instruction cache
-   logic             imem_req;
-   logic             imem_gnt;
-   logic [     31:0] imem_addr;
-   logic             imem_rvalid;
-   logic [MEM_W-1:0] imem_rdata;
 
    localparam int unsigned ICACHE_WAY_LEN = ICACHE_SZ / (ICACHE_LINE_W / 8) / 2;
 
@@ -252,14 +166,12 @@ module air_soc #(
    logic               dmem_gnt;
    logic [       31:0] dmem_addr;
    logic               dmem_we;
-   logic [MEM_W/8-1:0] dmem_be;
    logic [MEM_W  -1:0] dmem_wdata;
    logic               dmem_rvalid;
    logic               dmem_wvalid;
    logic [MEM_W  -1:0] dmem_rdata;
 
    localparam int unsigned DCACHE_WAY_LEN = DCACHE_SZ / (DCACHE_LINE_W / 8) / 2;
-
    cache #(
       .ADDR_BIT_W (32),
       .CPU_BYTE_W (MEM_W / 8),
@@ -271,15 +183,14 @@ module air_soc #(
       .rst_ni    (rst_ni),
       .hold_mem_i(1'b0),
 
-      // Data memory interface
-      .cpu_req_i(dcache_mem_obi_req.req),
-      .cpu_addr_i(dcache_mem_obi_req.a.addr),
-      .cpu_we_i(dcache_mem_obi_req.a.we),
-      .cpu_be_i(dcache_mem_obi_req.a.be),
-      .cpu_wdata_i(dcache_mem_obi_req.a.wdata),
-      .cpu_gnt_o(dcache_mem_obi_rsp.gnt),
-      .cpu_rvalid_o(dcache_mem_obi_rsp.rvalid),
-      .cpu_rdata_o(dcache_mem_obi_rsp.r.rdata),
+      .cpu_req_i   (cache_req),
+      .cpu_addr_i  (cache_addr),
+      .cpu_we_i    (cache_we),
+      .cpu_be_i    (cache_be),
+      .cpu_wdata_i (cache_wdata),
+      .cpu_gnt_o   (cache_gnt),
+      .cpu_rvalid_o(cache_rvalid),
+      .cpu_rdata_o (cache_rdata),
 
       .mem_req_o   (dmem_req),
       .mem_we_o    (dmem_we),
@@ -289,7 +200,8 @@ module air_soc #(
       .mem_rvalid_i(dmem_rvalid),
       .mem_rdata_i (dmem_rdata)
    );
-   assign dmem_be = '1;
+
+
 
    ///////////////////////////////////////////////////////////////////////////
    // MEMORY ARBITER
@@ -298,7 +210,7 @@ module air_soc #(
       mem_req   = imem_req | dmem_req;
       mem_addr  = imem_addr;
       mem_we    = 1'b0;
-      mem_be    = dmem_be;
+      mem_be    =  '1;
       mem_wdata = dmem_wdata;
       if (dmem_req) begin
          mem_we   = dmem_we;
@@ -338,7 +250,6 @@ module air_soc #(
          end
       end
    end
-
    assign imem_rvalid = mem_rvalid & ~req_sources[0];
    assign dmem_rvalid = mem_rvalid & req_sources[0] & ~req_write[0];
    assign dmem_wvalid = mem_rvalid & req_sources[0] & req_write[0];
@@ -364,96 +275,53 @@ module air_soc #(
       //.prog_mode_led_o(prog_mode_led_o)
    );
 
-
-   // -----------------
-   // Peripheral buses
-   // -----------------
-   sbr_obi_req_t [NumPeriphs-1:0] all_periph_obi_req;
-   sbr_obi_rsp_t [NumPeriphs-1:0] all_periph_obi_rsp;
-
-   // Error bus
-   sbr_obi_req_t error_obi_req;
-   sbr_obi_rsp_t error_obi_rsp;
-
-   // DCache mem bus
-   sbr_obi_req_t dcache_mem_obi_req;
-   sbr_obi_rsp_t dcache_mem_obi_rsp;
-
-   // SoC control bus
-   sbr_obi_req_t soc_ctrl_obi_req;
-   sbr_obi_rsp_t soc_ctrl_obi_rsp;
-
-   // UART periph bus
-   sbr_obi_req_t uart_obi_req;
-   sbr_obi_rsp_t uart_obi_rsp;
-
-   // Timer periph bus
-   sbr_obi_req_t timer_obi_req;
-   sbr_obi_rsp_t timer_obi_rsp;
-
-   assign dcache_mem_obi_req               = all_periph_obi_req[PeriphDCache];
-   assign all_periph_obi_rsp[PeriphDCache] = dcache_mem_obi_rsp;
-   assign uart_obi_req                     = all_periph_obi_req[PeriphUart];
-   assign all_periph_obi_rsp[PeriphUart]   = uart_obi_rsp;
-   assign timer_obi_req                    = all_periph_obi_req[PeriphTimer];
-   assign all_periph_obi_rsp[PeriphTimer]  = timer_obi_rsp;
-
-
-   // -----------------
-   // Peripherals
-   // -----------------
-
-   // demultiplex to peripherals according to address map
-   logic [cf_math_pkg::idx_width(NumPeriphs)-1:0] periph_idx;
-
-   addr_decode #(
-      .NoIndices(NumPeriphs),
-      .NoRules  (NumPeriphRules),
-      .addr_t   (logic [SbrObiCfg.DataWidth-1:0]),
-      .rule_t   (addr_map_rule_t)
-      // .Napot    (1'b0)
-   ) i_addr_decode_periphs (
-      .addr_i          (core_data_obi_req.a.addr),
-      .addr_map_i      (periph_addr_map),
-      .idx_o           (periph_idx),
-      .dec_valid_o     (),
-      .dec_error_o     (),
-      .en_default_idx_i(1'b1),
-      .default_idx_i   ('0)
-   );
-
-   obi_demux #(
-      .ObiCfg     (SbrObiCfg),
-      .obi_req_t  (sbr_obi_req_t),
-      .obi_rsp_t  (sbr_obi_rsp_t),
-      .NumMgrPorts(NumPeriphs),
-      .NumMaxTrans(1)
-   ) i_obi_demux (
-      .clk_i,
-      .rst_ni,
-
-      .sbr_port_select_i(periph_idx),
-      .sbr_port_req_i   (core_data_obi_req),
-      .sbr_port_rsp_o   (core_data_obi_rsp),
-
-      .mgr_ports_req_o(all_periph_obi_req),
-      .mgr_ports_rsp_i(all_periph_obi_rsp)
-   );
-
-
    uart_controller_obi #(
       .CLK_FREQ      (CLK_FREQ),
       .UART_BAUD_RATE(UART_BAUD_RATE)
    ) uart (
       .clk_i   (clk_i),
       .rst_ni  (rst_ni),
-      .req_i   (uart_obi_req.req),
-      .we_i    (uart_obi_req.a.we),
-      .addr_i  (uart_obi_req.a.addr),
-      .wdata_i (uart_obi_req.a.wdata),
-      .rvalid_o(uart_obi_rsp.rvalid),
-      .rdata_o (uart_obi_rsp.r.rdata),
+      .req_i   (uart_req),
+      .we_i    (uart_we),
+      .addr_i  (uart_addr),
+      .wdata_i (uart_wdata),
+      .rvalid_o(uart_rvalid),
+      .rdata_o (uart_rdata),
       .rx_i    (uart_rx_i),
       .tx_o    (uart_tx_o)
    );
+
+
+   obi_demux obi_demux_dut (
+      .clk_i (clk_i),
+      .rst_ni(rst_ni),
+
+      .data_req_i   (data_req),
+      .data_gnt_o   (data_gnt),
+      .data_rvalid_o(data_rvalid),
+      .data_we_i    (data_we),
+      .data_be_i    (data_be),
+      .data_addr_i  (data_addr),
+      .data_wdata_i (data_wdata),
+      .data_rdata_o (data_rdata),
+
+      .cache_req_o   (cache_req),
+      .cache_addr_o  (cache_addr),
+      .cache_we_o    (cache_we),
+      .cache_be_o    (cache_be),
+      .cache_wdata_o (cache_wdata),
+      .cache_gnt_i   (cache_gnt),
+      .cache_rvalid_i(cache_rvalid),
+      .cache_rdata_i (cache_rdata),
+
+      .uart_req_o   (uart_req),
+      .uart_addr_o  (uart_addr),
+      .uart_we_o    (uart_we),
+      .uart_be_o    (uart_be),
+      .uart_wdata_o (uart_wdata),
+      .uart_gnt_i   (uart_gnt),
+      .uart_rvalid_i(uart_rvalid),
+      .uart_rdata_i (uart_rdata)
+   );
+
 endmodule

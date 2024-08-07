@@ -1,7 +1,7 @@
 #include "uart.h"
 
-static volatile long* const uart_data = (volatile long* const)0x03000000;
-static volatile long* const uart_status = (volatile long* const)0x03000004;
+static volatile long* const uart_data = (volatile long* const)0x10000000;
+static volatile long* const uart_status = (volatile long* const)0x10000004;
 
 void uart_putc(char c)
 {
