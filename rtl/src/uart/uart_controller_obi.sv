@@ -1,115 +1,148 @@
+// uart.sv
+`timescale 1ns / 1ps
+//
+`default_nettype none
 
-module uart_controller_obi #(
-   parameter int unsigned CLK_FREQ       = 50_000_000,
-   parameter int unsigned UART_BAUD_RATE = 115200
-) (
-   input  logic        clk_i,
-   input  logic        rst_ni,
-   input  logic        req_i,
-   input  logic        we_i,
-   output logic        gnt_o,
-   input  logic [15:0] addr_i,
-   input  logic [31:0] wdata_i,
-   output logic        rvalid_o,
-   output logic [31:0] rdata_o,
+module uart_controller_obi (
+   input wire       clk_i,
+   input wire       rst_ni,
+   input wire       req_i,
+   input wire       we_i,
+   input wire [3:0] be_i,
 
-   input  logic rx_i,
-   output logic tx_o
+   output wire        gnt_o,
+   input  wire [31:0] addr_i,
+   input  wire [31:0] wdata_i,
+   output wire        rvalid_o,
+   output wire [31:0] rdata_o,
+
+   input  wire rx_i,
+   output wire tx_o
 );
 
-   wire busy;
-   uart_iface #(
-      .CLK_FREQ (CLK_FREQ),
-      .BAUD_RATE(UART_BAUD_RATE)
-   ) uart (
-      .clk_i   (clk_i),
-      .rst_ni  (rst_ni),
-      .we_i    (req_i && we_i),
-      .wdata_i (wdata_i[7:0]),
-      .wbusy_o (busy),
-      .read_i  (req_i && !we_i),
-      .rvalid_o(rvalid_o),
-      .rdata_o (rdata_o),
+   wire ack;
+   uart_iface uart_iface_dut (
+      .clk_i(clk_i),
+      .rst_i(!rst_ni),
 
-      .rx_i(rx_i),
-      .tx_o(tx_o)
+      .wb_adr_i(addr_i),
+      .wb_dat_i(wdata_i),
+      .wb_we_i (we_i),
+
+      .wb_stb_i(req_i),
+      .wb_sel_i(be_i),
+      .wb_cyc_i(req_i),
+      .wb_ack_o(ack),
+
+      .wb_dat_o(rdata_o),
+
+      .uart_rx_i(rx_i),
+      .uart_tx_o(tx_o)
    );
 
-   assign gnt_o = !busy;
-   assign uart_req = req_i;
+   assign gnt_o = ack;
+   assign rvalid_o = ack;
 
 endmodule
 
 
-module uart_iface #(
-   parameter int unsigned CLK_FREQ  = 50_000_000,
-   parameter int unsigned BAUD_RATE = 115200
-) (
-   input logic clk_i,
-   input logic rst_ni,
+module uart_iface (
+   input  wire        clk_i,
+   input  wire        rst_i,
+   input  wire [31:0] wb_adr_i,
+   input  wire [31:0] wb_dat_i,
+   input  wire        wb_we_i,
+   input  wire        wb_stb_i,
+   input  wire [ 3:0] wb_sel_i,
+   input  wire        wb_cyc_i,
+   output reg         wb_ack_o,
+   output reg  [31:0] wb_dat_o,
 
-   input  logic       we_i,
-   input  logic [7:0] wdata_i,
-   output logic       wbusy_o,
-   input  logic       read_i,
-   output logic       rvalid_o,
-   output logic [7:0] rdata_o,
-
-   input  logic rx_i,
-   output logic tx_o
+   input  wire uart_rx_i,
+   output wire uart_tx_o
 );
+   reg [15:0] baud_div;
 
-   localparam UART_RX_QUEUE_LEN = 8;
+   wire real_addr = wb_adr_i[3:2];
 
-   logic tx_ready;
-   uart_tx #(
-      .DATA_WIDTH(8),
-      .BAUD_RATE (BAUD_RATE),
-      .CLK_FREQ  (CLK_FREQ)
-   ) tx_inst (
-      .clk_i  (clk_i),
-      .rst_ni (rst_ni),
-      .valid_i(we_i),
-      .data_i (wdata_i),
-      .ready_o(tx_ready),
-      .tx_o   (tx_o)
-   );
-   assign wbusy_o = ~tx_ready;
+   reg tx_en;
+   reg tx_we;
+   wire tx_full;
+   wire tx_empty;
 
-   logic       rx_valid;
-   logic [7:0] rx_data;
-   uart_rx #(
-      .DATA_WIDTH(8),
-      .BAUD_RATE (BAUD_RATE),
-      .CLK_FREQ  (CLK_FREQ)
-   ) rx_inst (
-      .clk_i  (clk_i),
-      .rst_ni (rst_ni),
-      .rx_i   (rx_i),
-      .ready_i(1'b1),
-      .valid_o(rx_valid),
-      .data_o (rx_data)
+   reg rx_en;
+   reg rx_re;
+   wire rx_full;
+   wire rx_empty;
+   wire [7:0] rx_data;
+
+   uart_tx uart_tx_dut (
+      .clk_i     (clk_i),
+      .rst_i     (rst_i),
+      .baud_div_i(baud_div),
+      .we_i      (tx_we),
+      .stall_i   (~tx_en),
+      .data_i    (wb_dat_i[7:0]),
+      .full_o    (tx_full),
+      .empty_o   (tx_empty),
+      .tx_o      (uart_tx_o)
    );
 
-   logic       rvalid[UART_RX_QUEUE_LEN-1:0] = '{default: 0};
-   logic [7:0] rdata [UART_RX_QUEUE_LEN-1:0] = '{default: 0};
+   uart_rx uart_rx_dut (
+      .clk_i     (clk_i),
+      .rst_i     (rst_i),
+      .baud_div_i(baud_div),
+      .re_i      (rx_re),
+      .stall_i   (~rx_en),
+      .data_o    (rx_data),
+      .full_o    (rx_full),
+      .empty_o   (rx_empty),
+      .rx_i      (uart_rx_i)
+   );
 
-   always_ff @(posedge clk_i) begin
-      if (rvalid[0] == 0) begin
-         for (int i = 0; i < UART_RX_QUEUE_LEN - 1; i++) begin
-            rvalid[i] <= rvalid[i+1];
-            rdata[i]  <= rdata[i+1];
+
+   always @(posedge clk_i) begin
+      if (rst_i) begin
+         wb_ack_o <= 1'b0;
+         baud_div <= 16'b0;
+         rx_en    <= 1'b0;
+         tx_en    <= 1'b0;
+         rx_re    <= 1'b0;
+         tx_we    <= 1'b0;
+      end else begin
+         rx_re <= 1'b0;
+         tx_we <= 1'b0;
+         if (wb_cyc_i) begin
+            wb_ack_o <= wb_stb_i & !wb_ack_o; // butun islemler 1 cycle surer ve ack sinyali cyc'dan hemen sonra gonderilir.
+            case (real_addr)
+               2'h0: begin
+                  if (wb_stb_i & wb_we_i & !wb_ack_o) begin  // SB,SH,SW buyruklarini destekle
+                     tx_en    <= wb_sel_i[0] ? wb_dat_i[0] : tx_en;
+                     rx_en    <= wb_sel_i[0] ? wb_dat_i[1] : rx_en;
+                     baud_div <= (&wb_sel_i[3:2]) ? wb_dat_i[31:16] : baud_div;
+                  end
+                  wb_dat_o <= {baud_div, 14'b0, rx_en, tx_en};
+               end
+               2'h1: begin
+                  wb_dat_o <= {28'b0, rx_empty, rx_full, tx_empty, tx_full};
+               end
+               2'h2: begin
+                  if (wb_stb_i & !wb_ack_o) begin
+                     if (~rx_empty) begin
+                        wb_dat_o <= {24'b0, rx_data};
+                        rx_re <= 1'b1;
+                     end
+                  end
+               end
+               2'h3: begin
+                  if (wb_stb_i & wb_we_i & !wb_ack_o) begin
+                     if (~tx_full) begin
+                        tx_we <= wb_sel_i[0] ? 1'b1 : 1'b0;
+                     end
+                  end
+               end
+            endcase
          end
-         rvalid[UART_RX_QUEUE_LEN-1] <= 0;
       end
-
-      if (rx_valid) begin
-         rvalid[UART_RX_QUEUE_LEN-1] <= 1;
-         rdata[UART_RX_QUEUE_LEN-1]  <= rx_data;
-      end
-      if (rvalid[0] && read_i) rvalid[0] <= 0;
    end
-
-   assign rvalid_o = rvalid[0];
-   assign rdata_o  = rdata[0];
 endmodule

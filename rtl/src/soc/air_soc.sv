@@ -275,10 +275,7 @@ module air_soc #(
       //.prog_mode_led_o(prog_mode_led_o)
    );
 
-   uart_controller_obi #(
-      .CLK_FREQ      (CLK_FREQ),
-      .UART_BAUD_RATE(UART_BAUD_RATE)
-   ) uart (
+   uart_controller_obi uart (
       .clk_i   (clk_i),
       .rst_ni  (rst_ni),
       .req_i   (uart_req),

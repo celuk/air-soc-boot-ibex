@@ -1,197 +1,119 @@
-/*
- The MIT License (MIT)
-
- Copyright (c) 2019 Yuya Kudo.
-
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
-*/
+// uart_verici.v
+`timescale 1ns / 1ps
 
 
-module uart_rx #(
-        parameter DATA_WIDTH = 8,
-        parameter BAUD_RATE  = 115200,
-        parameter CLK_FREQ   = 100_000_000
-    )
-    (
-        input  logic                  clk_i,
-        input  logic                  rst_ni,
+// RX paketleri circuilar bir queue ya konulur.
+module uart_rx (
+   input  wire        clk_i,
+   input  wire        rst_i,
+   input  wire [15:0] baud_div_i,
+   input  wire        re_i,
+   input  wire        stall_i,
+   output wire [ 7:0] data_o,
+   output wire        full_o,
+   output wire        empty_o,
+   input  wire        rx_i
+);
 
-        input  logic                  rx_i,
-        input  logic                  ready_i,
-        output logic                  valid_o,
-        output logic [DATA_WIDTH-1:0] data_o
-    );
+   reg [3:0] state;
+   reg [3:0] next;
 
-    localparam LB_DATA_WIDTH    = $clog2(DATA_WIDTH);
-    localparam PULSE_WIDTH      = CLK_FREQ / BAUD_RATE;
-    localparam LB_PULSE_WIDTH   = $clog2(PULSE_WIDTH);
-    localparam HALF_PULSE_WIDTH = PULSE_WIDTH / 2;
+   localparam IDLE      = 4'd0,
+              START_BIT = 4'd1,
+              DATA_0    = 4'd2,
+              DATA_1    = 4'd3,
+              DATA_2    = 4'd4,
+              DATA_3    = 4'd5,
+              DATA_4    = 4'd6,
+              DATA_5    = 4'd7,
+              DATA_6    = 4'd8,
+              DATA_7    = 4'd9,
+              STOP_BIT  = 4'd10;
 
-    //-----------------------------------------------------------------------------
-    // noise removing filter
-    function majority5(input [4:0] val);
-       case(val)
-         5'b00000: majority5 = 0;
-         5'b00001: majority5 = 0;
-         5'b00010: majority5 = 0;
-         5'b00100: majority5 = 0;
-         5'b01000: majority5 = 0;
-         5'b10000: majority5 = 0;
-         5'b00011: majority5 = 0;
-         5'b00101: majority5 = 0;
-         5'b01001: majority5 = 0;
-         5'b10001: majority5 = 0;
-         5'b00110: majority5 = 0;
-         5'b01010: majority5 = 0;
-         5'b10010: majority5 = 0;
-         5'b01100: majority5 = 0;
-         5'b10100: majority5 = 0;
-         5'b11000: majority5 = 0;
-         default:  majority5 = 1;
-       endcase
-    endfunction
+   reg  [ 7:0] queue                [31:0];
+   reg  [ 4:0] read_ptr;
+   reg  [ 4:0] write_ptr;
+   reg  [15:0] counter;
+   reg         uart_clk_pulse;
 
-    //-----------------------------------------------------------------------------
-    // description about input signal
-    logic [1:0] sampling_cnt;
-    logic [4:0] sig_q;
-    logic       sig_r;
+   wire [ 4:0] limit = read_ptr - 1;
+   assign full_o  = (limit == write_ptr);
+   assign empty_o = (read_ptr == write_ptr);
+   assign data_o  = queue[read_ptr];
 
-    always_ff @(posedge clk_i) begin
-       if(!rst_ni) begin
-          sampling_cnt <= 0;
-          sig_q        <= 5'b11111;
-          sig_r        <= 1;
-       end
-       else begin
-          // connect to deserializer after removing noise
-          if(sampling_cnt == 0) begin
-             sig_q <= {rx_i, sig_q[4:1]};
-          end
+   reg [3:0] start_pattern;
+   reg       start_r;
 
-          sig_r        <= majority5(sig_q);
-          sampling_cnt <= sampling_cnt + 1;
-       end
-    end
+   always @(posedge clk_i) begin
+      if (rst_i) state <= IDLE;
+      else if (uart_clk_pulse) state <= next;
 
-    //----------------------------------------------------------------
-    // description about receive UART signal
-    typedef enum logic [1:0] {STT_DATA,
-                              STT_STOP,
-                              STT_WAIT
-                              } statetype;
-
-    statetype                 state;
-
-    logic [DATA_WIDTH-1:0]   data_tmp_r;
-    logic [LB_DATA_WIDTH:0]  data_cnt;
-    logic [LB_PULSE_WIDTH:0] clk_cnt;
-    logic                    rx_done;
-
-    always_ff @(posedge clk_i) begin
-       if(!rst_ni) begin
-          state      <= STT_WAIT;
-          data_tmp_r <= 0;
-          data_cnt   <= 0;
-          clk_cnt    <= 0;
-       end
-       else begin
-
-          //-----------------------------------------------------------------------------
-          // 3-state FSM
-          case(state)
-
-            //-----------------------------------------------------------------------------
-            // state      : STT_DATA
-            // behavior   : deserialize and recieve data
-            // next state : when all data have recieved -> STT_STOP
-            STT_DATA: begin
-               if(0 < clk_cnt) begin
-                  clk_cnt <= clk_cnt - 1;
-               end
-               else begin
-                  data_tmp_r <= {sig_r, data_tmp_r[DATA_WIDTH-1:1]};
-                  clk_cnt    <= PULSE_WIDTH;
-
-                  if(data_cnt == DATA_WIDTH - 1) begin
-                     state <= STT_STOP;
-                  end
-                  else begin
-                     data_cnt <= data_cnt + 1;
-                  end
-               end
+      if (rst_i) begin
+         read_ptr       <= 0;
+         write_ptr      <= 0;
+         counter        <= 0;
+         uart_clk_pulse <= 0;
+         start_pattern  <= 0;
+         start_r        <= 0;
+      end else begin
+         if (re_i) begin
+            read_ptr <= read_ptr + 1;
+         end
+         if (uart_clk_pulse) begin
+            if ((state == STOP_BIT) && (next == IDLE)) begin
+               write_ptr <= write_ptr + 1;
+               start_r   <= 1'b0;
             end
+         end
+         if (counter == baud_div_i) begin
+            counter        <= 0;
+            uart_clk_pulse <= 1'b1;
+         end else begin
+            if (start_r) counter <= counter + 1;
+            uart_clk_pulse <= 1'b0;
+         end
+         start_pattern <= {start_pattern[2:0], rx_i};
+      end
+      if (start_pattern == 4'b1100) begin
+         start_r <= 1'b1;
+         if (~start_r) begin
+            uart_clk_pulse <= 1'b1;
+            counter <= baud_div_i;
+         end
+      end
+   end
 
-            //-----------------------------------------------------------------------------
-            // state      : STT_STOP
-            // behavior   : watch stop bit
-            // next state : STT_WAIT
-            STT_STOP: begin
-               if(0 < clk_cnt) begin
-                  clk_cnt <= clk_cnt - 1;
-               end
-               else if(sig_r) begin
-                  state <= STT_WAIT;
-               end
-            end
-
-            //-----------------------------------------------------------------------------
-            // state      : STT_WAIT
-            // behavior   : watch start bit
-            // next state : when start bit is observed -> STT_DATA
-            STT_WAIT: begin
-               if(sig_r == 0) begin
-                  clk_cnt  <= PULSE_WIDTH + HALF_PULSE_WIDTH;
-                  data_cnt <= 0;
-                  state    <= STT_DATA;
-               end
-            end
-
+   always @(*) begin
+      case (state)
+         IDLE:      if (start_r && ~stall_i) next = START_BIT;
+ else next = IDLE;
+         START_BIT: next = DATA_0;
+         DATA_0:    next = DATA_1;
+         DATA_1:    next = DATA_2;
+         DATA_2:    next = DATA_3;
+         DATA_3:    next = DATA_4;
+         DATA_4:    next = DATA_5;
+         DATA_5:    next = DATA_6;
+         DATA_6:    next = DATA_7;
+         DATA_7:    next = STOP_BIT;
+         STOP_BIT:  next = IDLE;
+         default:   next = IDLE;
+      endcase
+   end
+   always @(posedge clk_i) begin
+      if (uart_clk_pulse) begin
+         case (state)
+            DATA_0: queue[write_ptr][0] <= rx_i;
+            DATA_1: queue[write_ptr][1] <= rx_i;
+            DATA_2: queue[write_ptr][2] <= rx_i;
+            DATA_3: queue[write_ptr][3] <= rx_i;
+            DATA_4: queue[write_ptr][4] <= rx_i;
+            DATA_5: queue[write_ptr][5] <= rx_i;
+            DATA_6: queue[write_ptr][6] <= rx_i;
+            DATA_7: queue[write_ptr][7] <= rx_i;
             default: begin
-               state <= STT_WAIT;
             end
-          endcase
-       end
-    end
-
-    assign rx_done = (state == STT_STOP) && (clk_cnt == 0);
-
-    //-----------------------------------------------------------------------------
-    // description about output signal
-    logic [DATA_WIDTH-1:0] data_r;
-    logic                  valid_r;
-
-    always_ff @(posedge clk_i) begin
-       if(!rst_ni) begin
-          data_r  <= 0;
-          valid_r <= 0;
-       end
-       else if(rx_done && !valid_r) begin
-          valid_r <= 1;
-          data_r  <= data_tmp_r;
-       end
-       else if(valid_r && ready_i) begin
-          valid_r <= 0;
-       end
-    end
-
-    assign data_o  = data_r;
-    assign valid_o = valid_r;
-
+         endcase
+      end
+   end
 endmodule

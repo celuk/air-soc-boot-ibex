@@ -1,141 +1,106 @@
-/*
- The MIT License (MIT)
-
- Copyright (c) 2019 Yuya Kudo.
-
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
-*/
+// uart_verici.v
+`timescale 1ns / 1ps
 
 
-module uart_tx #(
-        parameter DATA_WIDTH = 8,
-        parameter BAUD_RATE  = 115200,
-        parameter CLK_FREQ   = 100_000_000
-    )
-    (
-        input  logic                  clk_i,
-        input  logic                  rst_ni,
+// 1 bit start bit 8 veri bit no parity ve 1 stop bit
+// gonderme circular queue araciligi ile yapilir.
+module uart_tx (
+   input  wire        clk_i,
+   input  wire        rst_i,
+   input  wire [15:0] baud_div_i,
+   input  wire        we_i,
+   input  wire        stall_i,
+   input  wire [ 7:0] data_i,
+   output wire        full_o,
+   output wire        empty_o,
+   output reg         tx_o
+);
 
-        input  logic                  valid_i,
-        input  logic [DATA_WIDTH-1:0] data_i,
-        output logic                  ready_o,
-        output logic                  tx_o
-    );
+   reg [4:0] state;
+   reg [4:0] next;
 
-    localparam LB_DATA_WIDTH    = $clog2(DATA_WIDTH);
-    localparam PULSE_WIDTH      = CLK_FREQ / BAUD_RATE;
-    localparam LB_PULSE_WIDTH   = $clog2(PULSE_WIDTH);
-    localparam HALF_PULSE_WIDTH = PULSE_WIDTH / 2;
+   localparam IDLE       = 5'd0,
+              START_BIT  = 5'd1,
+              DATA_0     = 5'd2,
+              DATA_1     = 5'd3,
+              DATA_2     = 5'd4,
+              DATA_3     = 5'd5,
+              DATA_4     = 5'd6,
+              DATA_5     = 5'd7,
+              DATA_6     = 5'd8,
+              DATA_7     = 5'd9,
+              STOP_BIT0  = 5'd10;
 
-    typedef enum logic [1:0] {STT_DATA,
-                              STT_STOP,
-                              STT_WAIT
-                              } statetype;
+   reg  [ 7:0] queue                [31:0];
 
-    statetype                 state;
+   reg  [ 4:0] read_ptr;
+   reg  [ 4:0] write_ptr;
+   wire [ 4:0] limit = read_ptr - 1;
 
-    logic [DATA_WIDTH-1:0]     data_r;
-    logic                      sig_r;
-    logic                      ready_r;
-    logic [LB_DATA_WIDTH-1:0]  data_cnt;
-    logic [LB_PULSE_WIDTH:0]   clk_cnt;
+   reg  [15:0] counter;
+   reg         uart_clk_pulse;
 
-    always_ff @(posedge clk_i) begin
-       if(!rst_ni) begin
-          state    <= STT_WAIT;
-          sig_r    <= 1;
-          data_r   <= 0;
-          ready_r  <= 1;
-          data_cnt <= 0;
-          clk_cnt  <= 0;
-       end
-       else begin
+   assign full_o  = (limit == write_ptr);
+   assign empty_o = (read_ptr == write_ptr);
 
-          //-----------------------------------------------------------------------------
-          // 3-state FSM
-          case(state)
+   always @(posedge clk_i) begin
+      if (rst_i) state <= IDLE;
+      else if (uart_clk_pulse) state <= next;
 
-            //-----------------------------------------------------------------------------
-            // state      : STT_DATA
-            // behavior   : serialize and transmit data
-            // next state : when all data have transmited -> STT_STOP
-            STT_DATA: begin
-               if(0 < clk_cnt) begin
-                  clk_cnt <= clk_cnt - 1;
-               end
-               else begin
-                  sig_r   <= data_r[data_cnt];
-                  clk_cnt <= PULSE_WIDTH;
+      if (rst_i) begin
+         read_ptr       <= 0;
+         write_ptr      <= 0;
+         counter        <= 0;
+         uart_clk_pulse <= 0;
+      end else begin
+         if (we_i) begin
+            write_ptr        <= write_ptr + 1;
+            queue[write_ptr] <= data_i;
+         end
+         if (uart_clk_pulse) begin
+            if ((state == STOP_BIT0) && (next == IDLE)) read_ptr <= read_ptr + 1;
+         end
+         if (counter == baud_div_i) begin
+            counter        <= 0;
+            uart_clk_pulse <= 1'b1;
+         end else begin
+            counter <= counter + 1;
+            uart_clk_pulse <= 1'b0;
+         end
+      end
+   end
 
-                  if(data_cnt == DATA_WIDTH - 1) begin
-                     state <= STT_STOP;
-                  end
-                  else begin
-                     data_cnt <= data_cnt + 1;
-                  end
-               end
-            end
-
-            //-----------------------------------------------------------------------------
-            // state      : STT_STOP
-            // behavior   : assert stop bit
-            // next state : STT_WAIT
-            STT_STOP: begin
-               if(0 < clk_cnt) begin
-                  clk_cnt <= clk_cnt - 1;
-               end
-               else begin
-                  state   <= STT_WAIT;
-                  sig_r   <= 1;
-                  clk_cnt <= PULSE_WIDTH + HALF_PULSE_WIDTH;
-               end
-            end
-
-            //-----------------------------------------------------------------------------
-            // state      : STT_WAIT
-            // behavior   : watch valid signal, and assert start bit when valid signal assert
-            // next state : when valid signal assert -> STT_STAT
-            STT_WAIT: begin
-               if(0 < clk_cnt) begin
-                  clk_cnt <= clk_cnt - 1;
-               end
-               else if(!ready_r) begin
-                  ready_r <= 1;
-               end
-               else if(valid_i) begin
-                  state    <= STT_DATA;
-                  sig_r    <= 0;
-                  data_r   <= data_i;
-                  ready_r  <= 0;
-                  data_cnt <= 0;
-                  clk_cnt  <= PULSE_WIDTH;
-               end
-            end
-
-            default: begin
-               state <= STT_WAIT;
-            end
-          endcase
-       end
-    end
-
-    assign tx_o    = sig_r;
-    assign ready_o = ready_r;
-
+   always @(*) begin
+      case (state)
+         IDLE:      if (~empty_o && ~stall_i) next = START_BIT;
+ else next = IDLE;
+         START_BIT: next = DATA_0;
+         DATA_0:    next = DATA_1;
+         DATA_1:    next = DATA_2;
+         DATA_2:    next = DATA_3;
+         DATA_3:    next = DATA_4;
+         DATA_4:    next = DATA_5;
+         DATA_5:    next = DATA_6;
+         DATA_6:    next = DATA_7;
+         DATA_7:    next = STOP_BIT0;
+         STOP_BIT0: next = IDLE;
+         default:   next = IDLE;
+      endcase
+   end
+   always @(*) begin
+      case (state)
+         IDLE:      tx_o = 1'b1;
+         START_BIT: tx_o = 1'b0;
+         DATA_0:    tx_o = queue[read_ptr][0];
+         DATA_1:    tx_o = queue[read_ptr][1];
+         DATA_2:    tx_o = queue[read_ptr][2];
+         DATA_3:    tx_o = queue[read_ptr][3];
+         DATA_4:    tx_o = queue[read_ptr][4];
+         DATA_5:    tx_o = queue[read_ptr][5];
+         DATA_6:    tx_o = queue[read_ptr][6];
+         DATA_7:    tx_o = queue[read_ptr][7];
+         STOP_BIT0: tx_o = 1'b1;
+         default:   tx_o = 1'b1;
+      endcase
+   end
 endmodule
