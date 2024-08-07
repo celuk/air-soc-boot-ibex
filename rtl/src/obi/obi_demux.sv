@@ -39,10 +39,12 @@ module obi_demux (
    input  wire [31:0] uart_rdata_i
 );
 
-   localparam [31:0] MEM_BASE_ADDR = 32'h0000_0000;
-   localparam [31:0] MEM_RANGE = 32'h0008_0000;
-   localparam [31:0] UART_BASE_ADDR = 32'h1000_0000;
-   localparam [31:0] UART_RANGE = 32'h0008_0000;
+   // verilog_format: off
+   localparam [31:0] MEM_BASE_ADDR  = 32'h0000_0000;
+   localparam [31:0] UART_BASE_ADDR = 32'h2000_0000;
+   localparam [31:0] MEM_RANGE  = 32'h0008_0000;
+   localparam [31:0] UART_RANGE = 32'h0001_0000;
+   // verilog_format: on
 
    reg         data_req;
    reg         data_we;
