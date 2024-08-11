@@ -142,7 +142,8 @@ module periph_bus(
       .qspi_data_i(qspi_miso_i),
       .qspi_data_o(qspi_mosi_o),
       .qspi_cs_o(qspi_cs_o),
-      .qspi_sck_o(qspi_sck_o)
+      .qspi_sck_o(qspi_sck_o),
+      .qspi_out_mod_o(qspi_out_mod_o)
    );
 
    timer_controller timer_controller_dut (
