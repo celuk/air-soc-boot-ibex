@@ -1,8 +1,9 @@
 // air_soc.sv
 `timescale 1ns / 1ps
-//
-`default_nettype none
 
+`include "header.vh"
+
+`default_nettype none
 
 module obi_demux (
    input wire clk_i,
@@ -28,23 +29,16 @@ module obi_demux (
    input  wire        cache_rvalid_i,
    input  wire [31:0] cache_rdata_i,
 
-   // UART interface
-   output wire        uart_req_o,
-   output wire [31:0] uart_addr_o,
-   output wire        uart_we_o,
-   output wire [ 3:0] uart_be_o,
-   output wire [31:0] uart_wdata_o,
-   input  wire        uart_gnt_i,
-   input  wire        uart_rvalid_i,
-   input  wire [31:0] uart_rdata_i
+   // Peripheral interface
+   output wire        periph_req_o,
+   output wire [31:0] periph_addr_o,
+   output wire        periph_we_o,
+   output wire [ 3:0] periph_be_o,
+   output wire [31:0] periph_wdata_o,
+   input  wire        periph_gnt_i,
+   input  wire        periph_rvalid_i,
+   input  wire [31:0] periph_rdata_i
 );
-
-   // verilog_format: off
-   localparam [31:0] MEM_BASE_ADDR  = 32'h0000_0000;
-   localparam [31:0] UART_BASE_ADDR = 32'h2000_0000;
-   localparam [31:0] MEM_RANGE  = 32'h0008_0000;
-   localparam [31:0] UART_RANGE = 32'h0001_0000;
-   // verilog_format: on
 
    reg         data_req;
    reg         data_we;
@@ -58,7 +52,7 @@ module obi_demux (
       ZZZZZ,
       ERROR,
       CACHE,
-      UART
+      PERIPH
    } selected_periph_t;
 
    typedef enum {
@@ -70,31 +64,29 @@ module obi_demux (
    selected_periph_t periph;
 
    assign cache_addr_o = data_addr;
-   assign uart_addr_o = data_addr;
+   assign periph_addr_o = data_addr;
 
    assign cache_wdata_o = data_wdata;
-   assign uart_wdata_o = data_wdata;
+   assign periph_wdata_o = data_wdata;
 
-   assign cache_req_o = (MEM_BASE_ADDR + MEM_RANGE > data_addr) && (data_addr >= MEM_BASE_ADDR) ? data_req : 'h0;
-   assign cache_we_o =  (MEM_BASE_ADDR + MEM_RANGE > data_addr) && (data_addr >= MEM_BASE_ADDR) ? data_we : 'h0;
-   assign cache_be_o =  (MEM_BASE_ADDR + MEM_RANGE > data_addr) && (data_addr >= MEM_BASE_ADDR) ? data_be : 'h0;
+   assign cache_req_o = (`MEM_BASE_ADDR + `MEM_RANGE > data_addr) && (data_addr >= `MEM_BASE_ADDR) ? data_req : 'h0;
+   assign cache_we_o =  (`MEM_BASE_ADDR + `MEM_RANGE > data_addr) && (data_addr >= `MEM_BASE_ADDR) ? data_we : 'h0;
+   assign cache_be_o =  (`MEM_BASE_ADDR + `MEM_RANGE > data_addr) && (data_addr >= `MEM_BASE_ADDR) ? data_be : 'h0;
 
-   assign uart_req_o = (UART_BASE_ADDR + UART_RANGE > data_addr) && (data_addr >= UART_BASE_ADDR) ? data_req : 'h0;
-   assign uart_we_o = (UART_BASE_ADDR + UART_RANGE > data_addr ) && (data_addr >= UART_BASE_ADDR) ? data_we : 'h0;
-   assign uart_be_o = (UART_BASE_ADDR + UART_RANGE > data_addr ) && (data_addr >= UART_BASE_ADDR) ? data_be : 'h0;
+   assign periph_req_o = (`PERIPH_BASE_ADDR + `PERIPH_RANGE > data_addr) &&  (data_addr >= `PERIPH_BASE_ADDR) ? data_req : 'h0;
+   assign periph_we_o =  (`PERIPH_BASE_ADDR + `PERIPH_RANGE > data_addr ) && (data_addr >= `PERIPH_BASE_ADDR) ? data_we : 'h0;
+   assign periph_be_o =  (`PERIPH_BASE_ADDR + `PERIPH_RANGE > data_addr ) && (data_addr >= `PERIPH_BASE_ADDR) ? data_be : 'h0;
 
-
-
-   assign data_rdata_o = (MEM_BASE_ADDR+MEM_RANGE   > data_addr) && (data_addr >= MEM_BASE_ADDR ) ? cache_rdata_i :
-                         (UART_BASE_ADDR+UART_RANGE > data_addr) && (data_addr >= UART_BASE_ADDR) ? uart_rdata_i  :
+   assign data_rdata_o = (`MEM_BASE_ADDR + `MEM_RANGE   > data_addr) && (data_addr >= `MEM_BASE_ADDR ) ? cache_rdata_i :
+                         (`PERIPH_BASE_ADDR + `PERIPH_RANGE > data_addr) && (data_addr >= `PERIPH_BASE_ADDR) ? periph_rdata_i  :
                                                                                                     32'h0         ;
 
-   assign data_rvalid_o= (MEM_BASE_ADDR+MEM_RANGE   >= data_addr) && (data_addr >= MEM_BASE_ADDR ) ? cache_rvalid_i :
-                         (UART_BASE_ADDR+UART_RANGE >= data_addr) && (data_addr >= UART_BASE_ADDR) ? uart_rvalid_i  :
+   assign data_rvalid_o= (`MEM_BASE_ADDR + `MEM_RANGE   >= data_addr) && (data_addr >= `MEM_BASE_ADDR ) ? cache_rvalid_i :
+                         (`PERIPH_BASE_ADDR + `PERIPH_RANGE >= data_addr) && (data_addr >= `PERIPH_BASE_ADDR) ? periph_rvalid_i  :
                                                                                                       32'h0         ;
 
-   assign periph_gnt   = (MEM_BASE_ADDR+MEM_RANGE   > data_addr) && (data_addr >= MEM_BASE_ADDR ) ? cache_gnt_i :
-                         (UART_BASE_ADDR+UART_RANGE > data_addr) && (data_addr >= UART_BASE_ADDR) ? uart_gnt_i  :
+   assign periph_gnt   = (`MEM_BASE_ADDR + `MEM_RANGE   > data_addr) && (data_addr >= `MEM_BASE_ADDR ) ? cache_gnt_i :
+                         (`PERIPH_BASE_ADDR + `PERIPH_RANGE > data_addr) && (data_addr >= `PERIPH_BASE_ADDR) ? periph_gnt_i  :
                                                                                                       'h0       ;
 
    assign data_gnt_o = (state == IDLE) & periph_gnt;
@@ -136,8 +128,8 @@ module obi_demux (
             end
          endcase
 
-         periph  <= (MEM_BASE_ADDR+MEM_RANGE   > data_addr) && (data_addr >= MEM_BASE_ADDR ) ? CACHE :
-                    (UART_BASE_ADDR+UART_RANGE > data_addr) && (data_addr >= UART_BASE_ADDR) ? UART  :
+         periph  <= (`MEM_BASE_ADDR + `MEM_RANGE   > data_addr) && (data_addr >= `MEM_BASE_ADDR ) ? CACHE :
+                    (`PERIPH_BASE_ADDR + `PERIPH_RANGE > data_addr) && (data_addr >= `PERIPH_BASE_ADDR) ? PERIPH  :
                                                                                                ERROR ;
       end
    end

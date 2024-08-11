@@ -56,14 +56,14 @@ module air_soc #(
    logic               cache_rvalid;
    logic [MEM_W  -1:0] cache_rdata;
 
-   logic               uart_req;
-   logic [       31:0] uart_addr;
-   logic               uart_we;
-   logic [MEM_W/8-1:0] uart_be;
-   logic [MEM_W  -1:0] uart_wdata;
-   logic               uart_gnt;
-   logic               uart_rvalid;
-   logic [MEM_W  -1:0] uart_rdata;
+   logic               periph_req;
+   logic [       31:0] periph_addr;
+   logic               periph_we;
+   logic [MEM_W/8-1:0] periph_be;
+   logic [MEM_W  -1:0] periph_wdata;
+   logic               periph_gnt;
+   logic               periph_rvalid;
+   logic [MEM_W  -1:0] periph_rdata;
 
    // instruction cache
    logic               imem_req;
@@ -274,18 +274,36 @@ module air_soc #(
    uart_controller_obi uart (
       .clk_i   (clk_i),
       .rst_ni  (rst_ni),
-      .req_i   (uart_req),
-      .we_i    (uart_we),
-      .be_i    (uart_be),
-      .addr_i  (uart_addr),
-      .wdata_i (uart_wdata),
-      .gnt_o   (uart_gnt),
-      .rvalid_o(uart_rvalid),
-      .rdata_o (uart_rdata),
+      .req_i   (periph_req),
+      .we_i    (periph_we),
+      .be_i    (periph_be),
+      .addr_i  (periph_addr),
+      .wdata_i (periph_wdata),
+      .gnt_o   (periph_gnt),
+      .rvalid_o(periph_rvalid),
+      .rdata_o (periph_rdata),
       .rx_i    (uart_rx_i),
       .tx_o    (uart_tx_o)
    );
 
+   /*
+   periph_bus pb(
+      .clk_i(clk_i),
+      .rst_i(rst_ni),
+
+      .req_i   (periph_req),
+      .we_i    (periph_we),
+      .be_i    (periph_be),
+      .addr_i  (periph_addr),
+      .wdata_i (periph_wdata),
+      .gnt_o   (periph_gnt),
+      .rvalid_o(periph_rvalid),
+      .rdata_o (periph_rdata),
+
+      .uart_rx_i      (uart_rx_i),
+      .uart_tx_o      (uart_tx_o)
+   );
+   */
 
    obi_demux obi_demux_dut (
       .clk_i (clk_i),
@@ -309,14 +327,14 @@ module air_soc #(
       .cache_rvalid_i(cache_rvalid),
       .cache_rdata_i (cache_rdata),
 
-      .uart_req_o   (uart_req),
-      .uart_addr_o  (uart_addr),
-      .uart_we_o    (uart_we),
-      .uart_be_o    (uart_be),
-      .uart_wdata_o (uart_wdata),
-      .uart_gnt_i   (uart_gnt),
-      .uart_rvalid_i(uart_rvalid),
-      .uart_rdata_i (uart_rdata)
+      .periph_req_o   (periph_req),
+      .periph_addr_o  (periph_addr),
+      .periph_we_o    (periph_we),
+      .periph_be_o    (periph_be),
+      .periph_wdata_o (periph_wdata),
+      .periph_gnt_i   (periph_gnt),
+      .periph_rvalid_i(periph_rvalid),
+      .periph_rdata_i (periph_rdata)
    );
 
 endmodule
