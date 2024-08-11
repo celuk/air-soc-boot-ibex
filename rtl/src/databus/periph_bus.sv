@@ -38,8 +38,8 @@ module periph_bus(
    wire [31:0] uart_dat;
    
    wire        qspi_cyc;
-   wire        qspi_ack = 0;
-   wire [31:0] qspi_dat = 0;
+   wire        qspi_ack;
+   wire [31:0] qspi_dat;
    
    wire        i2c_cyc;
    wire        i2c_ack = 0;
@@ -125,21 +125,6 @@ module periph_bus(
       .uart_tx_o  (uart_tx_o )
    );
 
-   timer_controller timer_controller_dut (
-       .clk_i(clk_i),
-       .rst_i(rst_i),
-   
-       .wb_adr_i (wb_adr),
-       .wb_dat_i (wdata_i    ),
-       .wb_we_i  (wb_we      ),
-       .wb_stb_i (wb_stb     ),
-       .wb_sel_i (wb_sel     ),
-       .wb_cyc_i (timer_cyc),
-       .wb_ack_o (timer_ack),
-       .wb_dat_o (timer_dat)
-   );
-   
-   /*
    qspi_controller qspi_controller_dut (
       .clk_i(clk_i),
       .rst_i(rst_i),
@@ -153,12 +138,27 @@ module periph_bus(
       .wb_ack_o (qspi_ack   ),
       .wb_dat_o (qspi_dat   ),
       
-      .qspi_miso_i(qspi_miso_i),
-      .qspi_mosi_o(qspi_mosi_o),
+      .qspi_data_i(qspi_miso_i),
+      .qspi_data_o(qspi_mosi_o),
       .qspi_cs_o(qspi_cs_o),
       .qspi_sck_o(qspi_sck_o)
    );
+
+   timer_controller timer_controller_dut (
+       .clk_i(clk_i),
+       .rst_i(rst_i),
    
+       .wb_adr_i (wb_adr),
+       .wb_dat_i (wdata_i    ),
+       .wb_we_i  (wb_we      ),
+       .wb_stb_i (wb_stb     ),
+       .wb_sel_i (wb_sel     ),
+       .wb_cyc_i (timer_cyc),
+       .wb_ack_o (timer_ack),
+       .wb_dat_o (timer_dat)
+   );
+
+   /*
    i2c_controller i2c_controller_dut (
       .clk_i(clk_i),
       .rst_i(rst_i),

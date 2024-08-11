@@ -271,6 +271,11 @@ module air_soc #(
       //.prog_mode_led_o(prog_mode_led_o)
    );
 
+   logic [3:0] qspi_miso;
+   logic [3:0] qspi_mosi;
+   logic [3:0] qspi_sck;
+   logic [3:0] qspi_cs;
+
    periph_bus pb(
       .clk_i(clk_i),
       .rst_i(~rst_ni),
@@ -285,7 +290,12 @@ module air_soc #(
       .rdata_o (periph_rdata),
 
       .uart_rx_i      (uart_rx_i),
-      .uart_tx_o      (uart_tx_o)
+      .uart_tx_o      (uart_tx_o),
+
+      .qspi_miso_i    (qspi_miso),
+      .qspi_mosi_o    (qspi_mosi),
+      .qspi_sck_o     (qspi_sck),
+      .qspi_cs_o      (qspi_cs)
    );
    
 
