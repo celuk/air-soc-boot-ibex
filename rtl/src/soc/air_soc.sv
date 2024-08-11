@@ -1,6 +1,8 @@
 // air_soc.sv
 `timescale 1ns / 1ps
-//
+
+`include "header.vh"
+
 `default_nettype none
 
 module air_soc #(
@@ -70,64 +72,76 @@ module air_soc #(
    logic               imem_rvalid;
    logic [  MEM_W-1:0] imem_rdata;
 
+   // data cache
+   logic               dmem_req;
+   logic               dmem_gnt;
+   logic [       31:0] dmem_addr;
+   logic               dmem_we;
+   logic [MEM_W  -1:0] dmem_wdata;
+   logic               dmem_rvalid;
+   logic               dmem_wvalid;
+   logic [MEM_W  -1:0] dmem_rdata;
 
    cv32e40p_top #(
-      .FPU             (0),
-      .FPU_ADDMUL_LAT  (0),
-      .FPU_OTHERS_LAT  (0),
-      .ZFINX           (0),
-      .COREV_PULP      (0),
-      .COREV_CLUSTER   (0),
-      .NUM_MHPMCOUNTERS(1)
-   ) core (
-      // Clock and reset
-      .rst_ni      (rst_ni),
-      .clk_i       (clk_i),
-      .scan_cg_en_i(1'b0),
+       .COREV_PULP               ( `COREV_PULP ),
+       .COREV_CLUSTER            ( `COREV_CLUSTER ),
+       .FPU                      ( `FPU ),
+       .FPU_ADDMUL_LAT           ( `FPU_ADDMUL_LAT ),
+       .FPU_OTHERS_LAT           ( `FPU_OTHERS_LAT ),
+       .ZFINX                    ( `ZFINX ),
+       .NUM_MHPMCOUNTERS         ( `NUM_MHPMCOUNTERS )
+   )
+   cv32e40p_core_ip (
+       .clk_i                    (clk_i),
+       .rst_ni                   (rst_ni),
 
-      // Special control signals
-      .fetch_enable_i (1),
-      .pulp_clock_en_i(1'b0),
-      .core_sleep_o   (),
+       .pulp_clock_en_i          (`PULP_CLOCK_EN), // PULP clock enable (only used if COREV_CLUSTER = 1)
+       .scan_cg_en_i             (`SCAN_CG_EN), // Enable all clock gates for testing
 
-      // Configuration
-      .boot_addr_i        (32'h0000_0080),
-      .mtvec_addr_i       (32'h0000_0000),
-      .dm_halt_addr_i     (32'h00000000),
-      .dm_exception_addr_i(32'h00000000),
-      .hart_id_i          (32'b0),
+       // Configuration
+       .boot_addr_i              (`BOOT_ADDR),
+       .mtvec_addr_i             (`MTVEC_ADDR),
+       .dm_halt_addr_i           (`DM_HALT_ADDR),
+       .hart_id_i                (`HART_ID),
+       .dm_exception_addr_i      (`DM_EXCEPTION_ADDR),
 
-      // Instruction memory interface
-      .instr_addr_o  (instr_addr),
-      .instr_req_o   (instr_req),
-      .instr_gnt_i   (instr_gnt),
-      .instr_rvalid_i(instr_rvalid),
-      .instr_rdata_i (instr_rdata),
+       // Instruction memory interface
+       .instr_req_o              (instr_req),
+       .instr_gnt_i              (instr_gnt),
+       .instr_rvalid_i           (instr_rvalid),
+       .instr_addr_o             (instr_addr),
+       .instr_rdata_i            (instr_rdata),
 
-      // Data memory interface
-      .data_addr_o  (data_addr),
-      .data_req_o   (data_req),
-      .data_gnt_i   (data_gnt),
-      .data_we_o    (data_we),
-      .data_be_o    (data_be),
-      .data_wdata_o (data_wdata),
-      .data_rvalid_i(data_rvalid),
-      .data_rdata_i (data_rdata),
+       // Data memory interface
+       .data_req_o               (data_req),
+       .data_gnt_i               (data_gnt),
+       .data_rvalid_i            (data_rvalid),
+       .data_we_o                (data_we),
+       .data_be_o                (data_be),
+       .data_addr_o              (data_addr),
+       .data_wdata_o             (data_wdata),
+       .data_rdata_i             (data_rdata),
 
-      // Interrupt interface
-      .irq_i                    (0), //({14'b0, timer_bus.irq, gpio_bus.irq, 16'b0}), //4'b0, 0, 3'b0, 0, 3'b0, 0, 3'b0}),
-      .irq_ack_o(),
-      .irq_id_o(),
+       // TODO: Interrupt instead of polling peripherals
+       // Interrupt interface
+       .irq_i                    (32'h0), //({14'b0, timer_bus.irq, gpio_bus.irq, 16'b0}), //4'b0, 0, 3'b0, 0, 3'b0, 0, 3'b0}),
+       .irq_ack_o                (),
+       .irq_id_o                 (),
 
-      // Debug interface
-      .debug_req_i      (1'b0),
-      .debug_havereset_o(),
-      .debug_running_o  (),
-      .debug_halted_o   ()
+       // TODO: JTAG Integration
+       // Debug interface
+       .debug_req_i              (1'b0),
+       .debug_havereset_o        (),
+       .debug_running_o          (),
+       .debug_halted_o           (),
+
+       // CPU Control Signals
+       .fetch_enable_i           (1'b1),
+       .core_sleep_o             ()
    );
 
+   // instruction cache
    localparam int unsigned ICACHE_WAY_LEN = ICACHE_SZ / (ICACHE_LINE_W / 8) / 2;
-
    cache #(
       .ADDR_BIT_W (32),
       .CPU_BYTE_W (4),
@@ -156,15 +170,6 @@ module air_soc #(
    );
 
    // data cache
-   logic               dmem_req;
-   logic               dmem_gnt;
-   logic [       31:0] dmem_addr;
-   logic               dmem_we;
-   logic [MEM_W  -1:0] dmem_wdata;
-   logic               dmem_rvalid;
-   logic               dmem_wvalid;
-   logic [MEM_W  -1:0] dmem_rdata;
-
    localparam int unsigned DCACHE_WAY_LEN = DCACHE_SZ / (DCACHE_LINE_W / 8) / 2;
    cache #(
       .ADDR_BIT_W (32),
@@ -195,11 +200,8 @@ module air_soc #(
       .mem_rdata_i (dmem_rdata)
    );
 
-
-
    ///////////////////////////////////////////////////////////////////////////
    // MEMORY ARBITER
-
    always_comb begin
       mem_req   = imem_req | dmem_req;
       mem_addr  = imem_addr;
