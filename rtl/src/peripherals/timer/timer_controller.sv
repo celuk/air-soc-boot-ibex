@@ -144,7 +144,7 @@ always @* begin
 end
 
 always @(posedge clk_i) begin
-   if (!rst_i) begin
+   if (rst_i) begin
       wb_ack_r <= 0;
       wb_read_data_r <= 0;
 

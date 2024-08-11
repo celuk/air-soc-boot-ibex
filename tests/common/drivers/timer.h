@@ -23,5 +23,19 @@
 #define TIM_EVC (*(volatile uint32_t*) (TIM_BASE_ADDR + TIM_EVC_OFFSET))
 
 void init_timer();
+void timer_set_pre (unsigned int pre);
+int timer_get_pre ();
+void timer_set_are (unsigned int are);
+int timer_get_are ();
+void timer_set_clr (unsigned int clr);
+int timer_get_clr ();
+void timer_set_ena (unsigned int ena);
+int timer_get_ena ();
+void timer_set_mod (unsigned int mod);
+int timer_get_mod ();
+int timer_get_cnt ();
+int timer_get_evn ();
+void timer_set_evc (unsigned int evc);
+int timer_get_evc ();
 
 #endif

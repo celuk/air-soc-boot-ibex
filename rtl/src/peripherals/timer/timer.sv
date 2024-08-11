@@ -18,6 +18,9 @@ reg [31:0] TIM_CNT_NEXT_R;
 reg [31:0] TIM_EVN_R;
 reg [31:0] TIM_EVN_NEXT_R;
 
+assign TIM_CNT = TIM_CNT_R;
+assign TIM_EVN = TIM_EVN_R;
+
 reg [63:0] sayac;
 reg [63:0] sayac_next;
 
