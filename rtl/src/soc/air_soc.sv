@@ -271,25 +271,9 @@ module air_soc #(
       //.prog_mode_led_o(prog_mode_led_o)
    );
 
-   uart_controller_obi uart (
-      .clk_i   (clk_i),
-      .rst_ni  (rst_ni),
-      .req_i   (periph_req),
-      .we_i    (periph_we),
-      .be_i    (periph_be),
-      .addr_i  (periph_addr),
-      .wdata_i (periph_wdata),
-      .gnt_o   (periph_gnt),
-      .rvalid_o(periph_rvalid),
-      .rdata_o (periph_rdata),
-      .rx_i    (uart_rx_i),
-      .tx_o    (uart_tx_o)
-   );
-
-   /*
    periph_bus pb(
       .clk_i(clk_i),
-      .rst_i(rst_ni),
+      .rst_i(~rst_ni),
 
       .req_i   (periph_req),
       .we_i    (periph_we),
@@ -303,7 +287,7 @@ module air_soc #(
       .uart_rx_i      (uart_rx_i),
       .uart_tx_o      (uart_tx_o)
    );
-   */
+   
 
    obi_demux obi_demux_dut (
       .clk_i (clk_i),

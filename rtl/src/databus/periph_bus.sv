@@ -95,7 +95,7 @@ module periph_bus(
 
    obi2wishbone obi2wb (
       .clk_i(clk_i),
-      .rst_ni(rst_i),
+      .rst_ni(~rst_i),
 
       .req_i(req_i),
       .gnt_o(gnt_o),
