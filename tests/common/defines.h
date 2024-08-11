@@ -1,7 +1,10 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
-#define CPU_CLK 25000000 // 25 Mhz
+#define CPU_MHZ 100
+#define CPU_CLK (CPU_MHZ * 1000000)
 #define BAUD_RATE 9600
+
+#define US(x) (CPU_CLK/1000000 * x)
 
 #endif
