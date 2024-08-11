@@ -54,8 +54,8 @@ module periph_bus(
    wire [31:0] usb_dat = 0;
 
    wire        timer_cyc;
-   wire        timer_ack = 0;
-   wire [31:0] timer_dat = 0;
+   wire        timer_ack;
+   wire [31:0] timer_dat;
 
    wire        jtag_cyc;
    wire        jtag_ack = 0;
@@ -124,7 +124,7 @@ module periph_bus(
       .uart_rx_i  (uart_rx_i ),
       .uart_tx_o  (uart_tx_o )
    );
-/*
+
    timer_controller timer_controller_dut (
        .clk_i(clk_i),
        .rst_i(rst_i),
@@ -137,7 +137,7 @@ module periph_bus(
        .wb_cyc_i (timer_cyc),
        .wb_ack_o (timer_ack),
        .wb_dat_o (timer_dat)
-   );*/
+   );
    
    /*
    qspi_controller qspi_controller_dut (

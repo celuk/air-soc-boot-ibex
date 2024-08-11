@@ -1,13 +1,15 @@
 RISCVTYPE ?= riscv32-unknown-elf
 CC = $(RISCVTYPE)-gcc
 
-LINKER_SCRIPT ?= common/link.ld
-START_ASM ?= common/crt0.S
+COMMON_PATH ?= common
 
-DRIVERS_PATH ?= common/drivers
-DRIVERS ?= $(DRIVERS_PATH)/uart.h
+LINKER_SCRIPT ?= $(COMMON_PATH)/link.ld
+START_ASM ?= $(COMMON_PATH)/crt0.S
 
-CFLAGS ?= -O0 -mcmodel=medany -static -std=gnu99 -fno-common -fno-unroll-loops -nostdlib -nostartfiles -fno-builtin -ffunction-sections -lm -lgcc -T $(LINKER_SCRIPT) -march=rv32im -mabi=ilp32 -I$(DRIVERS_PATH)
+DRIVERS_PATH ?= $(COMMON_PATH)/drivers
+DRIVERS ?= $(DRIVERS_PATH)/uart.c
+
+CFLAGS ?= -O0 -mcmodel=medany -static -std=gnu99 -fno-common -fno-unroll-loops -nostdlib -nostartfiles -fno-builtin -ffunction-sections -lm -lgcc -T $(LINKER_SCRIPT) -march=rv32im -mabi=ilp32 -I$(COMMON_PATH) -I$(DRIVERS_PATH)
 
 CFILE ?= demo
 CPATH ?= $(CFILE)/$(CFILE)

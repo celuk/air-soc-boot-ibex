@@ -7,6 +7,10 @@
 #include <stdarg.h>
 #include <stdbool.h>
 
+#define UART_CTRL        (*(volatile uint32_t*)0x20000000)
+#define UART_STATUS      (*(volatile uint32_t*)0x20000004)
+#define UART_RDATA       (*(volatile uint32_t*)0x20000008)
+#define UART_WDATA       (*(volatile uint32_t*)0x2000000c)
 
 void     tekno_printf    (const char *fmt, ...);
 void     print           (const char *p);
@@ -41,33 +45,4 @@ typedef union
 	uint32_t bits;
 }uart_status;
 
-#define UART_CTRL        (*(volatile uint32_t*)0x20000000)
-#define UART_STATUS      (*(volatile uint32_t*)0x20000004)
-#define UART_RDATA       (*(volatile uint32_t*)0x20000008)
-#define UART_WDATA       (*(volatile uint32_t*)0x2000000c)
-
-//-----------------------------------------------
-// print a single character.
-//-----------------------------------------------
-int uart_txfull(){
-	uart_status uart_stat;
-	uart_stat.bits = UART_STATUS;
-	return uart_stat.fields.tx_full;
-}
-
-void zputchar(char c)
-{
-	while(uart_txfull());
-	UART_WDATA = c;
-}
-
-//-----------------------------------------------
-// print a string (char*).
-//-----------------------------------------------
-
-void print(const char *p)
-{
-	while (*p)
-		zputchar(*(p++));
-}
 #endif

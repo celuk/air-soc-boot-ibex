@@ -1,20 +1,10 @@
-#include "uart.h"
-
-#define uintptr_t unsigned int
-
-// #define uint32_t unsigned int
-#define CPU_CLK 25000000 // 25 Mhz
-#define BAUD_RATE 9600
+#include "uart.h"-
+#include "defines.h"
 
 int main()
 {
-    uart_ctrl uart_control;
-    uart_control.fields.tx_en = 0x1;
-    uart_control.fields.tx_en = 0x1;
-    uart_control.fields.baud_div = CPU_CLK / BAUD_RATE;
-    UART_CTRL = uart_control.bits;
-
-    //(*UART_CTRL) = 0x01b20003; //0x03640001; // bauddiv 868, baudrate 115200 // 4340 / 5 cunku 500de ve 100de diye, o zaman 50de 434 olması lazım
+    init_uart();
+    
     while (1) {
         print("When the CPU suddenly starts working:\n \
 #########%(//(%%/,,,,,,,,*(%%##############################%(//(////////(##(*,,,\n\
