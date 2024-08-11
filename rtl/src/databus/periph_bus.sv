@@ -23,6 +23,7 @@ module periph_bus(
    output       qspi_sck_o,
    output [3:0] qspi_mosi_o,
    input  [3:0] qspi_miso_i,
+   output [1:0] qspi_out_mod_o,
 
    input  sda_i,
    output sda_o,

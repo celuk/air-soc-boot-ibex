@@ -275,6 +275,7 @@ module air_soc #(
    logic [3:0] qspi_mosi;
    logic [3:0] qspi_sck;
    logic [3:0] qspi_cs;
+   logic [1:0] qspi_out_mod;
 
    periph_bus pb(
       .clk_i(clk_i),
@@ -295,7 +296,8 @@ module air_soc #(
       .qspi_miso_i    (qspi_miso),
       .qspi_mosi_o    (qspi_mosi),
       .qspi_sck_o     (qspi_sck),
-      .qspi_cs_o      (qspi_cs)
+      .qspi_cs_o      (qspi_cs),
+      .qspi_out_mod_o (qspi_out_mod)
    );
    
 
