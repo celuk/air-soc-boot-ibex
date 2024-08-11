@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "uart.h": "c",
-        "defines.h": "c"
+        "defines.h": "c",
+        "stdint.h": "c",
+        "timer.h": "c"
     }
 }

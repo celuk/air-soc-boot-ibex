@@ -21,6 +21,7 @@ int      strcmp          (const char *p1, const char *p2);
 size_t   strlen          (const char *s);
 int 	 uart_txfull	 ();
 int 	 uart_rxempty	 ();
+void init_uart();
 
 typedef union
 {
