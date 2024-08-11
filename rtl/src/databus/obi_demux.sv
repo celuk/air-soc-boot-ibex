@@ -1,7 +1,5 @@
 // air_soc.sv
 `timescale 1ns / 1ps
-//
-`default_nettype none
 
 `include "header.vh"
 
@@ -97,22 +95,22 @@ module obi_demux (
    localparam [31:0] MEM_RANGE       = 32'h0008_0000;
 
    localparam [31:0] UART_BASE_ADDR  = 32'h2000_0000;
-   localparam [31:0] UART_RANGE      = 32'h0001_0000;
+   localparam [31:0] UART_RANGE      = 32'h0000_FFFF;
 
    localparam [31:0] SPI_BASE_ADDR   = 32'h2001_0000;
-   localparam [31:0] SPI_RANGE       = 32'h0001_0000;
+   localparam [31:0] SPI_RANGE       = 32'h0000_FFFF;
 
    localparam [31:0] I2C_BASE_ADDR   = 32'h2002_0000;
-   localparam [31:0] I2C_RANGE       = 32'h0001_0000;
+   localparam [31:0] I2C_RANGE       = 32'h0000_FFFF;
 
    localparam [31:0] GPIO_BASE_ADDR  = 32'h2003_0000;
-   localparam [31:0] GPIO_RANGE      = 32'h0001_0000;
+   localparam [31:0] GPIO_RANGE      = 32'h0000_FFFF;
 
    localparam [31:0] USB_BASE_ADDR   = 32'h2004_0000;
-   localparam [31:0] USB_RANGE       = 32'h0001_0000;
+   localparam [31:0] USB_RANGE       = 32'h0000_FFFF;
 
    localparam [31:0] TIMER_BASE_ADDR = 32'h2005_0000;
-   localparam [31:0] TIMER_RANGE     = 32'h0001_0000;
+   localparam [31:0] TIMER_RANGE     = 32'h0000_FFFF;
 
 // localparam [31:0] JTAG_BASE_ADDR = 32'h2006_0000;
 // localparam [31:0] JTAG_RANGE     = 32'h0001_0000;
@@ -151,31 +149,31 @@ module obi_demux (
    assign i2c_wdata_o   = data_wdata;
    assign timer_wdata_o = data_wdata;
 
-   assign cache_req_o = (MEM_BASE_ADDR  + MEM_RANGE  > data_addr ) && (data_addr >= MEM_BASE_ADDR) ? data_req : 'h0;
+   assign cache_req_o = (MEM_BASE_ADDR  + MEM_RANGE  > data_addr ) && (data_addr >= MEM_BASE_ADDR) ? (state == WAITING) & data_req : 'h0;
    assign cache_we_o  = (MEM_BASE_ADDR  + MEM_RANGE  > data_addr ) && (data_addr >= MEM_BASE_ADDR) ? data_we  : 'h0;
    assign cache_be_o  = (MEM_BASE_ADDR  + MEM_RANGE  > data_addr ) && (data_addr >= MEM_BASE_ADDR) ? data_be  : 'h0;
 
-   assign uart_req_o  = (UART_BASE_ADDR + UART_RANGE > data_addr ) && (data_addr >= UART_BASE_ADDR) ? data_req : 'h0;
+   assign uart_req_o  = (UART_BASE_ADDR + UART_RANGE > data_addr ) && (data_addr >= UART_BASE_ADDR) ? (state == WAITING) & data_req : 'h0;
    assign uart_we_o   = (UART_BASE_ADDR + UART_RANGE > data_addr ) && (data_addr >= UART_BASE_ADDR) ? data_we  : 'h0;
    assign uart_be_o   = (UART_BASE_ADDR + UART_RANGE > data_addr ) && (data_addr >= UART_BASE_ADDR) ? data_be  : 'h0;
 
-   assign gpio_req_o  = (GPIO_BASE_ADDR + GPIO_RANGE > data_addr ) && (data_addr >= GPIO_BASE_ADDR) ? data_req : 'h0;
+   assign gpio_req_o  = (GPIO_BASE_ADDR + GPIO_RANGE > data_addr ) && (data_addr >= GPIO_BASE_ADDR) ? (state == WAITING) & data_req : 'h0;
    assign gpio_we_o   = (GPIO_BASE_ADDR + GPIO_RANGE > data_addr ) && (data_addr >= GPIO_BASE_ADDR) ? data_we  : 'h0;
    assign gpio_be_o   = (GPIO_BASE_ADDR + GPIO_RANGE > data_addr ) && (data_addr >= GPIO_BASE_ADDR) ? data_be  : 'h0;
 
-   assign spi_req_o   = (SPI_BASE_ADDR  + SPI_RANGE  > data_addr ) && (data_addr >= SPI_BASE_ADDR) ? data_req : 'h0;
+   assign spi_req_o   = (SPI_BASE_ADDR  + SPI_RANGE  > data_addr ) && (data_addr >= SPI_BASE_ADDR) ? (state == WAITING) & data_req : 'h0;
    assign spi_we_o    = (SPI_BASE_ADDR  + SPI_RANGE  > data_addr ) && (data_addr >= SPI_BASE_ADDR) ? data_we  : 'h0;
    assign spi_be_o    = (SPI_BASE_ADDR  + SPI_RANGE  > data_addr ) && (data_addr >= SPI_BASE_ADDR) ? data_be  : 'h0;
 
-   assign usb_req_o   = (USB_BASE_ADDR  + USB_RANGE  > data_addr ) && (data_addr >= USB_BASE_ADDR) ? data_req : 'h0;
+   assign usb_req_o   = (USB_BASE_ADDR  + USB_RANGE  > data_addr ) && (data_addr >= USB_BASE_ADDR) ? (state == WAITING) & data_req : 'h0;
    assign usb_we_o    = (USB_BASE_ADDR  + USB_RANGE  > data_addr ) && (data_addr >= USB_BASE_ADDR) ? data_we  : 'h0;
    assign usb_be_o    = (USB_BASE_ADDR  + USB_RANGE  > data_addr ) && (data_addr >= USB_BASE_ADDR) ? data_be  : 'h0;
 
-   assign i2c_req_o   = (I2C_BASE_ADDR  + I2C_RANGE  > data_addr ) && (data_addr >= I2C_BASE_ADDR) ? data_req : 'h0;
+   assign i2c_req_o   = (I2C_BASE_ADDR  + I2C_RANGE  > data_addr ) && (data_addr >= I2C_BASE_ADDR) ? (state == WAITING) & data_req : 'h0;
    assign i2c_we_o    = (I2C_BASE_ADDR  + I2C_RANGE  > data_addr ) && (data_addr >= I2C_BASE_ADDR) ? data_we  : 'h0;
    assign i2c_be_o    = (I2C_BASE_ADDR  + I2C_RANGE  > data_addr ) && (data_addr >= I2C_BASE_ADDR) ? data_be  : 'h0;
 
-   assign timer_req_o = (TIMER_BASE_ADDR + TIMER_RANGE > data_addr ) && (data_addr >= TIMER_BASE_ADDR) ? data_req : 'h0;
+   assign timer_req_o = (TIMER_BASE_ADDR + TIMER_RANGE > data_addr ) && (data_addr >= TIMER_BASE_ADDR) ? (state == WAITING) & data_req : 'h0;
    assign timer_we_o  = (TIMER_BASE_ADDR + TIMER_RANGE > data_addr ) && (data_addr >= TIMER_BASE_ADDR) ? data_we  : 'h0;
    assign timer_be_o  = (TIMER_BASE_ADDR + TIMER_RANGE > data_addr ) && (data_addr >= TIMER_BASE_ADDR) ? data_be  : 'h0;
 
@@ -187,6 +185,7 @@ module obi_demux (
                          (TIMER_BASE_ADDR+TIMER_RANGE > data_addr) && (data_addr >= TIMER_BASE_ADDR) ? timer_rdata_i :
                          (I2C_BASE_ADDR+I2C_RANGE     > data_addr) && (data_addr >= I2C_BASE_ADDR  ) ? i2c_rdata_i   :
                          (USB_BASE_ADDR+USB_RANGE     > data_addr) && (data_addr >= USB_BASE_ADDR  ) ? usb_rdata_i   :
+                         (SPI_BASE_ADDR+SPI_RANGE     > data_addr) && (data_addr >= SPI_BASE_ADDR  ) ? spi_rdata_i   :
                                                                                                        32'h0         ;
 
    assign data_rvalid_o= (MEM_BASE_ADDR+MEM_RANGE     >= data_addr) && (data_addr >= MEM_BASE_ADDR  ) ? cache_rvalid_i :
@@ -195,6 +194,7 @@ module obi_demux (
                          (TIMER_BASE_ADDR+TIMER_RANGE >= data_addr) && (data_addr >= TIMER_BASE_ADDR) ? timer_rvalid_i :
                          (I2C_BASE_ADDR+I2C_RANGE     >= data_addr) && (data_addr >= I2C_BASE_ADDR  ) ? i2c_rvalid_i   :
                          (USB_BASE_ADDR+USB_RANGE     >= data_addr) && (data_addr >= USB_BASE_ADDR  ) ? usb_rvalid_i   :
+                         (SPI_BASE_ADDR+SPI_RANGE     >= data_addr) && (data_addr >= SPI_BASE_ADDR  ) ? spi_rvalid_i   :
                                                                                                           1'h0         ;
 
    assign periph_gnt   = (MEM_BASE_ADDR+MEM_RANGE     > data_addr) && (data_addr >= MEM_BASE_ADDR  ) ? cache_gnt_i :
@@ -203,6 +203,7 @@ module obi_demux (
                          (TIMER_BASE_ADDR+TIMER_RANGE > data_addr) && (data_addr >= TIMER_BASE_ADDR) ? timer_gnt_i :
                          (I2C_BASE_ADDR+I2C_RANGE     > data_addr) && (data_addr >= I2C_BASE_ADDR  ) ? i2c_gnt_i   :
                          (USB_BASE_ADDR+USB_RANGE     > data_addr) && (data_addr >= USB_BASE_ADDR  ) ? usb_gnt_i   :
+                         (SPI_BASE_ADDR+SPI_RANGE     > data_addr) && (data_addr >= SPI_BASE_ADDR  ) ? spi_gnt_i   :
                                                                                                          'h0       ;
 
    assign data_gnt_o = (state == IDLE) & periph_gnt;
@@ -241,6 +242,7 @@ module obi_demux (
                data_wdata <= data_wdata_i;
             end
             default: begin
+               data_req <= 0;
             end
          endcase
       end

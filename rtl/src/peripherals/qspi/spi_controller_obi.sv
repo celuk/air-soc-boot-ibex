@@ -9,9 +9,7 @@ module spi_controller_obi (
    input  wire [31:0] addr_i,
    input  wire [31:0] wdata_i,
    output reg         rvalid_o,
-   output reg  [31:0] rdata_o,
-   input  wire        rx_i,
-   output wire        tx_o
+   output reg  [31:0] rdata_o
 );
 
    reg         wb_cyc_r;
