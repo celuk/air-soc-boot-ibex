@@ -14,7 +14,8 @@ int main()
     timer_set_evc(0);
     timer_set_clr(0);
     
-    tekno_printf("%d\n", timer_get_cnt());
+    while(1)
+        tekno_printf("%d\n", timer_get_cnt());
 
     while(1);
 }

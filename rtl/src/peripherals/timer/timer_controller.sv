@@ -55,52 +55,53 @@ always_comb begin
    TIM_EVC_NEXT = TIM_EVC;
 
    if(wb_cyc_i) begin
-      if(wb_stb_i & wb_we_i & !wb_ack_o) begin // write
+      wb_ack_next_r <= wb_stb_i & !wb_ack_r;
+      if(wb_stb_i & wb_we_i) begin // write // & !wb_ack_o
          case(wb_adr_i)
             8'h00: begin
                TIM_PRE_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : TIM_PRE[7:0  ];
                TIM_PRE_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : TIM_PRE[15:8 ];
                TIM_PRE_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : TIM_PRE[23:16];
                TIM_PRE_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : TIM_PRE[31:24];
-               wb_ack_next_r = 1'b1;
+               //wb_ack_next_r = 1'b1;
             end
             8'h04: begin
                TIM_ARE_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : TIM_ARE[7:0  ];
                TIM_ARE_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : TIM_ARE[15:8 ];
                TIM_ARE_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : TIM_ARE[23:16];
                TIM_ARE_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : TIM_ARE[31:24];
-               wb_ack_next_r = 1'b1;
+               //wb_ack_next_r = 1'b1;
             end
             8'h08: begin
                TIM_CLR_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : TIM_CLR[7:0  ];
                TIM_CLR_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : TIM_CLR[15:8 ];
                TIM_CLR_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : TIM_CLR[23:16];
                TIM_CLR_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : TIM_CLR[31:24];
-               wb_ack_next_r = 1'b1;
+               //wb_ack_next_r = 1'b1;
             end
             8'h0C: begin
                TIM_ENA_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : TIM_ENA[7:0  ];
                TIM_ENA_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : TIM_ENA[15:8 ];
                TIM_ENA_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : TIM_ENA[23:16];
                TIM_ENA_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : TIM_ENA[31:24];
-               wb_ack_next_r = 1'b1;
+               //wb_ack_next_r = 1'b1;
             end
             8'h10: begin
                TIM_MOD_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : TIM_MOD[7:0  ];
                TIM_MOD_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : TIM_MOD[15:8 ];
                TIM_MOD_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : TIM_MOD[23:16];
                TIM_MOD_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : TIM_MOD[31:24];
-               wb_ack_next_r = 1'b1;
+               //wb_ack_next_r = 1'b1;
             end
             8'h1C: begin
                TIM_EVC_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : TIM_EVC[7:0  ];
                TIM_EVC_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : TIM_EVC[15:8 ];
                TIM_EVC_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : TIM_EVC[23:16];
                TIM_EVC_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : TIM_EVC[31:24];
-               wb_ack_next_r = 1'b1;
+               //wb_ack_next_r = 1'b1;
             end
             default: begin
-               wb_ack_next_r = 0;
+               //wb_ack_next_r = 0;
             end
          endcase
       end 
@@ -108,44 +109,42 @@ always_comb begin
          case(wb_adr_i)
             8'h00: begin
                wb_read_data_next_r = TIM_PRE;
-               wb_ack_next_r = 1;
+               //wb_ack_next_r = 1;
             end
             8'h04: begin
                wb_read_data_next_r = TIM_ARE;
-               wb_ack_next_r = 1;
+               //wb_ack_next_r = 1;
             end
             8'h08: begin
                wb_read_data_next_r = TIM_CLR;
-               wb_ack_next_r = 1;
+               //wb_ack_next_r = 1;
             end
             8'h0C: begin
                wb_read_data_next_r = TIM_ENA;
-               wb_ack_next_r = 1;
+               //wb_ack_next_r = 1;
             end
             8'h10: begin
                wb_read_data_next_r = TIM_MOD;
-               wb_ack_next_r = 1;
+               //wb_ack_next_r = 1;
             end
             8'h14: begin
                wb_read_data_next_r = TIM_CNT;
-               wb_ack_next_r = 1;
+               //wb_ack_next_r = 1;
             end
             8'h18: begin
                wb_read_data_next_r = TIM_EVN;
-               wb_ack_next_r = 1;
+               //wb_ack_next_r = 1;
             end
             8'h1C: begin
                wb_read_data_next_r = TIM_EVC;
-               wb_ack_next_r = 1;
+               //wb_ack_next_r = 1;
             end
             default: begin
-               wb_ack_next_r = 0;
+               //wb_ack_next_r = 0;
             end
          endcase
-
       end
    end
-
 end
 
 always_ff @(posedge clk_i) begin

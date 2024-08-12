@@ -1,4 +1,5 @@
 #include "qspi.h"
+#include "uart.h"
 
 int main(){
     //init_uart();
@@ -17,6 +18,7 @@ int main(){
     QSPI_ADR = 0x00000000;
     QSPI_CCR = ccr.bits;
 
+    //tekno_printf("QSPI_DR0: %x\n", QSPI_DR0);
     //wait_for(US(500));
 
     ccr.fields.inst_value = CMD_WREN;
