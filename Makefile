@@ -9,17 +9,17 @@ all:
 	@echo "Read the makefile.";
 
 
-.PHONY: sim
-sim:
-	+@$(SUBMAKE) verification/sim/ $(ARGS)
+#.PHONY: sim
+#sim:
+#	+@$(SUBMAKE) verification/sim/ $(ARGS)
 
 .PHONY: coremark
 coremark:
 	+@$(SUBMAKE) tests/coremark clean
 	+@$(SUBMAKE) tests/coremark
 
-.PHONY: test
-test:
+.PHONY: compile
+compile:
 	+@$(SUBMAKE) tests clean CFILE=$(ARGS)
 	+@$(SUBMAKE) tests CFILE=$(ARGS)
 
@@ -33,8 +33,8 @@ clean_all_tests:
 	+@$(SUBMAKE) tests clean CFILE=demo
 	+@$(SUBMAKE) tests clean CFILE=pikachu
 
-.PHONY: simc
-simc:
+.PHONY: sim
+sim:
 	+@$(SUBMAKE) verification/sim air CFILE=$(ARGS)
 
 .PHONY: show

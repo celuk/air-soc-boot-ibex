@@ -12,7 +12,7 @@ int main()
     timer_set_ena(1);
     timer_set_mod(1);
     timer_set_evc(0);
-
+    
     tekno_printf("%d\n", timer_get_cnt());
 
     while(1);

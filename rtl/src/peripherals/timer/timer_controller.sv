@@ -53,45 +53,45 @@ always @* begin
       if(wb_stb_i & wb_we_i & !wb_ack_o) begin // write
          case(wb_adr_i)
             8'h00: begin
-               TIM_PRE_NEXT <= wb_sel_i[0] ? wb_dat_i[7:0] : TIM_PRE;
-               TIM_PRE_NEXT <= wb_sel_i[1] ? wb_dat_i[15:8] : TIM_PRE;
-               TIM_PRE_NEXT <= wb_sel_i[2] ? wb_dat_i[23:16] : TIM_PRE;
-               TIM_PRE_NEXT <= wb_sel_i[3] ? wb_dat_i[31:24] : TIM_PRE;
+               TIM_PRE_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : TIM_PRE[7:0  ];
+               TIM_PRE_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : TIM_PRE[15:8 ];
+               TIM_PRE_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : TIM_PRE[23:16];
+               TIM_PRE_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : TIM_PRE[31:24];
                wb_ack_next_r = 1'b1;
             end
             8'h04: begin
-               TIM_PRE_NEXT <= wb_sel_i[0] ? wb_dat_i[7:0] : TIM_ARE;
-               TIM_PRE_NEXT <= wb_sel_i[1] ? wb_dat_i[15:8] : TIM_ARE;
-               TIM_PRE_NEXT <= wb_sel_i[2] ? wb_dat_i[23:16] : TIM_ARE;
-               TIM_PRE_NEXT <= wb_sel_i[3] ? wb_dat_i[31:24] : TIM_ARE;
+               TIM_ARE_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : TIM_ARE[7:0  ];
+               TIM_ARE_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : TIM_ARE[15:8 ];
+               TIM_ARE_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : TIM_ARE[23:16];
+               TIM_ARE_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : TIM_ARE[31:24];
                wb_ack_next_r = 1'b1;
             end
             8'h08: begin
-               TIM_PRE_NEXT <= wb_sel_i[0] ? wb_dat_i[7:0] : TIM_CLR;
-               TIM_PRE_NEXT <= wb_sel_i[1] ? wb_dat_i[15:8] : TIM_CLR;
-               TIM_PRE_NEXT <= wb_sel_i[2] ? wb_dat_i[23:16] : TIM_CLR;
-               TIM_PRE_NEXT <= wb_sel_i[3] ? wb_dat_i[31:24] : TIM_CLR;
+               TIM_CLR_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : TIM_CLR[7:0  ];
+               TIM_CLR_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : TIM_CLR[15:8 ];
+               TIM_CLR_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : TIM_CLR[23:16];
+               TIM_CLR_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : TIM_CLR[31:24];
                wb_ack_next_r = 1'b1;
             end
             8'h0C: begin
-               TIM_PRE_NEXT <= wb_sel_i[0] ? wb_dat_i[7:0] : TIM_ENA;
-               TIM_PRE_NEXT <= wb_sel_i[1] ? wb_dat_i[15:8] : TIM_ENA;
-               TIM_PRE_NEXT <= wb_sel_i[2] ? wb_dat_i[23:16] : TIM_ENA;
-               TIM_PRE_NEXT <= wb_sel_i[3] ? wb_dat_i[31:24] : TIM_ENA;
+               TIM_ENA_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : TIM_ENA[7:0  ];
+               TIM_ENA_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : TIM_ENA[15:8 ];
+               TIM_ENA_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : TIM_ENA[23:16];
+               TIM_ENA_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : TIM_ENA[31:24];
                wb_ack_next_r = 1'b1;
             end
             8'h10: begin
-               TIM_PRE_NEXT <= wb_sel_i[0] ? wb_dat_i[7:0] : TIM_MOD;
-               TIM_PRE_NEXT <= wb_sel_i[1] ? wb_dat_i[15:8] : TIM_MOD;
-               TIM_PRE_NEXT <= wb_sel_i[2] ? wb_dat_i[23:16] : TIM_MOD;
-               TIM_PRE_NEXT <= wb_sel_i[3] ? wb_dat_i[31:24] : TIM_MOD;
+               TIM_MOD_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : TIM_MOD[7:0  ];
+               TIM_MOD_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : TIM_MOD[15:8 ];
+               TIM_MOD_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : TIM_MOD[23:16];
+               TIM_MOD_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : TIM_MOD[31:24];
                wb_ack_next_r = 1'b1;
             end
             8'h1C: begin
-               TIM_PRE_NEXT <= wb_sel_i[0] ? wb_dat_i[7:0] : TIM_EVC;
-               TIM_PRE_NEXT <= wb_sel_i[1] ? wb_dat_i[15:8] : TIM_EVC;
-               TIM_PRE_NEXT <= wb_sel_i[2] ? wb_dat_i[23:16] : TIM_EVC;
-               TIM_PRE_NEXT <= wb_sel_i[3] ? wb_dat_i[31:24] : TIM_EVC;
+               TIM_EVC_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : TIM_EVC[7:0  ];
+               TIM_EVC_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : TIM_EVC[15:8 ];
+               TIM_EVC_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : TIM_EVC[23:16];
+               TIM_EVC_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : TIM_EVC[31:24];
                wb_ack_next_r = 1'b1;
             end
             default: begin
