@@ -87,8 +87,6 @@ Original Author: Shay Gal-on
 // TODO ee_u32yi 64 bitlik yapmak lazim, hem de tekno.hda degisiklik gerek
 //typedef unsigned long int   ee_u32;
 
-//#include "tekno.h"
-
 #include <stdint.h>
 
 #define size_t long

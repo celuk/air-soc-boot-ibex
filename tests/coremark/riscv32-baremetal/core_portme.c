@@ -56,8 +56,8 @@ void init_uart(){
     UART_CTRL = uart_control.bits;
 }
 
-#define TIMER_LOW        (*(volatile uint32_t*)0x30000000)
-#define TIMER_HIGH       (*(volatile uint32_t*)0x30000004)
+#define TIMER_LOW        (*(volatile uint32_t*)0x20000000)
+#define TIMER_HIGH       (*(volatile uint32_t*)0x20000004)
 
 uint32_t get_timer_low(){
     return TIMER_LOW;
