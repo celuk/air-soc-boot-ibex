@@ -17,8 +17,53 @@ limitations under the License.
 #include <coremark.h>
 #include <stdarg.h>
 
-#include "uart.h"
+#include <stdint.h>
+/*
+#define UART_CTRL        (*(volatile uint32_t*)0x20000000)
+#define UART_STATUS      (*(volatile uint32_t*)0x20000004)
+#define UART_RDATA       (*(volatile uint32_t*)0x20000008)
+#define UART_WDATA       (*(volatile uint32_t*)0x2000000c)
 
+#define CPU_CLK 50000000  // 50 Mhz
+#define BAUD_RATE 115200
+
+typedef union
+{
+	struct {
+		unsigned int tx_en    : 1;
+		unsigned int rx_en 	  : 1;
+		unsigned int null	  : 14;
+		unsigned int baud_div : 16;
+	} fields;
+	uint32_t bits;
+}uart_ctrl;
+
+typedef union
+{
+	struct {
+		unsigned int tx_full  : 1;
+		unsigned int rx_full  : 1;
+		unsigned int tx_empty : 1;
+		unsigned int rx_empty : 1;
+		unsigned int null	  : 28;
+	} fields;
+	uint32_t bits;
+}uart_status;
+
+int uart_txfull(){
+	uart_status uart_stat;
+	uart_stat.bits = UART_STATUS;
+	return uart_stat.fields.tx_full;
+}
+
+void zputchar(char c)
+{
+	while(uart_txfull());
+	if (c == '\n')
+		zputchar('\r');
+	UART_WDATA = c;
+}
+*/
 #define ZEROPAD   (1 << 0) /* Pad with zero */
 #define SIGN      (1 << 1) /* Unsigned/signed long */
 #define PLUS      (1 << 2) /* Show plus */
@@ -661,10 +706,63 @@ ee_vsprintf(char *buf, const char *fmt, va_list args)
     return str - buf;
 }
 
+///////////////////////////////////////////////////////
+typedef union
+{
+	struct {
+		unsigned int tx_en    : 1;
+		unsigned int rx_en 	  : 1;
+		unsigned int null	  : 14;
+		unsigned int baud_div : 16;
+	} fields;
+	uint32_t bits;
+}uart_ctrl;
+
+typedef union
+{
+	struct {
+		unsigned int tx_full  : 1;
+		unsigned int rx_full  : 1;
+		unsigned int tx_empty : 1;
+		unsigned int rx_empty : 1;
+		unsigned int null	  : 28;
+	} fields;
+	uint32_t bits;
+}uart_status;
+
+#define UART_STATUS      (*(volatile uint32_t*)0x20000004)
+#define UART_RDATA       (*(volatile uint32_t*)0x20000008)
+#define UART_WDATA       (*(volatile uint32_t*)0x2000000c)
+
+//-----------------------------------------------
+// print a single character.
+//-----------------------------------------------
+int uart_txfull(){
+	uart_status uart_stat;
+	uart_stat.bits = UART_STATUS;
+	return uart_stat.fields.tx_full;
+}
+
+void zputchar(char c)
+{
+	while(uart_txfull());
+	UART_WDATA = c;
+}
+
+//-----------------------------------------------
+// print a string (char*).
+//-----------------------------------------------
+
+void print(const char *p)
+{
+	while (*p)
+		zputchar(*(p++));
+}
+
+
 void
 uart_send_char(char c)
 {
-    uart_putc(c);
 //#error "You must implement the method uart_send_char to use this file!\n";
     /*	Output of a char to a UART usually follows the following model:
             Wait until UART is ready
@@ -679,6 +777,7 @@ uart_send_char(char c)
             Check the UART sample code on your platform or the board
        documentation.
     */
+    zputchar(c);
 }
 
 int

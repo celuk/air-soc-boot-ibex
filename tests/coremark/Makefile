@@ -139,7 +139,7 @@ load: $(OUTFILE)
 
 .PHONY: clean
 clean:
-	rm -f $(OUTFILE) $(OBJS) $(OPATH)*.log *.info $(OPATH)index.html $(PORT_CLEAN) *.o *.coe *.hex *.s *.dump *.bin *.vh
+	rm -f $(OUTFILE) $(OBJS) $(OPATH)*.log *.info $(OPATH)index.html $(PORT_CLEAN) *.o *.coe *.hex *.s *.dump *.bin *.vh *.vmem
 
 .PHONY: force_rebuild
 force_rebuild:

@@ -48,7 +48,7 @@ CFLAGS = $(PORT_CFLAGS) -march=rv32im -mabi=ilp32 -I$(PORT_DIR) -I. -DFLAGS_STR=
 LFLAGS_END +=
 # Flag: PORT_SRCS
 # Port specific source files can be added here
-PORT_SRCS = $(PORT_DIR)/core_portme.c $(PORT_DIR)/ee_printf.c $(PORT_DIR)/crt0.S $(PORT_DIR)/syscalls.c $(PORT_DIR)/uart.c #$(PORT_DIR)/init.c #$(PORT_DIR)/syscalls.c #$(PORT_DIR)/crt.S
+PORT_SRCS = $(PORT_DIR)/core_portme.c $(PORT_DIR)/ee_printf.c $(PORT_DIR)/crt0.S $(PORT_DIR)/syscalls.c #$(PORT_DIR)/uart.c #$(PORT_DIR)/init.c #$(PORT_DIR)/syscalls.c #$(PORT_DIR)/crt.S
 ITERATIONS = 2000
 # Flag: LOAD
 #	Define this flag if you need to load to a target, as in a cross compile environment.

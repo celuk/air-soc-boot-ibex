@@ -18,6 +18,59 @@ Original Author: Shay Gal-on
 #include "coremark.h"
 #include "core_portme.h"
 
+
+
+#define CPU_CLK CLOCKS_PER_SEC //50000000  // 50 Mhz
+#define BAUD_RATE 115200
+
+typedef union
+{
+	struct {
+		unsigned int tx_en    : 1;
+		unsigned int rx_en 	  : 1;
+		unsigned int null	  : 14;
+		unsigned int baud_div : 16;
+	} fields;
+	uint32_t bits;
+}uart_ctrl;
+
+typedef union
+{
+	struct {
+		unsigned int tx_full  : 1;
+		unsigned int rx_full  : 1;
+		unsigned int tx_empty : 1;
+		unsigned int rx_empty : 1;
+		unsigned int null	  : 28;
+	} fields;
+	uint32_t bits;
+}uart_status;
+
+#define UART_CTRL        (*(volatile uint32_t*)0x20000000)
+
+void init_uart(){
+    uart_ctrl uart_control;
+    uart_control.fields.tx_en = 0x1;
+    uart_control.fields.tx_en = 0x1;
+    uart_control.fields.baud_div = CPU_CLK/BAUD_RATE;
+    UART_CTRL = uart_control.bits;
+}
+
+#define TIMER_LOW        (*(volatile uint32_t*)0x30000000)
+#define TIMER_HIGH       (*(volatile uint32_t*)0x30000004)
+
+uint32_t get_timer_low(){
+    return TIMER_LOW;
+}
+uint64_t get_timer_high(){
+    return TIMER_HIGH;
+}
+// TODO ust bitlere bakacaksak hem bura hem core_portme.hda degisiklik gerek
+uint32_t /*uint64_t*/ get_timer(){
+    //return (get_timer_high() << 32) + get_timer_low();
+    return get_timer_low();
+}
+
 #if VALIDATION_RUN
 volatile ee_s32 seed1_volatile = 0x3415;
 volatile ee_s32 seed2_volatile = 0x3415;
@@ -44,9 +97,9 @@ volatile ee_s32 seed5_volatile = 0;
 CORETIMETYPE
 barebones_clock()
 {
-    return 1;
 //#error \
     "You must implement a method to measure time in barebones_clock()! This function should return current time.\n"
+    return (get_timer_high() << 32) + get_timer_low();//get_timer();
 }
 /* Define : TIMER_RES_DIVIDER
         Divider to trade off timer resolution and total time that can be
@@ -127,11 +180,16 @@ ee_u32 default_num_contexts = 1;
         Target specific initialization code
         Test for some common mistakes.
 */
+//volatile unsigned int* UART_CTRL = 0x20000000;
+
 void
 portable_init(core_portable *p, int *argc, char *argv[])
 {
 //#error \
     "Call board initialization routines in portable init (if needed), in particular initialize UART!\n"
+
+    init_uart();
+    //(*UART_CTRL) = 0x01b20003;
 
     (void)argc; // prevent unused warning
     (void)argv; // prevent unused warning
