@@ -27,9 +27,14 @@ reg [63:0] sayac_next;
 wire basa_don = TIM_CNT_R == TIM_ARE;
 wire miktar = (sayac == TIM_PRE +1);
 
-always @* begin
+always_comb begin
     TIM_CNT_NEXT_R = TIM_CNT_R;
     TIM_EVN_NEXT_R = TIM_EVN_R;
+
+    sayac_next = sayac + 1;
+    if(sayac == TIM_PRE+1) begin
+        sayac_next = 0;
+    end
 
     if(TIM_ENA[0]) begin
         case({TIM_CLR[0], TIM_EVC[0], basa_don})
@@ -103,14 +108,7 @@ always @* begin
     end
 end
 
-//always@* begin
-//    sayac_next = sayac + 1;
-//    if(sayac == TIM_PRE+1) begin
-//        sayac_next = 0;
-//    end
-//end
-
-always @(posedge clk_i) begin
+always_ff @(posedge clk_i) begin
     if(rst_i) begin
         TIM_CNT_R <= 0;
         TIM_EVN_R <= 0;

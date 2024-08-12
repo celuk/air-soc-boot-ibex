@@ -44,7 +44,7 @@ wire[31:0] TIM_EVN;
 
 
 
-always @* begin
+always_comb begin
    wb_ack_next_r = 0;
    wb_read_data_next_r = 0;
 
@@ -143,7 +143,7 @@ always @* begin
 
 end
 
-always @(posedge clk_i) begin
+always_ff @(posedge clk_i) begin
    if (rst_i) begin
       wb_ack_r <= 0;
       wb_read_data_r <= 0;
