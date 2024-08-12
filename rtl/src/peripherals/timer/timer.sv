@@ -31,7 +31,9 @@ always_comb begin
     TIM_CNT_NEXT_R = TIM_CNT_R;
     TIM_EVN_NEXT_R = TIM_EVN_R;
 
-    sayac_next = sayac + 1;
+    //if(TIM_ENA[0]==1) begin 
+        sayac_next = sayac + 1;
+    //end 
     if(sayac == TIM_PRE+1) begin
         sayac_next = 0;
     end

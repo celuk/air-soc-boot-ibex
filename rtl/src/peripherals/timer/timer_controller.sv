@@ -47,7 +47,12 @@ wire[31:0] TIM_EVN;
 always_comb begin
    wb_ack_next_r = 0;
    wb_read_data_next_r = 0;
-
+   TIM_PRE_NEXT = TIM_PRE;
+   TIM_ARE_NEXT = TIM_ARE;
+   TIM_CLR_NEXT = TIM_CLR;
+   TIM_ENA_NEXT = TIM_ENA;
+   TIM_MOD_NEXT = TIM_MOD;
+   TIM_EVC_NEXT = TIM_EVC;
 
    if(wb_cyc_i) begin
       if(wb_stb_i & wb_we_i & !wb_ack_o) begin // write
