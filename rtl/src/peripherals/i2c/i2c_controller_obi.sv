@@ -10,8 +10,10 @@ module i2c_controller_obi (
    input  wire [31:0] wdata_i,
    output reg         rvalid_o,
    output reg  [31:0] rdata_o,
-   input  wire        rx_i,
-   output wire        tx_o
+   input  sda_i,
+   output sda_o,
+   input  scl_i,
+   output scl_o
 );
 
    reg         wb_cyc_r = 0;
@@ -19,18 +21,22 @@ module i2c_controller_obi (
    wire        wb_ack_w = 0;
    wire [31:0] wb_dat_o_w = 0;
 
-   // i2c_controller i2c_iface_dut (
-   //    .clk_i   (clk_i),
-   //    .rst_i   (~rst_ni),
-   //    .wb_adr_i(addr_i),
-   //    .wb_dat_i(wdata_i),
-   //    .wb_we_i (we_i),
-   //    .wb_stb_i(wb_stb_r),
-   //    .wb_sel_i(be_i),
-   //    .wb_cyc_i(wb_cyc_r),
-   //    .wb_ack_o(wb_ack_w),
-   //    .wb_dat_o(wb_dat_o_w)
-   // );
+   i2c_controller i2c_iface_dut (
+      .clk_i   (clk_i),
+      .rst_i   (~rst_ni),
+      .wb_adr_i(addr_i),
+      .wb_dat_i(wdata_i),
+      .wb_we_i (we_i),
+      .wb_stb_i(wb_stb_r),
+      .wb_sel_i(be_i),
+      .wb_cyc_i(wb_cyc_r),
+      .wb_ack_o(wb_ack_w),
+      .wb_dat_o(wb_dat_o_w),
+      .sda_i   (sda_i),
+      .sda_o   (sda_o),
+      .scl_i   (scl_i),
+      .scl_o   (scl_o)
+   );
 
    always @(posedge clk_i or negedge rst_ni) begin
       if (~rst_ni) begin

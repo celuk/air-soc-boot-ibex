@@ -3,6 +3,7 @@
         "uart.h": "c",
         "defines.h": "c",
         "stdint.h": "c",
-        "timer.h": "c"
+        "timer.h": "c",
+        "i2c.h": "c"
     }
 }

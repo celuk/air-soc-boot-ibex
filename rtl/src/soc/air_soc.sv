@@ -435,6 +435,8 @@ module air_soc #(
       .rdata_o (spi_rdata)
    );
 
+   logic sda_i, sda_o, scl_i, scl_o;
+
    i2c_controller_obi i2c (
       .clk_i   (clk_i),
       .rst_ni  (rst_ni),
@@ -445,7 +447,11 @@ module air_soc #(
       .wdata_i (i2c_wdata),
       .gnt_o   (i2c_gnt),
       .rvalid_o(i2c_rvalid),
-      .rdata_o (i2c_rdata)
+      .rdata_o (i2c_rdata),
+      .sda_i   (sda_i),
+      .sda_o   (sda_o),
+      .scl_i   (scl_i),
+      .scl_o   (scl_o)
    );
 
    gpio_controller_obi gpio (

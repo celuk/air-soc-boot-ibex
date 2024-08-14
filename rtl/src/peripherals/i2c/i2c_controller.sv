@@ -158,6 +158,7 @@ always @(posedge clk_i) begin
    end
 end
 
+/*
 i2c_master i2c (
     .clk(clk_i),
     .rst(rst_i),
@@ -174,6 +175,7 @@ i2c_master i2c (
     .read_ready_w(),
     .error_w()
 );
+*/
 
 endmodule
 
