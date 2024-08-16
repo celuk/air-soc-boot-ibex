@@ -1,14 +1,6 @@
 // qspi_denetleyici.v
 `timescale 1ps / 1ps
 
-//`define QSPI_CCR_INST 7:0
-//`define QSPI_CCR_DATA_MOD 9:8
-//`define QSPI_CCR_RW 10
-//`define QSPI_CCR_DUMMY_CYC 15:11
-//`define QSPI_CCR_DATA_SIZE 24:16
-//`define QSPI_CCR_PRESCALER 30:25
-//`define QSPI_CCR_CLEAR_STA 31
-
 `define CMD_READ   'h03
 `define CMD_DOR    'h3B
 `define CMD_QOR    'h6B
@@ -30,6 +22,7 @@
 module qspi_denetleyici (
    input clk_i,
    input rst_i,
+
    // wishbone interface
    input  [ 7:0] wb_adr_i,
    input  [31:0] wb_dat_i,
@@ -41,7 +34,6 @@ module qspi_denetleyici (
    output [31:0] wb_dat_o,
 
    // QSPI i/o
-   //inout [3:0] io_qspi_data,
    input [3:0] qspi_data_i,
    output [3:0] qspi_data_o,
    output [1:0] qspi_out_mod_o,
@@ -91,46 +83,6 @@ module qspi_denetleyici (
    wire [5:0] QSPI_CCR_PRESCALER = QSPI_CCR[30:25];
    wire QSPI_CCR_CLEAR_STA = QSPI_CCR[31];
 
-   reg [1:0] data_mod;
-   reg [1:0] data_mod_next;
-   localparam X1 = 2'b01,
-              X2 = 2'b10,
-              X4 = 2'b11;
-
-   wire [2:0] data_rate = (QSPI_CCR_DATA_MOD==X4) ? 4 : QSPI_CCR_DATA_MOD;
-
-   reg [2:0] state;
-   reg [2:0] state_next;
-   localparam IDLE = 0,
-              SEND_COMMAND = 1,
-              SEND_ADDRESS = 2,
-              DUMMY_CYCLES = 3,
-              TRANSFER_DATA = 4,
-              END_TRANSFER = 5;
-
-   reg [31:0] bit_counter;
-   reg [31:0] bit_counter_next;
-
-   // for not doing always read/write after a command came make read/write 0 after read/write operation
-   reg read;
-   reg read_next;
-   reg write;
-   reg write_next;
-
-   //reg qspi_cs_r;
-   //reg qspi_cs_next_r;
-   assign qspi_cs_o = (state == IDLE); //qspi_cs_r;
-
-   reg [31:0] in_buffer;
-   reg [31:0] in_buffer_next;
-
-   reg [31:0] out_buffer;
-   reg [31:0] out_buffer_next;
-
-   assign qspi_data_o = data_mod==X4 ? out_buffer[31:28] : 
-                        data_mod==X2 ? {2'b00, out_buffer[31:30]} : 
-                        data_mod==X1 ? {3'b000, out_buffer[31]} : 4'b0000;
-
    always @* begin
       wb_ack_next_r = 1'b0;
       wb_read_data_next_r = wb_read_data_r;
@@ -147,67 +99,6 @@ module qspi_denetleyici (
       QSPI_DR7_next = QSPI_DR7;
       QSPI_STA_next = QSPI_STA;
 
-      bit_counter_next = bit_counter + 1;
-
-      read_next = read;
-      write_next = write;
-
-      state_next = state;
-
-      //qspi_cs_next_r = qspi_cs_r;
-
-      in_buffer_next = in_buffer;
-      out_buffer_next = out_buffer;
-
-      data_mod_next = data_mod;
-
-      case(state)
-         IDLE: begin
-            //qspi_cs_next_r = 1'b1;
-            if(QSPI_CCR_INST != 8'h0) begin
-               state_next = SEND_COMMAND;
-
-               bit_counter_next = 0;
-
-               read_next = ~QSPI_CCR_RW;
-               write_next = QSPI_CCR_RW;
-            end
-         end
-         SEND_COMMAND: begin
-            if(bit_counter != 8) begin
-               //out_buffer_next = {out_buffer[30:0], QSPI_CCR_INST[bit_counter]};
-               out_buffer_next = {out_buffer[24:0], QSPI_CCR_INST};
-            end
-            else begin
-               state_next = SEND_ADDRESS;
-               bit_counter_next = 0;
-            end
-         end
-         SEND_ADDRESS: begin
-            if(bit_counter != 24) begin
-               //out_buffer_next = {out_buffer[30:0], QSPI_ADR[bit_counter]};
-
-               out_buffer_next = {out_buffer[7:0], QSPI_ADR};
-            end
-            else begin
-               state_next = DUMMY_CYCLES;
-               bit_counter_next = 0;
-            end
-         end
-         DUMMY_CYCLES: begin
-            state_next = TRANSFER_DATA;
-         end
-         TRANSFER_DATA: begin
-            state_next = END_TRANSFER;
-         end
-         END_TRANSFER: begin // ACK
-            state_next = IDLE;
-
-            read_next = 1'b0;
-            write_next = 1'b0;
-         end
-      endcase
-
       if(wb_cyc_i) begin
          wb_ack_next_r <= wb_stb_i & !wb_ack_r;
          // Write to control registers
@@ -223,7 +114,6 @@ module qspi_denetleyici (
                   QSPI_ADR_next[ 7: 0] = wb_sel_i[0] ? wb_dat_i[ 7: 0] : QSPI_ADR[ 7: 0];
                   QSPI_ADR_next[15: 8] = wb_sel_i[1] ? wb_dat_i[15: 8] : QSPI_ADR[15: 8];
                   QSPI_ADR_next[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : QSPI_ADR[23:16];
-                  //QSPI_ADR_next[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : QSPI_ADR[31:24];
                end
                8'h08: begin
                   QSPI_DR0_next[ 7: 0] = wb_sel_i[0] ? wb_dat_i[ 7: 0] : QSPI_DR0[ 7: 0];
@@ -312,20 +202,6 @@ module qspi_denetleyici (
          QSPI_DR6 <= 0;
          QSPI_DR7 <= 0;
          QSPI_STA <= 0;
-
-         bit_counter <= 0;
-
-         read <= 1'b0;
-         write <= 1'b0;
-
-         state <= IDLE;
-
-         //qspi_cs_r <= 1'b1;
-
-         in_buffer <= 0;
-         out_buffer <= 0;
-
-         data_mod <= 2'b01; // default x1
       end
       else begin
          wb_ack_r <= wb_ack_next_r;
@@ -342,188 +218,7 @@ module qspi_denetleyici (
          QSPI_DR6 <= QSPI_DR6_next;
          QSPI_DR7 <= QSPI_DR7_next;
          QSPI_STA <= QSPI_STA_next;
-
-         bit_counter <= bit_counter_next;
-
-         read <= read_next;
-         write <= write_next;
-
-         state <= state_next;
-
-         //qspi_cs_r <= qspi_cs_next_r;
-
-         in_buffer <= in_buffer_next;
-         out_buffer <= out_buffer_next;
-
-         data_mod <= data_mod_next;
       end
    end
-
-   /*
-   always @(posedge clk_i) begin
-      if(rst_i) begin
-         qspi_data_o <= 4'b0000;
-         qspi_out_mod_o <= 2'b00;
-      end
-      else begin
-         case(data_rate)
-            4: begin
-               qspi_data_o <= out_buffer[31:28];
-               qspi_out_mod_o <= 2'b11;
-            end
-            2: begin
-               qspi_data_o <= {2'b00, out_buffer[31:30]};
-               qspi_out_mod_o <= 2'b10;
-            end
-            1: begin
-               qspi_data_o <= {3'b000, out_buffer[31]};
-               qspi_out_mod_o <= 2'b01;
-            end
-         endcase
-      end
-   end
-   */
-
-   reg sck_r;
-   reg [5:0] prescale_counter;
-   wire [5:0] prescaler = (QSPI_CCR_PRESCALER > 0) ? QSPI_CCR_PRESCALER : 1;
-
-   always @(posedge clk_i) begin
-      if(rst_i) begin
-         sck_r <= 1'b1;
-         prescale_counter <= 6'b0;
-      end
-      else begin
-         if(prescale_counter == prescaler - 1) begin
-            prescale_counter <= 6'b0;
-            sck_r <= ~sck_r;
-         end
-         else begin
-            prescale_counter <= prescale_counter + 1;
-            sck_r <= sck_r;
-         end
-      end
-   end
-
-   assign qspi_sck_o = (state != IDLE) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0;
-
-   /*
-   wire cs_edge_detected;
-   wire cs_edge;
-
-   serial_clock_generator scg(
-      .sck(qspi_sck_o),
-      .rising_edge(),
-      .falling_edge(),
-      .clk(clk_i),
-      .rst_n(~rst_i),
-      //.en(cs_edge_detected & ~cs_edge),
-      .en(state != IDLE),
-      //.clk_divider_valid(1'b1),
-      .clk_divider_valid(state == IDLE),
-      .clk_divider({2'b00, QSPI_CCR_PRESCALER})
-   );
-   */
-
-   /*
-   edge_detector ed(
-      .edge_detected(cs_edge_detected),
-      .edge_type(cs_edge),
-      .clk(clk_i),
-      .rst_n(~rst_i),
-      .data_in(qspi_cs_o)
-   );
-   */
-
-endmodule
-
-module serial_clock_generator (
-    output reg      sck,
-    output reg      rising_edge,
-    output reg      falling_edge,
-
-    input wire       clk,
-    input wire       rst_n,
-    input wire       en,
-    input wire       clk_divider_valid,
-    input wire [7:0] clk_divider
-);
-
-reg       sck_nxt, rising_edge_nxt, falling_edge_nxt;
-reg [7:0] counter, counter_nxt, counter_target, counter_target_nxt;
-
-always @(posedge clk or negedge rst_n) begin
-    if (!rst_n) begin
-        sck <= 1'b0;
-        rising_edge <= 1'b0;
-        falling_edge <= 1'b0;
-        counter_target <= 8'b0;
-        counter <= 8'b0;
-    end
-    else begin
-        sck <= sck_nxt;
-        rising_edge <= rising_edge_nxt;
-        falling_edge <= falling_edge_nxt;
-        counter_target <= counter_target_nxt;
-        counter <= counter_nxt;
-    end
-end
-
-always @* begin
-    sck_nxt = 1'b0;
-    rising_edge_nxt = 1'b0;
-    falling_edge_nxt = 1'b0;
-    counter_target_nxt = counter_target;
-    counter_nxt = 8'b0;
-
-    if (clk_divider_valid) begin
-        counter_target_nxt = clk_divider;
-    end
-    else if (en) begin
-        sck_nxt = sck;
-        counter_nxt = counter + 1;
-
-        if (counter_target == 8'b0) begin
-            sck_nxt = ~sck;
-            rising_edge_nxt = ~sck;
-            falling_edge_nxt = sck;
-            counter_nxt = 8'b0;
-        end
-        else if (counter == counter_target) begin
-            sck_nxt = ~sck;
-            rising_edge_nxt = ~sck;
-            falling_edge_nxt = sck;
-            counter_nxt = 8'b0;
-        end
-    end
-end
-
-endmodule
-
-module edge_detector (
-    output wire edge_detected,
-    output wire edge_type, /* 0-falling, 1-rising */
-    input wire  clk,
-    input wire  rst_n,
-    input wire  data_in
-);
-
-reg data_in_prv, data_in_prv2, data_in_prv3;
-
-always @(posedge clk or negedge rst_n) begin
-    if (!rst_n) begin
-        data_in_prv <= 1'b0;
-        data_in_prv2 <= 1'b0;
-        data_in_prv3 <= 1'b0;
-    end
-    else begin
-        data_in_prv <= data_in;
-        data_in_prv2 <= data_in_prv;
-        data_in_prv3 <= data_in_prv2;
-    end
-end
-
-   assign edge_detected = data_in_prv2 ^ data_in_prv3;
-   assign edge_type = data_in_prv2;
 
 endmodule
