@@ -1,10 +1,20 @@
 #include "timer.h"
+#include "defines.h"
 
 void init_timer()
 {
-    TIM_PRE = 0;
-    TIM_ENA = 1;
-    TIM_MOD = 1;
+    //TIM_PRE = 0;
+    //TIM_ENA = 1;
+    //TIM_MOD = 1;
+
+    timer_set_clr(1);
+    timer_set_evc(1);
+    timer_set_pre(0);
+    timer_set_are(0xFFFFFFFF);
+    timer_set_ena(1);
+    timer_set_mod(1);
+    timer_set_evc(0);
+    timer_set_clr(0);
 }
 
 void timer_set_pre (unsigned int pre){
@@ -61,4 +71,22 @@ void timer_set_evc (unsigned int evc){
 
 int timer_get_evc (){
     return TIM_EVC;
+}
+
+void wait_for(uint32_t time){
+    init_timer();
+	uint32_t start = timer_get_cnt();
+	uint32_t end = timer_get_cnt();
+    uint32_t diff = end - start;
+	while(((diff)) < time){
+		end = timer_get_cnt();
+        if(end > start)
+            diff = end - start;
+        else
+            diff = start - end;
+	}
+}
+
+void wait_for_us(uint32_t time){
+    wait_for(US(time));
 }

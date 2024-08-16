@@ -19,7 +19,14 @@
 `define CMD_CLSR   'h30
 `define CMD_RESET  'hF0
 
-module qspi_denetleyici (
+`define CFG_MODE 12
+`define QSPEED_BIT 11
+`define DSPEED_BIT 10
+`define DIR_BIT 9
+`define USER_CS_n 8
+`define DATA_8BIT 7:0
+
+module qspi_controller (
    input clk_i,
    input rst_i,
 
@@ -38,7 +45,7 @@ module qspi_denetleyici (
    output [3:0] qspi_data_o,
    output [1:0] qspi_out_mod_o,
 
-   output qspi_cs_o,
+   output qspi_cs_n_o,
    output qspi_sck_o
 );
    
@@ -83,6 +90,16 @@ module qspi_denetleyici (
    wire [5:0] QSPI_CCR_PRESCALER = QSPI_CCR[30:25];
    wire QSPI_CCR_CLEAR_STA = QSPI_CCR[31];
 
+   // QSPI MASTER interface
+   logic wbqspi_cyc = wb_cyc_i;
+   logic wbqspi_data_stb = wb_stb_i && (|wb_sel_i);
+   logic wbqspi_ctrl_stb = 0;
+   logic wbqspi_we = wb_we_i; // gonderilecek komut yazilacagi zaman
+   logic [31:0] wbqspi_adr = 0;
+   logic [31:0] wbqspi_data_i = 0;
+   logic [31:0] wbqspi_data_o;
+   logic wbqspi_ack;
+
    always @* begin
       wb_ack_next_r = 1'b0;
       wb_read_data_next_r = wb_read_data_r;
@@ -97,7 +114,7 @@ module qspi_denetleyici (
       QSPI_DR5_next = QSPI_DR5;
       QSPI_DR6_next = QSPI_DR6;
       QSPI_DR7_next = QSPI_DR7;
-      QSPI_STA_next = QSPI_STA;
+      QSPI_STA_next = wbqspi_ack; //QSPI_STA;
 
       if(wb_cyc_i) begin
          wb_ack_next_r <= wb_stb_i & !wb_ack_r;
@@ -220,5 +237,28 @@ module qspi_denetleyici (
          QSPI_STA <= QSPI_STA_next;
       end
    end
+
+   wbqspiflash #(
+      .ADDRESS_WIDTH(24),
+      .OPT_READ_ONLY(1'b0)
+  )
+   qspi_flash_master (
+      .i_clk(clk_i),
+      .i_wb_cyc(wbqspi_cyc),
+      .i_wb_data_stb(wbqspi_data_stb),
+      .i_wb_ctrl_stb(wbqspi_ctrl_stb),
+      .i_wb_we(wbqspi_we),
+      .i_wb_addr(wbqspi_adr),
+      .i_wb_data(wbqspi_data_i),
+      .o_wb_stall(),
+      .o_wb_ack(wbqspi_ack),
+      .o_wb_data(wbqspi_data_o),
+      .o_qspi_sck(qspi_sck),
+      .o_qspi_cs_n(qspi_cs_n_o),
+      .o_qspi_mod(qspi_out_mod_o),
+      .o_qspi_dat(qspi_data_o),
+      .i_qspi_dat(qspi_data_i),
+      .o_interrupt()
+   );
 
 endmodule

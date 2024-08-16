@@ -1,5 +1,5 @@
 
-module spi_controller_obi (
+module qspi_controller_obi (
    input  wire        clk_i,
    input  wire        rst_ni,
    input  wire        req_i,
@@ -9,7 +9,14 @@ module spi_controller_obi (
    input  wire [31:0] addr_i,
    input  wire [31:0] wdata_i,
    output reg         rvalid_o,
-   output reg  [31:0] rdata_o
+   output reg  [31:0] rdata_o,
+
+   input [3:0] qspi_data_i,
+   output [3:0] qspi_data_o,
+   output [1:0] qspi_out_mod_o,
+
+   output qspi_cs_n_o,
+   output qspi_sck_o
 );
 
    reg         wb_cyc_r;
@@ -17,7 +24,7 @@ module spi_controller_obi (
    wire        wb_ack_w;
    wire [31:0] wb_dat_o_w;
 
-   qspi_controller spi_iface_dut (
+   qspi_controller qspi_iface_dut (
       .clk_i   (clk_i),
       .rst_i   (~rst_ni),
       .wb_adr_i(addr_i),
@@ -27,7 +34,12 @@ module spi_controller_obi (
       .wb_sel_i(be_i),
       .wb_cyc_i(wb_cyc_r),
       .wb_ack_o(wb_ack_w),
-      .wb_dat_o(wb_dat_o_w)
+      .wb_dat_o(wb_dat_o_w),
+      .qspi_data_i(qspi_data_i),
+      .qspi_data_o(qspi_data_o),
+      .qspi_out_mod_o(qspi_out_mod_o),
+      .qspi_cs_n_o(qspi_cs_n_o),
+      .qspi_sck_o(qspi_sck_o)
    );
 
    always @(posedge clk_i or negedge rst_ni) begin

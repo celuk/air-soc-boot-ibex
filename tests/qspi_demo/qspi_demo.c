@@ -1,10 +1,11 @@
 #include "qspi.h"
 #include "uart.h"
+#include "timer.h"
 
 int main(){
     //init_uart();
 
-    //wait_for(US(500));
+    wait_for_us(500);
 
     qspi_ccr ccr;
     ccr.fields.inst_value = CMD_READ;

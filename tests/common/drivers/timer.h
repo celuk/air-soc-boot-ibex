@@ -37,5 +37,7 @@ int timer_get_cnt ();
 int timer_get_evn ();
 void timer_set_evc (unsigned int evc);
 int timer_get_evc ();
+void wait_for(uint32_t time);
+void wait_for_us(uint32_t time);
 
 #endif

@@ -3,6 +3,8 @@
 //
 `default_nettype none
 
+`define QSPI_SIM
+
 module air_soc #(
    parameter int unsigned MEM_W         = 32,    // memory bus width in bits
    parameter int unsigned ICACHE_SZ     = 8192,  // instruction cache size in bytes
@@ -81,14 +83,14 @@ module air_soc #(
    logic               gpio_rvalid;
    logic [MEM_W  -1:0] gpio_rdata;
 
-   logic               spi_req;
-   logic [       31:0] spi_addr;
-   logic               spi_we;
-   logic [MEM_W/8-1:0] spi_be;
-   logic [MEM_W  -1:0] spi_wdata;
-   logic               spi_gnt;
-   logic               spi_rvalid;
-   logic [MEM_W  -1:0] spi_rdata;
+   logic               qspi_req;
+   logic [       31:0] qspi_addr;
+   logic               qspi_we;
+   logic [MEM_W/8-1:0] qspi_be;
+   logic [MEM_W  -1:0] qspi_wdata;
+   logic               qspi_gnt;
+   logic               qspi_rvalid;
+   logic [MEM_W  -1:0] qspi_rdata;
 
    logic               i2c_req;
    logic [       31:0] i2c_addr;
@@ -346,14 +348,14 @@ module air_soc #(
       .uart_rvalid_i(uart_rvalid),
       .uart_rdata_i (uart_rdata),
 
-      .spi_req_o   (spi_req),
-      .spi_addr_o  (spi_addr),
-      .spi_we_o    (spi_we),
-      .spi_be_o    (spi_be),
-      .spi_wdata_o (spi_wdata),
-      .spi_gnt_i   (spi_gnt),
-      .spi_rvalid_i(spi_rvalid),
-      .spi_rdata_i (spi_rdata),
+      .qspi_req_o   (qspi_req),
+      .qspi_addr_o  (qspi_addr),
+      .qspi_we_o    (qspi_we),
+      .qspi_be_o    (qspi_be),
+      .qspi_wdata_o (qspi_wdata),
+      .qspi_gnt_i   (qspi_gnt),
+      .qspi_rvalid_i(qspi_rvalid),
+      .qspi_rdata_i (qspi_rdata),
 
       .timer_req_o   (timer_req),
       .timer_addr_o  (timer_addr),
@@ -393,7 +395,6 @@ module air_soc #(
 
    );
 
-
    uart_controller_obi uart (
       .clk_i   (clk_i),
       .rst_ni  (rst_ni),
@@ -422,18 +423,57 @@ module air_soc #(
       .rdata_o (timer_rdata)
    );
 
-   spi_controller_obi spi (
+   wire qspi_cs_n_o;
+   wire qspi_sck_o;
+   wire [3:0] qspi_data_io;
+   wire [3:0] qspi_data_i;
+   wire [3:0] qspi_data_o;
+   wire [1:0] qspi_out_mod_o;
+
+   assign qspi_data_io[0] = |qspi_out_mod_o   ? qspi_data_o[0] : 1'bZ;
+   assign qspi_data_io[1] = qspi_out_mod_o[1] ? qspi_data_o[1] : 1'bZ;
+   assign qspi_data_io[2] = &qspi_out_mod_o   ? qspi_data_o[2] : 1'bZ;
+   assign qspi_data_io[3] = &qspi_out_mod_o   ? qspi_data_o[3] : 1'bZ;
+
+   assign qspi_data_i = qspi_data_io;
+
+   qspi_controller_obi qspi (
       .clk_i   (clk_i),
       .rst_ni  (rst_ni),
-      .req_i   (spi_req),
-      .we_i    (spi_we),
-      .be_i    (spi_be),
-      .addr_i  (spi_addr),
-      .wdata_i (spi_wdata),
-      .gnt_o   (spi_gnt),
-      .rvalid_o(spi_rvalid),
-      .rdata_o (spi_rdata)
+      .req_i   (qspi_req),
+      .we_i    (qspi_we),
+      .be_i    (qspi_be),
+      .addr_i  (qspi_addr),
+      .wdata_i (qspi_wdata),
+      .gnt_o   (qspi_gnt),
+      .rvalid_o(qspi_rvalid),
+      .rdata_o (qspi_rdata),
+      .qspi_data_i(qspi_data_i),
+      .qspi_data_o(qspi_data_o),
+      .qspi_out_mod_o(qspi_out_mod_o),
+      .qspi_cs_n_o(qspi_cs_n_o),
+      .qspi_sck_o(qspi_sck_o)
    );
+
+   `ifdef QSPI_SIM
+      s25fl128s  
+      #(
+        .mem_file_name("../../sim/s25fl128s.mem"),
+        .otp_file_name("none"),
+        .AddrRANGE(24'h000FFF)
+      )
+      flash(
+              // Data Inputs/Outputs
+              .SI(qspi_data_io[0]),
+              .SO(qspi_data_io[1]),
+              // Controls
+              .SCK(qspi_sck_o),
+              .CSNeg(qspi_cs_n_o),
+              //.RSTNeg(1),
+              .WPNeg(qspi_data_io[2]),
+              .HOLDNeg(qspi_data_io[3])
+      );
+   `endif
 
    logic sda_i, sda_o, scl_i, scl_o;
 
