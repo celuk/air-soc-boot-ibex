@@ -248,6 +248,7 @@ module s25fl128s
     reg  HOLDNegOut_zd = 1'bZ  ;
 
     assign SI_z = SIOut_z;
+
     assign SO_z = SOut_z;
 
     parameter UserPreload       = 1;
@@ -309,7 +310,8 @@ module s25fl128s
 
     // If speedsimulation is needed uncomment following line
 
-       `define SPEEDSIM;
+       //`define SPEEDSIM;
+    `define VERYSPEEDSIM;
 
     // powerup
     reg PoweredUp;
@@ -693,6 +695,33 @@ specify
         specparam        tdevice_PASSULCK          = 1e6;//
         // Password Unlock to Password Unlock Time
         specparam        tdevice_PASSACC           = 100e6;
+    `elsif VERYSPEEDSIM
+        // Page Program Operation
+        specparam        tdevice_PP_256            = 55e5;//tPP
+        // Page Program Operation
+        specparam        tdevice_PP_512            = 75e5;//tPP
+        // Typical Byte Programming Time
+        specparam        tdevice_BP                = 4e6;//tBP
+        // Sector Erase Operation
+        specparam        tdevice_SE64              = 650e5;//tSE
+        // Sector Erase Operation
+        specparam        tdevice_SE256             = 1875e5;//tSE
+        // Bulk Erase Operation
+        specparam        tdevice_BE                = 165e7;//tBE
+        // WRR Cycle Time
+        specparam        tdevice_WRR               = 2e7;//tW
+        // Erase Suspend/Erase Resume Time
+        specparam        tdevice_ERSSUSP           = 40e4;//tESL
+        // Program Suspend/Program Resume Time
+        specparam        tdevice_PRGSUSP           = 40e4;//
+        // VCC (min) to CS# Low
+        specparam        tdevice_PU                = 3e6;//tPU
+        // PPB Erase Time
+        specparam        tdevice_PPBERASE          = 15e7;//
+        // Password Unlock Time
+        specparam        tdevice_PASSULCK          = 1e4;//
+        // Password Unlock to Password Unlock Time
+        specparam        tdevice_PASSACC           = 100e4;
     `else
         // Page Program Operation
         specparam        tdevice_PP_256            = 55e7;//tPP

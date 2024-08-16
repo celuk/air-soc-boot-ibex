@@ -92,7 +92,7 @@ module qspi_controller (
    wire QSPI_CCR_CLEAR_STA = QSPI_CCR[31];
 
    // QSPI MASTER interface
-   logic wbqspi_cyc = wb_cyc_i;
+   logic wbqspi_cyc = wb_ack_o; //wb_cyc_i;
    logic wbqspi_data_stb = wb_stb_i && (|wb_sel_i);
    logic wbqspi_ctrl_stb = 0;
    logic wbqspi_we = QSPI_CCR_INST == `CMD_READ
@@ -115,7 +115,7 @@ module qspi_controller (
    logic [31:0] wbqspi_adr = QSPI_ADR;
    logic [31:0] wbqspi_data_i;
    assign wbqspi_data_i[`UNUSED] = 0;
-   assign wbqspi_data_i[`CFG_MODE] = QSPI_CCR_DATA_MOD;
+   assign wbqspi_data_i[`CFG_MODE] = QSPI_CCR_DATA_SIZE == 1;
    assign wbqspi_data_i[`QSPEED_BIT] = QSPI_CCR_DATA_MOD[1] & QSPI_CCR_DATA_MOD[0];
    assign wbqspi_data_i[`DSPEED_BIT] = QSPI_CCR_DATA_MOD[1] & ~QSPI_CCR_DATA_MOD[0];
    assign wbqspi_data_i[`DIR_BIT] = QSPI_CCR_RW;

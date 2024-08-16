@@ -5,7 +5,8 @@
 int main(){
     //init_uart();
 
-    wait_for_us(500);
+    //wait_for_us(500);
+    wait_for_us(5);
 
     qspi_ccr ccr;
     ccr.fields.inst_value = CMD_READ;
