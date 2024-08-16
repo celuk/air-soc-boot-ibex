@@ -4,6 +4,7 @@
         "defines.h": "c",
         "stdint.h": "c",
         "timer.h": "c",
-        "i2c.h": "c"
+        "i2c.h": "c",
+        "gpio.h": "c"
     }
 }
