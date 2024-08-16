@@ -19,6 +19,7 @@
 `define CMD_CLSR   'h30
 `define CMD_RESET  'hF0
 
+`define UNUSED 31:13
 `define CFG_MODE 12
 `define QSPEED_BIT 11
 `define DSPEED_BIT 10
@@ -94,9 +95,32 @@ module qspi_controller (
    logic wbqspi_cyc = wb_cyc_i;
    logic wbqspi_data_stb = wb_stb_i && (|wb_sel_i);
    logic wbqspi_ctrl_stb = 0;
-   logic wbqspi_we = wb_we_i; // gonderilecek komut yazilacagi zaman
-   logic [31:0] wbqspi_adr = 0;
-   logic [31:0] wbqspi_data_i = 0;
+   logic wbqspi_we = QSPI_CCR_INST == `CMD_READ
+                  || QSPI_CCR_INST == `CMD_DOR
+                  || QSPI_CCR_INST == `CMD_QOR
+                  || QSPI_CCR_INST == `CMD_PP
+                  || QSPI_CCR_INST == `CMD_QPP
+                  || QSPI_CCR_INST == `CMD_SE
+                  || QSPI_CCR_INST == `CMD_READID
+                  || QSPI_CCR_INST == `CMD_RDID
+                  || QSPI_CCR_INST == `CMD_RES
+                  || QSPI_CCR_INST == `CMD_RDSR1
+                  || QSPI_CCR_INST == `CMD_RDSR2
+                  || QSPI_CCR_INST == `CMD_RDCR
+                  || QSPI_CCR_INST == `CMD_WRR
+                  || QSPI_CCR_INST == `CMD_WRDI
+                  || QSPI_CCR_INST == `CMD_WREN
+                  || QSPI_CCR_INST == `CMD_CLSR
+                  || QSPI_CCR_INST == `CMD_RESET;
+   logic [31:0] wbqspi_adr = QSPI_ADR;
+   logic [31:0] wbqspi_data_i;
+   assign wbqspi_data_i[`UNUSED] = 0;
+   assign wbqspi_data_i[`CFG_MODE] = QSPI_CCR_DATA_MOD;
+   assign wbqspi_data_i[`QSPEED_BIT] = QSPI_CCR_DATA_MOD[1] & QSPI_CCR_DATA_MOD[0];
+   assign wbqspi_data_i[`DSPEED_BIT] = QSPI_CCR_DATA_MOD[1] & ~QSPI_CCR_DATA_MOD[0];
+   assign wbqspi_data_i[`DIR_BIT] = QSPI_CCR_RW;
+   assign wbqspi_data_i[`USER_CS_n] = 0;
+   assign wbqspi_data_i[`DATA_8BIT] = QSPI_CCR_INST;
    logic [31:0] wbqspi_data_o;
    logic wbqspi_ack;
 
