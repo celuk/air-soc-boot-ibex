@@ -99,7 +99,10 @@ barebones_clock()
 {
 //#error \
     "You must implement a method to measure time in barebones_clock()! This function should return current time.\n"
-    return (get_timer_high() << 32) + get_timer_low();//get_timer();
+    //return (get_timer_high() << 32) + get_timer_low();//get_timer();
+  uint32_t val;
+  asm volatile ("rdcycle %0 ;\n":"=r" (val) ::);
+  return val;
 }
 /* Define : TIMER_RES_DIVIDER
         Divider to trade off timer resolution and total time that can be
