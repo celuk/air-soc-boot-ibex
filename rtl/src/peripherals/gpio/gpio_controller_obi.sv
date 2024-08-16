@@ -10,8 +10,8 @@ module gpio_controller_obi (
    input  wire [31:0] wdata_i,
    output reg         rvalid_o,
    output reg  [31:0] rdata_o,
-   input  wire        rx_i,
-   output wire        tx_o
+   input  [15:0] gpio_i,
+   output [15:0] gpio_o
 );
 
    reg         wb_cyc_r;
@@ -29,7 +29,9 @@ module gpio_controller_obi (
       .wb_sel_i(be_i),
       .wb_cyc_i(wb_cyc_r),
       .wb_ack_o(wb_ack_w),
-      .wb_dat_o(wb_dat_o_w)
+      .wb_dat_o(wb_dat_o_w),
+      .gpio_i(gpio_i),
+      .gpio_o(gpio_o)
    );
 
    always @(posedge clk_i or negedge rst_ni) begin

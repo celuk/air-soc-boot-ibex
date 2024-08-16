@@ -494,6 +494,9 @@ module air_soc #(
       .scl_o   (scl_o)
    );
 
+   logic [15:0] gpio_i = 16'h0000;
+   logic [15:0] gpio_o;
+
    gpio_controller_obi gpio (
       .clk_i   (clk_i),
       .rst_ni  (rst_ni),
@@ -504,7 +507,9 @@ module air_soc #(
       .wdata_i (gpio_wdata),
       .gnt_o   (gpio_gnt),
       .rvalid_o(gpio_rvalid),
-      .rdata_o (gpio_rdata)
+      .rdata_o (gpio_rdata),
+      .gpio_i  (gpio_i),
+      .gpio_o  (gpio_o)
    );
 
    usb_controller_obi usb (
