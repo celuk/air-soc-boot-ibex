@@ -20,6 +20,9 @@ int main(){
     QSPI_ADR = 0x00000000;
     QSPI_CCR = ccr.bits;
 
+    //while(!QSPI_STA);
+    wait_for_us(5);
+
     //tekno_printf("QSPI_DR0: %x\n", QSPI_DR0);
     //wait_for(US(500));
 
@@ -43,6 +46,8 @@ int main(){
     QSPI_DR6 = 0x00000000;
     QSPI_DR7 = 0x10000000;
     
+    //while(!QSPI_STA);
+    wait_for_us(5);
 
     //wait_for(US(500));
 
@@ -56,6 +61,9 @@ int main(){
 
     QSPI_CCR = ccr.bits;
 
+    //while(!QSPI_STA);
+    wait_for_us(5);
+
     //wait_for(US(500));
 
     ccr.fields.inst_value = CMD_RDSR1;
@@ -65,6 +73,9 @@ int main(){
     ccr.fields.data_mod = 1;
     ccr.fields.clear_status_reg = 0;
     ccr.fields.dummy_cycle = 0;
+
+    //while(!QSPI_STA);
+    wait_for_us(5);
 
     int value = 100;
     while((value && 0x000000ff) != 0 ) {
@@ -83,6 +94,9 @@ int main(){
     ccr.fields.dummy_cycle = 0;
 
     QSPI_CCR = ccr.bits;
+
+    //while(!QSPI_STA);
+    wait_for_us(5);
 
     while(1);
 }
