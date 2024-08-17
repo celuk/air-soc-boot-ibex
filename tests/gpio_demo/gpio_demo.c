@@ -8,9 +8,9 @@ int main() {
     gpio_set(1, 0);
     
     init_timer();
-    wait_for_us(5);
+    wait_for(5);
     gpio_set(1, 1);
-    wait_for_us(5);
+    wait_for(5);
     gpio_set(1, 0);
 
     tekno_printf("GPIO 0: %d\n", gpio_get(0));

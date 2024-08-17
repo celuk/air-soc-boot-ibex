@@ -54,7 +54,7 @@ always_comb begin
 
    if(wb_cyc_i) begin
       wb_ack_next_r <= wb_stb_i & !wb_ack_r;
-      if(wb_stb_i & wb_we_i) begin // write
+      if(wb_stb_i & wb_we_i & !wb_ack_o) begin // write
          case(wb_adr_i)
             8'h00: begin
                TIM_PRE_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : TIM_PRE[7:0  ];

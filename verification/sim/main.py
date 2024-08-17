@@ -9,8 +9,10 @@ SCRIPT_DIR = Path(os.path.realpath(__file__)).parent.absolute()
 
 def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfile: str):
     hdl_dir = Path(SCRIPT_DIR / "../../rtl")
+    sim_dir = Path(SCRIPT_DIR / "../../rtl/sim")
     verilog_files = hdl_dir.rglob("*.v")
     system_verilog_files = hdl_dir.rglob("*.sv")
+    #mem_files = hdl_dir.rglob("*.mem")
 
     verilog_headers = hdl_dir.rglob("*.vh")
     system_verilog_headers = hdl_dir.rglob("*.svh")
@@ -28,6 +30,7 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
         + list(system_verilog_files)
         + list(submodule_verilog_files)
         + list(submodule_system_verilog_files)
+        #+ list(mem_files)
     )
     ## sort the sources to make sure that the def and pkg.sv files are at the beginning
     ## otherwise the simulator might not find the packages
@@ -49,6 +52,8 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
 
     subdirectories = [x[0] for x in os.walk(submodule_dir)]
     include_dirs.extend(subdirectories)
+    include_dirs.extend([sim_dir])
+    #include_dirs.extend(mem_files)
 
     print(include_dirs)
     print(verilog_sources)

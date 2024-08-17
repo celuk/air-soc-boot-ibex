@@ -152,25 +152,13 @@ module qspi_controller (
          reg_write_en <= 0;
       end
       else begin
-         if(ack_flag && state==IDLE && !ack) begin
-            ack <= 1;
-         end
-         else if(wb_cyc_i && wb_we_i && wb_sel_i[0] && wb_stb_i && state==IDLE && !ack) begin
+         if(wb_cyc_i && wb_we_i && wb_sel_i[0] && wb_stb_i && state==IDLE && !ack) begin
             // control_register_r[wb_adr_i>>2] <= wb_dat_i;
-            if(wb_adr_i==0) begin
-               // inst_flag <= 1;
-               ack <= 0;
-            end
-            else if(wb_adr_i!=0) begin
-               ack <= 1;
-            end
-            else begin
-               ack <= 0;
-            end
+            ack <= wb_stb_i & !ack;
          end
          else if(wb_cyc_i && !wb_we_i && wb_stb_i && state==IDLE && !ack) begin
             dat_r <= control_register_r[wb_adr_i>>2];
-            ack <= 1;
+            ack <= wb_stb_i & !ack;
          end
          else begin
             ack <= 0;
@@ -203,14 +191,18 @@ module qspi_controller (
          
          IDLE: begin
             ack_flag <= 0;
-            if(wb_cyc_i && !ack_flag && wb_we_i && wb_sel_i[0] && wb_stb_i && !ack) begin
-               if(wb_adr_i != 'h28)
-                  control_register_r[wb_adr_i>>2] <= wb_dat_i;
-               else
-                  control_register_r[wb_adr_i>>2] <= !busy;
+            if(wb_cyc_i) begin
+               ack <= wb_stb_i & !ack;
+               if(wb_we_i && wb_sel_i[0] && wb_stb_i && !ack_flag) begin
+                  if(wb_adr_i != 'h28)
+                     control_register_r[wb_adr_i>>2] <= wb_dat_i;
+                  else
+                     control_register_r[wb_adr_i>>2] <= !busy;
+               end
                if(wb_adr_i==0) 
                   inst_flag <= 1;
             end
+
             if(new_inst && inst_flag) begin
                state <= INST;
                // addr ekle
