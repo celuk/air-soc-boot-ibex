@@ -52,64 +52,51 @@ always @* begin
    wb_read_data_next_r = 0;
 
    if (wb_cyc_i) begin
-      if (wb_stb_i & wb_we_i & !wb_ack_o) begin // write
+      wb_ack_next_r <= wb_stb_i & !wb_ack_r;
+      if (wb_stb_i & wb_we_i) begin // write
          case (wb_adr_i)
             8'h00: begin
-               I2C_NBY_NEXT = wb_sel_i[0] ? wb_dat_i[7:0] : I2C_NBY;
-               I2C_NBY_NEXT = wb_sel_i[1] ? wb_dat_i[15:8] : I2C_NBY;
-               I2C_NBY_NEXT = wb_sel_i[2] ? wb_dat_i[23:16] : I2C_NBY;
-               I2C_NBY_NEXT = wb_sel_i[3] ? wb_dat_i[31:24] : I2C_NBY;
-               wb_ack_next_r = 1'b1;
+               I2C_NBY_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : I2C_NBY[7:0  ];
+               I2C_NBY_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : I2C_NBY[15:8 ];
+               I2C_NBY_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : I2C_NBY[23:16];
+               I2C_NBY_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : I2C_NBY[31:24];
             end
             8'h04: begin
-               I2C_ADR_NEXT = wb_sel_i[0] ? wb_dat_i[7:0] : I2C_ADR;
-               I2C_ADR_NEXT = wb_sel_i[1] ? wb_dat_i[15:8] : I2C_ADR;
-               I2C_ADR_NEXT = wb_sel_i[2] ? wb_dat_i[23:16] : I2C_ADR;
-               I2C_ADR_NEXT = wb_sel_i[3] ? wb_dat_i[31:24] : I2C_ADR;
-               wb_ack_next_r = 1'b1;
+               I2C_ADR_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : I2C_ADR[7:0  ];
+               I2C_ADR_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : I2C_ADR[15:8 ];
+               I2C_ADR_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : I2C_ADR[23:16];
+               I2C_ADR_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : I2C_ADR[31:24];
             end
             8'h08: begin
-               I2C_TDR_NEXT = wb_sel_i[0] ? wb_dat_i[7:0] : I2C_TDR;
-               I2C_TDR_NEXT = wb_sel_i[1] ? wb_dat_i[15:8] : I2C_TDR;
-               I2C_TDR_NEXT = wb_sel_i[2] ? wb_dat_i[23:16] : I2C_TDR;
-               I2C_TDR_NEXT = wb_sel_i[3] ? wb_dat_i[31:24] : I2C_TDR;
-               wb_ack_next_r = 1'b1;
+               I2C_TDR_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : I2C_TDR[7:0  ];
+               I2C_TDR_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : I2C_TDR[15:8 ];
+               I2C_TDR_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : I2C_TDR[23:16];
+               I2C_TDR_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : I2C_TDR[31:24];
             end
             8'h0C: begin
-               I2C_CFG_NEXT = wb_sel_i[0] ? wb_dat_i[7:0] : I2C_CFG;
-               I2C_CFG_NEXT = wb_sel_i[1] ? wb_dat_i[15:8] : I2C_CFG;
-               I2C_CFG_NEXT = wb_sel_i[2] ? wb_dat_i[23:16] : I2C_CFG;
-               I2C_CFG_NEXT = wb_sel_i[3] ? wb_dat_i[31:24] : I2C_CFG;
-               wb_ack_next_r = 1'b1;
-            end
-            default: begin
-               wb_ack_next_r = 0;
+               I2C_CFG_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : I2C_CFG[7:0  ];
+               I2C_CFG_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : I2C_CFG[15:8 ];
+               I2C_CFG_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : I2C_CFG[23:16];
+               I2C_CFG_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : I2C_CFG[31:24];
             end
          endcase
-      end else if (~wb_we_i) begin // read
+      end 
+      else if (~wb_we_i) begin // read
          case (wb_adr_i)
             8'h00: begin
                wb_read_data_next_r = I2C_NBY;
-               wb_ack_next_r = 1;
             end
             8'h04: begin
                wb_read_data_next_r = I2C_ADR;
-               wb_ack_next_r = 1;
             end
             8'h08: begin
                wb_read_data_next_r = I2C_RDR;
-               wb_ack_next_r = 1;
             end
             8'h0C: begin
                wb_read_data_next_r = I2C_TDR;
-               wb_ack_next_r = 1;
             end
             8'h10: begin
                wb_read_data_next_r = I2C_CFG;
-               wb_ack_next_r = 1;
-            end
-            default: begin
-               wb_ack_next_r = 0;
             end
          endcase
       end
