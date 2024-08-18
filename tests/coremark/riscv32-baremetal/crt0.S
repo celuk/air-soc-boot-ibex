@@ -30,7 +30,9 @@ _start:
     la t1, _bss_start
     la t2, _bss_end
 
-    bge t1, t2, bss_clear_end
+    j main	
+    1: j 1b
+    #bge t1, t2, bss_clear_end
 
 bss_clear_loop:
     sw x0, 0(t1)

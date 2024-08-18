@@ -7,5 +7,6 @@ int main()
 
     //tekno_printf("I2C_ADR: %x\n", I2C_ADR);
 
-    while(1);
+    //while(1);
+    return 0;
 }

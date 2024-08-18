@@ -17,5 +17,6 @@ int main()
     while(1)
         tekno_printf("%d\n", timer_get_cnt());
 
-    while(1);
+    //while(1);
+    return 0;
 }

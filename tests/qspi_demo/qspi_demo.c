@@ -98,5 +98,6 @@ int main(){
     //while(!QSPI_STA);
     wait_for_us(5);
 
-    while(1);
+    //while(1);
+    return 0;
 }
