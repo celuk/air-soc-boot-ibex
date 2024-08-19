@@ -1,4 +1,4 @@
-// qspi_denetleyici.v
+// qspi_controller.v
 `timescale 1ps / 1ps
 
 //`define QSPI_CCR_INST 7:0
@@ -27,7 +27,7 @@
 `define CMD_CLSR   'h30
 `define CMD_RESET  'hF0
 
-module qspi_denetleyici (
+module qspi_controller (
    input clk_i,
    input rst_i,
    // wishbone interface
@@ -46,7 +46,7 @@ module qspi_denetleyici (
    output [3:0] qspi_data_o,
    output [1:0] qspi_out_mod_o,
 
-   output qspi_cs_o,
+   output qspi_cs_n_o,
    output qspi_sck_o
 );
    
@@ -111,7 +111,7 @@ module qspi_denetleyici (
 
    reg qspi_cs_r;
    reg qspi_cs_next_r;
-   assign qspi_cs_o = qspi_cs_r; //(state == IDLE); //qspi_cs_r;
+   assign qspi_cs_n_o = qspi_cs_r; //(state == IDLE); //qspi_cs_r;
 
    reg [31:0] buffer;
    reg [31:0] buffer_next;
@@ -245,11 +245,9 @@ module qspi_denetleyici (
                
                QSPI_STA_next[1] = 1; // busy
 
+               state_next = TRANSFER_DATA;
                if(QSPI_CCR_DUMMY_CYC > 0) begin
                   state_next = DUMMY_CYCLES;
-               end
-               else begin
-                  state_next = TRANSFER_DATA;
                end
             end
             DUMMY_CYCLES: begin
@@ -443,6 +441,7 @@ module qspi_denetleyici (
          state <= state_next;
 
          qspi_cs_r <= qspi_cs_next_r;
+         sclk <= sclk_next;
 
          data_out_next <= data_out;
          data_out_enable <= data_out_enable_next;
@@ -527,7 +526,7 @@ module qspi_denetleyici (
       .edge_type(cs_edge),
       .clk(clk_i),
       .rst_n(~rst_i),
-      .data_in(qspi_cs_o)
+      .data_in(qspi_cs_n_o)
    );
    */
 
