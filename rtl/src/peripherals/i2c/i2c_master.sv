@@ -10,12 +10,14 @@ module i2c_master(
     output                  sda_o,           // sda output
     input       [6:0]       address_w,
     input                   rd_wr_w,
-    input       [7:0]       write_data_w,
-    input       [2:0]       num_read_w,
+    input       [31:0]      write_data_w,
+    input       [2:0]       num_bytes_w,
     output      [31:0]      read_data_w,
     input                   start_w,
+    output                  start_aldim_o,
     output                  ready_w,
-    output                  read_ready_w,
+    output                  read_finished_w,
+    output                  write_finished_w,
     output                  error_w
     );
     
@@ -55,17 +57,19 @@ module i2c_master(
     reg [3:0]   sample_buf, sample_buf_ns;
             
     reg [6:0]   address_r, address_ns_r;
-    reg [7:0]   read_data_r, read_data_ns_r;
-    reg [7:0]   write_data_r, write_data_ns_r;
+    reg [31:0]  read_data_r, read_data_ns_r;
+    reg [31:0]  write_data_r, write_data_ns_r;
     reg         rd_wr_r, rd_wr_ns_r;
-    reg [2:0]   num_read_r, num_read_ns_r;
-    reg         read_ready_r, read_ready_ns_r;
+    reg [2:0]   num_bytes_r, num_bytes_ns_r;
+    reg [2:0]   cur_bytes_r, cur_bytes_ns_r;
+    reg         read_finish_r, read_finish_ns_r;
+    reg         write_finish_r, write_finish_ns_r;
     
-    reg [31:0]  read_queue, read_queue_ns;    
     assign read_data_w = read_queue;
     
     assign ready_w = state == IDLE;
-    assign read_ready_w = read_ready_r;
+    assign read_finish_w = read_finish_r;
+    assign write_finish_w = write_finish_r;
 
     reg     error;
     assign  error_w = error;
@@ -83,9 +87,11 @@ module i2c_master(
         write_data_ns_r     = write_data_r;
         rd_wr_ns_r          = rd_wr_r;
         sample_buf_ns       = sample_buf;
-        read_queue_ns       = read_queue;
-        num_read_ns_r       = num_read_r;
-        read_ready_ns_r     = `LOW;
+        num_bytes_ns_r      = num_bytes_r;
+        cur_bytes_ns_r      = cur_bytes_r;
+        read_finish_ns_r    = read_finish_r;
+        write_finish_ns_r   = write_finish_r;
+        start_aldim_o       = 0;
         if(delay_ctr > 0) begin
             delay_ctr_ns = delay_ctr - 1;
         end else if(delay_ctr == 0) begin
@@ -98,10 +104,13 @@ module i2c_master(
                         address_ns_r = address_w;
                         rd_wr_ns_r = rd_wr_w;
                         write_data_ns_r = write_data_w;
-                        num_read_ns_r = num_read_w;
+                        num_bytes_ns_r = num_bytes_w;
                         state_ns = START;
                         bit_ctr_ns = 0;
-                        read_queue_ns = 0;
+                        cur_bytes_ns_r = 0;
+                        read_finish_ns_r    = 0;
+                        write_finish_ns_r   = 0;
+                        start_aldim_o = 1;
                     end
                 end
                 START: begin
@@ -112,6 +121,7 @@ module i2c_master(
                             sda_drive_ns = `HIGH;
                             sda_ns_r = `HIGH;
                             scl_ns_r = `HIGH;
+                            start_aldim_o = 1;
                         end                       
                         2'h1: begin
                             sda_ns_r = `LOW;
@@ -195,13 +205,13 @@ module i2c_master(
                             scl_ns_r = `LOW;
                             sample_buf_ns[2] = sda_i;    // Read from sda_i
                             ctr_ns = ctr - 1;
-                            read_data_ns_r[ctr] = (sample_buf[0]&sample_buf[1]) | (sample_buf[0]&sda_i) | (sample_buf[1]&sda_i);    // Read from sda_i
+                            read_data_ns_r[ctr + cur_bytes_r*8] = (sample_buf[0]&sample_buf[1]) | (sample_buf[0]&sda_i) | (sample_buf[1]&sda_i);    // Read from sda_i
                             if(ctr == 0) begin
-                                if(num_read_r == 1) begin
+                                if(cur_bytes_r == num_bytes_r - 1) begin        /// BAK BUNA
                                     state_ns = SEND_NACK;    
                                 end else begin
                                     state_ns = SEND_ACK;
-                                    num_read_ns_r = num_read_r - 1;
+                                    cur_bytes_ns_r = cur_bytes_r + 1;
                                 end
                                 bit_ctr_ns = 0;
                             end
@@ -214,7 +224,7 @@ module i2c_master(
                     case(bit_ctr)
                         2'h0: begin
                             sda_drive_ns = `HIGH;
-                            sda_ns_r = write_data_r[ctr];
+                            sda_ns_r = write_data_r[ctr + cur_bytes_r*8];
                             scl_ns_r = `LOW;
                         end
                         2'h1: begin
@@ -227,8 +237,9 @@ module i2c_master(
                             scl_ns_r = `LOW;
                             ctr_ns = ctr - 1;
                             if(ctr == 0) begin
-                                state_ns = RECEIVE_DATA_ACK;
+                                state_ns = RECEIVE_DATA_ACK;    
                                 bit_ctr_ns = 0;
+                                cur_bytes_ns_r = cur_bytes_r + 1;
                             end
                         end
                     endcase                
@@ -238,7 +249,6 @@ module i2c_master(
                     delay_ctr_ns = prescale - 1;
                     case(bit_ctr)
                         2'h0: begin
-                            read_queue_ns = (read_queue | {24'h000000, read_data_r}) << 8;
                             sda_drive_ns = `HIGH;
                             sda_ns_r = `LOW;
                             scl_ns_r = `LOW;
@@ -262,7 +272,6 @@ module i2c_master(
                     delay_ctr_ns = prescale - 1;
                     case(bit_ctr)
                         2'h0: begin
-                            read_queue_ns = read_queue | {24'h000000, read_data_r};
                             sda_drive_ns = `HIGH;
                             sda_ns_r = `HIGH;
                             scl_ns_r = `LOW;
@@ -275,8 +284,9 @@ module i2c_master(
                         end
                         2'h3: begin
                             scl_ns_r = `LOW;
-                            state_ns = STOP;
+                            state_ns = start_w ? IDLE : STOP;         // 1 çevrim kaybeder, çok sallamıyorum.
                             bit_ctr_ns = 0;
+                            read_finish_ns_r = 1;
                         end
                     endcase                
                 end                
@@ -329,11 +339,12 @@ module i2c_master(
                         2'h3: begin
                             scl_ns_r = `LOW;
                             sample_buf_ns[2] = sda_i;    // Read from sda_i
-                            state_ns = STOP;    
+                            state_ns = (start_again_w && (cur_bytes_r == num_bytes_r)) ? IDLE : STOP;
                             bit_ctr_ns = 0;
                             error = `LOW;
+                            write_finish_ns_r = 1;
                             if((sample_buf[0]|sample_buf[1]) & (sample_buf[0]|sda_i) & (sample_buf[1]|sda_i)) begin // NOT ACKED ERROR
-                                state_ns = IDLE;
+                                state_ns = IDLE;            /// BUNA GEREK VAR MI IDK
                                 error = `HIGH;
                             end                    
                         end
@@ -357,7 +368,6 @@ module i2c_master(
                             scl_ns_r = `HIGH;
                             state_ns = IDLE;
                             delay_ctr_ns = 0;
-                            read_ready_ns_r = rd_wr_r? `HIGH: `LOW; // okuma yapıldıysa read ready olucak
                         end
                     endcase                   
                 end
@@ -378,10 +388,12 @@ module i2c_master(
             read_data_r     <= 0;
             write_data_r    <= 0;
             rd_wr_r         <= 0;
-            num_read_r      <= 0;
+            num_bytes_r     <= 0;
+            cur_bytes_r     <= 0;
             sample_buf      <= 3'b0;
             read_queue      <= 0;
-            read_ready_r    <= `LOW;
+            read_finish_r   <= `LOW;
+            write_finish_r  <= `LOW;
         end else begin
             state       <= state_ns;
             sda_r       <= sda_ns_r;
@@ -394,10 +406,11 @@ module i2c_master(
             read_data_r     <= read_data_ns_r;
             write_data_r    <= write_data_ns_r;
             rd_wr_r         <= rd_wr_ns_r;
-            num_read_r      <= num_read_ns_r;
+            num_bytes_r     <= num_bytes_ns_r;
+            cur_bytes_r     <= cur_bytes_ns_r;
             sample_buf      <= sample_buf_ns;
-            read_queue      <= read_queue_ns;
-            read_ready_r    <= read_ready_ns_r;
+            read_finish_r   <= read_finish_ns_r;
+            write_finish_r  <= write_finish_ns_r;
         end
     end
     
