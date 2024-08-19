@@ -16,7 +16,14 @@ module air_soc #(
    input wire rst_ni,
 
    input  wire uart_rx_i,
-   output wire uart_tx_o
+   output wire uart_tx_o,
+
+   output wire dp_pu_o,
+   output wire tx_en_o,
+   output wire dp_tx_o,
+   output wire dn_tx_o,
+   input  wire dp_rx_i,
+   input  wire dn_rx_i
 );
 
    localparam RAM_FPATH = "";
@@ -430,50 +437,48 @@ module air_soc #(
    wire [3:0] qspi_data_o;
    wire [1:0] qspi_out_mod_o;
 
-   assign qspi_data_io[0] = |qspi_out_mod_o   ? qspi_data_o[0] : 1'bZ;
+   assign qspi_data_io[0] = |qspi_out_mod_o ? qspi_data_o[0] : 1'bZ;
    assign qspi_data_io[1] = qspi_out_mod_o[1] ? qspi_data_o[1] : 1'bZ;
-   assign qspi_data_io[2] = &qspi_out_mod_o   ? qspi_data_o[2] : 1'bZ;
-   assign qspi_data_io[3] = &qspi_out_mod_o   ? qspi_data_o[3] : 1'bZ;
+   assign qspi_data_io[2] = &qspi_out_mod_o ? qspi_data_o[2] : 1'bZ;
+   assign qspi_data_io[3] = &qspi_out_mod_o ? qspi_data_o[3] : 1'bZ;
 
    assign qspi_data_i = qspi_data_io;
 
    qspi_controller_obi qspi (
-      .clk_i   (clk_i),
-      .rst_ni  (rst_ni),
-      .req_i   (qspi_req),
-      .we_i    (qspi_we),
-      .be_i    (qspi_be),
-      .addr_i  (qspi_addr),
-      .wdata_i (qspi_wdata),
-      .gnt_o   (qspi_gnt),
-      .rvalid_o(qspi_rvalid),
-      .rdata_o (qspi_rdata),
-      .qspi_data_i(qspi_data_i),
-      .qspi_data_o(qspi_data_o),
+      .clk_i         (clk_i),
+      .rst_ni        (rst_ni),
+      .req_i         (qspi_req),
+      .we_i          (qspi_we),
+      .be_i          (qspi_be),
+      .addr_i        (qspi_addr),
+      .wdata_i       (qspi_wdata),
+      .gnt_o         (qspi_gnt),
+      .rvalid_o      (qspi_rvalid),
+      .rdata_o       (qspi_rdata),
+      .qspi_data_i   (qspi_data_i),
+      .qspi_data_o   (qspi_data_o),
       .qspi_out_mod_o(qspi_out_mod_o),
-      .qspi_cs_n_o(qspi_cs_n_o),
-      .qspi_sck_o(qspi_sck_o)
+      .qspi_cs_n_o   (qspi_cs_n_o),
+      .qspi_sck_o    (qspi_sck_o)
    );
 
-   `ifdef QSPI_SIM
-      s25fl128s  
-      #(
-        .mem_file_name("s25fl128s.mem"),
-        .otp_file_name("none"),
-        .AddrRANGE(24'h000FFF)
-      )
-      flash(
-              // Data Inputs/Outputs
-              .SI(qspi_data_io[0]),
-              .SO(qspi_data_io[1]),
-              // Controls
-              .SCK(qspi_sck_o),
-              .CSNeg(qspi_cs_n_o),
-              //.RSTNeg(1),
-              .WPNeg(qspi_data_io[2]),
-              .HOLDNeg(qspi_data_io[3])
-      );
-   `endif
+`ifdef QSPI_SIM
+   s25fl128s #(
+      .mem_file_name("s25fl128s.mem"),
+      .otp_file_name("none"),
+      .AddrRANGE(24'h000FFF)
+   ) flash (
+      // Data Inputs/Outputs
+      .SI(qspi_data_io[0]),
+      .SO(qspi_data_io[1]),
+      // Controls
+      .SCK(qspi_sck_o),
+      .CSNeg(qspi_cs_n_o),
+      //.RSTNeg(1),
+      .WPNeg(qspi_data_io[2]),
+      .HOLDNeg(qspi_data_io[3])
+   );
+`endif
 
    logic sda_i, sda_o, scl_i, scl_o;
 
@@ -522,7 +527,15 @@ module air_soc #(
       .wdata_i (usb_wdata),
       .gnt_o   (usb_gnt),
       .rvalid_o(usb_rvalid),
-      .rdata_o (usb_rdata)
+      .rdata_o (usb_rdata),
+
+      .dp_pu_o(dp_pu_o),
+      .tx_en_o(tx_en_o),
+      .dp_tx_o(dp_tx_o),
+      .dn_tx_o(dn_tx_o),
+      .dp_rx_i(dp_rx_i),
+      .dn_rx_i(dn_rx_i)
+
    );
 
 endmodule
