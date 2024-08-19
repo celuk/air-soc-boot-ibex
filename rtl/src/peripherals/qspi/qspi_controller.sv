@@ -111,7 +111,7 @@ module qspi_controller (
 
    reg qspi_cs_r;
    reg qspi_cs_next_r;
-   assign qspi_cs_n_o = qspi_cs_r; //(state == IDLE); //qspi_cs_r;
+   assign qspi_cs_n_o = (state == IDLE); //qspi_cs_r;
 
    reg [31:0] buffer;
    reg [31:0] buffer_next;
@@ -150,7 +150,7 @@ module qspi_controller (
 
    reg sclk;
    reg sclk_next;
-   assign qspi_sck_o = sclk;
+   //assign qspi_sck_o = sclk;
 
    always @* begin
       wb_ack_next_r = 1'b0;
@@ -411,7 +411,7 @@ module qspi_controller (
          state <= IDLE;
 
          qspi_cs_r <= 1'b1;
-         sclk <= 1'b1;
+         sclk <= 1'b0;
 
          data_out <= 4'b0000;
          data_out_enable <= 4'b0000;
@@ -477,7 +477,7 @@ module qspi_controller (
    end
    */
 
-   /*
+   
    reg sck_r;
    reg [5:0] prescale_counter;
    wire [5:0] prescaler = (QSPI_CCR_PRESCALER > 0) ? QSPI_CCR_PRESCALER : 1;
@@ -500,7 +500,7 @@ module qspi_controller (
    end
 
    assign qspi_sck_o = (state != IDLE) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0;
-   */
+   
 
    /*
    wire cs_edge_detected;
