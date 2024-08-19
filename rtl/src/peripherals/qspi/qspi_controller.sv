@@ -1,10 +1,36 @@
-// qspi_controller.sv
+// qspi_denetleyici.v
 `timescale 1ps / 1ps
 
-module qspi_controller (
+//`define QSPI_CCR_INST 7:0
+//`define QSPI_CCR_DATA_MOD 9:8
+//`define QSPI_CCR_RW 10
+//`define QSPI_CCR_DUMMY_CYC 15:11
+//`define QSPI_CCR_DATA_SIZE 24:16
+//`define QSPI_CCR_PRESCALER 30:25
+//`define QSPI_CCR_CLEAR_STA 31
+
+`define CMD_READ   'h03
+`define CMD_DOR    'h3B
+`define CMD_QOR    'h6B
+`define CMD_PP     'h02
+`define CMD_QPP    'h32
+`define CMD_SE     'hD8
+`define CMD_READID 'h90
+`define CMD_RDID   'h9F
+`define CMD_RES    'hAB
+`define CMD_RDSR1  'h05
+`define CMD_RDSR2  'h07
+`define CMD_RDCR   'h35
+`define CMD_WRR    'h01
+`define CMD_WRDI   'h04
+`define CMD_WREN   'h06
+`define CMD_CLSR   'h30
+`define CMD_RESET  'hF0
+
+module qspi_denetleyici (
    input clk_i,
    input rst_i,
-   // Wishbone interface
+   // wishbone interface
    input  [ 7:0] wb_adr_i,
    input  [31:0] wb_dat_i,
    input         wb_we_i,
@@ -20,311 +46,580 @@ module qspi_controller (
    output [3:0] qspi_data_o,
    output [1:0] qspi_out_mod_o,
 
-   output qspi_cs_n_o,
+   output qspi_cs_o,
    output qspi_sck_o
 );
    
-   // Durum makinesi parametreleri
-   localparam [4:0]
-   IDLE  = 5'b00001,
-   WRITE = 5'b00010,
-   READ  = 5'b00100,
-   DUMMY = 5'b01000,
-   INST  = 5'b10000;
+   reg wb_ack_r;
+   reg wb_ack_next_r;
+   assign wb_ack_o = wb_ack_r;
 
-   // data mode
-   localparam [1:0] 
-   sr = 2'b01,
-   dr = 2'b10,
-   qr = 2'b11;
+   reg [31:0] wb_read_data_r;
+   reg [31:0] wb_read_data_next_r;
+   assign wb_dat_o = wb_read_data_r;
 
-   // Insts
-   localparam [7:0] 
-   CMD_READ = 8'h03,
-   CMD_DOR = 8'h3B,
-   CMD_QOR = 8'h6B,
-   CMD_PP = 8'h02,
-   CMD_QPP = 8'h32,
-   CMD_SE = 8'hD8,
-   CMD_WREN = 8'h06;
+   // CONTROL REGISTERS
+   reg [31:0] QSPI_CCR;
+   reg [23:0] QSPI_ADR;
+   reg [31:0] QSPI_DR0;
+   reg [31:0] QSPI_DR1;
+   reg [31:0] QSPI_DR2;
+   reg [31:0] QSPI_DR3;
+   reg [31:0] QSPI_DR4;
+   reg [31:0] QSPI_DR5;
+   reg [31:0] QSPI_DR6;
+   reg [31:0] QSPI_DR7;
+   reg [1:0]  QSPI_STA;
 
-   // Define registers 
-   reg [31:0] control_register_r [10:0];
+   reg [31:0] QSPI_CCR_next;
+   reg [23:0] QSPI_ADR_next;
+   reg [31:0] QSPI_DR0_next;
+   reg [31:0] QSPI_DR1_next;
+   reg [31:0] QSPI_DR2_next;
+   reg [31:0] QSPI_DR3_next;
+   reg [31:0] QSPI_DR4_next;
+   reg [31:0] QSPI_DR5_next;
+   reg [31:0] QSPI_DR6_next;
+   reg [31:0] QSPI_DR7_next;
+   reg [1:0]  QSPI_STA_next;
 
-   reg [31:0] dat_r;
-   // flag to avoid wrond writes to data register
-   reg reg_write_en;
-   
-   // word counter for dr registers
-   reg [3:0] word_ctr;
-   // Send Instruction-Read-Write-Dummy Cycle
-   reg [4:0] state;
-   // transmission/receiver buffer
+   wire [7:0] QSPI_CCR_INST = QSPI_CCR[7:0];
+   wire [1:0] QSPI_CCR_DATA_MOD = QSPI_CCR[9:8];
+   wire QSPI_CCR_RW = QSPI_CCR[10];
+   wire [4:0] QSPI_CCR_DUMMY_CYC = QSPI_CCR[15:11];
+   wire [8:0] QSPI_CCR_DATA_SIZE = QSPI_CCR[24:16];
+   wire [5:0] QSPI_CCR_PRESCALER = QSPI_CCR[30:25];
+   wire QSPI_CCR_CLEAR_STA = QSPI_CCR[31];
+
+   localparam X1 = 2'b01,
+              X2 = 2'b10,
+              X4 = 2'b11;
+   wire [2:0] data_rate = (QSPI_CCR_DATA_MOD==X4) ? 4 : QSPI_CCR_DATA_MOD;
+
+   reg [2:0] state;
+   reg [2:0] state_next;
+   localparam IDLE = 0,
+              SELECT_DEVICE = 1,
+              SEND_COMMAND = 2,
+              SEND_ADDRESS = 3,
+              DUMMY_CYCLES = 4,
+              TRANSFER_DATA = 5,
+              END_TRANSFER = 6;
+
+   reg [31:0] bit_counter;
+   reg [31:0] bit_counter_next;
+
+   reg qspi_cs_r;
+   reg qspi_cs_next_r;
+   assign qspi_cs_o = qspi_cs_r; //(state == IDLE); //qspi_cs_r;
+
    reg [31:0] buffer;
-   // Flag for new instruction
-   wire new_inst = wb_stb_i; //TODO: change values
-   // Bit counter
-   reg [10:0] bit_ctr;
-   // Address enable flag
-   wire adr_en;
+   reg [31:0] buffer_next;
 
-   // Name registers
-   wire [31:0] QSPI_CCR = control_register_r[0];
-   wire [31:0] QSPI_ADR = control_register_r[1];
-   // wire [31:0] QSPI_DR  = control_register_r[word_ctr];
-   //wire [31:0] QSPI_STA = control_register_r[10];
+   //assign qspi_data_o = data_mod==X4 ? out_buffer[31:28] : 
+   //                     data_mod==X2 ? {2'b00, out_buffer[31:30]} : 
+   //                     data_mod==X1 ? {3'b000, out_buffer[31]} : 4'b0000;
 
-   // Name config reg values
-   // Instruction to be send to flash device
-   wire [7:0] instruction_value = QSPI_CCR[7:0];
-   // 00 -> send data
-   // 01 -> x1 (single channel)
-   // 10 -> x2 (dual channel)
-   // 11 -> x4 (quad channel)
-   wire [1:0] data_mod = QSPI_CCR[9:8];
-   // 0 -> read
-   // 1 -> write
-   wire write_flash = QSPI_CCR[10];
-   // Number of dummy cycles
-   wire [4:0] dummy_cycles = QSPI_CCR[15:11];
-   // Size of data
-   wire [8:0] data_size = QSPI_CCR[24:16];
-   // Clock divide value, should not be 0
-   wire [5:0] prescale = QSPI_CCR[30:25]>0 ? QSPI_CCR[30:25] : 1;
-   // Reset status reg
-   wire reset_status_reg = QSPI_CCR[31];
-   // Status reg
-   //wire status_reg = QSPI_STA[0];
-   // data rate
-   wire [2:0] data_rate = (data_mod==2'b11) ? 4 : data_mod;
-   // ack
-   reg ack;
-   reg ack_flag;
-   assign wb_ack_o = ack;
-   // assign dat_o
-   assign wb_dat_o = dat_r;
-   // adr en
-   assign adr_en = (instruction_value==CMD_READ) ||
-                     (instruction_value==CMD_DOR) ||
-                     (instruction_value==CMD_QOR) ||
-                     (instruction_value==CMD_PP) ||
-                     (instruction_value==CMD_QPP) ||
-                     (instruction_value==CMD_SE);
+   reg [3:0] data_in;
+   reg [3:0] data_in_next;
 
-//// todo: butun degerleri ekle
-   // Dont read or write flash commands
-   wire read_write_unable = (instruction_value==CMD_WREN);
-   // flag to stop
-   reg inst_flag;
+   reg [3:0] data_out;
+   reg [3:0] data_out_next;
 
-   // Slowdown clock
-   reg clock_en;
-   reg [5:0] prescale_ctr;
-   always @(posedge clk_i) begin
-      if(rst_i) begin
-         prescale_ctr <= 0;
-         clock_en <= 0;   
+   reg [3:0] data_out_enable;
+   reg [3:0] data_out_enable_next;
+
+   assign qspi_data_o = data_out;
+   assign qspi_out_mod_o = data_out_enable == 4'b1111 ? 2'b11 :
+                           data_out_enable == 4'b0011 ? 2'b10 :
+                           data_out_enable == 4'b0001 ? 2'b01 :
+                           2'b00;
+
+   // if there is a write to CCR, new instruction is coming
+   //wire new_instruction = (wb_cyc_i & wb_stb_i & wb_we_i & !wb_ack_o & (|wb_sel_i) & wb_adr_i == 8'h00);
+
+   reg new_instruction;
+   reg new_instruction_next;
+
+   assign addr_enable = (QSPI_CCR_INST == `CMD_READ) ||
+                        (QSPI_CCR_INST == `CMD_DOR ) ||
+                        (QSPI_CCR_INST == `CMD_QOR ) ||
+                        (QSPI_CCR_INST == `CMD_PP  ) ||
+                        (QSPI_CCR_INST == `CMD_QPP ) ||
+                        (QSPI_CCR_INST == `CMD_SE  );
+
+   reg sclk;
+   reg sclk_next;
+   assign qspi_sck_o = sclk;
+
+   always @* begin
+      wb_ack_next_r = 1'b0;
+      wb_read_data_next_r = wb_read_data_r;
+
+      QSPI_CCR_next = QSPI_CCR;
+      QSPI_ADR_next = QSPI_ADR;
+      QSPI_DR0_next = QSPI_DR0;
+      QSPI_DR1_next = QSPI_DR1;
+      QSPI_DR2_next = QSPI_DR2;
+      QSPI_DR3_next = QSPI_DR3;
+      QSPI_DR4_next = QSPI_DR4;
+      QSPI_DR5_next = QSPI_DR5;
+      QSPI_DR6_next = QSPI_DR6;
+      QSPI_DR7_next = QSPI_DR7;
+      QSPI_STA_next = 0;
+
+      bit_counter_next = bit_counter;
+
+      state_next = state;
+
+      qspi_cs_next_r = qspi_cs_r;
+
+      data_out_next = data_out;
+      data_out_enable_next = data_out_enable;
+
+      buffer_next = buffer;
+
+      new_instruction_next = (wb_cyc_i & wb_stb_i & wb_we_i & !wb_ack_o & (|wb_sel_i) & wb_adr_i == 8'h00);
+
+      if(|bit_counter) begin // if bit_counter is not 0
+         data_out_next[3:0] = QSPI_CCR_DATA_MOD==X4 ? buffer[31:28] : 
+                              QSPI_CCR_DATA_MOD==X2 ? {2'b00, buffer[31:30]} : 
+                              QSPI_CCR_DATA_MOD==X1 ? {3'b000, buffer[31]}   : 4'b0000;
+
+         if (sclk) begin
+            sclk_next = 1'b0;
+         end else begin
+            sclk_next = 1'b1;
+            buffer_next = QSPI_CCR_DATA_MOD==X4 ? {buffer[27:0], qspi_data_i[3:0]} : 
+                          QSPI_CCR_DATA_MOD==X2 ? {buffer[29:0], qspi_data_i[1:0]} : 
+                          QSPI_CCR_DATA_MOD==X1 ? {buffer[30:0], qspi_data_i[0]}   : 0;
+            bit_counter_next = bit_counter - data_rate; // -4 -2 -1
+         end
+         QSPI_STA_next[1] = 1; // busy
       end
       else begin
-         if(prescale_ctr < prescale) begin
-            clock_en <= 0;
-            prescale_ctr <= prescale_ctr + 1;
-         end
-         else begin
-            clock_en <= 1;
-            prescale_ctr <= 0;
-         end
-      end
-   end
-
-   // Read-write control registers
-   wire busy = state != IDLE; 
-  
-   integer i;
-   always @(posedge clk_i) begin
-      if(rst_i) begin
-         // for(i=0; i<11; i=i+1) begin
-         //    control_register_r[i] <= 0;
-         // end
-         // inst_flag <= 0;
-         ack <= 0;
-         dat_r <= 0;
-         reg_write_en <= 0;
-      end
-      else begin
-         if(wb_cyc_i && wb_we_i && wb_sel_i[0] && wb_stb_i && state==IDLE && !ack) begin
-            // control_register_r[wb_adr_i>>2] <= wb_dat_i;
-            ack <= wb_stb_i & !ack;
-         end
-         else if(wb_cyc_i && !wb_we_i && wb_stb_i && state==IDLE && !ack) begin
-            dat_r <= control_register_r[wb_adr_i>>2];
-            ack <= wb_stb_i & !ack;
-         end
-         else begin
-            ack <= 0;
-         end
-      end
-   end
-
-   reg [1:0] out_mod;
-   assign qspi_data_o = out_mod==2'b11 ? buffer[31:28] : 
-                        out_mod==2'b10 ? {2'b00, buffer[31:30]} : 
-                        out_mod==2'b01 ? {2'b00, 1'b0, buffer[31]} : 4'b0000;
-
-   assign qspi_out_mod_o = out_mod;
-
-   always @(posedge clk_i) begin
-      if(rst_i) begin
-         for(i=0; i<11; i=i+1) begin
-            control_register_r[i] <= 0;
-         end
-         state <= IDLE;
-         word_ctr <= 0;
-         bit_ctr <= 0;
-         buffer <= 0;
-         ack_flag <= 0;
-         out_mod <= 2'b01;
-         inst_flag <= 0;
-      end
-      else if (clock_en) begin
          case(state)
-         
-         IDLE: begin
-            ack_flag <= 0;
-            if(wb_cyc_i) begin
-               ack <= wb_stb_i & !ack;
-               if(wb_we_i && wb_sel_i[0] && wb_stb_i && !ack_flag) begin
-                  if(wb_adr_i != 'h28)
-                     control_register_r[wb_adr_i>>2] <= wb_dat_i;
-                  else
-                     control_register_r[wb_adr_i>>2] <= !busy;
-               end
-               if(wb_adr_i==0) 
-                  inst_flag <= 1;
-            end
+            IDLE: begin
+               qspi_cs_next_r = 1'b1;
+               data_out_enable_next = 4'b0001;
+               bit_counter_next = 0;
+               QSPI_STA_next[1] = 0; // not busy
 
-            if(new_inst && inst_flag) begin
-               state <= INST;
-               // addr ekle
-               bit_ctr <= (adr_en) ? 32 : 8;
-               buffer <= (adr_en) ? {instruction_value, QSPI_ADR[23:0]} : {instruction_value, 24'b0};
-            end
-         end
+               state_next = IDLE;
 
-         INST: begin
-            if(bit_ctr != 0) begin
-               buffer <= buffer << 1;
-               bit_ctr <= bit_ctr - 1;
-               inst_flag <= 0;
-               if(bit_ctr==1) begin
-                  out_mod <= (!write_flash) ? 2'b01 : data_mod;
-                  if(dummy_cycles!=0) begin
-                     state <= DUMMY;
-                     bit_ctr <= dummy_cycles;
-                  end
-                  else begin
-                     state <= (read_write_unable) ? IDLE : (write_flash) ? WRITE : READ;
-                     ack_flag <= (read_write_unable) ? 1 : 0;
-                     reg_write_en <= 0;
-                     bit_ctr <= ((data_size)<<3);
-                     word_ctr <= 0;
-                     buffer <= control_register_r[2];
-                  end
+               if(new_instruction) begin
+                  new_instruction_next = 1'b0;
+
+                  state_next = SELECT_DEVICE;
                end
             end
-         end
+            SELECT_DEVICE: begin
+               qspi_cs_next_r = 1'b0;
+               bit_counter_next = 0;
+               QSPI_STA_next[1] = 1; // busy
 
-         DUMMY: begin
-            if(bit_ctr != 0) begin
-               bit_ctr <= bit_ctr - data_rate; 
+               state_next = SEND_COMMAND;
             end
-            else begin
-               state <= (read_write_unable) ? IDLE : (write_flash) ? WRITE : READ;
-               ack_flag <= (read_write_unable) ? 1 : 0;
-               reg_write_en <= 0;
-               bit_ctr <= ((data_size)<<3);
-               word_ctr <= 0;
-               buffer <= control_register_r[2];
-            end
-         end
 
-         WRITE: begin
-            if(bit_ctr != 1) begin
-               bit_ctr <= bit_ctr - data_rate;
-               buffer <= buffer << data_rate;
+            SEND_COMMAND: begin
+               buffer_next[31:24] = QSPI_CCR_INST;
+               bit_counter_next = 8;
+               QSPI_STA_next[1] = 1; // busy
+
+               state_next = SEND_ADDRESS;
+            end
+            SEND_ADDRESS: begin
+               if(addr_enable) begin
+                  buffer_next[31:8] = QSPI_ADR;
+                  bit_counter_next = 24;
+               end
+               else begin
+                  buffer_next[31:8] = 0;
+                  bit_counter_next = 0;
+               end
+
+               data_out_enable_next = QSPI_CCR_DATA_MOD==X4 ? 4'b1111 :
+                                      QSPI_CCR_DATA_MOD==X2 ? 4'b0011 :
+                                      QSPI_CCR_DATA_MOD==X1 ? 4'b0001 :
+                                      4'b0001;
                
-               if(bit_ctr%32==1) begin
-                  buffer <= control_register_r[word_ctr+2];
-                  word_ctr <= word_ctr + 1;
-               end
-            end
-            else begin
-               ack_flag <= 1;
-               state <= IDLE;
-               bit_ctr <= 0;
-               out_mod <= 2'b01;
-               control_register_r[0] <= 0;
-               word_ctr <= 0;
-            end
-         end
+               QSPI_STA_next[1] = 1; // busy
 
-         READ: begin
-            if(bit_ctr != 1) begin
-               case(data_mod)
-               sr: buffer <= {buffer, qspi_data_i[1]};
-               dr: buffer <= {buffer, qspi_data_i[1:0]};
-               qr: buffer <= {buffer, qspi_data_i[3:0]};
-               default: buffer <= {buffer, qspi_data_i[1]};
-               endcase
-               bit_ctr <= bit_ctr - data_rate;
+               if(QSPI_CCR_DUMMY_CYC > 0) begin
+                  state_next = DUMMY_CYCLES;
+               end
+               else begin
+                  state_next = TRANSFER_DATA;
+               end
+            end
+            DUMMY_CYCLES: begin
+               data_out_enable_next = 4'b0000;
+               bit_counter_next = QSPI_CCR_DUMMY_CYC;
+               QSPI_STA_next[1] = 1; // busy
 
-               if(bit_ctr%32==1) begin
-                  case(data_mod)
-                  sr:   control_register_r[2+word_ctr] <= {buffer, qspi_data_i[1]}; 
-                  dr:   control_register_r[2+word_ctr] <= {buffer, qspi_data_i[1:0]}; 
-                  qr:   control_register_r[2+word_ctr] <= {buffer, qspi_data_i[3:0]};
-                  default: control_register_r[2+word_ctr] <= {buffer, qspi_data_i[1]}; 
-                  endcase
-                  word_ctr <= word_ctr + 1;
-               end
+               state_next = TRANSFER_DATA;
             end
-            else begin
-               if(bit_ctr%32==1) begin
-                  case(data_mod)
-                  sr:   control_register_r[2+word_ctr] <= {buffer, qspi_data_i[1]}; 
-                  dr:   control_register_r[2+word_ctr] <= {buffer, qspi_data_i[1:0]}; 
-                  qr:   control_register_r[2+word_ctr] <= {buffer, qspi_data_i[3:0]};
-                  default: control_register_r[2+word_ctr] <= {buffer, qspi_data_i[1]}; 
-                  endcase
-                  word_ctr <= word_ctr + 1;
+            TRANSFER_DATA: begin
+               if(QSPI_CCR_RW) begin
+                  data_out_enable_next = QSPI_CCR_DATA_MOD==X4 ? 4'b1111 :
+                                         QSPI_CCR_DATA_MOD==X2 ? 4'b0011 :
+                                         QSPI_CCR_DATA_MOD==X1 ? 4'b0001 :
+                                         4'b0000;
+                  buffer_next[31:0] = QSPI_DR0;
                end
-               ack_flag <= 1;
-               state <= IDLE;
-               bit_ctr <= 0;
-               out_mod <= 2'b01;
-               control_register_r[0] <= 0;
-               word_ctr <= 0;
+               else begin
+                  data_out_enable_next = 4'b0000;
+                  buffer_next[31:0] = 0;
+               end
+
+               QSPI_STA_next[1] = 1; // busy
+
+               bit_counter_next = 32;
+
+               state_next = END_TRANSFER;
             end
-         end
-         
+            END_TRANSFER: begin // ACK
+               QSPI_DR0_next = buffer;
+               bit_counter_next = 0;
+
+               QSPI_STA_next[0] = 1;
+               QSPI_STA_next[1] = 0; // not busy
+
+               state_next = IDLE;
+            end
          endcase
-      end   
+
+      end
+
+      /*
+      data_out_enable_next = QSPI_CCR_RW ?
+                                          QSPI_CCR_DATA_MOD==X4 ? 4'b1111 :
+                                          QSPI_CCR_DATA_MOD==X2 ? 4'b0011 :
+                                          QSPI_CCR_DATA_MOD==X1 ? 4'b0001 :
+                                          4'b0000;
+      */
+
+      if(QSPI_CCR_CLEAR_STA) begin
+         QSPI_STA_next = 0;
+      end
+
+      if(wb_cyc_i) begin
+         wb_ack_next_r <= wb_stb_i & !wb_ack_r;
+         // Write to control registers
+         if(wb_stb_i & wb_we_i & !wb_ack_o) begin
+            case(wb_adr_i)
+               8'h00: begin
+                  QSPI_CCR_next[ 7: 0] = wb_sel_i[0] ? wb_dat_i[ 7: 0] : QSPI_CCR[ 7: 0];
+                  QSPI_CCR_next[15: 8] = wb_sel_i[1] ? wb_dat_i[15: 8] : QSPI_CCR[15: 8];
+                  QSPI_CCR_next[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : QSPI_CCR[23:16];
+                  QSPI_CCR_next[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : QSPI_CCR[31:24];
+               end
+               8'h04: begin
+                  QSPI_ADR_next[ 7: 0] = wb_sel_i[0] ? wb_dat_i[ 7: 0] : QSPI_ADR[ 7: 0];
+                  QSPI_ADR_next[15: 8] = wb_sel_i[1] ? wb_dat_i[15: 8] : QSPI_ADR[15: 8];
+                  QSPI_ADR_next[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : QSPI_ADR[23:16];
+                  //QSPI_ADR_next[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : QSPI_ADR[31:24];
+               end
+               8'h08: begin
+                  QSPI_DR0_next[ 7: 0] = wb_sel_i[0] ? wb_dat_i[ 7: 0] : QSPI_DR0[ 7: 0];
+                  QSPI_DR0_next[15: 8] = wb_sel_i[1] ? wb_dat_i[15: 8] : QSPI_DR0[15: 8];
+                  QSPI_DR0_next[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : QSPI_DR0[23:16];
+                  QSPI_DR0_next[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : QSPI_DR0[31:24];
+               end
+               8'h0C: begin
+                  QSPI_DR1_next[ 7: 0] = wb_sel_i[0] ? wb_dat_i[ 7: 0] : QSPI_DR1[ 7: 0];
+                  QSPI_DR1_next[15: 8] = wb_sel_i[1] ? wb_dat_i[15: 8] : QSPI_DR1[15: 8];
+                  QSPI_DR1_next[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : QSPI_DR1[23:16];
+                  QSPI_DR1_next[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : QSPI_DR1[31:24];
+               end
+               8'h10: begin
+                  QSPI_DR2_next[ 7: 0] = wb_sel_i[0] ? wb_dat_i[ 7: 0] : QSPI_DR2[ 7: 0];
+                  QSPI_DR2_next[15: 8] = wb_sel_i[1] ? wb_dat_i[15: 8] : QSPI_DR2[15: 8];
+                  QSPI_DR2_next[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : QSPI_DR2[23:16];
+                  QSPI_DR2_next[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : QSPI_DR2[31:24];
+               end
+               8'h14: begin
+                  QSPI_DR3_next[ 7: 0] = wb_sel_i[0] ? wb_dat_i[ 7: 0] : QSPI_DR3[ 7: 0];
+                  QSPI_DR3_next[15: 8] = wb_sel_i[1] ? wb_dat_i[15: 8] : QSPI_DR3[15: 8];
+                  QSPI_DR3_next[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : QSPI_DR3[23:16];
+                  QSPI_DR3_next[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : QSPI_DR3[31:24];
+               end
+               8'h18: begin
+                  QSPI_DR4_next[ 7: 0] = wb_sel_i[0] ? wb_dat_i[ 7: 0] : QSPI_DR4[ 7: 0];
+                  QSPI_DR4_next[15: 8] = wb_sel_i[1] ? wb_dat_i[15: 8] : QSPI_DR4[15: 8];
+                  QSPI_DR4_next[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : QSPI_DR4[23:16];
+                  QSPI_DR4_next[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : QSPI_DR4[31:24];
+               end
+               8'h1C: begin
+                  QSPI_DR5_next[ 7: 0] = wb_sel_i[0] ? wb_dat_i[ 7: 0] : QSPI_DR5[ 7: 0];
+                  QSPI_DR5_next[15: 8] = wb_sel_i[1] ? wb_dat_i[15: 8] : QSPI_DR5[15: 8];
+                  QSPI_DR5_next[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : QSPI_DR5[23:16];
+                  QSPI_DR5_next[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : QSPI_DR5[31:24];
+               end
+               8'h20: begin
+                  QSPI_DR6_next[ 7: 0] = wb_sel_i[0] ? wb_dat_i[ 7: 0] : QSPI_DR6[ 7: 0];
+                  QSPI_DR6_next[15: 8] = wb_sel_i[1] ? wb_dat_i[15: 8] : QSPI_DR6[15: 8];
+                  QSPI_DR6_next[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : QSPI_DR6[23:16];
+                  QSPI_DR6_next[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : QSPI_DR6[31:24];
+               end
+               8'h24: begin
+                  QSPI_DR7_next[ 7: 0] = wb_sel_i[0] ? wb_dat_i[ 7: 0] : QSPI_DR7[ 7: 0];
+                  QSPI_DR7_next[15: 8] = wb_sel_i[1] ? wb_dat_i[15: 8] : QSPI_DR7[15: 8];
+                  QSPI_DR7_next[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : QSPI_DR7[23:16];
+                  QSPI_DR7_next[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : QSPI_DR7[31:24];
+               end
+
+               // QSPI_STA --> Read only
+            endcase
+         end
+         // Read from control registers
+         else if(~wb_we_i) begin
+            case(wb_adr_i)
+               8'h00: begin wb_read_data_next_r = QSPI_CCR; end
+               8'h04: begin wb_read_data_next_r = {8'h0, QSPI_ADR}; end
+               8'h08: begin wb_read_data_next_r = QSPI_DR0; end
+               8'h0C: begin wb_read_data_next_r = QSPI_DR1; end
+               8'h10: begin wb_read_data_next_r = QSPI_DR2; end
+               8'h14: begin wb_read_data_next_r = QSPI_DR3; end
+               8'h18: begin wb_read_data_next_r = QSPI_DR4; end
+               8'h1C: begin wb_read_data_next_r = QSPI_DR5; end
+               8'h20: begin wb_read_data_next_r = QSPI_DR6; end
+               8'h24: begin wb_read_data_next_r = QSPI_DR7; end
+               8'h28: begin wb_read_data_next_r = {30'h0, QSPI_STA}; end
+            endcase
+         end
+      end
    end
 
-   reg sck_r;
    always @(posedge clk_i) begin
       if(rst_i) begin
-         sck_r <= 0;
+         wb_ack_r <= 1'b0;
+         wb_read_data_r <= 32'h0;
+
+         QSPI_CCR <= 0;
+         QSPI_ADR <= 0;
+         QSPI_DR0 <= 0;
+         QSPI_DR1 <= 0;
+         QSPI_DR2 <= 0;
+         QSPI_DR3 <= 0;
+         QSPI_DR4 <= 0;
+         QSPI_DR5 <= 0;
+         QSPI_DR6 <= 0;
+         QSPI_DR7 <= 0;
+         QSPI_STA <= 0;
+
+         bit_counter <= 0;
+
+         state <= IDLE;
+
+         qspi_cs_r <= 1'b1;
+         sclk <= 1'b1;
+
+         data_out <= 4'b0000;
+         data_out_enable <= 4'b0000;
+
+         buffer <= 0;
+
+         new_instruction <= 1'b0;
       end
-      // Assumption!! prescale must be odd number.
-      if((prescale_ctr == (prescale+1)>>1) || (prescale_ctr == 0)) begin
-         // clock_en <= 1;
-         sck_r <= ~sck_r;
+      else begin
+         wb_ack_r <= wb_ack_next_r;
+         wb_read_data_r <= wb_read_data_next_r;
+
+         QSPI_CCR <= QSPI_CCR_next;
+         QSPI_ADR <= QSPI_ADR_next;
+         QSPI_DR0 <= QSPI_DR0_next;
+         QSPI_DR1 <= QSPI_DR1_next;
+         QSPI_DR2 <= QSPI_DR2_next;
+         QSPI_DR3 <= QSPI_DR3_next;
+         QSPI_DR4 <= QSPI_DR4_next;
+         QSPI_DR5 <= QSPI_DR5_next;
+         QSPI_DR6 <= QSPI_DR6_next;
+         QSPI_DR7 <= QSPI_DR7_next;
+         QSPI_STA <= QSPI_STA_next;
+
+         bit_counter <= bit_counter_next;
+
+         state <= state_next;
+
+         qspi_cs_r <= qspi_cs_next_r;
+
+         data_out_next <= data_out;
+         data_out_enable <= data_out_enable_next;
+
+         buffer <= buffer_next;
+
+         new_instruction <= new_instruction_next;
       end
    end
-   // // Control sck and cs
-   assign qspi_cs_n_o = (state==IDLE);
-   // reg sck;
-   assign qspi_sck_o = (prescale==0) ? clk_i&&(state!=IDLE) : (prescale==1) ? clock_en&&(state!=IDLE) : sck_r&&(state!=IDLE);
+
+   /*
+   always @(posedge clk_i) begin
+      if(rst_i) begin
+         qspi_data_o <= 4'b0000;
+         qspi_out_mod_o <= 2'b00;
+      end
+      else begin
+         case(data_rate)
+            4: begin
+               qspi_data_o <= out_buffer[31:28];
+               qspi_out_mod_o <= 2'b11;
+            end
+            2: begin
+               qspi_data_o <= {2'b00, out_buffer[31:30]};
+               qspi_out_mod_o <= 2'b10;
+            end
+            1: begin
+               qspi_data_o <= {3'b000, out_buffer[31]};
+               qspi_out_mod_o <= 2'b01;
+            end
+         endcase
+      end
+   end
+   */
+
+   /*
+   reg sck_r;
+   reg [5:0] prescale_counter;
+   wire [5:0] prescaler = (QSPI_CCR_PRESCALER > 0) ? QSPI_CCR_PRESCALER : 1;
+
+   always @(posedge clk_i) begin
+      if(rst_i) begin
+         sck_r <= 1'b1;
+         prescale_counter <= 6'b0;
+      end
+      else begin
+         if(prescale_counter == prescaler - 1) begin
+            prescale_counter <= 6'b0;
+            sck_r <= ~sck_r;
+         end
+         else begin
+            prescale_counter <= prescale_counter + 1;
+            sck_r <= sck_r;
+         end
+      end
+   end
+
+   assign qspi_sck_o = (state != IDLE) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0;
+   */
+
+   /*
+   wire cs_edge_detected;
+   wire cs_edge;
+
+   serial_clock_generator scg(
+      .sck(qspi_sck_o),
+      .rising_edge(),
+      .falling_edge(),
+      .clk(clk_i),
+      .rst_n(~rst_i),
+      //.en(cs_edge_detected & ~cs_edge),
+      .en(state != IDLE),
+      //.clk_divider_valid(1'b1),
+      .clk_divider_valid(state == IDLE),
+      .clk_divider({2'b00, QSPI_CCR_PRESCALER})
+   );
+   */
+
+   /*
+   edge_detector ed(
+      .edge_detected(cs_edge_detected),
+      .edge_type(cs_edge),
+      .clk(clk_i),
+      .rst_n(~rst_i),
+      .data_in(qspi_cs_o)
+   );
+   */
+
+endmodule
+
+module serial_clock_generator (
+    output reg      sck,
+    output reg      rising_edge,
+    output reg      falling_edge,
+
+    input wire       clk,
+    input wire       rst_n,
+    input wire       en,
+    input wire       clk_divider_valid,
+    input wire [7:0] clk_divider
+);
+
+reg       sck_nxt, rising_edge_nxt, falling_edge_nxt;
+reg [7:0] counter, counter_nxt, counter_target, counter_target_nxt;
+
+always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+        sck <= 1'b0;
+        rising_edge <= 1'b0;
+        falling_edge <= 1'b0;
+        counter_target <= 8'b0;
+        counter <= 8'b0;
+    end
+    else begin
+        sck <= sck_nxt;
+        rising_edge <= rising_edge_nxt;
+        falling_edge <= falling_edge_nxt;
+        counter_target <= counter_target_nxt;
+        counter <= counter_nxt;
+    end
+end
+
+always @* begin
+    sck_nxt = 1'b0;
+    rising_edge_nxt = 1'b0;
+    falling_edge_nxt = 1'b0;
+    counter_target_nxt = counter_target;
+    counter_nxt = 8'b0;
+
+    if (clk_divider_valid) begin
+        counter_target_nxt = clk_divider;
+    end
+    else if (en) begin
+        sck_nxt = sck;
+        counter_nxt = counter + 1;
+
+        if (counter_target == 8'b0) begin
+            sck_nxt = ~sck;
+            rising_edge_nxt = ~sck;
+            falling_edge_nxt = sck;
+            counter_nxt = 8'b0;
+        end
+        else if (counter == counter_target) begin
+            sck_nxt = ~sck;
+            rising_edge_nxt = ~sck;
+            falling_edge_nxt = sck;
+            counter_nxt = 8'b0;
+        end
+    end
+end
+
+endmodule
+
+module edge_detector (
+    output wire edge_detected,
+    output wire edge_type, /* 0-falling, 1-rising */
+    input wire  clk,
+    input wire  rst_n,
+    input wire  data_in
+);
+
+reg data_in_prv, data_in_prv2, data_in_prv3;
+
+always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+        data_in_prv <= 1'b0;
+        data_in_prv2 <= 1'b0;
+        data_in_prv3 <= 1'b0;
+    end
+    else begin
+        data_in_prv <= data_in;
+        data_in_prv2 <= data_in_prv;
+        data_in_prv3 <= data_in_prv2;
+    end
+end
+
+   assign edge_detected = data_in_prv2 ^ data_in_prv3;
+   assign edge_type = data_in_prv2;
 
 endmodule

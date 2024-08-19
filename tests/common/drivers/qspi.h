@@ -66,12 +66,12 @@ typedef union
 typedef union
 {
 	struct {
-        // En bastaki en anlamsiz
-		unsigned int address    : 24;
-        unsigned int dummy      : 7;
-        unsigned int address_en : 1;
+        // the least significant bit is at the beginning
+		unsigned int transaction_done : 1;
+        unsigned int busy             : 7;
+        unsigned int reserved         : 24;
 	} fields;
 	uint32_t bits;
-}qspi_adr;
+}qspi_sta;
 
 #endif
