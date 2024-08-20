@@ -14,7 +14,8 @@ module i2c_master(
     input       [2:0]       num_bytes_w,
     output      [31:0]      read_data_w,
     input                   start_w,
-    output                  start_aldim_o,
+    // TODO
+    output                  reg start_aldim_o,
     output                  ready_w,
     output                  read_finished_w,
     output                  write_finished_w,
@@ -65,7 +66,8 @@ module i2c_master(
     reg         read_finish_r, read_finish_ns_r;
     reg         write_finish_r, write_finish_ns_r;
     
-    assign read_data_w = read_queue;
+    // TODO
+    //assign read_data_w = read_queue;
     
     assign ready_w = state == IDLE;
     assign read_finish_w = read_finish_r;
@@ -339,7 +341,8 @@ module i2c_master(
                         2'h3: begin
                             scl_ns_r = `LOW;
                             sample_buf_ns[2] = sda_i;    // Read from sda_i
-                            state_ns = (start_again_w && (cur_bytes_r == num_bytes_r)) ? IDLE : STOP;
+                            // TODO
+                            //state_ns = (start_again_w && (cur_bytes_r == num_bytes_r)) ? IDLE : STOP;
                             bit_ctr_ns = 0;
                             error = `LOW;
                             write_finish_ns_r = 1;
@@ -391,7 +394,8 @@ module i2c_master(
             num_bytes_r     <= 0;
             cur_bytes_r     <= 0;
             sample_buf      <= 3'b0;
-            read_queue      <= 0;
+            // TODO
+            //read_queue      <= 0;
             read_finish_r   <= `LOW;
             write_finish_r  <= `LOW;
         end else begin
