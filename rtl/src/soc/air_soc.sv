@@ -1,17 +1,13 @@
 // air_soc.sv
 `timescale 1ns / 1ps
-//
+
+`include "header.vh"
+
 `default_nettype none
 
 `define QSPI_SIM
 
-module air_soc #(
-   parameter int unsigned MEM_W         = 32,    // memory bus width in bits
-   parameter int unsigned ICACHE_SZ     = 8192,  // instruction cache size in bytes
-   parameter int unsigned ICACHE_LINE_W = 64,    // instruction cache line width in bits
-   parameter int unsigned DCACHE_SZ     = 8192,  // data cache size in bytes
-   parameter int unsigned DCACHE_LINE_W = 64     // data cache line width in bits
-) (
+module air_soc (
    input wire clk_i,
    input wire rst_ni,
 
@@ -25,9 +21,6 @@ module air_soc #(
    input  wire dp_rx_i,
    input  wire dn_rx_i
 );
-
-   localparam RAM_FPATH = "";
-   localparam RAM_SIZE = 256 * 1024;
 
    logic               mem_req;
    logic [       31:0] mem_addr;
@@ -45,77 +38,77 @@ module air_soc #(
    logic [       31:0] instr_rdata;
 
    // Data arbiter for main core
-   logic               data_req;
-   logic [       31:0] data_addr;
-   logic               data_we;
-   logic [MEM_W/8-1:0] data_be;
-   logic [MEM_W  -1:0] data_wdata;
-   logic               data_gnt;
-   logic               data_rvalid;
-   logic [MEM_W  -1:0] data_rdata;
+   logic                data_req;
+   logic [       31:0]  data_addr;
+   logic                data_we;
+   logic [`MEM_W/8-1:0] data_be;
+   logic [`MEM_W  -1:0] data_wdata;
+   logic                data_gnt;
+   logic                data_rvalid;
+   logic [`MEM_W  -1:0] data_rdata;
 
-   logic               cache_req;
-   logic [       31:0] cache_addr;
-   logic               cache_we;
-   logic [MEM_W/8-1:0] cache_be;
-   logic [MEM_W  -1:0] cache_wdata;
-   logic               cache_gnt;
-   logic               cache_rvalid;
-   logic [MEM_W  -1:0] cache_rdata;
+   logic                cache_req;
+   logic [       31:0]  cache_addr;
+   logic                cache_we;
+   logic [`MEM_W/8-1:0] cache_be;
+   logic [`MEM_W  -1:0] cache_wdata;
+   logic                cache_gnt;
+   logic                cache_rvalid;
+   logic [`MEM_W  -1:0] cache_rdata;
 
-   logic               uart_req;
-   logic [       31:0] uart_addr;
-   logic               uart_we;
-   logic [MEM_W/8-1:0] uart_be;
-   logic [MEM_W  -1:0] uart_wdata;
-   logic               uart_gnt;
-   logic               uart_rvalid;
-   logic [MEM_W  -1:0] uart_rdata;
+   logic                uart_req;
+   logic [       31:0]  uart_addr;
+   logic                uart_we;
+   logic [`MEM_W/8-1:0] uart_be;
+   logic [`MEM_W  -1:0] uart_wdata;
+   logic                uart_gnt;
+   logic                uart_rvalid;
+   logic [`MEM_W  -1:0] uart_rdata;
 
-   logic               timer_req;
-   logic [       31:0] timer_addr;
-   logic               timer_we;
-   logic [MEM_W/8-1:0] timer_be;
-   logic [MEM_W  -1:0] timer_wdata;
-   logic               timer_gnt;
-   logic               timer_rvalid;
-   logic [MEM_W  -1:0] timer_rdata;
+   logic                timer_req;
+   logic [       31:0]  timer_addr;
+   logic                timer_we;
+   logic [`MEM_W/8-1:0] timer_be;
+   logic [`MEM_W  -1:0] timer_wdata;
+   logic                timer_gnt;
+   logic                timer_rvalid;
+   logic [`MEM_W  -1:0] timer_rdata;
 
-   logic               gpio_req;
-   logic [       31:0] gpio_addr;
-   logic               gpio_we;
-   logic [MEM_W/8-1:0] gpio_be;
-   logic [MEM_W  -1:0] gpio_wdata;
-   logic               gpio_gnt;
-   logic               gpio_rvalid;
-   logic [MEM_W  -1:0] gpio_rdata;
+   logic                gpio_req;
+   logic [       31:0]  gpio_addr;
+   logic                gpio_we;
+   logic [`MEM_W/8-1:0] gpio_be;
+   logic [`MEM_W  -1:0] gpio_wdata;
+   logic                gpio_gnt;
+   logic                gpio_rvalid;
+   logic [`MEM_W  -1:0] gpio_rdata;
 
-   logic               qspi_req;
-   logic [       31:0] qspi_addr;
-   logic               qspi_we;
-   logic [MEM_W/8-1:0] qspi_be;
-   logic [MEM_W  -1:0] qspi_wdata;
-   logic               qspi_gnt;
-   logic               qspi_rvalid;
-   logic [MEM_W  -1:0] qspi_rdata;
+   logic                qspi_req;
+   logic [       31:0]  qspi_addr;
+   logic                qspi_we;
+   logic [`MEM_W/8-1:0] qspi_be;
+   logic [`MEM_W  -1:0] qspi_wdata;
+   logic                qspi_gnt;
+   logic                qspi_rvalid;
+   logic [`MEM_W  -1:0] qspi_rdata;
 
-   logic               i2c_req;
-   logic [       31:0] i2c_addr;
-   logic               i2c_we;
-   logic [MEM_W/8-1:0] i2c_be;
-   logic [MEM_W  -1:0] i2c_wdata;
-   logic               i2c_gnt;
-   logic               i2c_rvalid;
-   logic [MEM_W  -1:0] i2c_rdata;
+   logic                i2c_req;
+   logic [       31:0]  i2c_addr;
+   logic                i2c_we;
+   logic [`MEM_W/8-1:0] i2c_be;
+   logic [`MEM_W  -1:0] i2c_wdata;
+   logic                i2c_gnt;
+   logic                i2c_rvalid;
+   logic [`MEM_W  -1:0] i2c_rdata;
 
-   logic               usb_req;
-   logic [       31:0] usb_addr;
-   logic               usb_we;
-   logic [MEM_W/8-1:0] usb_be;
-   logic [MEM_W  -1:0] usb_wdata;
-   logic               usb_gnt;
-   logic               usb_rvalid;
-   logic [MEM_W  -1:0] usb_rdata;
+   logic                usb_req;
+   logic [       31:0]  usb_addr;
+   logic                usb_we;
+   logic [`MEM_W/8-1:0] usb_be;
+   logic [`MEM_W  -1:0] usb_wdata;
+   logic                usb_gnt;
+   logic                usb_rvalid;
+   logic [`MEM_W  -1:0] usb_rdata;
 
 
    // instruction cache
@@ -123,72 +116,72 @@ module air_soc #(
    logic               imem_gnt;
    logic [       31:0] imem_addr;
    logic               imem_rvalid;
-   logic [  MEM_W-1:0] imem_rdata;
-
+   logic [ `MEM_W-1:0] imem_rdata;
 
    cv32e40p_top #(
-      .FPU             (0),
-      .FPU_ADDMUL_LAT  (0),
-      .FPU_OTHERS_LAT  (0),
-      .ZFINX           (0),
-      .COREV_PULP      (0),
-      .COREV_CLUSTER   (0),
-      .NUM_MHPMCOUNTERS(1)
-   ) core (
-      // Clock and reset
-      .rst_ni      (rst_ni),
-      .clk_i       (clk_i),
-      .scan_cg_en_i(1'b0),
+       .COREV_PULP               ( `COREV_PULP ),
+       .COREV_CLUSTER            ( `COREV_CLUSTER ),
+       .FPU                      ( `FPU ),
+       .FPU_ADDMUL_LAT           ( `FPU_ADDMUL_LAT ),
+       .FPU_OTHERS_LAT           ( `FPU_OTHERS_LAT ),
+       .ZFINX                    ( `ZFINX ),
+       .NUM_MHPMCOUNTERS         ( `NUM_MHPMCOUNTERS )
+   )
+   cv32e40p_core_ip (
+       .clk_i                    (clk_i),
+       .rst_ni                   (rst_ni),
 
-      // Special control signals
-      .fetch_enable_i (1),
-      .pulp_clock_en_i(1'b0),
-      .core_sleep_o   (),
+       .pulp_clock_en_i          (`PULP_CLOCK_EN), // PULP clock enable (only used if COREV_CLUSTER = 1)
+       .scan_cg_en_i             (`SCAN_CG_EN), // Enable all clock gates for testing
 
-      // Configuration
-      .boot_addr_i        (32'h0000_0080),
-      .mtvec_addr_i       (32'h0000_0000),
-      .dm_halt_addr_i     (32'h00000000),
-      .dm_exception_addr_i(32'h00000000),
-      .hart_id_i          (32'b0),
+       // Configuration
+       .boot_addr_i              (`BOOT_ADDR),
+       .mtvec_addr_i             (`MTVEC_ADDR),
+       .dm_halt_addr_i           (`DM_HALT_ADDR),
+       .hart_id_i                (`HART_ID),
+       .dm_exception_addr_i      (`DM_EXCEPTION_ADDR),
 
-      // Instruction memory interface
-      .instr_addr_o  (instr_addr),
-      .instr_req_o   (instr_req),
-      .instr_gnt_i   (instr_gnt),
-      .instr_rvalid_i(instr_rvalid),
-      .instr_rdata_i (instr_rdata),
+       // Instruction memory interface
+       .instr_req_o              (instr_req),
+       .instr_gnt_i              (instr_gnt),
+       .instr_rvalid_i           (instr_rvalid),
+       .instr_addr_o             (instr_addr),
+       .instr_rdata_i            (instr_rdata),
 
-      // Data memory interface
-      .data_addr_o  (data_addr),
-      .data_req_o   (data_req),
-      .data_gnt_i   (data_gnt),
-      .data_we_o    (data_we),
-      .data_be_o    (data_be),
-      .data_wdata_o (data_wdata),
-      .data_rvalid_i(data_rvalid),
-      .data_rdata_i (data_rdata),
+       // Data memory interface
+       .data_req_o               (data_req),
+       .data_gnt_i               (data_gnt),
+       .data_rvalid_i            (data_rvalid),
+       .data_we_o                (data_we),
+       .data_be_o                (data_be),
+       .data_addr_o              (data_addr),
+       .data_wdata_o             (data_wdata),
+       .data_rdata_i             (data_rdata),
 
-      // Interrupt interface
-      .irq_i                    (0), //({14'b0, timer_bus.irq, gpio_bus.irq, 16'b0}), //4'b0, 0, 3'b0, 0, 3'b0, 0, 3'b0}),
-      .irq_ack_o(),
-      .irq_id_o(),
+       // TODO: Interrupt instead of polling peripherals
+       // Interrupt interface
+       .irq_i                    (32'h0), //({14'b0, timer_bus.irq, gpio_bus.irq, 16'b0}), //4'b0, 0, 3'b0, 0, 3'b0, 0, 3'b0}),
+       .irq_ack_o                (),
+       .irq_id_o                 (),
 
-      // Debug interface
-      .debug_req_i      (1'b0),
-      .debug_havereset_o(),
-      .debug_running_o  (),
-      .debug_halted_o   ()
+       // TODO: JTAG Integration
+       // Debug interface
+       .debug_req_i              (1'b0),
+       .debug_havereset_o        (),
+       .debug_running_o          (),
+       .debug_halted_o           (),
+
+       // CPU Control Signals
+       .fetch_enable_i           (1'b1),
+       .core_sleep_o             ()
    );
-
-   localparam int unsigned ICACHE_WAY_LEN = ICACHE_SZ / (ICACHE_LINE_W / 8) / 2;
 
    cache #(
       .ADDR_BIT_W (32),
       .CPU_BYTE_W (4),
-      .MEM_BYTE_W (MEM_W / 8),
-      .LINE_BYTE_W(ICACHE_LINE_W / 8),
-      .WAY_LEN    (ICACHE_WAY_LEN)
+      .MEM_BYTE_W (`MEM_W / 8),
+      .LINE_BYTE_W(`ICACHE_LINE_W / 8),
+      .WAY_LEN    (`ICACHE_WAY_LEN)
    ) icache (
       .clk_i       (clk_i),
       .rst_ni      (rst_ni),
@@ -211,22 +204,21 @@ module air_soc #(
    );
 
    // data cache
-   logic               dmem_req;
-   logic               dmem_gnt;
-   logic [       31:0] dmem_addr;
-   logic               dmem_we;
-   logic [MEM_W  -1:0] dmem_wdata;
-   logic               dmem_rvalid;
-   logic               dmem_wvalid;
-   logic [MEM_W  -1:0] dmem_rdata;
+   logic                dmem_req;
+   logic                dmem_gnt;
+   logic [       31:0]  dmem_addr;
+   logic                dmem_we;
+   logic [`MEM_W  -1:0] dmem_wdata;
+   logic                dmem_rvalid;
+   logic                dmem_wvalid;
+   logic [`MEM_W  -1:0] dmem_rdata;
 
-   localparam int unsigned DCACHE_WAY_LEN = DCACHE_SZ / (DCACHE_LINE_W / 8) / 2;
    cache #(
       .ADDR_BIT_W (32),
-      .CPU_BYTE_W (MEM_W / 8),
-      .MEM_BYTE_W (MEM_W / 8),
-      .LINE_BYTE_W(DCACHE_LINE_W / 8),
-      .WAY_LEN    (DCACHE_WAY_LEN)
+      .CPU_BYTE_W (`MEM_W / 8),
+      .MEM_BYTE_W (`MEM_W / 8),
+      .LINE_BYTE_W(`DCACHE_LINE_W / 8),
+      .WAY_LEN    (`DCACHE_WAY_LEN)
    ) dcache (
       .clk_i     (clk_i),
       .rst_ni    (rst_ni),
@@ -249,8 +241,6 @@ module air_soc #(
       .mem_rvalid_i(dmem_rvalid),
       .mem_rdata_i (dmem_rdata)
    );
-
-
 
    ///////////////////////////////////////////////////////////////////////////
    // MEMORY ARBITER
@@ -306,8 +296,8 @@ module air_soc #(
    assign dmem_rdata  = mem_rdata;
 
    ram32 #(
-      .SIZE     (RAM_SIZE / 4),
-      .INIT_FILE(RAM_FPATH)
+      .SIZE     (`RAM_SIZE / 4),
+      .INIT_FILE(`RAM_FPATH)
    ) main_memory (
       .clk_i   (clk_i),
       .rst_ni  (rst_ni),
@@ -437,10 +427,10 @@ module air_soc #(
    wire [3:0] qspi_data_o;
    wire [1:0] qspi_out_mod_o;
 
-   assign qspi_data_io[0] = |qspi_out_mod_o ? qspi_data_o[0] : 1'bZ;
+   assign qspi_data_io[0] = |qspi_out_mod_o   ? qspi_data_o[0] : 1'bZ;
    assign qspi_data_io[1] = qspi_out_mod_o[1] ? qspi_data_o[1] : 1'bZ;
-   assign qspi_data_io[2] = &qspi_out_mod_o ? qspi_data_o[2] : 1'bZ;
-   assign qspi_data_io[3] = &qspi_out_mod_o ? qspi_data_o[3] : 1'bZ;
+   assign qspi_data_io[2] = &qspi_out_mod_o   ? qspi_data_o[2] : 1'bZ;
+   assign qspi_data_io[3] = &qspi_out_mod_o   ? qspi_data_o[3] : 1'bZ;
 
    assign qspi_data_i = qspi_data_io;
 
@@ -535,7 +525,6 @@ module air_soc #(
       .dn_tx_o(dn_tx_o),
       .dp_rx_i(dp_rx_i),
       .dn_rx_i(dn_rx_i)
-
    );
 
 endmodule

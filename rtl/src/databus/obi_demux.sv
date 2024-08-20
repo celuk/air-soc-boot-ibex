@@ -77,7 +77,7 @@ module obi_demux (
    input  wire        gpio_rvalid_i,
    input  wire [31:0] gpio_rdata_i,
 
-   // GPIO interface
+   // USB interface
    output wire        usb_req_o,
    output wire [31:0] usb_addr_o,
    output wire        usb_we_o,
@@ -87,32 +87,6 @@ module obi_demux (
    input  wire        usb_rvalid_i,
    input  wire [31:0] usb_rdata_i
 );
-   // verilog_format: off
-   localparam [31:0] MEM_BASE_ADDR   = 32'h0000_0000;
-   localparam [31:0] MEM_RANGE       = 32'h0008_0000;
-
-   localparam [31:0] UART_BASE_ADDR  = 32'h2000_0000;
-   localparam [31:0] UART_RANGE      = 32'h0000_FFFF;
-
-   localparam [31:0] QSPI_BASE_ADDR   = 32'h2001_0000;
-   localparam [31:0] QSPI_RANGE       = 32'h0000_FFFF;
-
-   localparam [31:0] I2C_BASE_ADDR   = 32'h2002_0000;
-   localparam [31:0] I2C_RANGE       = 32'h0000_FFFF;
-
-   localparam [31:0] GPIO_BASE_ADDR  = 32'h2003_0000;
-   localparam [31:0] GPIO_RANGE      = 32'h0000_FFFF;
-
-   localparam [31:0] USB_BASE_ADDR   = 32'h2004_0000;
-   localparam [31:0] USB_RANGE       = 32'h0000_FFFF;
-
-   localparam [31:0] TIMER_BASE_ADDR = 32'h2005_0000;
-   localparam [31:0] TIMER_RANGE     = 32'h0000_FFFF;
-
-// localparam [31:0] JTAG_BASE_ADDR = 32'h2006_0000;
-// localparam [31:0] JTAG_RANGE     = 32'h0001_0000;
-   // verilog_format: on
-
 
    reg         data_req;
    reg         data_we;
@@ -133,7 +107,7 @@ module obi_demux (
    assign cache_addr_o = data_addr;
    assign uart_addr_o  = data_addr;
    assign gpio_addr_o  = data_addr;
-   assign qspi_addr_o   = data_addr;
+   assign qspi_addr_o  = data_addr;
    assign usb_addr_o   = data_addr;
    assign i2c_addr_o   = data_addr;
    assign timer_addr_o = data_addr;
@@ -141,67 +115,65 @@ module obi_demux (
    assign cache_wdata_o = data_wdata;
    assign uart_wdata_o  = data_wdata;
    assign gpio_wdata_o  = data_wdata;
-   assign qspi_wdata_o   = data_wdata;
+   assign qspi_wdata_o  = data_wdata;
    assign usb_wdata_o   = data_wdata;
    assign i2c_wdata_o   = data_wdata;
    assign timer_wdata_o = data_wdata;
 
-   assign cache_req_o = (MEM_BASE_ADDR  + MEM_RANGE  > data_addr ) && (data_addr >= MEM_BASE_ADDR) ? (state == WAITING) & data_req : 'h0;
-   assign cache_we_o  = (MEM_BASE_ADDR  + MEM_RANGE  > data_addr ) && (data_addr >= MEM_BASE_ADDR) ? data_we  : 'h0;
-   assign cache_be_o  = (MEM_BASE_ADDR  + MEM_RANGE  > data_addr ) && (data_addr >= MEM_BASE_ADDR) ? data_be  : 'h0;
+   assign cache_req_o = (`MEM_BASE_ADDR  + `MEM_RANGE  > data_addr )   && (data_addr >= `MEM_BASE_ADDR)   ? (state == WAITING) & data_req : 'h0;
+   assign cache_we_o  = (`MEM_BASE_ADDR  + `MEM_RANGE  > data_addr )   && (data_addr >= `MEM_BASE_ADDR)   ? data_we  : 'h0;
+   assign cache_be_o  = (`MEM_BASE_ADDR  + `MEM_RANGE  > data_addr )   && (data_addr >= `MEM_BASE_ADDR)   ? data_be  : 'h0;
+  
+   assign uart_req_o  = (`UART_BASE_ADDR + `UART_RANGE > data_addr )   && (data_addr >= `UART_BASE_ADDR)  ? (state == WAITING) & data_req : 'h0;
+   assign uart_we_o   = (`UART_BASE_ADDR + `UART_RANGE > data_addr )   && (data_addr >= `UART_BASE_ADDR)  ? data_we  : 'h0;
+   assign uart_be_o   = (`UART_BASE_ADDR + `UART_RANGE > data_addr )   && (data_addr >= `UART_BASE_ADDR)  ? data_be  : 'h0;
+  
+   assign gpio_req_o  = (`GPIO_BASE_ADDR + `GPIO_RANGE > data_addr )   && (data_addr >= `GPIO_BASE_ADDR)  ? (state == WAITING) & data_req : 'h0;
+   assign gpio_we_o   = (`GPIO_BASE_ADDR + `GPIO_RANGE > data_addr )   && (data_addr >= `GPIO_BASE_ADDR)  ? data_we  : 'h0;
+   assign gpio_be_o   = (`GPIO_BASE_ADDR + `GPIO_RANGE > data_addr )   && (data_addr >= `GPIO_BASE_ADDR)  ? data_be  : 'h0;
+  
+   assign qspi_req_o  = (`QSPI_BASE_ADDR + `QSPI_RANGE  > data_addr )  && (data_addr >= `QSPI_BASE_ADDR)  ? (state == WAITING) & data_req : 'h0;
+   assign qspi_we_o   = (`QSPI_BASE_ADDR + `QSPI_RANGE  > data_addr )  && (data_addr >= `QSPI_BASE_ADDR)  ? data_we  : 'h0;
+   assign qspi_be_o   = (`QSPI_BASE_ADDR + `QSPI_RANGE  > data_addr )  && (data_addr >= `QSPI_BASE_ADDR)  ? data_be  : 'h0;
+ 
+   assign usb_req_o   = (`USB_BASE_ADDR  + `USB_RANGE  > data_addr )   && (data_addr >= `USB_BASE_ADDR)   ? (state == WAITING) & data_req : 'h0;
+   assign usb_we_o    = (`USB_BASE_ADDR  + `USB_RANGE  > data_addr )   && (data_addr >= `USB_BASE_ADDR)   ? data_we  : 'h0;
+   assign usb_be_o    = (`USB_BASE_ADDR  + `USB_RANGE  > data_addr )   && (data_addr >= `USB_BASE_ADDR)   ? data_be  : 'h0;
+ 
+   assign i2c_req_o   = (`I2C_BASE_ADDR  + `I2C_RANGE  > data_addr )   && (data_addr >= `I2C_BASE_ADDR)   ? (state == WAITING) & data_req : 'h0;
+   assign i2c_we_o    = (`I2C_BASE_ADDR  + `I2C_RANGE  > data_addr )   && (data_addr >= `I2C_BASE_ADDR)   ? data_we  : 'h0;
+   assign i2c_be_o    = (`I2C_BASE_ADDR  + `I2C_RANGE  > data_addr )   && (data_addr >= `I2C_BASE_ADDR)   ? data_be  : 'h0;
 
-   assign uart_req_o  = (UART_BASE_ADDR + UART_RANGE > data_addr ) && (data_addr >= UART_BASE_ADDR) ? (state == WAITING) & data_req : 'h0;
-   assign uart_we_o   = (UART_BASE_ADDR + UART_RANGE > data_addr ) && (data_addr >= UART_BASE_ADDR) ? data_we  : 'h0;
-   assign uart_be_o   = (UART_BASE_ADDR + UART_RANGE > data_addr ) && (data_addr >= UART_BASE_ADDR) ? data_be  : 'h0;
+   assign timer_req_o = (`TIMER_BASE_ADDR + `TIMER_RANGE > data_addr ) && (data_addr >= `TIMER_BASE_ADDR) ? (state == WAITING) & data_req : 'h0;
+   assign timer_we_o  = (`TIMER_BASE_ADDR + `TIMER_RANGE > data_addr ) && (data_addr >= `TIMER_BASE_ADDR) ? data_we  : 'h0;
+   assign timer_be_o  = (`TIMER_BASE_ADDR + `TIMER_RANGE > data_addr ) && (data_addr >= `TIMER_BASE_ADDR) ? data_be  : 'h0;
 
-   assign gpio_req_o  = (GPIO_BASE_ADDR + GPIO_RANGE > data_addr ) && (data_addr >= GPIO_BASE_ADDR) ? (state == WAITING) & data_req : 'h0;
-   assign gpio_we_o   = (GPIO_BASE_ADDR + GPIO_RANGE > data_addr ) && (data_addr >= GPIO_BASE_ADDR) ? data_we  : 'h0;
-   assign gpio_be_o   = (GPIO_BASE_ADDR + GPIO_RANGE > data_addr ) && (data_addr >= GPIO_BASE_ADDR) ? data_be  : 'h0;
+   assign data_rdata_o = (`MEM_BASE_ADDR+`MEM_RANGE     > data_addr) && (data_addr >= `MEM_BASE_ADDR  ) ? cache_rdata_i :
+                         (`UART_BASE_ADDR+`UART_RANGE   > data_addr) && (data_addr >= `UART_BASE_ADDR ) ? uart_rdata_i  :
+                         (`GPIO_BASE_ADDR+`GPIO_RANGE   > data_addr) && (data_addr >= `GPIO_BASE_ADDR ) ? gpio_rdata_i  :
+                         (`TIMER_BASE_ADDR+`TIMER_RANGE > data_addr) && (data_addr >= `TIMER_BASE_ADDR) ? timer_rdata_i :
+                         (`I2C_BASE_ADDR+`I2C_RANGE     > data_addr) && (data_addr >= `I2C_BASE_ADDR  ) ? i2c_rdata_i   :
+                         (`USB_BASE_ADDR+`USB_RANGE     > data_addr) && (data_addr >= `USB_BASE_ADDR  ) ? usb_rdata_i   :
+                         (`QSPI_BASE_ADDR+`QSPI_RANGE   > data_addr) && (data_addr >= `QSPI_BASE_ADDR ) ? qspi_rdata_i  :
+                                                                                                          32'h0         ;
 
-   assign qspi_req_o   = (QSPI_BASE_ADDR  + QSPI_RANGE  > data_addr ) && (data_addr >= QSPI_BASE_ADDR) ? (state == WAITING) & data_req : 'h0;
-   assign qspi_we_o    = (QSPI_BASE_ADDR  + QSPI_RANGE  > data_addr ) && (data_addr >= QSPI_BASE_ADDR) ? data_we  : 'h0;
-   assign qspi_be_o    = (QSPI_BASE_ADDR  + QSPI_RANGE  > data_addr ) && (data_addr >= QSPI_BASE_ADDR) ? data_be  : 'h0;
+   assign data_rvalid_o= (`MEM_BASE_ADDR+`MEM_RANGE     >= data_addr) && (data_addr >= `MEM_BASE_ADDR  ) ? cache_rvalid_i :
+                         (`UART_BASE_ADDR+`UART_RANGE   >= data_addr) && (data_addr >= `UART_BASE_ADDR ) ? uart_rvalid_i  :
+                         (`GPIO_BASE_ADDR+`GPIO_RANGE   >= data_addr) && (data_addr >= `GPIO_BASE_ADDR ) ? gpio_rvalid_i  :
+                         (`TIMER_BASE_ADDR+`TIMER_RANGE >= data_addr) && (data_addr >= `TIMER_BASE_ADDR) ? timer_rvalid_i :
+                         (`I2C_BASE_ADDR+`I2C_RANGE     >= data_addr) && (data_addr >= `I2C_BASE_ADDR  ) ? i2c_rvalid_i   :
+                         (`USB_BASE_ADDR+`USB_RANGE     >= data_addr) && (data_addr >= `USB_BASE_ADDR  ) ? usb_rvalid_i   :
+                         (`QSPI_BASE_ADDR+`QSPI_RANGE   >= data_addr) && (data_addr >= `QSPI_BASE_ADDR ) ? qspi_rvalid_i  :
+                                                                                                           1'h0           ;
 
-   assign usb_req_o   = (USB_BASE_ADDR  + USB_RANGE  > data_addr ) && (data_addr >= USB_BASE_ADDR) ? (state == WAITING) & data_req : 'h0;
-   assign usb_we_o    = (USB_BASE_ADDR  + USB_RANGE  > data_addr ) && (data_addr >= USB_BASE_ADDR) ? data_we  : 'h0;
-   assign usb_be_o    = (USB_BASE_ADDR  + USB_RANGE  > data_addr ) && (data_addr >= USB_BASE_ADDR) ? data_be  : 'h0;
-
-   assign i2c_req_o   = (I2C_BASE_ADDR  + I2C_RANGE  > data_addr ) && (data_addr >= I2C_BASE_ADDR) ? (state == WAITING) & data_req : 'h0;
-   assign i2c_we_o    = (I2C_BASE_ADDR  + I2C_RANGE  > data_addr ) && (data_addr >= I2C_BASE_ADDR) ? data_we  : 'h0;
-   assign i2c_be_o    = (I2C_BASE_ADDR  + I2C_RANGE  > data_addr ) && (data_addr >= I2C_BASE_ADDR) ? data_be  : 'h0;
-
-   assign timer_req_o = (TIMER_BASE_ADDR + TIMER_RANGE > data_addr ) && (data_addr >= TIMER_BASE_ADDR) ? (state == WAITING) & data_req : 'h0;
-   assign timer_we_o  = (TIMER_BASE_ADDR + TIMER_RANGE > data_addr ) && (data_addr >= TIMER_BASE_ADDR) ? data_we  : 'h0;
-   assign timer_be_o  = (TIMER_BASE_ADDR + TIMER_RANGE > data_addr ) && (data_addr >= TIMER_BASE_ADDR) ? data_be  : 'h0;
-
-
-
-   assign data_rdata_o = (MEM_BASE_ADDR+MEM_RANGE     > data_addr) && (data_addr >= MEM_BASE_ADDR  ) ? cache_rdata_i :
-                         (UART_BASE_ADDR+UART_RANGE   > data_addr) && (data_addr >= UART_BASE_ADDR ) ? uart_rdata_i  :
-                         (GPIO_BASE_ADDR+GPIO_RANGE   > data_addr) && (data_addr >= GPIO_BASE_ADDR ) ? gpio_rdata_i  :
-                         (TIMER_BASE_ADDR+TIMER_RANGE > data_addr) && (data_addr >= TIMER_BASE_ADDR) ? timer_rdata_i :
-                         (I2C_BASE_ADDR+I2C_RANGE     > data_addr) && (data_addr >= I2C_BASE_ADDR  ) ? i2c_rdata_i   :
-                         (USB_BASE_ADDR+USB_RANGE     > data_addr) && (data_addr >= USB_BASE_ADDR  ) ? usb_rdata_i   :
-                         (QSPI_BASE_ADDR+QSPI_RANGE   > data_addr) && (data_addr >= QSPI_BASE_ADDR ) ? qspi_rdata_i  :
-                                                                                                       32'h0         ;
-
-   assign data_rvalid_o= (MEM_BASE_ADDR+MEM_RANGE     >= data_addr) && (data_addr >= MEM_BASE_ADDR  ) ? cache_rvalid_i :
-                         (UART_BASE_ADDR+UART_RANGE   >= data_addr) && (data_addr >= UART_BASE_ADDR ) ? uart_rvalid_i  :
-                         (GPIO_BASE_ADDR+GPIO_RANGE   >= data_addr) && (data_addr >= GPIO_BASE_ADDR ) ? gpio_rvalid_i  :
-                         (TIMER_BASE_ADDR+TIMER_RANGE >= data_addr) && (data_addr >= TIMER_BASE_ADDR) ? timer_rvalid_i :
-                         (I2C_BASE_ADDR+I2C_RANGE     >= data_addr) && (data_addr >= I2C_BASE_ADDR  ) ? i2c_rvalid_i   :
-                         (USB_BASE_ADDR+USB_RANGE     >= data_addr) && (data_addr >= USB_BASE_ADDR  ) ? usb_rvalid_i   :
-                         (QSPI_BASE_ADDR+QSPI_RANGE   >= data_addr) && (data_addr >= QSPI_BASE_ADDR ) ? qspi_rvalid_i  :
-                                                                                                          1'h0         ;
-
-   assign periph_gnt   = (MEM_BASE_ADDR+MEM_RANGE     > data_addr) && (data_addr >= MEM_BASE_ADDR  ) ? cache_gnt_i :
-                         (UART_BASE_ADDR+UART_RANGE   > data_addr) && (data_addr >= UART_BASE_ADDR ) ? uart_gnt_i  :
-                         (GPIO_BASE_ADDR+GPIO_RANGE   > data_addr) && (data_addr >= GPIO_BASE_ADDR ) ? gpio_gnt_i  :
-                         (TIMER_BASE_ADDR+TIMER_RANGE > data_addr) && (data_addr >= TIMER_BASE_ADDR) ? timer_gnt_i :
-                         (I2C_BASE_ADDR+I2C_RANGE     > data_addr) && (data_addr >= I2C_BASE_ADDR  ) ? i2c_gnt_i   :
-                         (USB_BASE_ADDR+USB_RANGE     > data_addr) && (data_addr >= USB_BASE_ADDR  ) ? usb_gnt_i   :
-                         (QSPI_BASE_ADDR+QSPI_RANGE   > data_addr) && (data_addr >= QSPI_BASE_ADDR ) ? qspi_gnt_i  :
-                                                                                                         'h0       ;
+   assign periph_gnt   = (`MEM_BASE_ADDR+`MEM_RANGE     > data_addr) && (data_addr >= `MEM_BASE_ADDR  ) ? cache_gnt_i :
+                         (`UART_BASE_ADDR+`UART_RANGE   > data_addr) && (data_addr >= `UART_BASE_ADDR ) ? uart_gnt_i  :
+                         (`GPIO_BASE_ADDR+`GPIO_RANGE   > data_addr) && (data_addr >= `GPIO_BASE_ADDR ) ? gpio_gnt_i  :
+                         (`TIMER_BASE_ADDR+`TIMER_RANGE > data_addr) && (data_addr >= `TIMER_BASE_ADDR) ? timer_gnt_i :
+                         (`I2C_BASE_ADDR+`I2C_RANGE     > data_addr) && (data_addr >= `I2C_BASE_ADDR  ) ? i2c_gnt_i   :
+                         (`USB_BASE_ADDR+`USB_RANGE     > data_addr) && (data_addr >= `USB_BASE_ADDR  ) ? usb_gnt_i   :
+                         (`QSPI_BASE_ADDR+`QSPI_RANGE   > data_addr) && (data_addr >= `QSPI_BASE_ADDR ) ? qspi_gnt_i  :
+                                                                                                          'h0         ;
 
    assign data_gnt_o = (state == IDLE) & periph_gnt;
 
