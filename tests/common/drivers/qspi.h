@@ -68,8 +68,8 @@ typedef union
 	struct {
         // the least significant bit is at the beginning
 		unsigned int transaction_done : 1;
-        unsigned int busy             : 7;
-        unsigned int reserved         : 24;
+        unsigned int busy             : 1;
+        unsigned int reserved         : 30;
 	} fields;
 	uint32_t bits;
 }qspi_sta;

@@ -166,7 +166,8 @@ module qspi_controller (
       QSPI_DR5_next = QSPI_DR5;
       QSPI_DR6_next = QSPI_DR6;
       QSPI_DR7_next = QSPI_DR7;
-      QSPI_STA_next = 0;
+      QSPI_STA_next[0] = 0;
+      QSPI_STA_next[1] = QSPI_STA[1];
 
       bit_counter_next = bit_counter;
 
@@ -179,7 +180,7 @@ module qspi_controller (
 
       buffer_next = buffer;
 
-      new_instruction_next = (wb_cyc_i & wb_stb_i & wb_we_i & !wb_ack_o & (|wb_sel_i) & wb_adr_i == 8'h00);
+      new_instruction_next = (wb_cyc_i & wb_stb_i & wb_we_i & !wb_ack_o & (|wb_sel_i) & wb_adr_i == 8'h00); // if there is a write to CCR
 
       if(|bit_counter) begin // if bit_counter is not 0
          data_out_next[3:0] = QSPI_CCR_DATA_MOD==X4 ? buffer[31:28] : 
@@ -210,7 +211,7 @@ module qspi_controller (
                if(new_instruction) begin
                   new_instruction_next = 1'b0;
 
-                  state_next = SELECT_DEVICE;
+                  state_next = SEND_COMMAND;
                end
             end
             SELECT_DEVICE: begin
@@ -222,6 +223,7 @@ module qspi_controller (
             end
 
             SEND_COMMAND: begin
+               qspi_cs_next_r = 1'b0;
                buffer_next[31:24] = QSPI_CCR_INST;
                bit_counter_next = 8;
                QSPI_STA_next[1] = 1; // busy
@@ -298,7 +300,7 @@ module qspi_controller (
       */
 
       if(QSPI_CCR_CLEAR_STA) begin
-         QSPI_STA_next = 0;
+         QSPI_STA_next[0] = 0;
       end
 
       if(wb_cyc_i) begin
@@ -443,7 +445,7 @@ module qspi_controller (
          qspi_cs_r <= qspi_cs_next_r;
          sclk <= sclk_next;
 
-         data_out_next <= data_out;
+         data_out <= data_out_next;
          data_out_enable <= data_out_enable_next;
 
          buffer <= buffer_next;
