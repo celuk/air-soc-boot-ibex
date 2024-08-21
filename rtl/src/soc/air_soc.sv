@@ -118,6 +118,17 @@ module air_soc (
    logic               imem_rvalid;
    logic [ `MEM_W-1:0] imem_rdata;
 
+   // data cache
+   logic                dmem_req;
+   logic                dmem_gnt;
+   logic [       31:0]  dmem_addr;
+   logic                dmem_we;
+   logic [         3:0] dmem_be;
+   logic [`MEM_W  -1:0] dmem_wdata;
+   logic                dmem_rvalid;
+   logic                dmem_wvalid;
+   logic [`MEM_W  -1:0] dmem_rdata;
+
    cv32e40p_top #(
        .COREV_PULP               ( `COREV_PULP ),
        .COREV_CLUSTER            ( `COREV_CLUSTER ),
@@ -176,71 +187,87 @@ module air_soc (
        .core_sleep_o             ()
    );
 
-   cache #(
-      .ADDR_BIT_W (32),
-      .CPU_BYTE_W (4),
-      .MEM_BYTE_W (`MEM_W / 8),
-      .LINE_BYTE_W(`ICACHE_LINE_W / 8),
-      .WAY_LEN    (`ICACHE_WAY_LEN)
-   ) icache (
-      .clk_i       (clk_i),
-      .rst_ni      (rst_ni),
-      .hold_mem_i  (1'b0),
-      .cpu_req_i   (instr_req),
-      .cpu_addr_i  (instr_addr),
-      .cpu_we_i    ('0),
-      .cpu_be_i    ('0),
-      .cpu_wdata_i ('0),
-      .cpu_gnt_o   (instr_gnt),
-      .cpu_rvalid_o(instr_rvalid),
-      .cpu_rdata_o (instr_rdata),
-      .mem_req_o   (imem_req),
-      .mem_addr_o  (imem_addr),
-      .mem_we_o    (),
-      .mem_wdata_o (),
-      .mem_gnt_i   (imem_gnt),
-      .mem_rvalid_i(imem_rvalid),
-      .mem_rdata_i (imem_rdata)
-   );
+   generate
+      if(`ICACHE_SZ > 0) begin
+         cache #(
+            .ADDR_BIT_W (32),
+            .CPU_BYTE_W (4),
+            .MEM_BYTE_W (`MEM_W / 8),
+            .LINE_BYTE_W(`ICACHE_LINE_W / 8),
+            .WAY_LEN    (`ICACHE_WAY_LEN)
+         ) icache (
+            .clk_i       (clk_i),
+            .rst_ni      (rst_ni),
+            .hold_mem_i  (1'b0),
+            .cpu_req_i   (instr_req),
+            .cpu_addr_i  (instr_addr),
+            .cpu_we_i    ('0),
+            .cpu_be_i    ('0),
+            .cpu_wdata_i ('0),
+            .cpu_gnt_o   (instr_gnt),
+            .cpu_rvalid_o(instr_rvalid),
+            .cpu_rdata_o (instr_rdata),
+            .mem_req_o   (imem_req),
+            .mem_addr_o  (imem_addr),
+            .mem_we_o    (),
+            .mem_wdata_o (),
+            .mem_gnt_i   (imem_gnt),
+            .mem_rvalid_i(imem_rvalid),
+            .mem_rdata_i (imem_rdata)
+         );
+      end
+      else begin
+         assign instr_gnt    = imem_gnt;
+         assign instr_rvalid = imem_rvalid;
+         assign instr_rdata  = imem_rdata[31:0];
+         assign imem_req     = instr_req;
+         assign imem_addr    = instr_addr;
+      end
+   endgenerate
 
-   // data cache
-   logic                dmem_req;
-   logic                dmem_gnt;
-   logic [       31:0]  dmem_addr;
-   logic                dmem_we;
-   logic [`MEM_W  -1:0] dmem_wdata;
-   logic                dmem_rvalid;
-   logic                dmem_wvalid;
-   logic [`MEM_W  -1:0] dmem_rdata;
+   generate
+      if(`DCACHE_SZ > 0) begin
+         cache #(
+            .ADDR_BIT_W (32),
+            .CPU_BYTE_W (`MEM_W / 8),
+            .MEM_BYTE_W (`MEM_W / 8),
+            .LINE_BYTE_W(`DCACHE_LINE_W / 8),
+            .WAY_LEN    (`DCACHE_WAY_LEN)
+         ) dcache (
+            .clk_i     (clk_i),
+            .rst_ni    (rst_ni),
+            .hold_mem_i(1'b0),
 
-   cache #(
-      .ADDR_BIT_W (32),
-      .CPU_BYTE_W (`MEM_W / 8),
-      .MEM_BYTE_W (`MEM_W / 8),
-      .LINE_BYTE_W(`DCACHE_LINE_W / 8),
-      .WAY_LEN    (`DCACHE_WAY_LEN)
-   ) dcache (
-      .clk_i     (clk_i),
-      .rst_ni    (rst_ni),
-      .hold_mem_i(1'b0),
+            .cpu_req_i   (cache_req),
+            .cpu_addr_i  (cache_addr),
+            .cpu_we_i    (cache_we),
+            .cpu_be_i    (cache_be),
+            .cpu_wdata_i (cache_wdata),
+            .cpu_gnt_o   (cache_gnt),
+            .cpu_rvalid_o(cache_rvalid),
+            .cpu_rdata_o (cache_rdata),
 
-      .cpu_req_i   (cache_req),
-      .cpu_addr_i  (cache_addr),
-      .cpu_we_i    (cache_we),
-      .cpu_be_i    (cache_be),
-      .cpu_wdata_i (cache_wdata),
-      .cpu_gnt_o   (cache_gnt),
-      .cpu_rvalid_o(cache_rvalid),
-      .cpu_rdata_o (cache_rdata),
-
-      .mem_req_o   (dmem_req),
-      .mem_we_o    (dmem_we),
-      .mem_addr_o  (dmem_addr),
-      .mem_wdata_o (dmem_wdata),
-      .mem_gnt_i   (dmem_gnt),
-      .mem_rvalid_i(dmem_rvalid),
-      .mem_rdata_i (dmem_rdata)
-   );
+            .mem_req_o   (dmem_req),
+            .mem_we_o    (dmem_we),
+            .mem_addr_o  (dmem_addr),
+            .mem_wdata_o (dmem_wdata),
+            .mem_gnt_i   (dmem_gnt),
+            .mem_rvalid_i(dmem_rvalid),
+            .mem_rdata_i (dmem_rdata)
+         );
+         assign dmem_be = 4'b1111;
+      end
+      else begin
+         assign dmem_req     = cache_req;
+         assign dmem_we      = cache_we;
+         assign dmem_be      = cache_be;
+         assign dmem_addr    = cache_addr;
+         assign dmem_wdata   = cache_wdata;
+         assign cache_gnt    = dmem_gnt;
+         assign cache_rvalid = dmem_rvalid | dmem_wvalid;
+         assign cache_rdata  = dmem_rdata;
+      end
+   endgenerate
 
    ///////////////////////////////////////////////////////////////////////////
    // MEMORY ARBITER
@@ -249,7 +276,7 @@ module air_soc (
       mem_req   = imem_req | dmem_req;
       mem_addr  = imem_addr;
       mem_we    = 1'b0;
-      mem_be    =  '1;
+      mem_be    = dmem_be;
       mem_wdata = dmem_wdata;
       if (dmem_req) begin
          mem_we   = dmem_we;
@@ -292,7 +319,7 @@ module air_soc (
    assign imem_rvalid = mem_rvalid & ~req_sources[0];
    assign dmem_rvalid = mem_rvalid & req_sources[0] & ~req_write[0];
    assign dmem_wvalid = mem_rvalid & req_sources[0] & req_write[0];
-   assign imem_rdata  = mem_rdata;
+   assign imem_rdata  = (`ICACHE_SZ > 0) ? mem_rdata : mem_rdata[(imem_req_addr[0][$clog2(`MEM_W)-1:0] & {3'b000, {($clog2(`MEM_W/8)-2){1'b1}}, 2'b00})*8 +: 32];
    assign dmem_rdata  = mem_rdata;
 
    ram32 #(

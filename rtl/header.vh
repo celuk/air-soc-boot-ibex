@@ -16,16 +16,21 @@
 `define HART_ID 32'h0
 `define DM_EXCEPTION_ADDR 32'h0
 
-`define MEM_W 32
+// TODO: Handle if DCACHE_SZ is 0
+// Cache sizes must be at least mutiple of 64 --> e.g. 64, 128, 256, ...
 `define ICACHE_SZ 8192
-`define ICACHE_LINE_W 64
 `define DCACHE_SZ 8192
+`define MEM_W 32
+`define ICACHE_LINE_W 64
 `define DCACHE_LINE_W 64
 `define ICACHE_WAY_LEN `ICACHE_SZ / (`ICACHE_LINE_W / 8) / 2
 `define DCACHE_WAY_LEN `DCACHE_SZ / (`DCACHE_LINE_W / 8) / 2
 
 `define RAM_FPATH ""
 `define RAM_SIZE 256 * 1024
+
+`define MEM_BASE_ADDR   32'h0000_0000
+`define MEM_RANGE       32'h0008_0000
 
 /*
 PERIPHERALS
@@ -38,8 +43,6 @@ PERIPHERALS
 0x20060000 = JTAG  = 00100000000001100000000000000000
 */
 
-`define MEM_BASE_ADDR   32'h0000_0000
-`define MEM_RANGE       32'h0008_0000
 `define UART_BASE_ADDR  32'h2000_0000
 `define UART_RANGE      32'h0000_FFFF
 `define QSPI_BASE_ADDR  32'h2001_0000
