@@ -481,7 +481,7 @@ module air_soc (
 
 `ifdef QSPI_SIM
    s25fl128s #(
-      .mem_file_name("s25fl128s.mem"),
+      .mem_file_name("../../../rtl/sim/s25fl128s.mem"),
       .otp_file_name("none"),
       .AddrRANGE(24'h000FFF)
    ) flash (
