@@ -1,13 +1,23 @@
 onerror {resume}
 quietly WaveActivateNextPane {} 0
 
-#add wave -noupdate /teknofest_wrapper/flash/WPNeg
-#add wave -noupdate -divider controller
-#add wave -noupdate /teknofest_wrapper/soc/isl_blksiz/veriyolu_dut/qspi_denetleyici_dut/wb_adr_i
+add wave -noupdate /air_soc/clk_i
+add wave -noupdate /air_soc/rst_ni
+
+add wave -noupdate -divider flash
+add wave -noupdate /air_soc/flash/SI
+add wave -noupdate /air_soc/flash/SO
+add wave -noupdate /air_soc/flash/CSNeg
+add wave -noupdate /air_soc/flash/SCK
+add wave -noupdate /air_soc/flash/RSTNeg
+add wave -noupdate /air_soc/flash/HOLDNeg
+add wave -noupdate /air_soc/flash/WPNeg
+add wave -noupdate /air_soc/flash/WEL
+
+add wave -noupdate -divider controller
+add wave -noupdate /air_soc/qspi/qspi_iface_dut/*
 
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {205870500 ps} 0} {{Cursor 2} {205585589 ps} 0}
-quietly wave cursor active 2
 configure wave -namecolwidth 150
 configure wave -valuecolwidth 100
 configure wave -justifyvalue left
@@ -22,5 +32,5 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ps
 update
-WaveRestoreZoom {205822282 ps} {205935841 ps}
 
+wave zoom full
