@@ -13,6 +13,7 @@ add wave -noupdate /air_soc/flash/RSTNeg
 add wave -noupdate /air_soc/flash/HOLDNeg
 add wave -noupdate /air_soc/flash/WPNeg
 add wave -noupdate /air_soc/flash/WEL
+add wave -noupdate /air_soc/flash/Mem
 
 add wave -noupdate -divider controller
 add wave -noupdate /air_soc/qspi/qspi_iface_dut/*
