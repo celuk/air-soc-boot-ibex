@@ -146,7 +146,19 @@ module qspi_controller (
                         (QSPI_CCR_INST == `CMD_QOR ) ||
                         (QSPI_CCR_INST == `CMD_PP  ) ||
                         (QSPI_CCR_INST == `CMD_QPP ) ||
-                        (QSPI_CCR_INST == `CMD_SE  );
+                        (QSPI_CCR_INST == `CMD_SE  ) ||
+                        (QSPI_CCR_INST == `CMD_READID) ||
+                        (QSPI_CCR_INST == `CMD_RDID) ||
+                        //(QSPI_CCR_INST == `CMD_RES ) ||
+                        (QSPI_CCR_INST == `CMD_RDSR1) ||
+                        (QSPI_CCR_INST == `CMD_RDSR2) //||
+                        //(QSPI_CCR_INST == `CMD_RDCR) ||
+                        //(QSPI_CCR_INST == `CMD_WRR ) ||
+                        //(QSPI_CCR_INST == `CMD_WRDI) ||
+                        //(QSPI_CCR_INST == `CMD_WREN) ||
+                        //(QSPI_CCR_INST == `CMD_CLSR) ||
+                        //(QSPI_CCR_INST == `CMD_RESET)
+                        ;
 
    reg sclk;
    reg sclk_next;

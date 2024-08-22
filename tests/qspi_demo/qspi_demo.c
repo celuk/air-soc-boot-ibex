@@ -45,7 +45,28 @@ int main(){
             break;
         }
     }
+
+    /*
+    ccr.fields.inst_value = CMD_RDSR1;
+    ccr.fields.prescaler = 1;
+    ccr.fields.data_size = 0;
+    ccr.fields.wr_flash = 0;
+    ccr.fields.data_mod = 1;
+    ccr.fields.clear_status_reg = 0;
+    ccr.fields.dummy_cycle = 0;
+
+    QSPI_CCR = ccr.bits;
+
+    while(1){
+        sta.bits = QSPI_STA;
+        if(!sta.fields.busy){
+            break;
+        }
+    }
     
+    while(QSPI_DR0 == 0);
+    */
+
     QSPI_ADR = 0x00000000; //0x00002000; 
     QSPI_DR0 = 0x000a0000;
     QSPI_DR1 = 0x0b000000;
@@ -67,6 +88,48 @@ int main(){
 
     QSPI_CCR = ccr.bits;
 
+    while(1){
+        sta.bits = QSPI_STA;
+        if(!sta.fields.busy){
+            break;
+        }
+    }
+
+    ccr.fields.inst_value = CMD_RDSR1;
+    ccr.fields.prescaler = 1;
+    ccr.fields.data_size = 0;
+    ccr.fields.wr_flash = 0;
+    ccr.fields.data_mod = 1;
+    ccr.fields.clear_status_reg = 0;
+    ccr.fields.dummy_cycle = 0;
+
+    QSPI_CCR = ccr.bits;
+
+    while(1){
+        sta.bits = QSPI_STA;
+        if(!sta.fields.busy){
+            break;
+        }
+    }
+
+    /*
+    ccr.fields.inst_value = CMD_WRDI;
+    ccr.fields.prescaler = 1;
+    ccr.fields.data_size = 0;
+    ccr.fields.wr_flash = 0;
+    ccr.fields.data_mod = 1;
+    ccr.fields.clear_status_reg = 0;
+    ccr.fields.dummy_cycle = 0;
+
+    QSPI_CCR = ccr.bits;
+
+    while(1){
+        sta.bits = QSPI_STA;
+        if(!sta.fields.busy){
+            break;
+        }
+    }
+    */
 
     //while(1);
     return 0;
