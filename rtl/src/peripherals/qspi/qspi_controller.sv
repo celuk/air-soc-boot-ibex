@@ -182,6 +182,8 @@ module qspi_controller (
 
       new_instruction_next = (wb_cyc_i & wb_stb_i & wb_we_i & !wb_ack_o & (|wb_sel_i) & wb_adr_i == 8'h00); // if there is a write to CCR
 
+      sclk_next = 0;
+
       if(|bit_counter) begin // if bit_counter is not 0
          data_out_next[3:0] = QSPI_CCR_DATA_MOD==X4 ? buffer[31:28] : 
                               QSPI_CCR_DATA_MOD==X2 ? {2'b00, buffer[31:30]} :
@@ -189,7 +191,8 @@ module qspi_controller (
 
          if (sclk) begin
             sclk_next = 1'b0;
-         end else begin
+         end 
+         else begin
             sclk_next = 1'b1;
             buffer_next = QSPI_CCR_DATA_MOD==X4 ? {buffer[27:0], qspi_data_i[3:0]} : 
                           QSPI_CCR_DATA_MOD==X2 ? {buffer[29:0], qspi_data_i[1:0]} : 
