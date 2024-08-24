@@ -141,16 +141,16 @@ module qspi_controller (
    reg new_instruction;
    reg new_instruction_next;
 
-   assign addr_enable = (QSPI_CCR_INST == `CMD_READ) ||
-                        (QSPI_CCR_INST == `CMD_DOR ) ||
-                        (QSPI_CCR_INST == `CMD_QOR ) ||
-                        (QSPI_CCR_INST == `CMD_PP  ) ||
-                        (QSPI_CCR_INST == `CMD_QPP ) ||
-                        (QSPI_CCR_INST == `CMD_SE  ) ||
+   assign addr_enable = (QSPI_CCR_INST == `CMD_READ)   ||
+                        (QSPI_CCR_INST == `CMD_DOR )   ||
+                        (QSPI_CCR_INST == `CMD_QOR )   ||
+                        (QSPI_CCR_INST == `CMD_PP  )   ||
+                        (QSPI_CCR_INST == `CMD_QPP )   ||
+                        (QSPI_CCR_INST == `CMD_SE  )   ||
                         (QSPI_CCR_INST == `CMD_READID) ||
-                        (QSPI_CCR_INST == `CMD_RDID) ||
+                        (QSPI_CCR_INST == `CMD_RDID)   ||
                         //(QSPI_CCR_INST == `CMD_RES ) ||
-                        (QSPI_CCR_INST == `CMD_RDSR1) ||
+                        (QSPI_CCR_INST == `CMD_RDSR1)  ||
                         (QSPI_CCR_INST == `CMD_RDSR2) //||
                         //(QSPI_CCR_INST == `CMD_RDCR) ||
                         //(QSPI_CCR_INST == `CMD_WRR ) ||
@@ -191,6 +191,8 @@ module qspi_controller (
       data_out_enable_next = data_out_enable;
 
       buffer_next = buffer;
+
+      sclk_next = sclk;
 
       new_instruction_next = (wb_cyc_i & wb_stb_i & wb_we_i & !wb_ack_o & (|wb_sel_i) & wb_adr_i == 8'h00); // if there is a write to CCR
 
