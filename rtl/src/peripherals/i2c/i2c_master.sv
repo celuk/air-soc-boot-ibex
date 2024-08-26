@@ -3,25 +3,25 @@
 `define LOW 1'b0
 
 module i2c_master(
-    input                   clk,
-    input                   rst,
-    output                  scl,
+    input                   clk_i,
+    input                   rst_i,
+    input                   scl_i,           // TODO: scl input, multi master için kullanılabilir 
+    output                  scl_o,
     input                   sda_i,           // sda input
     output                  sda_o,           // sda output
-    input       [6:0]       address_w,
-    input                   rd_wr_w,
-    input       [31:0]      write_data_w,
-    input       [2:0]       num_bytes_w,
-    output      [31:0]      read_data_w,
-    input                   start_w,
-    // TODO
-    output                  reg start_aldim_o,
-    output                  ready_w,
-    output                  read_finished_w,
-    output                  write_finished_w,
-    output                  error_w
+    input       [6:0]       address_i,
+    input                   rd_wr_i,
+    input       [31:0]      write_data_i,
+    input       [2:0]       num_bytes_i,
+    output      [31:0]      read_data_o,
+    input                   start_i,
+    output      reg         start_aldim_o,  
+    output                  ready_o,
+    output                  read_finished_o,
+    output                  write_finished_o,
+    output                  error_o
     );
-    
+    reg debug_adres_gitti_r;
 
     localparam [3:0]
         IDLE                = 4'h0,
@@ -40,7 +40,7 @@ module i2c_master(
     reg     scl_r, scl_ns_r;
     reg     sda_drive, sda_drive_ns;
     
-    assign scl = scl_r;
+    assign scl_o = scl_r;
     assign sda_o = sda_drive ? sda_r : 1'bZ;    // Output control for sda_o
 
     reg [9:0]   delay_ctr, delay_ctr_ns;
@@ -50,12 +50,12 @@ module i2c_master(
     50 MHz için prescale = 250 (20ns*250*4 = 20000ns = 50 kbit/s)
     */ 
 
-    reg [3:0]   ctr, ctr_ns;
+    reg [3:0]   ctr, ctr_ns; //oku yaz durumlarında bitleri sayar 
     reg [1:0]   bit_ctr, bit_ctr_ns;
     
     reg [3:0]   state, state_ns;
     
-    reg [3:0]   sample_buf, sample_buf_ns;
+    reg [3:0]   sample_buf, sample_buf_ns; // her bitin dört kez örneklenmesi için. 3 veya 4 örnekte aynı sonuç çıkarsa o bit kabul edilir.
             
     reg [6:0]   address_r, address_ns_r;
     reg [31:0]  read_data_r, read_data_ns_r;
@@ -66,17 +66,17 @@ module i2c_master(
     reg         read_finish_r, read_finish_ns_r;
     reg         write_finish_r, write_finish_ns_r;
     
-    // TODO
-    //assign read_data_w = read_queue;
+    assign read_data_o = read_data_r;
     
-    assign ready_w = state == IDLE;
-    assign read_finish_w = read_finish_r;
-    assign write_finish_w = write_finish_r;
+    assign ready_o = state == IDLE;
+    assign read_finished_o = read_finish_r;
+    assign write_finished_o = write_finish_r;
 
     reg     error;
-    assign  error_w = error;
+    assign  error_o = error;
 
     always @* begin
+        debug_adres_gitti_r = 0;
         state_ns            = state;
         sda_ns_r            = sda_r;
         scl_ns_r            = scl_r;
@@ -101,12 +101,12 @@ module i2c_master(
                 IDLE: begin
                     delay_ctr_ns = 0;
                     sda_drive_ns = `LOW;
-                    if(start_w) begin
+                    if(start_i) begin
                         // Load data to registers from the queue
-                        address_ns_r = address_w;
-                        rd_wr_ns_r = rd_wr_w;
-                        write_data_ns_r = write_data_w;
-                        num_bytes_ns_r = num_bytes_w;
+                        address_ns_r = address_i;
+                        rd_wr_ns_r = rd_wr_i;
+                        write_data_ns_r = write_data_i;
+                        num_bytes_ns_r = num_bytes_i;
                         state_ns = START;
                         bit_ctr_ns = 0;
                         cur_bytes_ns_r = 0;
@@ -119,21 +119,21 @@ module i2c_master(
                     bit_ctr_ns = bit_ctr + 1;
                     delay_ctr_ns = prescale - 1;
                     case(bit_ctr)
-                        2'h0: begin
+                        2'h0: begin //sda hattı veri için hazırlanır.
                             sda_drive_ns = `HIGH;
                             sda_ns_r = `HIGH;
                             scl_ns_r = `HIGH;
                             start_aldim_o = 1;
                         end                       
-                        2'h1: begin
+                        2'h1: begin //scl yükseltilir. Verinin geçerli olduğu zaman dilimi.
                             sda_ns_r = `LOW;
                             scl_ns_r = `HIGH;
                         end
-                        2'h2: begin
+                        2'h2: begin //scl yüksek tutulur. Verinin stabil hale gelmesi için.
                             sda_ns_r = `LOW;
                             scl_ns_r = `LOW;
                         end
-                        2'h3: begin
+                        2'h3: begin //sda düşürülür. Sonraki bitin işlenmesi için.
                             state_ns = ADDRESS;
                             ctr_ns = 6;
                             bit_ctr_ns = 0;
@@ -161,11 +161,13 @@ module i2c_master(
                             if(ctr == 0) begin
                                 state_ns = RD_WR;
                                 bit_ctr_ns = 0;
+                                debug_adres_gitti_r = 1;
                             end
                         end
                     endcase
                 end
                 RD_WR: begin
+                    debug_adres_gitti_r = 0;
                     bit_ctr_ns = bit_ctr + 1;
                     delay_ctr_ns = prescale - 1;
                     case(bit_ctr)
@@ -286,7 +288,7 @@ module i2c_master(
                         end
                         2'h3: begin
                             scl_ns_r = `LOW;
-                            state_ns = start_w ? IDLE : STOP;         // 1 çevrim kaybeder, çok sallamıyorum.
+                            state_ns = start_i ? IDLE : STOP;         // 1 çevrim kaybeder, çok sallamıyorum.
                             bit_ctr_ns = 0;
                             read_finish_ns_r = 1;
                         end
@@ -341,8 +343,7 @@ module i2c_master(
                         2'h3: begin
                             scl_ns_r = `LOW;
                             sample_buf_ns[2] = sda_i;    // Read from sda_i
-                            // TODO
-                            //state_ns = (start_again_w && (cur_bytes_r == num_bytes_r)) ? IDLE : STOP;
+                            state_ns = (start_i && (cur_bytes_r == num_bytes_r)) ? IDLE : STOP;  //YCT'ye sor start_again_w yerine start_aldim ekledim
                             bit_ctr_ns = 0;
                             error = `LOW;
                             write_finish_ns_r = 1;
@@ -378,8 +379,8 @@ module i2c_master(
         end
     end
     
-    always @(posedge clk) begin
-        if(rst) begin
+    always @(posedge clk_i) begin
+        if(rst_i) begin
             state       <= IDLE;
             sda_r       <= `HIGH;
             scl_r       <= `HIGH;
@@ -394,8 +395,7 @@ module i2c_master(
             num_bytes_r     <= 0;
             cur_bytes_r     <= 0;
             sample_buf      <= 3'b0;
-            // TODO
-            //read_queue      <= 0;
+            
             read_finish_r   <= `LOW;
             write_finish_r  <= `LOW;
         end else begin
