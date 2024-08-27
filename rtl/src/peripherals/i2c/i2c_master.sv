@@ -19,7 +19,8 @@ module i2c_master(
     output                  ready_o,
     output                  read_finished_o,
     output                  write_finished_o,
-    output                  error_o
+    output                  error_o,
+    output                  sda_drive_o
     );
     reg debug_adres_gitti_r;
 
@@ -42,9 +43,9 @@ module i2c_master(
     
     assign scl_o = scl_r;
     assign sda_o = sda_drive ? sda_r : 1'bZ;    // Output control for sda_o
-
-    reg [9:0]   delay_ctr, delay_ctr_ns;
-    reg [9:0]   prescale = 10'd250;
+    assign  sda_drive_o = sda_drive;
+    reg [5:0]   delay_ctr, delay_ctr_ns;
+    reg [5:0]   prescale = 10'd62;//işemcinin 248 çevrimi bunun 1 çevrimi 100mhz ise
     
     /*
     50 MHz için prescale = 250 (20ns*250*4 = 20000ns = 50 kbit/s)
@@ -185,6 +186,7 @@ module i2c_master(
                         2'h3: begin
                             scl_ns_r = `LOW;
                             state_ns = RECEIVE_ADDR_ACK;
+                            ctr_ns = 7;
                             bit_ctr_ns = 0;
                         end
                     endcase
@@ -218,6 +220,7 @@ module i2c_master(
                                     cur_bytes_ns_r = cur_bytes_r + 1;
                                 end
                                 bit_ctr_ns = 0;
+                                ctr_ns = 7;
                             end
                         end
                     endcase
@@ -244,6 +247,7 @@ module i2c_master(
                                 state_ns = RECEIVE_DATA_ACK;    
                                 bit_ctr_ns = 0;
                                 cur_bytes_ns_r = cur_bytes_r + 1;
+                                ctr_ns = 7;
                             end
                         end
                     endcase                
@@ -290,6 +294,7 @@ module i2c_master(
                             scl_ns_r = `LOW;
                             state_ns = start_i ? IDLE : STOP;         // 1 çevrim kaybeder, çok sallamıyorum.
                             bit_ctr_ns = 0;
+                            ctr_ns = 7;
                             read_finish_ns_r = 1;
                         end
                     endcase                
@@ -317,10 +322,10 @@ module i2c_master(
                             bit_ctr_ns = 0;
                             ctr_ns = 7;
                             error = `LOW;
-                            if((sample_buf[0]|sample_buf[1]) & (sample_buf[0]|sda_i) & (sample_buf[1]|sda_i)) begin // NOT ACKED ERROR
-                                state_ns = IDLE;
-                                error = `HIGH;
-                            end
+                            // if((sample_buf[0]|sample_buf[1]) & (sample_buf[0]|sda_i) & (sample_buf[1]|sda_i)) begin // NOT ACKED ERROR
+                            //     state_ns = IDLE;
+                            //     error = `HIGH;
+                            // end
                         end
                     endcase                
                 end
@@ -343,14 +348,16 @@ module i2c_master(
                         2'h3: begin
                             scl_ns_r = `LOW;
                             sample_buf_ns[2] = sda_i;    // Read from sda_i
-                            state_ns = (start_i && (cur_bytes_r == num_bytes_r)) ? IDLE : STOP;  //YCT'ye sor start_again_w yerine start_aldim ekledim
                             bit_ctr_ns = 0;
                             error = `LOW;
-                            write_finish_ns_r = 1;
-                            if((sample_buf[0]|sample_buf[1]) & (sample_buf[0]|sda_i) & (sample_buf[1]|sda_i)) begin // NOT ACKED ERROR
-                                state_ns = IDLE;            /// BUNA GEREK VAR MI IDK
-                                error = `HIGH;
-                            end                    
+                            write_finish_ns_r = (cur_bytes_r == num_bytes_r) ? `HIGH : `LOW;
+                            state_ns = (cur_bytes_r != num_bytes_r) ? WRITE : (start_i ? IDLE : STOP);
+                            ctr_ns = 7;
+                            // if((sample_buf[0]|sample_buf[1]) & (sample_buf[0]|sda_i) & (sample_buf[1]|sda_i)) begin // NOT ACKED ERROR
+                            //     state_ns = IDLE;            /// BUNA GEREK VAR MI IDK
+                            //     error = `HIGH;
+                            // end  
+                                              
                         end
                     endcase                
                 end                
