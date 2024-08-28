@@ -35,7 +35,7 @@
 #define CMD_PP 0x02
 #define CMD_QPP 0x32
 #define CMD_SE 0xD8
-#define CMD_READID 0x90
+#define CMD_READ_ID 0x90
 #define CMD_RDID 0x9F
 #define CMD_RES 0xAB
 #define CMD_RDSR1 0x05

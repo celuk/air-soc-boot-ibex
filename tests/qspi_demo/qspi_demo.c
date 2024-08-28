@@ -23,6 +23,18 @@ int main(){
 
     QSPI_ADR = 0x00000000;
     qspi_set_ccr(
+        /*inst_value*/       CMD_READ_ID,
+        /*data_mod*/         1,
+        /*wr_flash*/         0,
+        /*dummy_cycle*/      0,
+        /*data_size*/        1,
+        /*prescaler*/        1,
+        /*clear_status_reg*/ 1
+    );
+    wait_for_not_busy();
+
+    QSPI_ADR = 0x00000000;
+    qspi_set_ccr(
         /*inst_value*/       CMD_READ,
         /*data_mod*/         1,
         /*wr_flash*/         0,
@@ -159,7 +171,7 @@ int main(){
 
     QSPI_ADR = 0x00000000;
     qspi_set_ccr(
-        /*inst_value*/       CMD_SE,
+        /*inst_value*/       0x60,
         /*data_mod*/         1,
         /*wr_flash*/         0,
         /*dummy_cycle*/      0,
