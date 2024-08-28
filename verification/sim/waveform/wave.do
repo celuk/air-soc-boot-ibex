@@ -11,8 +11,8 @@ add wave -noupdate /air_soc/qspi/qspi_iface_dut/QSPI_CCR_INST
 add wave -noupdate -divider flash
 add wave -noupdate /air_soc/flash/SI
 add wave -noupdate /air_soc/flash/SO
-add wave -noupdate /air_soc/flash/HOLDNeg
 add wave -noupdate /air_soc/flash/WPNeg
+add wave -noupdate /air_soc/flash/HOLDNeg
 add wave -noupdate /air_soc/flash/CSNeg
 add wave -noupdate /air_soc/flash/SCK
 add wave -noupdate /air_soc/flash/RSTNeg

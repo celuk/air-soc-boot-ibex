@@ -484,7 +484,7 @@ module air_soc (
       .mem_file_name("../../../rtl/sim/s25fl128s.mem"),
       //.mem_file_name("none"),
       .otp_file_name("none"),
-      .AddrRANGE(24'h000FFF)
+      .AddrRANGE(24'hFFFFFF)
    ) flash (
       // Data Inputs/Outputs
       .SI(qspi_data_io[0]),
