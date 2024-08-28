@@ -190,7 +190,8 @@ module qspi_controller (
       QSPI_DR5_next = QSPI_DR5;
       QSPI_DR6_next = QSPI_DR6;
       QSPI_DR7_next = QSPI_DR7;
-      QSPI_STA_next[0] = 0;
+      // TODO: which one?
+      QSPI_STA_next[0] = QSPI_STA[0]; //0;
       QSPI_STA_next[1] = QSPI_STA[1];
 
       bit_counter_next = bit_counter;
@@ -269,10 +270,6 @@ module qspi_controller (
                bit_counter_next = `INSTRUCTION_SIZE;
 
                data_out_enable_next = 4'b0001;
-                                      //QSPI_CCR_DATA_MOD==X4 ? 4'b1111 :
-                                      //QSPI_CCR_DATA_MOD==X2 ? 4'b0011 :
-                                      //QSPI_CCR_DATA_MOD==X1 ? 4'b0001 :
-                                      //4'b0001;
 
                QSPI_STA_next[1] = 1; // busy
 
@@ -294,10 +291,6 @@ module qspi_controller (
                bit_counter_next = `ADDRESS_SIZE;
 
                data_out_enable_next = 4'b0001;
-                                      //QSPI_CCR_DATA_MOD==X4 ? 4'b1111 :
-                                      //QSPI_CCR_DATA_MOD==X2 ? 4'b0011 :
-                                      //QSPI_CCR_DATA_MOD==X1 ? 4'b0001 :
-                                      //4'b0001;
                
                QSPI_STA_next[1] = 1; // busy
 
@@ -353,6 +346,7 @@ module qspi_controller (
                if(bit_counter == 0) begin
                   state_next = END_TRANSFER;
                end
+               QSPI_STA_next[1] = 1; // busy
             end
             END_TRANSFER: begin // ACK
                bit_counter_next = 0;
@@ -981,14 +975,6 @@ module qspi_controller (
             end
          endcase
       end
-
-      /*
-      data_out_enable_next = QSPI_CCR_WR ?
-                                          QSPI_CCR_DATA_MOD==X4 ? 4'b1111 :
-                                          QSPI_CCR_DATA_MOD==X2 ? 4'b0011 :
-                                          QSPI_CCR_DATA_MOD==X1 ? 4'b0001 :
-                                          4'b0000;
-      */
 
       if(QSPI_CCR_CLEAR_STA) begin
          QSPI_STA_next[0] = 0;

@@ -74,4 +74,27 @@ typedef union
 	uint32_t bits;
 }qspi_sta;
 
+//void init_qspi(unsigned int time);
+void qspi_set_ccr(unsigned int inst_value, unsigned int data_mod, unsigned int wr_flash, unsigned int dummy_cycle, unsigned int data_size, unsigned int prescaler, unsigned int clear_status_reg);
+void wait_for_not_busy();
+unsigned int read_status_register(unsigned int cmd);
+void wait_for_wel_set();
+void wait_for_wip_done();
+
+//void qspi_wait_for_not_busy();
+//void qspi_wait_for_transaction_done();
+//void qspi_write_enable();
+//void qspi_write_disable();
+//void qspi_clear_status_register();
+//void qspi_reset();
+//void qspi_read(uint32_t address, uint32_t* data, uint32_t size);
+//void qspi_write(uint32_t address, uint32_t* data, uint32_t size);
+//void qspi_erase_sector(uint32_t address);
+//void qspi_read_id(uint32_t* data);
+//void qspi_read_status_register(uint32_t* data);
+//void qspi_read_status_register2(uint32_t* data);
+//void qspi_read_configuration_register(uint32_t* data);
+//void qspi_write_register(uint32_t address, uint32_t data);
+//void qspi_read_register(uint32_t address, uint32_t* data);
+
 #endif
