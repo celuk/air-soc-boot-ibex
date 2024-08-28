@@ -213,8 +213,9 @@ assign wb_ack_o = wb_ack_r;
       .ready_o              (ready_w),
       .read_finished_o      (read_finished_w),
       .write_finished_o     (write_finished_w),
-      .error_o              (error_w),
-      .sda_drive            (sda_drive_w)
+      .error_o              (error_w)
+      // TODO
+      //,.sda_drive            (sda_drive_w)
    );
    
 

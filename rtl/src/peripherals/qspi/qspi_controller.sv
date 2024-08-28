@@ -27,6 +27,10 @@
 `define CMD_CLSR    'h30
 `define CMD_RESET   'hF0
 
+`define MAX_BIT 256
+`define INSTRUCTION_SIZE 8
+`define ADDRESS_SIZE 24
+
 module qspi_controller (
    input clk_i,
    input rst_i,
@@ -83,6 +87,8 @@ module qspi_controller (
    reg [31:0] QSPI_DR7_next;
    reg [1:0]  QSPI_STA_next;
 
+   wire [`MAX_BIT-1:0] QSPI_DRs = {QSPI_DR7, QSPI_DR6, QSPI_DR5, QSPI_DR4, QSPI_DR3, QSPI_DR2, QSPI_DR1, QSPI_DR0};
+
    wire [7:0] QSPI_CCR_INST = QSPI_CCR[7:0];
    wire [1:0] QSPI_CCR_DATA_MOD = QSPI_CCR[9:8];
    wire QSPI_CCR_WR = QSPI_CCR[10];
@@ -113,8 +119,8 @@ module qspi_controller (
    reg qspi_cs_next_r;
    assign qspi_cs_n_o = (state == IDLE); //qspi_cs_r;
 
-   reg [31:0] buffer;
-   reg [31:0] buffer_next;
+   reg [`MAX_BIT-1:0] buffer;
+   reg [`MAX_BIT-1:0] buffer_next;
 
    //assign qspi_data_o = data_mod==X4 ? out_buffer[31:28] : 
    //                     data_mod==X2 ? {2'b00, out_buffer[31:30]} : 
@@ -147,7 +153,7 @@ module qspi_controller (
                         (QSPI_CCR_INST == `CMD_PP  )    ||
                         (QSPI_CCR_INST == `CMD_QPP )    ||
                         (QSPI_CCR_INST == `CMD_SE  )    ||
-                        (QSPI_CCR_INST == `CMD_READ_ID) ||
+                        (QSPI_CCR_INST == `CMD_READ_ID)
                         ;
 
    // when data write or read
@@ -162,12 +168,14 @@ module qspi_controller (
                         (QSPI_CCR_INST == `CMD_RDSR1)   ||
                         (QSPI_CCR_INST == `CMD_RDSR2)   ||
                         (QSPI_CCR_INST == `CMD_RDCR)    ||
-                        (QSPI_CCR_INST == `CMD_WRR )    ||
+                        (QSPI_CCR_INST == `CMD_WRR )
                         ;
 
    reg sclk;
    reg sclk_next;
    //assign qspi_sck_o = sclk;
+
+   integer i;
 
    always @* begin
       wb_ack_next_r = 1'b0;
@@ -202,21 +210,70 @@ module qspi_controller (
       new_instruction_next = (wb_cyc_i & wb_stb_i & wb_we_i & !wb_ack_o & (|wb_sel_i) & wb_adr_i == 8'h00); // if there is a write to CCR
 
       if(|bit_counter) begin // if bit_counter is not 0
-         data_out_next[3:0] = QSPI_CCR_DATA_MOD==X4 ? buffer[31:28] : 
-                              QSPI_CCR_DATA_MOD==X2 ? {2'b00, buffer[31:30]} :
-                              QSPI_CCR_DATA_MOD==X1 ? {3'b000, buffer[31]}   : 4'b0000;
+         // commands and addresses sending just from IO0
+         data_out_next[3:0] = data_out_enable==4 ? buffer[`MAX_BIT-1:`MAX_BIT-4] :
+                              data_out_enable==2 ? {2'b00, buffer[`MAX_BIT-1:`MAX_BIT-2]} :
+                              data_out_enable==1 ? {3'b000, buffer[`MAX_BIT-1]}   : 4'b0000;
+                              //QSPI_CCR_DATA_MOD==X4 ? buffer[`MAX_BIT-1:`MAX_BIT-4] : 
+                              //QSPI_CCR_DATA_MOD==X2 ? {2'b00, buffer[`MAX_BIT-1:`MAX_BIT-2]} :
+                              //QSPI_CCR_DATA_MOD==X1 ? {3'b000, buffer[`MAX_BIT-1]}   : 4'b0000;
 
          if (sclk) begin
             sclk_next = 1'b0;
          end 
          else begin
             sclk_next = 1'b1;
-            buffer_next = QSPI_CCR_DATA_MOD==X4 ? {buffer[27:0], qspi_data_i[3:0]} : 
-                          QSPI_CCR_DATA_MOD==X2 ? {buffer[29:0], qspi_data_i[1:0]} : 
-                          QSPI_CCR_DATA_MOD==X1 ? {buffer[30:0], qspi_data_i[0]}   : 0;
-            bit_counter_next = bit_counter - data_rate; // -4 -2 -1
+            buffer_next = QSPI_CCR_DATA_MOD==X4 ? {buffer[`MAX_BIT-5:0], qspi_data_i[3:0]} : 
+                          QSPI_CCR_DATA_MOD==X2 ? {buffer[`MAX_BIT-3:0], qspi_data_i[1:0]} : 
+                          QSPI_CCR_DATA_MOD==X1 ? {buffer[`MAX_BIT-2:0], qspi_data_i[0]}   : 0;
+
+            if(QSPI_CCR_WR)
+               bit_counter_next = bit_counter - data_out_enable; // -4 -2 -1
+            else
+               bit_counter_next = bit_counter - data_rate; // -4 -2 -1
          end
          QSPI_STA_next[1] = 1; // busy
+
+         /*
+         if(state == TRANSFER_DATA) begin
+            if(bit_counter % 8 == 0)
+         case( (QSPI_CCR_DATA_SIZE+1) - (bit_counter/8) )
+            'd0: begin
+               buffer_next[31:24] = QSPI_DR0[7:0];
+            end
+            'd1: begin
+               buffer_next[31:24] = QSPI_DR0[15:8];
+            end
+            'd2: begin
+               buffer_next[31:24] = QSPI_DR0[23:16];
+            end
+            'd3: begin
+               buffer_next[31:24] = QSPI_DR0[31:24];
+            end
+
+            'd4: begin
+               buffer_next[31:24] = QSPI_DR1[7:0];
+            end
+            'd5: begin
+               buffer_next[31:24] = QSPI_DR1[15:8];
+            end
+            'd6: begin
+               buffer_next[31:24] = QSPI_DR1[23:16];
+            end
+            'd7: begin
+               buffer_next[31:24] = QSPI_DR1[31:24];
+            end
+            
+         endcase
+            // if read then read buffer to regs
+            if(~QSPI_CCR_WR) begin
+               QSPI_DR0_next[7:0] = buffer;
+            end
+            else begin
+               QSPI_DR0_next = QSPI_DR0;
+            end
+         end
+         */
       end
       else begin
          case(state)
@@ -247,36 +304,43 @@ module qspi_controller (
 
             SEND_COMMAND: begin
                qspi_cs_next_r = 1'b0;
-               buffer_next[31:24] = QSPI_CCR_INST;
-               bit_counter_next = 8;
+               buffer_next[`MAX_BIT-1 -: `INSTRUCTION_SIZE] = QSPI_CCR_INST;
+               bit_counter_next = `INSTRUCTION_SIZE;
 
-               data_out_enable_next = QSPI_CCR_DATA_MOD==X4 ? 4'b1111 :
-                                      QSPI_CCR_DATA_MOD==X2 ? 4'b0011 :
-                                      QSPI_CCR_DATA_MOD==X1 ? 4'b0001 :
-                                      4'b0001;
+               data_out_enable_next = 4'b0001;
+                                      //QSPI_CCR_DATA_MOD==X4 ? 4'b1111 :
+                                      //QSPI_CCR_DATA_MOD==X2 ? 4'b0011 :
+                                      //QSPI_CCR_DATA_MOD==X1 ? 4'b0001 :
+                                      //4'b0001;
 
                QSPI_STA_next[1] = 1; // busy
 
-               state_next = SEND_ADDRESS;
-            end
-            SEND_ADDRESS: begin
                if(addr_enable) begin
-                  buffer_next[31:8] = QSPI_ADR;
-                  bit_counter_next = 24;
+                  state_next = SEND_ADDRESS;
+               end
+               else if(QSPI_CCR_DUMMY_CYC > 0) begin
+                  state_next = DUMMY_CYCLES;
+               end
+               else if(data_enable) begin
+                  state_next = TRANSFER_DATA;
                end
                else begin
-                  buffer_next[31:8] = 0;
-                  bit_counter_next = 0;
+                  state_next = END_TRANSFER;
                end
+            end
+            SEND_ADDRESS: begin
+               buffer_next[`MAX_BIT-1 -: `ADDRESS_SIZE] = QSPI_ADR;
+               bit_counter_next = `ADDRESS_SIZE;
 
-               data_out_enable_next = QSPI_CCR_DATA_MOD==X4 ? 4'b1111 :
-                                      QSPI_CCR_DATA_MOD==X2 ? 4'b0011 :
-                                      QSPI_CCR_DATA_MOD==X1 ? 4'b0001 :
-                                      4'b0001;
+               data_out_enable_next = 4'b0001;
+                                      //QSPI_CCR_DATA_MOD==X4 ? 4'b1111 :
+                                      //QSPI_CCR_DATA_MOD==X2 ? 4'b0011 :
+                                      //QSPI_CCR_DATA_MOD==X1 ? 4'b0001 :
+                                      //4'b0001;
                
                QSPI_STA_next[1] = 1; // busy
 
-               if(addr_enable)
+               if(data_enable)
                   state_next = TRANSFER_DATA;
                else
                   state_next = END_TRANSFER;
@@ -285,14 +349,13 @@ module qspi_controller (
                end
             end
             DUMMY_CYCLES: begin
-               data_out_enable_next = 4'b0000;
                bit_counter_next = QSPI_CCR_DUMMY_CYC;
 
                data_out_enable_next = 4'b0000;
 
                QSPI_STA_next[1] = 1; // busy
 
-               if(addr_enable)
+               if(data_enable)
                   state_next = TRANSFER_DATA;
                else
                   state_next = END_TRANSFER;
@@ -303,26 +366,147 @@ module qspi_controller (
                                          QSPI_CCR_DATA_MOD==X2 ? 4'b0011 :
                                          QSPI_CCR_DATA_MOD==X1 ? 4'b0001 :
                                          4'b0001;
-                  buffer_next[31:0] = QSPI_DR0;
+                  
+                  // at least one byte should be transferred
+                  //buffer_next[31:24] = QSPI_DR0[7:0];
+                  
+                  //buffer_next[`MAX_BIT-1 -: (QSPI_CCR_DATA_SIZE+1)*8] = QSPI_DRs[0 +: (QSPI_CCR_DATA_SIZE+1)*8];
+                  for (i = 0; i < (QSPI_CCR_DATA_SIZE+1)*8; i = i + 1) begin
+                     buffer_next[`MAX_BIT-1 - i] = QSPI_DRs[i];
+                  end
                end
                else begin
                   data_out_enable_next = 4'b0000;
-                  buffer_next[31:0] = 0;
+                  //buffer_next[31:0] = 0;
                end
 
                QSPI_STA_next[1] = 1; // busy
 
-               if(data_enable) begin
-                  bit_counter_next = 32;
-               end
-               else begin
-                  bit_counter_next = 0;
-               end
+               bit_counter_next = 8*(QSPI_CCR_DATA_SIZE+1);
 
                state_next = END_TRANSFER;
             end
             END_TRANSFER: begin // ACK
-               QSPI_DR0_next = buffer;
+               //QSPI_DR0_next = buffer;
+
+               // TODO: make read parametric
+               // to do it parametric, dr registers should be merged into one
+               if(data_enable && ~QSPI_CCR_WR) begin
+                  // if QSPI_CCR_DATA_SIZE is 0, then 1 byte
+                  // 1 byte is always read if data_enable and read operation
+                  QSPI_DR0_next[7:0] = buffer[7:0];
+                  // if a byte is read to a register then clear the rest
+                  QSPI_DR0_next[31:8] = 0;
+
+                  if(QSPI_CCR_DATA_SIZE >= 1) begin
+                     QSPI_DR0_next[15:8] = buffer[15:8];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 2) begin
+                     QSPI_DR0_next[23:16] = buffer[23:16];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 3) begin
+                     QSPI_DR0_next[31:24] = buffer[31:24];
+                  end
+
+                  if(QSPI_CCR_DATA_SIZE >= 4) begin
+                     QSPI_DR1_next[7:0] = buffer[39:32];
+                     QSPI_DR1_next[31:8] = 0;
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 5) begin
+                     QSPI_DR1_next[15:8] = buffer[47:40];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 6) begin
+                     QSPI_DR1_next[23:16] = buffer[55:48];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 7) begin
+                     QSPI_DR1_next[31:24] = buffer[63:56];
+                  end
+
+                  if(QSPI_CCR_DATA_SIZE >= 8) begin
+                     QSPI_DR2_next[7:0] = buffer[71:64];
+                     QSPI_DR2_next[31:8] = 0;
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 9) begin
+                     QSPI_DR2_next[15:8] = buffer[79:72];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 10) begin
+                     QSPI_DR2_next[23:16] = buffer[87:80];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 11) begin
+                     QSPI_DR2_next[31:24] = buffer[95:88];
+                  end
+
+                  if(QSPI_CCR_DATA_SIZE >= 12) begin
+                     QSPI_DR3_next[7:0] = buffer[103:96];
+                     QSPI_DR3_next[31:8] = 0;
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 13) begin
+                     QSPI_DR3_next[15:8] = buffer[111:104];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 14) begin
+                     QSPI_DR3_next[23:16] = buffer[119:112];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 15) begin
+                     QSPI_DR3_next[31:24] = buffer[127:120];
+                  end
+
+                  if(QSPI_CCR_DATA_SIZE >= 16) begin
+                     QSPI_DR4_next[7:0] = buffer[135:128];
+                     QSPI_DR4_next[31:8] = 0;
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 17) begin
+                     QSPI_DR4_next[15:8] = buffer[143:136];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 18) begin
+                     QSPI_DR4_next[23:16] = buffer[151:144];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 19) begin
+                     QSPI_DR4_next[31:24] = buffer[159:152];
+                  end
+
+                  if(QSPI_CCR_DATA_SIZE >= 20) begin
+                     QSPI_DR5_next[7:0] = buffer[167:160];
+                     QSPI_DR5_next[31:8] = 0;
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 21) begin
+                     QSPI_DR5_next[15:8] = buffer[175:168];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 22) begin
+                     QSPI_DR5_next[23:16] = buffer[183:176];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 23) begin
+                     QSPI_DR5_next[31:24] = buffer[191:184];
+                  end
+
+                  if(QSPI_CCR_DATA_SIZE >= 24) begin
+                     QSPI_DR6_next[7:0] = buffer[199:192];
+                     QSPI_DR6_next[31:8] = 0;
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 25) begin
+                     QSPI_DR6_next[15:8] = buffer[207:200];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 26) begin
+                     QSPI_DR6_next[23:16] = buffer[215:208];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 27) begin
+                     QSPI_DR6_next[31:24] = buffer[223:216];
+                  end
+
+                  if(QSPI_CCR_DATA_SIZE >= 28) begin
+                     QSPI_DR7_next[7:0] = buffer[231:224];
+                     QSPI_DR7_next[31:8] = 0;
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 29) begin
+                     QSPI_DR7_next[15:8] = buffer[239:232];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 30) begin
+                     QSPI_DR7_next[23:16] = buffer[247:240];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 31) begin
+                     QSPI_DR7_next[31:24] = buffer[255:248];
+                  end
+               end
+
                bit_counter_next = 0;
 
                data_out_enable_next = 4'b0000;
