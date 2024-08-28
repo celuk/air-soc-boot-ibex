@@ -81,6 +81,7 @@ assign wb_ack_o = wb_ack_r;
    wire             read_finished_w;
    wire             write_finished_w;
    wire             error_w;
+   wire             sda_drive_w;
 
    wire [2:0] bayt_sayisi;
    assign bayt_sayisi = I2C_NBY[2:0] < 1 ? 0 : (I2C_NBY[2:0] > 4 ? 4 : I2C_NBY[2:0]); // bayt sayısını 1-4 arasına sıkıştırır
@@ -212,8 +213,10 @@ assign wb_ack_o = wb_ack_r;
       .ready_o              (ready_w),
       .read_finished_o      (read_finished_w),
       .write_finished_o     (write_finished_w),
-      .error_o              (error_w)
+      .error_o              (error_w),
+      .sda_drive            (sda_drive_w)
    );
+   
 
    always @(posedge clk_i) begin
       if (rst_i) begin

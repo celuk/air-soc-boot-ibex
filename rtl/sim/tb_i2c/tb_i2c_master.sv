@@ -57,7 +57,8 @@ module tb_i2c_master;
 //    sda_i;
     address_i = 7'b1100110;
     rd_wr_i = 1'b0; //yazma
-    write_data_i = 32'b11001100110011001100110011001100;
+    sda_i = 1'b0;
+    write_data_i = 32'b110011001100110011001100_00001100;
     num_bytes_i = 3'b100;
     start_i = 1'b1;    
 

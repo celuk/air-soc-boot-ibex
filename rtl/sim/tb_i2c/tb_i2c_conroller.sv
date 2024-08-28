@@ -51,6 +51,7 @@ module tb_i2c_controller();
         wb_adr_i = 32'd35;
         wb_dat_i = 32'd35;
         wb_we_i = 1'b1;
+       
         wb_stb_i = 1'b1;
         wb_sel_i = 4'b1111;
         wb_cyc_i = 1'b1;
