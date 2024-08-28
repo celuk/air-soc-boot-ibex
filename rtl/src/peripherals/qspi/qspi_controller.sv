@@ -174,6 +174,9 @@ module qspi_controller (
    reg sclk_next;
    //assign qspi_sck_o = sclk;
 
+   reg [2:0] transfer_rate;
+   reg [2:0] transfer_rate_next;
+
    integer i;
 
    always @* begin
@@ -206,6 +209,8 @@ module qspi_controller (
       buffer_next = buffer;
 
       sclk_next = sclk;
+      
+      transfer_rate_next = transfer_rate;
 
       new_instruction_next = (wb_cyc_i & wb_stb_i & wb_we_i & !wb_ack_o & (|wb_sel_i) & wb_adr_i == 8'h00); // if there is a write to CCR
 
@@ -223,16 +228,17 @@ module qspi_controller (
          end 
          else begin
             sclk_next = 1'b1;
-            buffer_next = QSPI_CCR_DATA_MOD==X4 ? {buffer[`MAX_BIT-5:0], qspi_data_i[3:0]} : 
-                          QSPI_CCR_DATA_MOD==X2 ? {buffer[`MAX_BIT-3:0], qspi_data_i[1:0]} : 
-                          QSPI_CCR_DATA_MOD==X1 ? {buffer[`MAX_BIT-2:0], qspi_data_i[1]}   : 0; // if single SO bit is 1 not 0 (SI)
+            buffer_next = transfer_rate==X4 ? {buffer[`MAX_BIT-5:0], qspi_data_i[3:0]} : 
+                          transfer_rate==X2 ? {buffer[`MAX_BIT-3:0], qspi_data_i[1:0]} : 
+                          transfer_rate==X1 ? {buffer[`MAX_BIT-2:0], qspi_data_i[1]}   : 0; // if single SO bit is 1 not 0 (SI)
 
-            if((state==TRANSFER_DATA || state==END_TRANSFER) && (QSPI_CCR_DUMMY_CYC > 0))
-               bit_counter_next = bit_counter - 1;
-            else if(QSPI_CCR_WR)
-               bit_counter_next = bit_counter - data_out_enable; // -4 -2 -1
-            else
-               bit_counter_next = bit_counter - data_rate; // -4 -2 -1
+            bit_counter_next = bit_counter - transfer_rate;
+            //if((state==TRANSFER_DATA || state==END_TRANSFER) && (QSPI_CCR_DUMMY_CYC > 0))
+            //   bit_counter_next = bit_counter - 1;
+            //else if(QSPI_CCR_WR)
+            //   bit_counter_next = bit_counter - data_out_enable; // -4 -2 -1
+            //else
+            //   bit_counter_next = bit_counter - data_rate; // -4 -2 -1
             
          end
          QSPI_STA_next[1] = 1; // busy
@@ -243,6 +249,7 @@ module qspi_controller (
                qspi_cs_next_r = 1'b1;
                data_out_enable_next = 4'b0000;
                bit_counter_next = 0;
+               transfer_rate_next = 4'b0000;
                QSPI_STA_next[1] = 0; // not busy
 
                state_next = IDLE;
@@ -271,6 +278,8 @@ module qspi_controller (
 
                data_out_enable_next = 4'b0001;
 
+               transfer_rate_next = 4'b0001;
+
                QSPI_STA_next[1] = 1; // busy
 
                if(addr_enable) begin
@@ -291,6 +300,8 @@ module qspi_controller (
                bit_counter_next = `ADDRESS_SIZE;
 
                data_out_enable_next = 4'b0001;
+
+               transfer_rate_next = 4'b0001;
                
                QSPI_STA_next[1] = 1; // busy
 
@@ -308,6 +319,8 @@ module qspi_controller (
 
                data_out_enable_next = 4'b0000;
 
+               transfer_rate_next = 4'b0001;
+
                QSPI_STA_next[1] = 1; // busy
 
                if(data_enable)
@@ -320,7 +333,7 @@ module qspi_controller (
                   data_out_enable_next = QSPI_CCR_DATA_MOD==X4 ? 4'b1111 :
                                          QSPI_CCR_DATA_MOD==X2 ? 4'b0011 :
                                          QSPI_CCR_DATA_MOD==X1 ? 4'b0001 :
-                                         4'b0001;
+                                         4'b0000;
                   
                   // at least one byte should be transferred
                   //buffer_next[31:24] = QSPI_DR0[7:0];
@@ -335,6 +348,8 @@ module qspi_controller (
                   data_out_enable_next = 4'b0000;
                   //buffer_next[31:0] = 0;
                end
+
+               transfer_rate_next = data_rate;
 
                QSPI_STA_next[1] = 1; // busy
 
@@ -352,6 +367,8 @@ module qspi_controller (
                bit_counter_next = 0;
 
                data_out_enable_next = 4'b0000;
+
+               transfer_rate_next = 4'b0000;
 
                QSPI_STA_next[0] = 1;
                QSPI_STA_next[1] = 0; // not busy
@@ -1097,6 +1114,8 @@ module qspi_controller (
 
          buffer <= 0;
 
+         transfer_rate <= 0;
+
          new_instruction <= 1'b0;
       end
       else begin
@@ -1126,6 +1145,8 @@ module qspi_controller (
          data_out_enable <= data_out_enable_next;
 
          buffer <= buffer_next;
+
+         transfer_rate <= transfer_rate_next;
 
          new_instruction <= new_instruction_next;
       end

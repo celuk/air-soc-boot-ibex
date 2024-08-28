@@ -6,6 +6,7 @@ add wave -noupdate /air_soc/rst_ni
 
 add wave -noupdate /air_soc/qspi/qspi_iface_dut/state
 add wave -noupdate /air_soc/qspi/qspi_iface_dut/bit_counter
+add wave -noupdate /air_soc/qspi/qspi_iface_dut/QSPI_CCR_INST
 
 add wave -noupdate -divider flash
 add wave -noupdate /air_soc/flash/SI

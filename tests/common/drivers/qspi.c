@@ -26,7 +26,7 @@ unsigned int read_status_register(unsigned int cmd) {
     ccr.fields.data_mod = 1;
     ccr.fields.wr_flash = 0;
     ccr.fields.dummy_cycle = 0;
-    ccr.fields.data_size = 8;
+    ccr.fields.data_size = 0;
     ccr.fields.prescaler = 1;
     ccr.fields.clear_status_reg = 0;
     
@@ -36,12 +36,12 @@ unsigned int read_status_register(unsigned int cmd) {
     return (unsigned int)QSPI_DR0;
 }
 
-// if wel is not set wait
+// if wel is not set, wait
 void wait_for_wel_set() {
     while (!(read_status_register(CMD_RDSR1) & 0x02));
 }
 
-// if write in progress wait
+// if write in progress, wait
 void wait_for_wip_done() {
     while (read_status_register(CMD_RDSR1) & 0x01);
 }
