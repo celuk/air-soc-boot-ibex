@@ -6,19 +6,39 @@ int main(){
     //init_uart();
 
     //wait_for_us(500);
-    wait_for_us(5);
+    wait_for_us(10);
 
     qspi_ccr ccr;
     qspi_sta sta;
 
+    ccr.fields.inst_value = CMD_DOR;
+    ccr.fields.prescaler = 1;
+    ccr.fields.data_size = 31;
+    ccr.fields.wr_flash = 0;
+    ccr.fields.data_mod = 2;
+    ccr.fields.clear_status_reg = 0;
+    ccr.fields.dummy_cycle = 0;
+
+    QSPI_ADR = 0x00000000;
+    QSPI_CCR = ccr.bits;
+
+    while(1){
+        sta.bits = QSPI_STA;
+        if(!sta.fields.busy){
+            break;
+        }
+    }
+
+
     ccr.fields.inst_value = CMD_READ;
     ccr.fields.prescaler = 1;
-    ccr.fields.data_size = 0;
+    ccr.fields.data_size = 31;
     ccr.fields.wr_flash = 0;
     ccr.fields.data_mod = 1;
     ccr.fields.clear_status_reg = 0;
     ccr.fields.dummy_cycle = 0;
 
+    // if data_size is 31 --> 32 byte and 0 address's data will start from DR7
     QSPI_ADR = 0x00000000;
     QSPI_CCR = ccr.bits;
 
@@ -87,6 +107,23 @@ int main(){
     ccr.fields.dummy_cycle = 0;
 
     //wait_for_us(150);
+
+    QSPI_CCR = ccr.bits;
+
+    while(1){
+        sta.bits = QSPI_STA;
+        if(!sta.fields.busy){
+            break;
+        }
+    }
+
+    ccr.fields.inst_value = CMD_WREN;
+    ccr.fields.prescaler = 1;
+    ccr.fields.data_size = 0;
+    ccr.fields.wr_flash = 0;
+    ccr.fields.data_mod = 1;
+    ccr.fields.clear_status_reg = 0;
+    ccr.fields.dummy_cycle = 0;
 
     QSPI_CCR = ccr.bits;
 

@@ -110,7 +110,8 @@ module qspi_controller (
               SEND_ADDRESS = 3,
               DUMMY_CYCLES = 4,
               TRANSFER_DATA = 5,
-              END_TRANSFER = 6;
+              TRANSFERRING = 6,
+              END_TRANSFER = 7;
 
    reg [31:0] bit_counter;
    reg [31:0] bit_counter_next;
@@ -157,6 +158,7 @@ module qspi_controller (
                         ;
 
    // when data write or read
+   // also if DATA_MOD is 0
    assign data_enable = (QSPI_CCR_INST == `CMD_READ)    ||
                         (QSPI_CCR_INST == `CMD_DOR )    ||
                         (QSPI_CCR_INST == `CMD_QOR )    ||
@@ -385,13 +387,14 @@ module qspi_controller (
 
                bit_counter_next = 8*(QSPI_CCR_DATA_SIZE+1);
 
-               state_next = END_TRANSFER;
+               state_next = TRANSFERRING;
+            end
+            TRANSFERRING: begin
+               if(bit_counter == 0) begin
+                  state_next = END_TRANSFER;
+               end
             end
             END_TRANSFER: begin // ACK
-               //QSPI_DR0_next = buffer;
-
-               
-
                bit_counter_next = 0;
 
                data_out_enable_next = 4'b0000;
@@ -400,128 +403,128 @@ module qspi_controller (
                QSPI_STA_next[1] = 0; // not busy
 
                state_next = IDLE;
+
+               // TODO: make read parametric
+               // to do it parametric, dr registers should be merged into one
+               // read in just one cycle from buffer to DRs
+               if(data_enable && ~QSPI_CCR_WR) begin
+                  // if QSPI_CCR_DATA_SIZE is 0, then 1 byte
+                  // 1 byte is always read if data_enable and read operation
+                  QSPI_DR0_next[7:0] = buffer[7:0];
+                  // if a byte is read to a register then clear the rest
+                  QSPI_DR0_next[31:8] = 0;
+               
+                  if(QSPI_CCR_DATA_SIZE >= 1) begin
+                     QSPI_DR0_next[15:8] = buffer[15:8];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 2) begin
+                     QSPI_DR0_next[23:16] = buffer[23:16];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 3) begin
+                     QSPI_DR0_next[31:24] = buffer[31:24];
+                  end
+               
+                  if(QSPI_CCR_DATA_SIZE >= 4) begin
+                     QSPI_DR1_next[7:0] = buffer[39:32];
+                     QSPI_DR1_next[31:8] = 0;
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 5) begin
+                     QSPI_DR1_next[15:8] = buffer[47:40];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 6) begin
+                     QSPI_DR1_next[23:16] = buffer[55:48];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 7) begin
+                     QSPI_DR1_next[31:24] = buffer[63:56];
+                  end
+               
+                  if(QSPI_CCR_DATA_SIZE >= 8) begin
+                     QSPI_DR2_next[7:0] = buffer[71:64];
+                     QSPI_DR2_next[31:8] = 0;
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 9) begin
+                     QSPI_DR2_next[15:8] = buffer[79:72];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 10) begin
+                     QSPI_DR2_next[23:16] = buffer[87:80];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 11) begin
+                     QSPI_DR2_next[31:24] = buffer[95:88];
+                  end
+               
+                  if(QSPI_CCR_DATA_SIZE >= 12) begin
+                     QSPI_DR3_next[7:0] = buffer[103:96];
+                     QSPI_DR3_next[31:8] = 0;
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 13) begin
+                     QSPI_DR3_next[15:8] = buffer[111:104];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 14) begin
+                     QSPI_DR3_next[23:16] = buffer[119:112];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 15) begin
+                     QSPI_DR3_next[31:24] = buffer[127:120];
+                  end
+               
+                  if(QSPI_CCR_DATA_SIZE >= 16) begin
+                     QSPI_DR4_next[7:0] = buffer[135:128];
+                     QSPI_DR4_next[31:8] = 0;
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 17) begin
+                     QSPI_DR4_next[15:8] = buffer[143:136];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 18) begin
+                     QSPI_DR4_next[23:16] = buffer[151:144];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 19) begin
+                     QSPI_DR4_next[31:24] = buffer[159:152];
+                  end
+               
+                  if(QSPI_CCR_DATA_SIZE >= 20) begin
+                     QSPI_DR5_next[7:0] = buffer[167:160];
+                     QSPI_DR5_next[31:8] = 0;
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 21) begin
+                     QSPI_DR5_next[15:8] = buffer[175:168];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 22) begin
+                     QSPI_DR5_next[23:16] = buffer[183:176];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 23) begin
+                     QSPI_DR5_next[31:24] = buffer[191:184];
+                  end
+               
+                  if(QSPI_CCR_DATA_SIZE >= 24) begin
+                     QSPI_DR6_next[7:0] = buffer[199:192];
+                     QSPI_DR6_next[31:8] = 0;
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 25) begin
+                     QSPI_DR6_next[15:8] = buffer[207:200];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 26) begin
+                     QSPI_DR6_next[23:16] = buffer[215:208];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 27) begin
+                     QSPI_DR6_next[31:24] = buffer[223:216];
+                  end
+               
+                  if(QSPI_CCR_DATA_SIZE >= 28) begin
+                     QSPI_DR7_next[7:0] = buffer[231:224];
+                     QSPI_DR7_next[31:8] = 0;
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 29) begin
+                     QSPI_DR7_next[15:8] = buffer[239:232];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 30) begin
+                     QSPI_DR7_next[23:16] = buffer[247:240];
+                  end
+                  if(QSPI_CCR_DATA_SIZE >= 31) begin
+                     QSPI_DR7_next[31:24] = buffer[255:248];
+                  end
+               end
             end
          endcase
 
-      end
-
-      // TODO: make read parametric
-      // to do it parametric, dr registers should be merged into one
-      // read in just one cycle from buffer to DRs
-      if(state==END_TRANSFER && state_next==IDLE && data_enable && ~QSPI_CCR_WR) begin
-         // if QSPI_CCR_DATA_SIZE is 0, then 1 byte
-         // 1 byte is always read if data_enable and read operation
-         QSPI_DR0_next[7:0] = buffer[7:0];
-         // if a byte is read to a register then clear the rest
-         QSPI_DR0_next[31:8] = 0;
-
-         if(QSPI_CCR_DATA_SIZE >= 1) begin
-            QSPI_DR0_next[15:8] = buffer[15:8];
-         end
-         if(QSPI_CCR_DATA_SIZE >= 2) begin
-            QSPI_DR0_next[23:16] = buffer[23:16];
-         end
-         if(QSPI_CCR_DATA_SIZE >= 3) begin
-            QSPI_DR0_next[31:24] = buffer[31:24];
-         end
-
-         if(QSPI_CCR_DATA_SIZE >= 4) begin
-            QSPI_DR1_next[7:0] = buffer[39:32];
-            QSPI_DR1_next[31:8] = 0;
-         end
-         if(QSPI_CCR_DATA_SIZE >= 5) begin
-            QSPI_DR1_next[15:8] = buffer[47:40];
-         end
-         if(QSPI_CCR_DATA_SIZE >= 6) begin
-            QSPI_DR1_next[23:16] = buffer[55:48];
-         end
-         if(QSPI_CCR_DATA_SIZE >= 7) begin
-            QSPI_DR1_next[31:24] = buffer[63:56];
-         end
-
-         if(QSPI_CCR_DATA_SIZE >= 8) begin
-            QSPI_DR2_next[7:0] = buffer[71:64];
-            QSPI_DR2_next[31:8] = 0;
-         end
-         if(QSPI_CCR_DATA_SIZE >= 9) begin
-            QSPI_DR2_next[15:8] = buffer[79:72];
-         end
-         if(QSPI_CCR_DATA_SIZE >= 10) begin
-            QSPI_DR2_next[23:16] = buffer[87:80];
-         end
-         if(QSPI_CCR_DATA_SIZE >= 11) begin
-            QSPI_DR2_next[31:24] = buffer[95:88];
-         end
-
-         if(QSPI_CCR_DATA_SIZE >= 12) begin
-            QSPI_DR3_next[7:0] = buffer[103:96];
-            QSPI_DR3_next[31:8] = 0;
-         end
-         if(QSPI_CCR_DATA_SIZE >= 13) begin
-            QSPI_DR3_next[15:8] = buffer[111:104];
-         end
-         if(QSPI_CCR_DATA_SIZE >= 14) begin
-            QSPI_DR3_next[23:16] = buffer[119:112];
-         end
-         if(QSPI_CCR_DATA_SIZE >= 15) begin
-            QSPI_DR3_next[31:24] = buffer[127:120];
-         end
-
-         if(QSPI_CCR_DATA_SIZE >= 16) begin
-            QSPI_DR4_next[7:0] = buffer[135:128];
-            QSPI_DR4_next[31:8] = 0;
-         end
-         if(QSPI_CCR_DATA_SIZE >= 17) begin
-            QSPI_DR4_next[15:8] = buffer[143:136];
-         end
-         if(QSPI_CCR_DATA_SIZE >= 18) begin
-            QSPI_DR4_next[23:16] = buffer[151:144];
-         end
-         if(QSPI_CCR_DATA_SIZE >= 19) begin
-            QSPI_DR4_next[31:24] = buffer[159:152];
-         end
-
-         if(QSPI_CCR_DATA_SIZE >= 20) begin
-            QSPI_DR5_next[7:0] = buffer[167:160];
-            QSPI_DR5_next[31:8] = 0;
-         end
-         if(QSPI_CCR_DATA_SIZE >= 21) begin
-            QSPI_DR5_next[15:8] = buffer[175:168];
-         end
-         if(QSPI_CCR_DATA_SIZE >= 22) begin
-            QSPI_DR5_next[23:16] = buffer[183:176];
-         end
-         if(QSPI_CCR_DATA_SIZE >= 23) begin
-            QSPI_DR5_next[31:24] = buffer[191:184];
-         end
-
-         if(QSPI_CCR_DATA_SIZE >= 24) begin
-            QSPI_DR6_next[7:0] = buffer[199:192];
-            QSPI_DR6_next[31:8] = 0;
-         end
-         if(QSPI_CCR_DATA_SIZE >= 25) begin
-            QSPI_DR6_next[15:8] = buffer[207:200];
-         end
-         if(QSPI_CCR_DATA_SIZE >= 26) begin
-            QSPI_DR6_next[23:16] = buffer[215:208];
-         end
-         if(QSPI_CCR_DATA_SIZE >= 27) begin
-            QSPI_DR6_next[31:24] = buffer[223:216];
-         end
-
-         if(QSPI_CCR_DATA_SIZE >= 28) begin
-            QSPI_DR7_next[7:0] = buffer[231:224];
-            QSPI_DR7_next[31:8] = 0;
-         end
-         if(QSPI_CCR_DATA_SIZE >= 29) begin
-            QSPI_DR7_next[15:8] = buffer[239:232];
-         end
-         if(QSPI_CCR_DATA_SIZE >= 30) begin
-            QSPI_DR7_next[23:16] = buffer[247:240];
-         end
-         if(QSPI_CCR_DATA_SIZE >= 31) begin
-            QSPI_DR7_next[31:24] = buffer[255:248];
-         end
       end
 
       /*
