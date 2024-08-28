@@ -86,6 +86,8 @@ int main(){
     ccr.fields.clear_status_reg = 0;
     ccr.fields.dummy_cycle = 0;
 
+    //wait_for_us(150);
+
     QSPI_CCR = ccr.bits;
 
     while(1){

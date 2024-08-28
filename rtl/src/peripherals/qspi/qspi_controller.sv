@@ -3,29 +3,29 @@
 
 //`define QSPI_CCR_INST 7:0
 //`define QSPI_CCR_DATA_MOD 9:8
-//`define QSPI_CCR_RW 10
+//`define QSPI_CCR_WR 10
 //`define QSPI_CCR_DUMMY_CYC 15:11
 //`define QSPI_CCR_DATA_SIZE 24:16
 //`define QSPI_CCR_PRESCALER 30:25
 //`define QSPI_CCR_CLEAR_STA 31
 
-`define CMD_READ   'h03
-`define CMD_DOR    'h3B
-`define CMD_QOR    'h6B
-`define CMD_PP     'h02
-`define CMD_QPP    'h32
-`define CMD_SE     'hD8
-`define CMD_READID 'h90
-`define CMD_RDID   'h9F
-`define CMD_RES    'hAB
-`define CMD_RDSR1  'h05
-`define CMD_RDSR2  'h07
-`define CMD_RDCR   'h35
-`define CMD_WRR    'h01
-`define CMD_WRDI   'h04
-`define CMD_WREN   'h06
-`define CMD_CLSR   'h30
-`define CMD_RESET  'hF0
+`define CMD_READ    'h03
+`define CMD_DOR     'h3B
+`define CMD_QOR     'h6B
+`define CMD_PP      'h02
+`define CMD_QPP     'h32
+`define CMD_SE      'hD8
+`define CMD_READ_ID 'h90
+`define CMD_RDID    'h9F
+`define CMD_RES     'hAB
+`define CMD_RDSR1   'h05
+`define CMD_RDSR2   'h07
+`define CMD_RDCR    'h35
+`define CMD_WRR     'h01
+`define CMD_WRDI    'h04
+`define CMD_WREN    'h06
+`define CMD_CLSR    'h30
+`define CMD_RESET   'hF0
 
 module qspi_controller (
    input clk_i,
@@ -85,7 +85,7 @@ module qspi_controller (
 
    wire [7:0] QSPI_CCR_INST = QSPI_CCR[7:0];
    wire [1:0] QSPI_CCR_DATA_MOD = QSPI_CCR[9:8];
-   wire QSPI_CCR_RW = QSPI_CCR[10];
+   wire QSPI_CCR_WR = QSPI_CCR[10];
    wire [4:0] QSPI_CCR_DUMMY_CYC = QSPI_CCR[15:11];
    wire [8:0] QSPI_CCR_DATA_SIZE = QSPI_CCR[24:16];
    wire [5:0] QSPI_CCR_PRESCALER = QSPI_CCR[30:25];
@@ -141,23 +141,28 @@ module qspi_controller (
    reg new_instruction;
    reg new_instruction_next;
 
-   assign addr_enable = (QSPI_CCR_INST == `CMD_READ)   ||
-                        (QSPI_CCR_INST == `CMD_DOR )   ||
-                        (QSPI_CCR_INST == `CMD_QOR )   ||
-                        (QSPI_CCR_INST == `CMD_PP  )   ||
-                        (QSPI_CCR_INST == `CMD_QPP )   ||
-                        (QSPI_CCR_INST == `CMD_SE  )   ||
-                        (QSPI_CCR_INST == `CMD_READID) ||
-                        (QSPI_CCR_INST == `CMD_RDID)   ||
-                        //(QSPI_CCR_INST == `CMD_RES ) ||
-                        (QSPI_CCR_INST == `CMD_RDSR1)  ||
-                        (QSPI_CCR_INST == `CMD_RDSR2) //||
-                        //(QSPI_CCR_INST == `CMD_RDCR) ||
-                        //(QSPI_CCR_INST == `CMD_WRR ) ||
-                        //(QSPI_CCR_INST == `CMD_WRDI) ||
-                        //(QSPI_CCR_INST == `CMD_WREN) ||
-                        //(QSPI_CCR_INST == `CMD_CLSR) ||
-                        //(QSPI_CCR_INST == `CMD_RESET)
+   assign addr_enable = (QSPI_CCR_INST == `CMD_READ)    ||
+                        (QSPI_CCR_INST == `CMD_DOR )    ||
+                        (QSPI_CCR_INST == `CMD_QOR )    ||
+                        (QSPI_CCR_INST == `CMD_PP  )    ||
+                        (QSPI_CCR_INST == `CMD_QPP )    ||
+                        (QSPI_CCR_INST == `CMD_SE  )    ||
+                        (QSPI_CCR_INST == `CMD_READ_ID) ||
+                        ;
+
+   // when data write or read
+   assign data_enable = (QSPI_CCR_INST == `CMD_READ)    ||
+                        (QSPI_CCR_INST == `CMD_DOR )    ||
+                        (QSPI_CCR_INST == `CMD_QOR )    ||
+                        (QSPI_CCR_INST == `CMD_PP  )    ||
+                        (QSPI_CCR_INST == `CMD_QPP )    ||
+                        (QSPI_CCR_INST == `CMD_READ_ID) ||
+                        (QSPI_CCR_INST == `CMD_RDID)    ||
+                        (QSPI_CCR_INST == `CMD_RES )    ||
+                        (QSPI_CCR_INST == `CMD_RDSR1)   ||
+                        (QSPI_CCR_INST == `CMD_RDSR2)   ||
+                        (QSPI_CCR_INST == `CMD_RDCR)    ||
+                        (QSPI_CCR_INST == `CMD_WRR )    ||
                         ;
 
    reg sclk;
@@ -203,7 +208,8 @@ module qspi_controller (
 
          if (sclk) begin
             sclk_next = 1'b0;
-         end else begin
+         end 
+         else begin
             sclk_next = 1'b1;
             buffer_next = QSPI_CCR_DATA_MOD==X4 ? {buffer[27:0], qspi_data_i[3:0]} : 
                           QSPI_CCR_DATA_MOD==X2 ? {buffer[29:0], qspi_data_i[1:0]} : 
@@ -292,7 +298,7 @@ module qspi_controller (
                   state_next = END_TRANSFER;
             end
             TRANSFER_DATA: begin
-               if(QSPI_CCR_RW) begin
+               if(QSPI_CCR_WR) begin
                   data_out_enable_next = QSPI_CCR_DATA_MOD==X4 ? 4'b1111 :
                                          QSPI_CCR_DATA_MOD==X2 ? 4'b0011 :
                                          QSPI_CCR_DATA_MOD==X1 ? 4'b0001 :
@@ -306,7 +312,12 @@ module qspi_controller (
 
                QSPI_STA_next[1] = 1; // busy
 
-               bit_counter_next = 32;
+               if(data_enable) begin
+                  bit_counter_next = 32;
+               end
+               else begin
+                  bit_counter_next = 0;
+               end
 
                state_next = END_TRANSFER;
             end
@@ -326,7 +337,7 @@ module qspi_controller (
       end
 
       /*
-      data_out_enable_next = QSPI_CCR_RW ?
+      data_out_enable_next = QSPI_CCR_WR ?
                                           QSPI_CCR_DATA_MOD==X4 ? 4'b1111 :
                                           QSPI_CCR_DATA_MOD==X2 ? 4'b0011 :
                                           QSPI_CCR_DATA_MOD==X1 ? 4'b0001 :
