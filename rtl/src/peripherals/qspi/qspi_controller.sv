@@ -225,7 +225,7 @@ module qspi_controller (
             sclk_next = 1'b1;
             buffer_next = QSPI_CCR_DATA_MOD==X4 ? {buffer[`MAX_BIT-5:0], qspi_data_i[3:0]} : 
                           QSPI_CCR_DATA_MOD==X2 ? {buffer[`MAX_BIT-3:0], qspi_data_i[1:0]} : 
-                          QSPI_CCR_DATA_MOD==X1 ? {buffer[`MAX_BIT-2:0], qspi_data_i[0]}   : 0;
+                          QSPI_CCR_DATA_MOD==X1 ? {buffer[`MAX_BIT-2:0], qspi_data_i[1]}   : 0; // if single SO bit is 1 not 0 (SI)
 
             if(QSPI_CCR_WR)
                bit_counter_next = bit_counter - data_out_enable; // -4 -2 -1
@@ -407,7 +407,8 @@ module qspi_controller (
 
       // TODO: make read parametric
       // to do it parametric, dr registers should be merged into one
-      if(state==TRANSFER_DATA && state_next==END_TRANSFER && data_enable && ~QSPI_CCR_WR) begin
+      // read in just one cycle from buffer to DRs
+      if(state==END_TRANSFER && state_next==IDLE && data_enable && ~QSPI_CCR_WR) begin
          // if QSPI_CCR_DATA_SIZE is 0, then 1 byte
          // 1 byte is always read if data_enable and read operation
          QSPI_DR0_next[7:0] = buffer[7:0];

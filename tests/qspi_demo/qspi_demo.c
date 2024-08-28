@@ -13,7 +13,7 @@ int main(){
 
     ccr.fields.inst_value = CMD_READ;
     ccr.fields.prescaler = 1;
-    ccr.fields.data_size = 3;
+    ccr.fields.data_size = 0;
     ccr.fields.wr_flash = 0;
     ccr.fields.data_mod = 1;
     ccr.fields.clear_status_reg = 0;
