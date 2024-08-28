@@ -41,6 +41,10 @@ void wait_for_wel_set() {
     while (!(read_status_register(CMD_RDSR1) & 0x02));
 }
 
+void wait_for_wel_down() {
+    while (read_status_register(CMD_RDSR1) & 0x02);
+}
+
 // if write in progress, wait
 void wait_for_wip_done() {
     while (read_status_register(CMD_RDSR1) & 0x01);

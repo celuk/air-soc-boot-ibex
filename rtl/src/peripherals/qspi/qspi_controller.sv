@@ -174,8 +174,8 @@ module qspi_controller (
    reg sclk_next;
    //assign qspi_sck_o = sclk;
 
-   reg [2:0] transfer_rate;
-   reg [2:0] transfer_rate_next;
+   reg [2:0] bit_rate;
+   reg [2:0] bit_rate_next;
 
    integer i;
 
@@ -210,15 +210,15 @@ module qspi_controller (
 
       sclk_next = sclk;
       
-      transfer_rate_next = transfer_rate;
+      bit_rate_next = bit_rate;
 
       new_instruction_next = (wb_cyc_i & wb_stb_i & wb_we_i & !wb_ack_o & (|wb_sel_i) & wb_adr_i == 8'h00); // if there is a write to CCR
 
       if(|bit_counter) begin // if bit_counter is not 0
          // commands and addresses sending just from IO0
-         data_out_next[3:0] = data_out_enable==4 ? buffer[`MAX_BIT-1:`MAX_BIT-4] :
-                              data_out_enable==2 ? {2'b00, buffer[`MAX_BIT-1:`MAX_BIT-2]} :
-                              data_out_enable==1 ? {3'b000, buffer[`MAX_BIT-1]}   : 4'b0000;
+         data_out_next[3:0] = data_out_enable==4'b1111 ? buffer[`MAX_BIT-1:`MAX_BIT-4]          :
+                              data_out_enable==4'b0011 ? {2'b00, buffer[`MAX_BIT-1:`MAX_BIT-2]} :
+                              data_out_enable==4'b0001 ? {3'b000, buffer[`MAX_BIT-1]}           : 4'b0000;
                               //QSPI_CCR_DATA_MOD==X4 ? buffer[`MAX_BIT-1:`MAX_BIT-4] : 
                               //QSPI_CCR_DATA_MOD==X2 ? {2'b00, buffer[`MAX_BIT-1:`MAX_BIT-2]} :
                               //QSPI_CCR_DATA_MOD==X1 ? {3'b000, buffer[`MAX_BIT-1]}   : 4'b0000;
@@ -228,11 +228,11 @@ module qspi_controller (
          end 
          else begin
             sclk_next = 1'b1;
-            buffer_next = transfer_rate==4 ? {buffer[`MAX_BIT-5:0], qspi_data_i[3:0]} : 
-                          transfer_rate==2 ? {buffer[`MAX_BIT-3:0], qspi_data_i[1:0]} : 
-                          transfer_rate==1 ? {buffer[`MAX_BIT-2:0], qspi_data_i[1]}   : 0; // if single SO bit is 1 not 0 (SI)
+            buffer_next = bit_rate==4 ? {buffer[`MAX_BIT-5:0], qspi_data_i[3:0]} : 
+                          bit_rate==2 ? {buffer[`MAX_BIT-3:0], qspi_data_i[1:0]} : 
+                          bit_rate==1 ? {buffer[`MAX_BIT-2:0], qspi_data_i[1]}   : 0; // if single SO bit is 1 not 0 (SI)
 
-            bit_counter_next = bit_counter - transfer_rate;
+            bit_counter_next = bit_counter - bit_rate;
             //if((state==TRANSFER_DATA || state==END_TRANSFER) && (QSPI_CCR_DUMMY_CYC > 0))
             //   bit_counter_next = bit_counter - 1;
             //else if(QSPI_CCR_WR)
@@ -249,7 +249,7 @@ module qspi_controller (
                qspi_cs_next_r = 1'b1;
                data_out_enable_next = 4'b0000;
                bit_counter_next = 0;
-               transfer_rate_next = 4'b0000;
+               bit_rate_next = 0;
                QSPI_STA_next[1] = 0; // not busy
 
                state_next = IDLE;
@@ -278,7 +278,7 @@ module qspi_controller (
 
                data_out_enable_next = 4'b0001;
 
-               transfer_rate_next = 4'b0001;
+               bit_rate_next = 1;
 
                QSPI_STA_next[1] = 1; // busy
 
@@ -301,7 +301,7 @@ module qspi_controller (
 
                data_out_enable_next = 4'b0001;
 
-               transfer_rate_next = 4'b0001;
+               bit_rate_next = 1;
                
                QSPI_STA_next[1] = 1; // busy
 
@@ -319,7 +319,7 @@ module qspi_controller (
 
                data_out_enable_next = 4'b0000;
 
-               transfer_rate_next = 4'b0001;
+               bit_rate_next = 1;
 
                QSPI_STA_next[1] = 1; // busy
 
@@ -349,7 +349,7 @@ module qspi_controller (
                   //buffer_next[31:0] = 0;
                end
 
-               transfer_rate_next = data_rate;
+               bit_rate_next = data_rate;
 
                QSPI_STA_next[1] = 1; // busy
 
@@ -368,7 +368,7 @@ module qspi_controller (
 
                data_out_enable_next = 4'b0000;
 
-               transfer_rate_next = 4'b0000;
+               bit_rate_next = 0;
 
                QSPI_STA_next[0] = 1;
                QSPI_STA_next[1] = 0; // not busy
@@ -1114,7 +1114,7 @@ module qspi_controller (
 
          buffer <= 0;
 
-         transfer_rate <= 0;
+         bit_rate <= 0;
 
          new_instruction <= 1'b0;
       end
@@ -1146,7 +1146,7 @@ module qspi_controller (
 
          buffer <= buffer_next;
 
-         transfer_rate <= transfer_rate_next;
+         bit_rate <= bit_rate_next;
 
          new_instruction <= new_instruction_next;
       end

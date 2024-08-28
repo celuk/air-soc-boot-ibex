@@ -80,6 +80,7 @@ void wait_for_not_busy();
 unsigned int read_status_register(unsigned int cmd);
 void wait_for_wel_set();
 void wait_for_wip_done();
+void wait_for_wel_down();
 
 //void qspi_wait_for_not_busy();
 //void qspi_wait_for_transaction_done();
