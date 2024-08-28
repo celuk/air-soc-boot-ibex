@@ -127,9 +127,6 @@ module qspi_controller (
    //                     data_mod==X2 ? {2'b00, out_buffer[31:30]} : 
    //                     data_mod==X1 ? {3'b000, out_buffer[31]} : 4'b0000;
 
-   reg [3:0] data_in;
-   reg [3:0] data_in_next;
-
    reg [3:0] data_out;
    reg [3:0] data_out_next;
 
@@ -229,54 +226,15 @@ module qspi_controller (
                           QSPI_CCR_DATA_MOD==X2 ? {buffer[`MAX_BIT-3:0], qspi_data_i[1:0]} : 
                           QSPI_CCR_DATA_MOD==X1 ? {buffer[`MAX_BIT-2:0], qspi_data_i[1]}   : 0; // if single SO bit is 1 not 0 (SI)
 
-            if(QSPI_CCR_WR)
+            if((state==TRANSFER_DATA || state==END_TRANSFER) && (QSPI_CCR_DUMMY_CYC > 0))
+               bit_counter_next = bit_counter - 1;
+            else if(QSPI_CCR_WR)
                bit_counter_next = bit_counter - data_out_enable; // -4 -2 -1
             else
                bit_counter_next = bit_counter - data_rate; // -4 -2 -1
             
          end
          QSPI_STA_next[1] = 1; // busy
-
-         /*
-         if(state == TRANSFER_DATA) begin
-            if(bit_counter % 8 == 0)
-         case( (QSPI_CCR_DATA_SIZE+1) - (bit_counter/8) )
-            'd0: begin
-               buffer_next[31:24] = QSPI_DR0[7:0];
-            end
-            'd1: begin
-               buffer_next[31:24] = QSPI_DR0[15:8];
-            end
-            'd2: begin
-               buffer_next[31:24] = QSPI_DR0[23:16];
-            end
-            'd3: begin
-               buffer_next[31:24] = QSPI_DR0[31:24];
-            end
-
-            'd4: begin
-               buffer_next[31:24] = QSPI_DR1[7:0];
-            end
-            'd5: begin
-               buffer_next[31:24] = QSPI_DR1[15:8];
-            end
-            'd6: begin
-               buffer_next[31:24] = QSPI_DR1[23:16];
-            end
-            'd7: begin
-               buffer_next[31:24] = QSPI_DR1[31:24];
-            end
-            
-         endcase
-            // if read then read buffer to regs
-            if(~QSPI_CCR_WR) begin
-               QSPI_DR0_next[7:0] = buffer;
-            end
-            else begin
-               QSPI_DR0_next = QSPI_DR0;
-            end
-         end
-         */
       end
       else begin
          case(state)
@@ -347,6 +305,7 @@ module qspi_controller (
                   state_next = TRANSFER_DATA;
                else
                   state_next = END_TRANSFER;
+
                if(QSPI_CCR_DUMMY_CYC > 0) begin
                   state_next = DUMMY_CYCLES;
                end
@@ -375,7 +334,8 @@ module qspi_controller (
                   
                   //buffer_next[`MAX_BIT-1 -: (QSPI_CCR_DATA_SIZE+1)*8] = QSPI_DRs[0 +: (QSPI_CCR_DATA_SIZE+1)*8];
                   for (i = 0; i < (QSPI_CCR_DATA_SIZE+1)*8; i = i + 1) begin
-                     buffer_next[`MAX_BIT-1 - i] = QSPI_DRs[i];
+                     //buffer_next[`MAX_BIT-1 - i] = QSPI_DRs[i];
+                     buffer_next[`MAX_BIT-1 - i*8 -: 8] = QSPI_DRs[i*8 +: 8];
                   end
                end
                else begin
@@ -415,116 +375,611 @@ module qspi_controller (
                   QSPI_DR0_next[31:8] = 0;
                
                   if(QSPI_CCR_DATA_SIZE >= 1) begin
-                     QSPI_DR0_next[15:8] = buffer[15:8];
+                     QSPI_DR0_next[7:0] = buffer[15:8];
+                     QSPI_DR0_next[15:8] = buffer[7:0];
                   end
                   if(QSPI_CCR_DATA_SIZE >= 2) begin
-                     QSPI_DR0_next[23:16] = buffer[23:16];
+                     QSPI_DR0_next[7:0] = buffer[23:16];
+                     QSPI_DR0_next[15:8] = buffer[15:8];
+                     QSPI_DR0_next[23:16] = buffer[7:0];
                   end
                   if(QSPI_CCR_DATA_SIZE >= 3) begin
-                     QSPI_DR0_next[31:24] = buffer[31:24];
+                     QSPI_DR0_next[7:0] = buffer[31:24];
+                     QSPI_DR0_next[15:8] = buffer[23:16];
+                     QSPI_DR0_next[23:16] = buffer[15:8];
+                     QSPI_DR0_next[31:24] = buffer[7:0];
                   end
                
                   if(QSPI_CCR_DATA_SIZE >= 4) begin
-                     QSPI_DR1_next[7:0] = buffer[39:32];
+                     QSPI_DR0_next[7:0] = buffer[39:32];
+                     QSPI_DR0_next[15:8] = buffer[31:24];
+                     QSPI_DR0_next[23:16] = buffer[23:16];
+                     QSPI_DR0_next[31:24] = buffer[15:8];
+                     QSPI_DR1_next[7:0] = buffer[7:0];
                      QSPI_DR1_next[31:8] = 0;
                   end
                   if(QSPI_CCR_DATA_SIZE >= 5) begin
-                     QSPI_DR1_next[15:8] = buffer[47:40];
+                     QSPI_DR0_next[7:0] = buffer[47:40];
+                     QSPI_DR0_next[15:8] = buffer[39:32];
+                     QSPI_DR0_next[23:16] = buffer[31:24];
+                     QSPI_DR0_next[31:24] = buffer[23:16];
+                     QSPI_DR1_next[7:0] = buffer[15:8];
+                     QSPI_DR1_next[15:8] = buffer[7:0];
                   end
                   if(QSPI_CCR_DATA_SIZE >= 6) begin
-                     QSPI_DR1_next[23:16] = buffer[55:48];
+                     QSPI_DR0_next[7:0] = buffer[55:48];
+                     QSPI_DR0_next[15:8] = buffer[47:40];
+                     QSPI_DR0_next[23:16] = buffer[39:32];
+                     QSPI_DR0_next[31:24] = buffer[31:24];
+                     QSPI_DR1_next[7:0] = buffer[23:16];
+                     QSPI_DR1_next[15:8] = buffer[15:8];
+                     QSPI_DR1_next[23:16] = buffer[7:0];
                   end
                   if(QSPI_CCR_DATA_SIZE >= 7) begin
-                     QSPI_DR1_next[31:24] = buffer[63:56];
+                     QSPI_DR0_next[7:0] = buffer[63:56];
+                     QSPI_DR0_next[15:8] = buffer[55:48];
+                     QSPI_DR0_next[23:16] = buffer[47:40];
+                     QSPI_DR0_next[31:24] = buffer[39:32];
+                     QSPI_DR1_next[7:0] = buffer[31:24];
+                     QSPI_DR1_next[15:8] = buffer[23:16];
+                     QSPI_DR1_next[23:16] = buffer[15:8];
+                     QSPI_DR1_next[31:24] = buffer[7:0];
                   end
-               
+
                   if(QSPI_CCR_DATA_SIZE >= 8) begin
-                     QSPI_DR2_next[7:0] = buffer[71:64];
+                     QSPI_DR0_next[7:0] = buffer[71:64];
+                     QSPI_DR0_next[15:8] = buffer[63:56];
+                     QSPI_DR0_next[23:16] = buffer[55:48];
+                     QSPI_DR0_next[31:24] = buffer[47:40];
+                     QSPI_DR1_next[7:0] = buffer[39:32];
+                     QSPI_DR1_next[15:8] = buffer[31:24];
+                     QSPI_DR1_next[23:16] = buffer[23:16];
+                     QSPI_DR1_next[31:24] = buffer[15:8];
+                     QSPI_DR2_next[7:0] = buffer[7:0];
                      QSPI_DR2_next[31:8] = 0;
                   end
                   if(QSPI_CCR_DATA_SIZE >= 9) begin
-                     QSPI_DR2_next[15:8] = buffer[79:72];
+                     QSPI_DR0_next[7:0] = buffer[79:72];
+                     QSPI_DR0_next[15:8] = buffer[71:64];
+                     QSPI_DR0_next[23:16] = buffer[63:56];
+                     QSPI_DR0_next[31:24] = buffer[55:48];
+                     QSPI_DR1_next[7:0] = buffer[47:40];
+                     QSPI_DR1_next[15:8] = buffer[39:32];
+                     QSPI_DR1_next[23:16] = buffer[31:24];
+                     QSPI_DR1_next[31:24] = buffer[23:16];
+                     QSPI_DR2_next[7:0] = buffer[15:8];
+                     QSPI_DR2_next[15:8] = buffer[7:0];
                   end
                   if(QSPI_CCR_DATA_SIZE >= 10) begin
-                     QSPI_DR2_next[23:16] = buffer[87:80];
+                     QSPI_DR0_next[7:0] = buffer[87:80];
+                     QSPI_DR0_next[15:8] = buffer[79:72];
+                     QSPI_DR0_next[23:16] = buffer[71:64];
+                     QSPI_DR0_next[31:24] = buffer[63:56];
+                     QSPI_DR1_next[7:0] = buffer[55:48];
+                     QSPI_DR1_next[15:8] = buffer[47:40];
+                     QSPI_DR1_next[23:16] = buffer[39:32];
+                     QSPI_DR1_next[31:24] = buffer[31:24];
+                     QSPI_DR2_next[7:0] = buffer[23:16];
+                     QSPI_DR2_next[15:8] = buffer[15:8];
+                     QSPI_DR2_next[23:16] = buffer[7:0];
                   end
                   if(QSPI_CCR_DATA_SIZE >= 11) begin
-                     QSPI_DR2_next[31:24] = buffer[95:88];
+                     QSPI_DR0_next[7:0] = buffer[95:88];
+                     QSPI_DR0_next[15:8] = buffer[87:80];
+                     QSPI_DR0_next[23:16] = buffer[79:72];
+                     QSPI_DR0_next[31:24] = buffer[71:64];
+                     QSPI_DR1_next[7:0] = buffer[63:56];
+                     QSPI_DR1_next[15:8] = buffer[55:48];
+                     QSPI_DR1_next[23:16] = buffer[47:40];
+                     QSPI_DR1_next[31:24] = buffer[39:32];
+                     QSPI_DR2_next[7:0] = buffer[31:24];
+                     QSPI_DR2_next[15:8] = buffer[23:16];
+                     QSPI_DR2_next[23:16] = buffer[15:8];
+                     QSPI_DR2_next[31:24] = buffer[7:0];
                   end
-               
+
                   if(QSPI_CCR_DATA_SIZE >= 12) begin
-                     QSPI_DR3_next[7:0] = buffer[103:96];
+                     QSPI_DR0_next[7:0] = buffer[103:96];
+                     QSPI_DR0_next[15:8] = buffer[95:88];
+                     QSPI_DR0_next[23:16] = buffer[87:80];
+                     QSPI_DR0_next[31:24] = buffer[79:72];
+                     QSPI_DR1_next[7:0] = buffer[71:64];
+                     QSPI_DR1_next[15:8] = buffer[63:56];
+                     QSPI_DR1_next[23:16] = buffer[55:48];
+                     QSPI_DR1_next[31:24] = buffer[47:40];
+                     QSPI_DR2_next[7:0] = buffer[39:32];
+                     QSPI_DR2_next[15:8] = buffer[31:24];
+                     QSPI_DR2_next[23:16] = buffer[23:16];
+                     QSPI_DR2_next[31:24] = buffer[15:8];
+                     QSPI_DR3_next[7:0] = buffer[7:0];
                      QSPI_DR3_next[31:8] = 0;
                   end
                   if(QSPI_CCR_DATA_SIZE >= 13) begin
-                     QSPI_DR3_next[15:8] = buffer[111:104];
+                     QSPI_DR0_next[7:0] = buffer[111:104];
+                     QSPI_DR0_next[15:8] = buffer[103:96];
+                     QSPI_DR0_next[23:16] = buffer[95:88];
+                     QSPI_DR0_next[31:24] = buffer[87:80];
+                     QSPI_DR1_next[7:0] = buffer[79:72];
+                     QSPI_DR1_next[15:8] = buffer[71:64];
+                     QSPI_DR1_next[23:16] = buffer[63:56];
+                     QSPI_DR1_next[31:24] = buffer[55:48];
+                     QSPI_DR2_next[7:0] = buffer[47:40];
+                     QSPI_DR2_next[15:8] = buffer[39:32];
+                     QSPI_DR2_next[23:16] = buffer[31:24];
+                     QSPI_DR2_next[31:24] = buffer[23:16];
+                     QSPI_DR3_next[7:0] = buffer[15:8];
+                     QSPI_DR3_next[15:8] = buffer[7:0];
                   end
                   if(QSPI_CCR_DATA_SIZE >= 14) begin
-                     QSPI_DR3_next[23:16] = buffer[119:112];
+                     QSPI_DR0_next[7:0] = buffer[119:112];
+                     QSPI_DR0_next[15:8] = buffer[111:104];
+                     QSPI_DR0_next[23:16] = buffer[103:96];
+                     QSPI_DR0_next[31:24] = buffer[95:88];
+                     QSPI_DR1_next[7:0] = buffer[87:80];
+                     QSPI_DR1_next[15:8] = buffer[79:72];
+                     QSPI_DR1_next[23:16] = buffer[71:64];
+                     QSPI_DR1_next[31:24] = buffer[63:56];
+                     QSPI_DR2_next[7:0] = buffer[55:48];
+                     QSPI_DR2_next[15:8] = buffer[47:40];
+                     QSPI_DR2_next[23:16] = buffer[39:32];
+                     QSPI_DR2_next[31:24] = buffer[31:24];
+                     QSPI_DR3_next[7:0] = buffer[23:16];
+                     QSPI_DR3_next[15:8] = buffer[15:8];
+                     QSPI_DR3_next[23:16] = buffer[7:0];
                   end
                   if(QSPI_CCR_DATA_SIZE >= 15) begin
-                     QSPI_DR3_next[31:24] = buffer[127:120];
+                     QSPI_DR0_next[7:0] = buffer[127:120];
+                     QSPI_DR0_next[15:8] = buffer[119:112];
+                     QSPI_DR0_next[23:16] = buffer[111:104];
+                     QSPI_DR0_next[31:24] = buffer[103:96];
+                     QSPI_DR1_next[7:0] = buffer[95:88];
+                     QSPI_DR1_next[15:8] = buffer[87:80];
+                     QSPI_DR1_next[23:16] = buffer[79:72];
+                     QSPI_DR1_next[31:24] = buffer[71:64];
+                     QSPI_DR2_next[7:0] = buffer[63:56];
+                     QSPI_DR2_next[15:8] = buffer[55:48];
+                     QSPI_DR2_next[23:16] = buffer[47:40];
+                     QSPI_DR2_next[31:24] = buffer[39:32];
+                     QSPI_DR3_next[7:0] = buffer[31:24];
+                     QSPI_DR3_next[15:8] = buffer[23:16];
+                     QSPI_DR3_next[23:16] = buffer[15:8];
+                     QSPI_DR3_next[31:24] = buffer[7:0];
                   end
-               
+
                   if(QSPI_CCR_DATA_SIZE >= 16) begin
-                     QSPI_DR4_next[7:0] = buffer[135:128];
+                     QSPI_DR0_next[7:0] = buffer[135:128];
+                     QSPI_DR0_next[15:8] = buffer[127:120];
+                     QSPI_DR0_next[23:16] = buffer[119:112];
+                     QSPI_DR0_next[31:24] = buffer[111:104];
+                     QSPI_DR1_next[7:0] = buffer[103:96];
+                     QSPI_DR1_next[15:8] = buffer[95:88];
+                     QSPI_DR1_next[23:16] = buffer[87:80];
+                     QSPI_DR1_next[31:24] = buffer[79:72];
+                     QSPI_DR2_next[7:0] = buffer[71:64];
+                     QSPI_DR2_next[15:8] = buffer[63:56];
+                     QSPI_DR2_next[23:16] = buffer[55:48];
+                     QSPI_DR2_next[31:24] = buffer[47:40];
+                     QSPI_DR3_next[7:0] = buffer[39:32];
+                     QSPI_DR3_next[15:8] = buffer[31:24];
+                     QSPI_DR3_next[23:16] = buffer[23:16];
+                     QSPI_DR3_next[31:24] = buffer[15:8];
+                     QSPI_DR4_next[7:0] = buffer[7:0];
                      QSPI_DR4_next[31:8] = 0;
                   end
                   if(QSPI_CCR_DATA_SIZE >= 17) begin
-                     QSPI_DR4_next[15:8] = buffer[143:136];
+                     QSPI_DR0_next[7:0] = buffer[143:136];
+                     QSPI_DR0_next[15:8] = buffer[135:128];
+                     QSPI_DR0_next[23:16] = buffer[127:120];
+                     QSPI_DR0_next[31:24] = buffer[119:112];
+                     QSPI_DR1_next[7:0] = buffer[111:104];
+                     QSPI_DR1_next[15:8] = buffer[103:96];
+                     QSPI_DR1_next[23:16] = buffer[95:88];
+                     QSPI_DR1_next[31:24] = buffer[87:80];
+                     QSPI_DR2_next[7:0] = buffer[79:72];
+                     QSPI_DR2_next[15:8] = buffer[71:64];
+                     QSPI_DR2_next[23:16] = buffer[63:56];
+                     QSPI_DR2_next[31:24] = buffer[55:48];
+                     QSPI_DR3_next[7:0] = buffer[47:40];
+                     QSPI_DR3_next[15:8] = buffer[39:32];
+                     QSPI_DR3_next[23:16] = buffer[31:24];
+                     QSPI_DR3_next[31:24] = buffer[23:16];
+                     QSPI_DR4_next[7:0] = buffer[15:8];
+                     QSPI_DR4_next[15:8] = buffer[7:0];
                   end
                   if(QSPI_CCR_DATA_SIZE >= 18) begin
-                     QSPI_DR4_next[23:16] = buffer[151:144];
+                     QSPI_DR0_next[7:0] = buffer[151:144];
+                     QSPI_DR0_next[15:8] = buffer[143:136];
+                     QSPI_DR0_next[23:16] = buffer[135:128];
+                     QSPI_DR0_next[31:24] = buffer[127:120];
+                     QSPI_DR1_next[7:0] = buffer[119:112];
+                     QSPI_DR1_next[15:8] = buffer[111:104];
+                     QSPI_DR1_next[23:16] = buffer[103:96];
+                     QSPI_DR1_next[31:24] = buffer[95:88];
+                     QSPI_DR2_next[7:0] = buffer[87:80];
+                     QSPI_DR2_next[15:8] = buffer[79:72];
+                     QSPI_DR2_next[23:16] = buffer[71:64];
+                     QSPI_DR2_next[31:24] = buffer[63:56];
+                     QSPI_DR3_next[7:0] = buffer[55:48];
+                     QSPI_DR3_next[15:8] = buffer[47:40];
+                     QSPI_DR3_next[23:16] = buffer[39:32];
+                     QSPI_DR3_next[31:24] = buffer[31:24];
+                     QSPI_DR4_next[7:0] = buffer[23:16];
+                     QSPI_DR4_next[15:8] = buffer[15:8];
+                     QSPI_DR4_next[23:16] = buffer[7:0];
                   end
                   if(QSPI_CCR_DATA_SIZE >= 19) begin
-                     QSPI_DR4_next[31:24] = buffer[159:152];
+                     QSPI_DR0_next[7:0] = buffer[159:152];
+                     QSPI_DR0_next[15:8] = buffer[151:144];
+                     QSPI_DR0_next[23:16] = buffer[143:136];
+                     QSPI_DR0_next[31:24] = buffer[135:128];
+                     QSPI_DR1_next[7:0] = buffer[127:120];
+                     QSPI_DR1_next[15:8] = buffer[119:112];
+                     QSPI_DR1_next[23:16] = buffer[111:104];
+                     QSPI_DR1_next[31:24] = buffer[103:96];
+                     QSPI_DR2_next[7:0] = buffer[95:88];
+                     QSPI_DR2_next[15:8] = buffer[87:80];
+                     QSPI_DR2_next[23:16] = buffer[79:72];
+                     QSPI_DR2_next[31:24] = buffer[71:64];
+                     QSPI_DR3_next[7:0] = buffer[63:56];
+                     QSPI_DR3_next[15:8] = buffer[55:48];
+                     QSPI_DR3_next[23:16] = buffer[47:40];
+                     QSPI_DR3_next[31:24] = buffer[39:32];
+                     QSPI_DR4_next[7:0] = buffer[31:24];
+                     QSPI_DR4_next[15:8] = buffer[23:16];
+                     QSPI_DR4_next[23:16] = buffer[15:8];
+                     QSPI_DR4_next[31:24] = buffer[7:0];
                   end
-               
+
                   if(QSPI_CCR_DATA_SIZE >= 20) begin
-                     QSPI_DR5_next[7:0] = buffer[167:160];
+                     QSPI_DR0_next[7:0] = buffer[167:160];
+                     QSPI_DR0_next[15:8] = buffer[159:152];
+                     QSPI_DR0_next[23:16] = buffer[151:144];
+                     QSPI_DR0_next[31:24] = buffer[143:136];
+                     QSPI_DR1_next[7:0] = buffer[135:128];
+                     QSPI_DR1_next[15:8] = buffer[127:120];
+                     QSPI_DR1_next[23:16] = buffer[119:112];
+                     QSPI_DR1_next[31:24] = buffer[111:104];
+                     QSPI_DR2_next[7:0] = buffer[103:96];
+                     QSPI_DR2_next[15:8] = buffer[95:88];
+                     QSPI_DR2_next[23:16] = buffer[87:80];
+                     QSPI_DR2_next[31:24] = buffer[79:72];
+                     QSPI_DR3_next[7:0] = buffer[71:64];
+                     QSPI_DR3_next[15:8] = buffer[63:56];
+                     QSPI_DR3_next[23:16] = buffer[55:48];
+                     QSPI_DR3_next[31:24] = buffer[47:40];
+                     QSPI_DR4_next[7:0] = buffer[39:32];
+                     QSPI_DR4_next[15:8] = buffer[31:24];
+                     QSPI_DR4_next[23:16] = buffer[23:16];
+                     QSPI_DR4_next[31:24] = buffer[15:8];
+                     QSPI_DR5_next[7:0] = buffer[7:0];
                      QSPI_DR5_next[31:8] = 0;
                   end
                   if(QSPI_CCR_DATA_SIZE >= 21) begin
-                     QSPI_DR5_next[15:8] = buffer[175:168];
+                     QSPI_DR0_next[7:0] = buffer[175:168];
+                     QSPI_DR0_next[15:8] = buffer[167:160];
+                     QSPI_DR0_next[23:16] = buffer[159:152];
+                     QSPI_DR0_next[31:24] = buffer[151:144];
+                     QSPI_DR1_next[7:0] = buffer[143:136];
+                     QSPI_DR1_next[15:8] = buffer[135:128];
+                     QSPI_DR1_next[23:16] = buffer[127:120];
+                     QSPI_DR1_next[31:24] = buffer[119:112];
+                     QSPI_DR2_next[7:0] = buffer[111:104];
+                     QSPI_DR2_next[15:8] = buffer[103:96];
+                     QSPI_DR2_next[23:16] = buffer[95:88];
+                     QSPI_DR2_next[31:24] = buffer[87:80];
+                     QSPI_DR3_next[7:0] = buffer[79:72];
+                     QSPI_DR3_next[15:8] = buffer[71:64];
+                     QSPI_DR3_next[23:16] = buffer[63:56];
+                     QSPI_DR3_next[31:24] = buffer[55:48];
+                     QSPI_DR4_next[7:0] = buffer[47:40];
+                     QSPI_DR4_next[15:8] = buffer[39:32];
+                     QSPI_DR4_next[23:16] = buffer[31:24];
+                     QSPI_DR4_next[31:24] = buffer[23:16];
+                     QSPI_DR5_next[7:0] = buffer[15:8];
+                     QSPI_DR5_next[15:8] = buffer[7:0];
                   end
                   if(QSPI_CCR_DATA_SIZE >= 22) begin
-                     QSPI_DR5_next[23:16] = buffer[183:176];
+                     QSPI_DR0_next[7:0] = buffer[183:176];
+                     QSPI_DR0_next[15:8] = buffer[175:168];
+                     QSPI_DR0_next[23:16] = buffer[167:160];
+                     QSPI_DR0_next[31:24] = buffer[159:152];
+                     QSPI_DR1_next[7:0] = buffer[151:144];
+                     QSPI_DR1_next[15:8] = buffer[143:136];
+                     QSPI_DR1_next[23:16] = buffer[135:128];
+                     QSPI_DR1_next[31:24] = buffer[127:120];
+                     QSPI_DR2_next[7:0] = buffer[119:112];
+                     QSPI_DR2_next[15:8] = buffer[111:104];
+                     QSPI_DR2_next[23:16] = buffer[103:96];
+                     QSPI_DR2_next[31:24] = buffer[95:88];
+                     QSPI_DR3_next[7:0] = buffer[87:80];
+                     QSPI_DR3_next[15:8] = buffer[79:72];
+                     QSPI_DR3_next[23:16] = buffer[71:64];
+                     QSPI_DR3_next[31:24] = buffer[63:56];
+                     QSPI_DR4_next[7:0] = buffer[55:48];
+                     QSPI_DR4_next[15:8] = buffer[47:40];
+                     QSPI_DR4_next[23:16] = buffer[39:32];
+                     QSPI_DR4_next[31:24] = buffer[31:24];
+                     QSPI_DR5_next[7:0] = buffer[23:16];
+                     QSPI_DR5_next[15:8] = buffer[15:8];
+                     QSPI_DR5_next[23:16] = buffer[7:0];
                   end
                   if(QSPI_CCR_DATA_SIZE >= 23) begin
-                     QSPI_DR5_next[31:24] = buffer[191:184];
+                     QSPI_DR0_next[7:0] = buffer[191:184];
+                     QSPI_DR0_next[15:8] = buffer[183:176];
+                     QSPI_DR0_next[23:16] = buffer[175:168];
+                     QSPI_DR0_next[31:24] = buffer[167:160];
+                     QSPI_DR1_next[7:0] = buffer[159:152];
+                     QSPI_DR1_next[15:8] = buffer[151:144];
+                     QSPI_DR1_next[23:16] = buffer[143:136];
+                     QSPI_DR1_next[31:24] = buffer[135:128];
+                     QSPI_DR2_next[7:0] = buffer[127:120];
+                     QSPI_DR2_next[15:8] = buffer[119:112];
+                     QSPI_DR2_next[23:16] = buffer[111:104];
+                     QSPI_DR2_next[31:24] = buffer[103:96];
+                     QSPI_DR3_next[7:0] = buffer[95:88];
+                     QSPI_DR3_next[15:8] = buffer[87:80];
+                     QSPI_DR3_next[23:16] = buffer[79:72];
+                     QSPI_DR3_next[31:24] = buffer[71:64];
+                     QSPI_DR4_next[7:0] = buffer[63:56];
+                     QSPI_DR4_next[15:8] = buffer[55:48];
+                     QSPI_DR4_next[23:16] = buffer[47:40];
+                     QSPI_DR4_next[31:24] = buffer[39:32];
+                     QSPI_DR5_next[7:0] = buffer[31:24];
+                     QSPI_DR5_next[15:8] = buffer[23:16];
+                     QSPI_DR5_next[23:16] = buffer[15:8];
+                     QSPI_DR5_next[31:24] = buffer[7:0];
                   end
-               
+
                   if(QSPI_CCR_DATA_SIZE >= 24) begin
-                     QSPI_DR6_next[7:0] = buffer[199:192];
+                     QSPI_DR0_next[7:0] = buffer[199:192];
+                     QSPI_DR0_next[15:8] = buffer[191:184];
+                     QSPI_DR0_next[23:16] = buffer[183:176];
+                     QSPI_DR0_next[31:24] = buffer[175:168];
+                     QSPI_DR1_next[7:0] = buffer[167:160];
+                     QSPI_DR1_next[15:8] = buffer[159:152];
+                     QSPI_DR1_next[23:16] = buffer[151:144];
+                     QSPI_DR1_next[31:24] = buffer[143:136];
+                     QSPI_DR2_next[7:0] = buffer[135:128];
+                     QSPI_DR2_next[15:8] = buffer[127:120];
+                     QSPI_DR2_next[23:16] = buffer[119:112];
+                     QSPI_DR2_next[31:24] = buffer[111:104];
+                     QSPI_DR3_next[7:0] = buffer[103:96];
+                     QSPI_DR3_next[15:8] = buffer[95:88];
+                     QSPI_DR3_next[23:16] = buffer[87:80];
+                     QSPI_DR3_next[31:24] = buffer[79:72];
+                     QSPI_DR4_next[7:0] = buffer[71:64];
+                     QSPI_DR4_next[15:8] = buffer[63:56];
+                     QSPI_DR4_next[23:16] = buffer[55:48];
+                     QSPI_DR4_next[31:24] = buffer[47:40];
+                     QSPI_DR5_next[7:0] = buffer[39:32];
+                     QSPI_DR5_next[15:8] = buffer[31:24];
+                     QSPI_DR5_next[23:16] = buffer[23:16];
+                     QSPI_DR5_next[31:24] = buffer[15:8];
+                     QSPI_DR6_next[7:0] = buffer[7:0];
                      QSPI_DR6_next[31:8] = 0;
                   end
                   if(QSPI_CCR_DATA_SIZE >= 25) begin
-                     QSPI_DR6_next[15:8] = buffer[207:200];
+                     QSPI_DR0_next[7:0] = buffer[207:200];
+                     QSPI_DR0_next[15:8] = buffer[199:192];
+                     QSPI_DR0_next[23:16] = buffer[191:184];
+                     QSPI_DR0_next[31:24] = buffer[183:176];
+                     QSPI_DR1_next[7:0] = buffer[175:168];
+                     QSPI_DR1_next[15:8] = buffer[167:160];
+                     QSPI_DR1_next[23:16] = buffer[159:152];
+                     QSPI_DR1_next[31:24] = buffer[151:144];
+                     QSPI_DR2_next[7:0] = buffer[143:136];
+                     QSPI_DR2_next[15:8] = buffer[135:128];
+                     QSPI_DR2_next[23:16] = buffer[127:120];
+                     QSPI_DR2_next[31:24] = buffer[119:112];
+                     QSPI_DR3_next[7:0] = buffer[111:104];
+                     QSPI_DR3_next[15:8] = buffer[103:96];
+                     QSPI_DR3_next[23:16] = buffer[95:88];
+                     QSPI_DR3_next[31:24] = buffer[87:80];
+                     QSPI_DR4_next[7:0] = buffer[79:72];
+                     QSPI_DR4_next[15:8] = buffer[71:64];
+                     QSPI_DR4_next[23:16] = buffer[63:56];
+                     QSPI_DR4_next[31:24] = buffer[55:48];
+                     QSPI_DR5_next[7:0] = buffer[47:40];
+                     QSPI_DR5_next[15:8] = buffer[39:32];
+                     QSPI_DR5_next[23:16] = buffer[31:24];
+                     QSPI_DR5_next[31:24] = buffer[23:16];
+                     QSPI_DR6_next[7:0] = buffer[15:8];
+                     QSPI_DR6_next[15:8] = buffer[7:0];
                   end
                   if(QSPI_CCR_DATA_SIZE >= 26) begin
-                     QSPI_DR6_next[23:16] = buffer[215:208];
+                     QSPI_DR0_next[7:0] = buffer[215:208];
+                     QSPI_DR0_next[15:8] = buffer[207:200];
+                     QSPI_DR0_next[23:16] = buffer[199:192];
+                     QSPI_DR0_next[31:24] = buffer[191:184];
+                     QSPI_DR1_next[7:0] = buffer[183:176];
+                     QSPI_DR1_next[15:8] = buffer[175:168];
+                     QSPI_DR1_next[23:16] = buffer[167:160];
+                     QSPI_DR1_next[31:24] = buffer[159:152];
+                     QSPI_DR2_next[7:0] = buffer[151:144];
+                     QSPI_DR2_next[15:8] = buffer[143:136];
+                     QSPI_DR2_next[23:16] = buffer[135:128];
+                     QSPI_DR2_next[31:24] = buffer[127:120];
+                     QSPI_DR3_next[7:0] = buffer[119:112];
+                     QSPI_DR3_next[15:8] = buffer[111:104];
+                     QSPI_DR3_next[23:16] = buffer[103:96];
+                     QSPI_DR3_next[31:24] = buffer[95:88];
+                     QSPI_DR4_next[7:0] = buffer[87:80];
+                     QSPI_DR4_next[15:8] = buffer[79:72];
+                     QSPI_DR4_next[23:16] = buffer[71:64];
+                     QSPI_DR4_next[31:24] = buffer[63:56];
+                     QSPI_DR5_next[7:0] = buffer[55:48];
+                     QSPI_DR5_next[15:8] = buffer[47:40];
+                     QSPI_DR5_next[23:16] = buffer[39:32];
+                     QSPI_DR5_next[31:24] = buffer[31:24];
+                     QSPI_DR6_next[7:0] = buffer[23:16];
+                     QSPI_DR6_next[15:8] = buffer[15:8];
+                     QSPI_DR6_next[23:16] = buffer[7:0];
                   end
                   if(QSPI_CCR_DATA_SIZE >= 27) begin
-                     QSPI_DR6_next[31:24] = buffer[223:216];
+                     QSPI_DR0_next[7:0] = buffer[223:216];
+                     QSPI_DR0_next[15:8] = buffer[215:208];
+                     QSPI_DR0_next[23:16] = buffer[207:200];
+                     QSPI_DR0_next[31:24] = buffer[199:192];
+                     QSPI_DR1_next[7:0] = buffer[191:184];
+                     QSPI_DR1_next[15:8] = buffer[183:176];
+                     QSPI_DR1_next[23:16] = buffer[175:168];
+                     QSPI_DR1_next[31:24] = buffer[167:160];
+                     QSPI_DR2_next[7:0] = buffer[159:152];
+                     QSPI_DR2_next[15:8] = buffer[151:144];
+                     QSPI_DR2_next[23:16] = buffer[143:136];
+                     QSPI_DR2_next[31:24] = buffer[135:128];
+                     QSPI_DR3_next[7:0] = buffer[127:120];
+                     QSPI_DR3_next[15:8] = buffer[119:112];
+                     QSPI_DR3_next[23:16] = buffer[111:104];
+                     QSPI_DR3_next[31:24] = buffer[103:96];
+                     QSPI_DR4_next[7:0] = buffer[95:88];
+                     QSPI_DR4_next[15:8] = buffer[87:80];
+                     QSPI_DR4_next[23:16] = buffer[79:72];
+                     QSPI_DR4_next[31:24] = buffer[71:64];
+                     QSPI_DR5_next[7:0] = buffer[63:56];
+                     QSPI_DR5_next[15:8] = buffer[55:48];
+                     QSPI_DR5_next[23:16] = buffer[47:40];
+                     QSPI_DR5_next[31:24] = buffer[39:32];
+                     QSPI_DR6_next[7:0] = buffer[31:24];
+                     QSPI_DR6_next[15:8] = buffer[23:16];
+                     QSPI_DR6_next[23:16] = buffer[15:8];
+                     QSPI_DR6_next[31:24] = buffer[7:0];
                   end
-               
+
                   if(QSPI_CCR_DATA_SIZE >= 28) begin
-                     QSPI_DR7_next[7:0] = buffer[231:224];
+                     QSPI_DR0_next[7:0] = buffer[231:224];
+                     QSPI_DR0_next[15:8] = buffer[223:216];
+                     QSPI_DR0_next[23:16] = buffer[215:208];
+                     QSPI_DR0_next[31:24] = buffer[207:200];
+                     QSPI_DR1_next[7:0] = buffer[199:192];
+                     QSPI_DR1_next[15:8] = buffer[191:184];
+                     QSPI_DR1_next[23:16] = buffer[183:176];
+                     QSPI_DR1_next[31:24] = buffer[175:168];
+                     QSPI_DR2_next[7:0] = buffer[167:160];
+                     QSPI_DR2_next[15:8] = buffer[159:152];
+                     QSPI_DR2_next[23:16] = buffer[151:144];
+                     QSPI_DR2_next[31:24] = buffer[143:136];
+                     QSPI_DR3_next[7:0] = buffer[135:128];
+                     QSPI_DR3_next[15:8] = buffer[127:120];
+                     QSPI_DR3_next[23:16] = buffer[119:112];
+                     QSPI_DR3_next[31:24] = buffer[111:104];
+                     QSPI_DR4_next[7:0] = buffer[103:96];
+                     QSPI_DR4_next[15:8] = buffer[95:88];
+                     QSPI_DR4_next[23:16] = buffer[87:80];
+                     QSPI_DR4_next[31:24] = buffer[79:72];
+                     QSPI_DR5_next[7:0] = buffer[71:64];
+                     QSPI_DR5_next[15:8] = buffer[63:56];
+                     QSPI_DR5_next[23:16] = buffer[55:48];
+                     QSPI_DR5_next[31:24] = buffer[47:40];
+                     QSPI_DR6_next[7:0] = buffer[39:32];
+                     QSPI_DR6_next[15:8] = buffer[31:24];
+                     QSPI_DR6_next[23:16] = buffer[23:16];
+                     QSPI_DR6_next[31:24] = buffer[15:8];
+                     QSPI_DR7_next[7:0] = buffer[7:0];
                      QSPI_DR7_next[31:8] = 0;
                   end
                   if(QSPI_CCR_DATA_SIZE >= 29) begin
-                     QSPI_DR7_next[15:8] = buffer[239:232];
+                     QSPI_DR0_next[7:0] = buffer[239:232];
+                     QSPI_DR0_next[15:8] = buffer[231:224];
+                     QSPI_DR0_next[23:16] = buffer[223:216];
+                     QSPI_DR0_next[31:24] = buffer[215:208];
+                     QSPI_DR1_next[7:0] = buffer[207:200];
+                     QSPI_DR1_next[15:8] = buffer[199:192];
+                     QSPI_DR1_next[23:16] = buffer[191:184];
+                     QSPI_DR1_next[31:24] = buffer[183:176];
+                     QSPI_DR2_next[7:0] = buffer[175:168];
+                     QSPI_DR2_next[15:8] = buffer[167:160];
+                     QSPI_DR2_next[23:16] = buffer[159:152];
+                     QSPI_DR2_next[31:24] = buffer[151:144];
+                     QSPI_DR3_next[7:0] = buffer[143:136];
+                     QSPI_DR3_next[15:8] = buffer[135:128];
+                     QSPI_DR3_next[23:16] = buffer[127:120];
+                     QSPI_DR3_next[31:24] = buffer[119:112];
+                     QSPI_DR4_next[7:0] = buffer[111:104];
+                     QSPI_DR4_next[15:8] = buffer[103:96];
+                     QSPI_DR4_next[23:16] = buffer[95:88];
+                     QSPI_DR4_next[31:24] = buffer[87:80];
+                     QSPI_DR5_next[7:0] = buffer[79:72];
+                     QSPI_DR5_next[15:8] = buffer[71:64];
+                     QSPI_DR5_next[23:16] = buffer[63:56];
+                     QSPI_DR5_next[31:24] = buffer[55:48];
+                     QSPI_DR6_next[7:0] = buffer[47:40];
+                     QSPI_DR6_next[15:8] = buffer[39:32];
+                     QSPI_DR6_next[23:16] = buffer[31:24];
+                     QSPI_DR6_next[31:24] = buffer[23:16];
+                     QSPI_DR7_next[7:0] = buffer[15:8];
+                     QSPI_DR7_next[15:8] = buffer[7:0];
                   end
                   if(QSPI_CCR_DATA_SIZE >= 30) begin
-                     QSPI_DR7_next[23:16] = buffer[247:240];
+                     QSPI_DR0_next[7:0] = buffer[247:240];
+                     QSPI_DR0_next[15:8] = buffer[239:232];
+                     QSPI_DR0_next[23:16] = buffer[231:224];
+                     QSPI_DR0_next[31:24] = buffer[223:216];
+                     QSPI_DR1_next[7:0] = buffer[215:208];
+                     QSPI_DR1_next[15:8] = buffer[207:200];
+                     QSPI_DR1_next[23:16] = buffer[199:192];
+                     QSPI_DR1_next[31:24] = buffer[191:184];
+                     QSPI_DR2_next[7:0] = buffer[183:176];
+                     QSPI_DR2_next[15:8] = buffer[175:168];
+                     QSPI_DR2_next[23:16] = buffer[167:160];
+                     QSPI_DR2_next[31:24] = buffer[159:152];
+                     QSPI_DR3_next[7:0] = buffer[151:144];
+                     QSPI_DR3_next[15:8] = buffer[143:136];
+                     QSPI_DR3_next[23:16] = buffer[135:128];
+                     QSPI_DR3_next[31:24] = buffer[127:120];
+                     QSPI_DR4_next[7:0] = buffer[119:112];
+                     QSPI_DR4_next[15:8] = buffer[111:104];
+                     QSPI_DR4_next[23:16] = buffer[103:96];
+                     QSPI_DR4_next[31:24] = buffer[95:88];
+                     QSPI_DR5_next[7:0] = buffer[87:80];
+                     QSPI_DR5_next[15:8] = buffer[79:72];
+                     QSPI_DR5_next[23:16] = buffer[71:64];
+                     QSPI_DR5_next[31:24] = buffer[63:56];
+                     QSPI_DR6_next[7:0] = buffer[55:48];
+                     QSPI_DR6_next[15:8] = buffer[47:40];
+                     QSPI_DR6_next[23:16] = buffer[39:32];
+                     QSPI_DR6_next[31:24] = buffer[31:24];
+                     QSPI_DR7_next[7:0] = buffer[23:16];
+                     QSPI_DR7_next[15:8] = buffer[15:8];
+                     QSPI_DR7_next[23:16] = buffer[7:0];
                   end
                   if(QSPI_CCR_DATA_SIZE >= 31) begin
-                     QSPI_DR7_next[31:24] = buffer[255:248];
+                     QSPI_DR0_next[7:0] = buffer[255:248];
+                     QSPI_DR0_next[15:8] = buffer[247:240];
+                     QSPI_DR0_next[23:16] = buffer[239:232];
+                     QSPI_DR0_next[31:24] = buffer[231:224];
+                     QSPI_DR1_next[7:0] = buffer[223:216];
+                     QSPI_DR1_next[15:8] = buffer[215:208];
+                     QSPI_DR1_next[23:16] = buffer[207:200];
+                     QSPI_DR1_next[31:24] = buffer[199:192];
+                     QSPI_DR2_next[7:0] = buffer[191:184];
+                     QSPI_DR2_next[15:8] = buffer[183:176];
+                     QSPI_DR2_next[23:16] = buffer[175:168];
+                     QSPI_DR2_next[31:24] = buffer[167:160];
+                     QSPI_DR3_next[7:0] = buffer[159:152];
+                     QSPI_DR3_next[15:8] = buffer[151:144];
+                     QSPI_DR3_next[23:16] = buffer[143:136];
+                     QSPI_DR3_next[31:24] = buffer[135:128];
+                     QSPI_DR4_next[7:0] = buffer[127:120];
+                     QSPI_DR4_next[15:8] = buffer[119:112];
+                     QSPI_DR4_next[23:16] = buffer[111:104];
+                     QSPI_DR4_next[31:24] = buffer[103:96];
+                     QSPI_DR5_next[7:0] = buffer[95:88];
+                     QSPI_DR5_next[15:8] = buffer[87:80];
+                     QSPI_DR5_next[23:16] = buffer[79:72];
+                     QSPI_DR5_next[31:24] = buffer[71:64];
+                     QSPI_DR6_next[7:0] = buffer[63:56];
+                     QSPI_DR6_next[15:8] = buffer[55:48];
+                     QSPI_DR6_next[23:16] = buffer[47:40];
+                     QSPI_DR6_next[31:24] = buffer[39:32];
+                     QSPI_DR7_next[7:0] = buffer[31:24];
+                     QSPI_DR7_next[15:8] = buffer[23:16];
+                     QSPI_DR7_next[23:16] = buffer[15:8];
+                     QSPI_DR7_next[31:24] = buffer[7:0];
                   end
                end
             end
          endcase
-
       end
 
       /*

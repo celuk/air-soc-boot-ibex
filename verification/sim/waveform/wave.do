@@ -4,6 +4,9 @@ quietly WaveActivateNextPane {} 0
 add wave -noupdate /air_soc/clk_i
 add wave -noupdate /air_soc/rst_ni
 
+add wave -noupdate /air_soc/qspi/qspi_iface_dut/state
+add wave -noupdate /air_soc/qspi/qspi_iface_dut/bit_counter
+
 add wave -noupdate -divider flash
 add wave -noupdate /air_soc/flash/SI
 add wave -noupdate /air_soc/flash/SO
@@ -13,6 +16,13 @@ add wave -noupdate /air_soc/flash/RSTNeg
 add wave -noupdate /air_soc/flash/HOLDNeg
 add wave -noupdate /air_soc/flash/WPNeg
 add wave -noupdate /air_soc/flash/WEL
+add wave -noupdate /air_soc/flash/WIP
+add wave -noupdate /air_soc/flash/QUAD
+add wave -noupdate /air_soc/flash/Config_reg1
+add wave -noupdate /air_soc/flash/Status_reg1
+add wave -noupdate /air_soc/flash/Status_reg2
+add wave -noupdate /air_soc/flash/P_ERR
+add wave -noupdate /air_soc/flash/E_ERR
 add wave -noupdate /air_soc/flash/Mem
 
 add wave -noupdate -divider controller
