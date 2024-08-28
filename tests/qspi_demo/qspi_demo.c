@@ -20,6 +20,27 @@ int main(){
     );
     wait_for_not_busy();
 
+    qspi_ccr ccr;
+    qspi_sta sta;
+
+    ccr.fields.inst_value = CMD_DOR;
+    ccr.fields.prescaler = 1;
+    ccr.fields.data_size = 31;
+    ccr.fields.wr_flash = 0;
+    ccr.fields.data_mod = 2;
+    ccr.fields.clear_status_reg = 0;
+    ccr.fields.dummy_cycle = 8; // if below 50mhz it can be 0
+
+    QSPI_ADR = 0x00000000;
+    QSPI_CCR = ccr.bits;
+
+    while(1){
+        sta.bits = QSPI_STA;
+        if(!sta.fields.busy){
+            break;
+        }
+    }
+
     qspi_set_ccr(
         /*inst_value*/       CMD_WREN,
         /*data_mod*/         1,
@@ -46,8 +67,6 @@ int main(){
     wait_for_not_busy();
     wait_for_wip_done();
 
-    qspi_ccr ccr;
-    qspi_sta sta;
 
     ccr.fields.inst_value = CMD_QOR;
     ccr.fields.prescaler = 1;

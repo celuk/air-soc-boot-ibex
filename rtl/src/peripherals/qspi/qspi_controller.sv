@@ -228,9 +228,9 @@ module qspi_controller (
          end 
          else begin
             sclk_next = 1'b1;
-            buffer_next = transfer_rate==X4 ? {buffer[`MAX_BIT-5:0], qspi_data_i[3:0]} : 
-                          transfer_rate==X2 ? {buffer[`MAX_BIT-3:0], qspi_data_i[1:0]} : 
-                          transfer_rate==X1 ? {buffer[`MAX_BIT-2:0], qspi_data_i[1]}   : 0; // if single SO bit is 1 not 0 (SI)
+            buffer_next = transfer_rate==4 ? {buffer[`MAX_BIT-5:0], qspi_data_i[3:0]} : 
+                          transfer_rate==2 ? {buffer[`MAX_BIT-3:0], qspi_data_i[1:0]} : 
+                          transfer_rate==1 ? {buffer[`MAX_BIT-2:0], qspi_data_i[1]}   : 0; // if single SO bit is 1 not 0 (SI)
 
             bit_counter_next = bit_counter - transfer_rate;
             //if((state==TRANSFER_DATA || state==END_TRANSFER) && (QSPI_CCR_DUMMY_CYC > 0))
