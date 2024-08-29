@@ -174,6 +174,8 @@ module qspi_controller (
    reg sclk_next;
    //assign qspi_sck_o = sclk;
 
+   reg sck_r;
+
    reg [2:0] bit_rate;
    reg [2:0] bit_rate_next;
 
@@ -1177,29 +1179,27 @@ module qspi_controller (
    end
    */
 
-   
-   reg sck_r;
-   reg [5:0] prescale_counter;
+   reg [5:0] prescaler_counter;
    wire [5:0] prescaler = (QSPI_CCR_PRESCALER > 0) ? QSPI_CCR_PRESCALER : 1;
 
    always @(posedge clk_i) begin
       if(rst_i) begin
-         sck_r <= 1'b1;
-         prescale_counter <= 6'b0;
+         sck_r <= 1'b0;
+         prescaler_counter <= 6'b0;
       end
       else begin
-         if(prescale_counter == prescaler - 1) begin
-            prescale_counter <= 6'b0;
+         if(prescaler_counter == prescaler - 1) begin
+            prescaler_counter <= 6'b0;
             sck_r <= ~sck_r;
          end
          else begin
-            prescale_counter <= prescale_counter + 1;
+            prescaler_counter <= prescaler_counter + 1;
             sck_r <= sck_r;
          end
       end
    end
 
-   assign qspi_sck_o = sclk; //(state != IDLE) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0;
+   assign qspi_sck_o = sclk; //(|bit_counter) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0; //sclk; //(state != IDLE) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0;
    
 
    /*

@@ -21,7 +21,10 @@ module i2c_controller (
     input  sda_i,
     output sda_o,
     input  scl_i, //buna bakılacak
-    output scl_o
+    output scl_o,
+
+    output sda_out_en_o,
+    output scl_out_en_o
 );
 
 reg [31:0] wb_read_data_r = 0;

@@ -9,6 +9,11 @@ add wave -noupdate /air_soc/qspi/qspi_iface_dut/bit_counter
 add wave -noupdate /air_soc/qspi/qspi_iface_dut/QSPI_CCR_INST
 
 add wave -noupdate -divider flash
+add wave -noupdate /air_soc/flash/bus_cycle_state
+add wave -noupdate /air_soc/flash/Data_in
+add wave -noupdate /air_soc/flash/Byte_slv
+add wave -noupdate /air_soc/flash/wr_prot
+add wave -noupdate /air_soc/flash/data_cnt
 add wave -noupdate /air_soc/flash/SI
 add wave -noupdate /air_soc/flash/SO
 add wave -noupdate /air_soc/flash/WPNeg

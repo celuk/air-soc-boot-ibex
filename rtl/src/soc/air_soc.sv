@@ -6,6 +6,7 @@
 `default_nettype none
 
 `define QSPI_SIM
+//`define I2C_SIM
 
 module air_soc (
    input wire clk_i,
@@ -14,12 +15,26 @@ module air_soc (
    input  wire uart_rx_i,
    output wire uart_tx_o,
 
-   output wire dp_pu_o,
-   output wire tx_en_o,
-   output wire dp_tx_o,
-   output wire dn_tx_o,
-   input  wire dp_rx_i,
-   input  wire dn_rx_i
+   `ifndef QSPI_SIM
+   output wire qspi_cs_n_o,
+   output wire qspi_sck_o,
+   inout wire [3:0] qspi_data_io,
+   `endif
+
+   `ifndef I2C_SIM
+   inout wire sda_io,
+   inout wire scl_io,
+   `endif
+
+   input wire [15:0] gpio_i,
+   output wire [15:0] gpio_o,
+
+   output wire usb_dp_pu_o,
+   output wire usb_tx_en_o,
+   output wire usb_dp_tx_o,
+   output wire usb_dn_tx_o,
+   input  wire usb_dp_rx_i,
+   input  wire usb_dn_rx_i
 );
 
    logic               mem_req;
@@ -447,9 +462,12 @@ module air_soc (
       .rdata_o (timer_rdata)
    );
 
+   `ifdef QSPI_SIM
    wire qspi_cs_n_o;
    wire qspi_sck_o;
    wire [3:0] qspi_data_io;
+   `endif
+
    wire [3:0] qspi_data_i;
    wire [3:0] qspi_data_o;
    wire [1:0] qspi_out_mod_o;
@@ -499,7 +517,23 @@ module air_soc (
    );
 `endif
 
-   logic sda_i, sda_o, scl_i, scl_o;
+   `ifdef I2C_SIM
+   wire sda_io;
+   wire scl_io;
+   `endif
+
+   logic sda_i;
+   logic sda_o;
+   logic sda_out_en_o;
+   logic scl_i;
+   logic scl_o;
+   logic scl_out_en_o;
+
+   assign sda_io = sda_out_en_o ? sda_o : 1'bZ;
+   assign sda_i = sda_io;
+
+   assign scl_io = scl_out_en_o ? scl_o : 1'bZ;
+   assign scl_i = scl_io;
 
    i2c_controller_obi i2c (
       .clk_i   (clk_i),
@@ -515,11 +549,10 @@ module air_soc (
       .sda_i   (sda_i),
       .sda_o   (sda_o),
       .scl_i   (scl_i),
-      .scl_o   (scl_o)
+      .scl_o   (scl_o),
+      .sda_out_en_o(sda_out_en_o),
+      .scl_out_en_o(scl_out_en_o)
    );
-
-   logic [15:0] gpio_i = 16'h0000;
-   logic [15:0] gpio_o;
 
    gpio_controller_obi gpio (
       .clk_i   (clk_i),
@@ -548,12 +581,12 @@ module air_soc (
       .rvalid_o(usb_rvalid),
       .rdata_o (usb_rdata),
 
-      .dp_pu_o(dp_pu_o),
-      .tx_en_o(tx_en_o),
-      .dp_tx_o(dp_tx_o),
-      .dn_tx_o(dn_tx_o),
-      .dp_rx_i(dp_rx_i),
-      .dn_rx_i(dn_rx_i)
+      .dp_pu_o(usb_dp_pu_o),
+      .tx_en_o(usb_tx_en_o),
+      .dp_tx_o(usb_dp_tx_o),
+      .dn_tx_o(usb_dn_tx_o),
+      .dp_rx_i(usb_dp_rx_i),
+      .dn_rx_i(usb_dn_rx_i)
    );
 
 endmodule

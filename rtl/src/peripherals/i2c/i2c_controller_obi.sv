@@ -10,10 +10,12 @@ module i2c_controller_obi (
    input  wire [31:0] wdata_i,
    output reg         rvalid_o,
    output reg  [31:0] rdata_o,
-   input  sda_i,
-   output sda_o,
-   input  scl_i,
-   output scl_o
+   input  wire sda_i,
+   output wire sda_o,
+   input  wire scl_i,
+   output wire scl_o,
+   output wire sda_out_en_o,
+   output wire scl_out_en_o
 );
 
    reg         wb_cyc_r = 0;
@@ -35,7 +37,9 @@ module i2c_controller_obi (
       .sda_i   (sda_i),
       .sda_o   (sda_o),
       .scl_i   (scl_i),
-      .scl_o   (scl_o)
+      .scl_o   (scl_o),
+      .sda_out_en_o(sda_out_en_o),
+      .scl_out_en_o(scl_out_en_o)
    );
 
    always @(posedge clk_i or negedge rst_ni) begin

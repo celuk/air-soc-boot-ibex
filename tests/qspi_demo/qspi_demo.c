@@ -171,7 +171,7 @@ int main(){
 
     QSPI_ADR = 0x00000000;
     qspi_set_ccr(
-        /*inst_value*/       0x60,
+        /*inst_value*/       CMD_SE,
         /*data_mod*/         1,
         /*wr_flash*/         0,
         /*dummy_cycle*/      0,
@@ -217,8 +217,8 @@ int main(){
 
     QSPI_ADR = 0x00000000;
     qspi_set_ccr(
-        /*inst_value*/       CMD_QPP,
-        /*data_mod*/         3,
+        /*inst_value*/       CMD_PP,
+        /*data_mod*/         1,
         /*wr_flash*/         1,
         /*dummy_cycle*/      0,
         /*data_size*/        31,
