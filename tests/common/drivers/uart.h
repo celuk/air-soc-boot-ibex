@@ -7,10 +7,10 @@
 #include <stdarg.h>
 #include <stdbool.h>
 
-#define UART_CTRL        (*(volatile uint32_t*)0x20000000)
-#define UART_STATUS      (*(volatile uint32_t*)0x20000004)
-#define UART_RDATA       (*(volatile uint32_t*)0x20000008)
-#define UART_WDATA       (*(volatile uint32_t*)0x2000000c)
+#define UART_CTRL        (*(volatile uint32_t*)0xFF000000)
+#define UART_STATUS      (*(volatile uint32_t*)0xFF000004)
+#define UART_RDATA       (*(volatile uint32_t*)0xFF000008)
+#define UART_WDATA       (*(volatile uint32_t*)0xFF00000c)
 
 void     tekno_printf    (const char *fmt, ...);
 void     print           (const char *p);

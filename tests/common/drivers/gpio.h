@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define GPIO_BASE_ADDR  0x20030000
+#define GPIO_BASE_ADDR  0xFF030000
 #define GPIO_IDR_OFFSET 0x00
 #define GPIO_ODR_OFFSET 0x04
 

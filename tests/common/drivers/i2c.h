@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define I2C_BASE_ADDR  0x20020000
+#define I2C_BASE_ADDR  0xFF020000
 #define I2C_NBY_OFFSET 0x00
 #define I2C_ADR_OFFSET 0x04
 #define I2C_RDR_OFFSET 0x08

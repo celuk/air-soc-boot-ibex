@@ -18,52 +18,7 @@ limitations under the License.
 #include <stdarg.h>
 
 #include <stdint.h>
-/*
-#define UART_CTRL        (*(volatile uint32_t*)0x20000000)
-#define UART_STATUS      (*(volatile uint32_t*)0x20000004)
-#define UART_RDATA       (*(volatile uint32_t*)0x20000008)
-#define UART_WDATA       (*(volatile uint32_t*)0x2000000c)
 
-#define CPU_CLK 50000000  // 50 Mhz
-#define BAUD_RATE 115200
-
-typedef union
-{
-	struct {
-		unsigned int tx_en    : 1;
-		unsigned int rx_en 	  : 1;
-		unsigned int null	  : 14;
-		unsigned int baud_div : 16;
-	} fields;
-	uint32_t bits;
-}uart_ctrl;
-
-typedef union
-{
-	struct {
-		unsigned int tx_full  : 1;
-		unsigned int rx_full  : 1;
-		unsigned int tx_empty : 1;
-		unsigned int rx_empty : 1;
-		unsigned int null	  : 28;
-	} fields;
-	uint32_t bits;
-}uart_status;
-
-int uart_txfull(){
-	uart_status uart_stat;
-	uart_stat.bits = UART_STATUS;
-	return uart_stat.fields.tx_full;
-}
-
-void zputchar(char c)
-{
-	while(uart_txfull());
-	if (c == '\n')
-		zputchar('\r');
-	UART_WDATA = c;
-}
-*/
 #define ZEROPAD   (1 << 0) /* Pad with zero */
 #define SIGN      (1 << 1) /* Unsigned/signed long */
 #define PLUS      (1 << 2) /* Show plus */
@@ -730,9 +685,9 @@ typedef union
 	uint32_t bits;
 }uart_status;
 
-#define UART_STATUS      (*(volatile uint32_t*)0x20000004)
-#define UART_RDATA       (*(volatile uint32_t*)0x20000008)
-#define UART_WDATA       (*(volatile uint32_t*)0x2000000c)
+#define UART_STATUS      (*(volatile uint32_t*)0xFF000004)
+#define UART_RDATA       (*(volatile uint32_t*)0xFF000008)
+#define UART_WDATA       (*(volatile uint32_t*)0xFF00000c)
 
 //-----------------------------------------------
 // print a single character.

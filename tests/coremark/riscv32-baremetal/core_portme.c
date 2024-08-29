@@ -46,7 +46,7 @@ typedef union
 	uint32_t bits;
 }uart_status;
 
-#define UART_CTRL        (*(volatile uint32_t*)0x20000000)
+#define UART_CTRL        (*(volatile uint32_t*)0xFF000000)
 
 void init_uart(){
     uart_ctrl uart_control;
@@ -56,8 +56,8 @@ void init_uart(){
     UART_CTRL = uart_control.bits;
 }
 
-#define TIMER_LOW        (*(volatile uint32_t*)0x20000000)
-#define TIMER_HIGH       (*(volatile uint32_t*)0x20000004)
+#define TIMER_LOW        (*(volatile uint32_t*)0xFF000000)
+#define TIMER_HIGH       (*(volatile uint32_t*)0xFF000004)
 
 uint32_t get_timer_low(){
     return TIMER_LOW;
@@ -183,7 +183,6 @@ ee_u32 default_num_contexts = 1;
         Target specific initialization code
         Test for some common mistakes.
 */
-//volatile unsigned int* UART_CTRL = 0x20000000;
 
 void
 portable_init(core_portable *p, int *argc, char *argv[])
@@ -192,7 +191,6 @@ portable_init(core_portable *p, int *argc, char *argv[])
     "Call board initialization routines in portable init (if needed), in particular initialize UART!\n"
 
     init_uart();
-    //(*UART_CTRL) = 0x01b20003;
 
     (void)argc; // prevent unused warning
     (void)argv; // prevent unused warning

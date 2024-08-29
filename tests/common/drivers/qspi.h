@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define QSPI_BASE_ADDR  0x20010000
+#define QSPI_BASE_ADDR  0xFF010000
 #define QSPI_CCR_OFFSET 0x00
 #define QSPI_ADR_OFFSET 0x04
 #define QSPI_DR0_OFFSET 0x08

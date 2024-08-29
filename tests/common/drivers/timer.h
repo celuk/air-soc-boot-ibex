@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define TIM_BASE_ADDR  0x20050000
+#define TIM_BASE_ADDR  0xFF050000
 #define TIM_PRE_OFFSET 0x00
 #define TIM_ARE_OFFSET 0x04
 #define TIM_CLR_OFFSET 0x08

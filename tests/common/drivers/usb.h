@@ -7,10 +7,10 @@
 #include <stdarg.h>
 #include <stdbool.h>
 
-#define USB_CTRL     (*(volatile uint32_t*)0x20040000)
-#define USB_STATUS   (*(volatile uint32_t*)0x20040004)
-#define USB_RDATA    (*(volatile uint32_t*)0x20040008)
-#define USB_WDATA    (*(volatile uint32_t*)0x2004000c)
+#define USB_CTRL     (*(volatile uint32_t*)0xFF040000)
+#define USB_STATUS   (*(volatile uint32_t*)0xFF040004)
+#define USB_RDATA    (*(volatile uint32_t*)0xFF040008)
+#define USB_WDATA    (*(volatile uint32_t*)0xFF04000c)
 
 void     tekno_printf    (const char *fmt, ...);
 void     print           (const char *p);
