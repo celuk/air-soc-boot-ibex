@@ -27,10 +27,10 @@
 `define DCACHE_WAY_LEN `DCACHE_SZ / (`DCACHE_LINE_W / 8) / 2
 
 `define RAM_FPATH ""
-`define RAM_SIZE 256 * 1024
+`define RAM_SIZE 131072 //256 * 1024
 
 `define MEM_BASE_ADDR   32'h0000_0000
-`define MEM_RANGE       32'h0008_0000
+`define MEM_RANGE       32'h0F00_0000
 
 /*
 PERIPHERALS

@@ -74,13 +74,14 @@ typedef union
 	uint32_t bits;
 }qspi_sta;
 
-//void init_qspi(unsigned int time);
+void qspi_init(); //(unsigned int time);
 void qspi_set_ccr(unsigned int inst_value, unsigned int data_mod, unsigned int wr_flash, unsigned int dummy_cycle, unsigned int data_size, unsigned int prescaler, unsigned int clear_status_reg);
 void wait_for_not_busy();
 unsigned int read_status_register(unsigned int cmd);
 void wait_for_wel_set();
 void wait_for_wip_done();
 void wait_for_wel_down();
+void qspi_enable_quad();
 
 //void qspi_wait_for_not_busy();
 //void qspi_wait_for_transaction_done();
