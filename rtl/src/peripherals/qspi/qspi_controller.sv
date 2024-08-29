@@ -145,6 +145,9 @@ module qspi_controller (
    reg new_instruction;
    reg new_instruction_next;
 
+   wire addr_enable;
+   wire data_enable;
+
    assign addr_enable = (QSPI_CCR_INST == `CMD_READ)    ||
                         (QSPI_CCR_INST == `CMD_DOR )    ||
                         (QSPI_CCR_INST == `CMD_QOR )    ||

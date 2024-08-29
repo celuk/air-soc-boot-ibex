@@ -6,7 +6,7 @@
 // Simple single-port RAM with 32-bit words and byte enable
 module ram32 #(
    parameter SIZE = 16384,  // 64 K
-   parameter INIT_FILE
+   parameter INIT_FILE = ""
 ) (
    input clk_i,
    input rst_ni,

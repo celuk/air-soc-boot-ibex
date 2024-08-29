@@ -55,7 +55,9 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
     include_dirs.extend([sim_dir])
     #include_dirs.extend(mem_files)
 
+    print("\nINCLUDE_DIRS:")
     print(include_dirs)
+    print("\nVERILOG_SOURCES:")
     print(verilog_sources)
 
     runner = get_runner(simulator)
