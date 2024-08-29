@@ -2,9 +2,6 @@
 // Borrowed from https://github.com/KASIRGA-KIZIL/tekno-kizil
 `timescale 1ns / 1ps
 
-`include "header.vh"
-
-// Bu modulun tek gorevi wishbone sinyallerini UART registerlarina yazmak
 module uart_controller (
    input wire clk_i,
    input wire rst_i,
@@ -20,86 +17,145 @@ module uart_controller (
    input  wire uart_rx_i,
    output wire uart_tx_o
 );
-   reg [15:0] baud_div;
    
-   reg tx_en;
-   reg tx_we;
-   wire tx_full;
-   wire tx_empty;
+
+   reg [31:0] wb_read_data_r = 0;
+   reg [31:0] wb_read_data_next_r = 0;
+   assign wb_dat_o = wb_read_data_r;
+
+   reg wb_ack_r = 0;
+   reg wb_ack_next_r = 0;
+   assign wb_ack_o = wb_ack_r;
+
+   reg [31:0] UART_CPB;
+   reg [31:0] UART_STP;
+   reg [31:0] UART_RDR;
+   reg [31:0] UART_TDR;
+   reg [31:0] UART_CFG;
+
+   reg [31:0] UART_CPB_NEXT;
+   reg [31:0] UART_STP_NEXT;
+   reg [31:0] UART_RDR_NEXT;
+   reg [31:0] UART_TDR_NEXT;
+   reg [31:0] UART_CFG_NEXT;
+
+   wire tx_complete;
+   wire rx_complete;
+   wire [7:0] uart_rx_data;
+   reg tx_enable;
    
-   reg  rx_en;
-   reg  rx_re;
-   wire rx_full;
-   wire rx_empty;
-   wire [7:0] rx_data;
-   
-   uart_tx uart_tx_dut (
-      .clk_i (clk_i ),
-      .rst_i (rst_i ),
-      .baud_div_i(baud_div),
-      .we_i    (tx_we        ),
-      .stall_i (~tx_en       ),
-      .data_i  (wb_dat_i[7:0]),
-      .full_o  (tx_full      ),
-      .empty_o (tx_empty     ),
-      .tx_o    (uart_tx_o    )
-   );
-   
-   uart_rx uart_rx_dut (
-      .clk_i (clk_i ),
-      .rst_i (rst_i ),
-      .baud_div_i (baud_div),
-      .re_i    (rx_re    ),
-      .stall_i (~rx_en   ),
-      .data_o  (rx_data  ),
-      .full_o  (rx_full  ),
-      .empty_o (rx_empty ),
-      .rx_i    (uart_rx_i)
-   );
-   
-   
-   always @(posedge clk_i) begin
-      if (rst_i) begin
-         wb_ack_o <= 1'b0;
-         baud_div <= 16'b0;
-         rx_en    <= 1'b0;
-         tx_en    <= 1'b0;
-         rx_re    <= 1'b0;
-         tx_we    <= 1'b0;
-      end else begin
-         rx_re    <= 1'b0;
-         tx_we    <= 1'b0;
-         if(wb_cyc_i) begin
-            wb_ack_o <= wb_stb_i & !wb_ack_o; // butun islemler 1 cycle surer ve ack sinyali cyc'dan hemen sonra gonderilir.
-            case(wb_adr_i[3:0])
-               4'h0: begin
-                  if(wb_stb_i & wb_we_i & !wb_ack_o) begin // SB,SH,SW buyruklarini destekle
-                     tx_en    <=   wb_sel_i[0]    ? wb_dat_i[0]     : tx_en;
-                     rx_en    <=   wb_sel_i[0]    ? wb_dat_i[1]     : rx_en;
-                     baud_div <= (&wb_sel_i[3:2]) ? wb_dat_i[31:16] : baud_div;
-                  end
-                  wb_dat_o <= {baud_div, 14'b0, rx_en, tx_en};
+   always @* begin
+      wb_ack_next_r = 0;
+      wb_read_data_next_r = 0;
+      UART_CPB_NEXT = UART_CPB;
+      UART_STP_NEXT = UART_STP;
+      UART_RDR_NEXT = UART_RDR;
+      UART_TDR_NEXT = UART_TDR;
+      UART_CFG_NEXT = UART_CFG;
+
+         if(rx_complete) begin
+            UART_RDR_NEXT = uart_rx_data;
+            UART_CFG_NEXT[1] = 1;
+         end
+         if(UART_CFG[0] == 1) begin
+            tx_enable = 1;
+         end
+         if(tx_complete) begin
+            UART_CFG_NEXT[2] = 1;
+         end
+
+      if(wb_cyc_i) begin
+         wb_ack_next_r <= wb_stb_i & !wb_ack_r;
+         if(wb_stb_i & wb_we_i & !wb_ack_o) begin // write
+            case(wb_adr_i)
+               8'h00: begin
+                  UART_CPB_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : UART_CPB[7:0  ];
+                  UART_CPB_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : UART_CPB[15:8 ];
+                  UART_CPB_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : UART_CPB[23:16];
+                  UART_CPB_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : UART_CPB[31:24];
                end
-               4'h4: begin
-                  wb_dat_o <= {28'b0,rx_empty,rx_full,tx_empty,tx_full};
+               8'h04: begin
+                  UART_STP_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : UART_STP[7:0  ];
+                  UART_STP_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : UART_STP[15:8 ];
+                  UART_STP_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : UART_STP[23:16];
+                  UART_STP_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : UART_STP[31:24];
                end
-               4'h8: begin
-                  if(wb_stb_i & !wb_ack_o) begin
-                     if(~rx_empty)begin
-                        wb_dat_o <= {24'b0,rx_data};
-                        rx_re <= 1'b1;
-                     end
-                  end
+               
+               // UART_RDR --> Read only
+
+               8'h0C: begin
+                  UART_TDR_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : UART_TDR[7:0  ];
+                  UART_TDR_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : UART_TDR[15:8 ];
+                  UART_TDR_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : UART_TDR[23:16];
+                  UART_TDR_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : UART_TDR[31:24];
                end
-               4'hc: begin
-                  if(wb_stb_i & wb_we_i & !wb_ack_o) begin
-                     if(~tx_full) begin
-                        tx_we    <=   wb_sel_i[0]    ? 1'b1     : 1'b0;
-                     end
-                  end
+               8'h10: begin
+                  UART_CFG_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : UART_CFG[7:0  ];
+                  UART_CFG_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : UART_CFG[15:8 ];
+                  UART_CFG_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : UART_CFG[23:16];
+                  UART_CFG_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : UART_CFG[31:24];
+               end
+            endcase
+         end 
+         else if(~wb_we_i) begin // read
+            case(wb_adr_i)
+               8'h00: begin
+                  wb_read_data_next_r = UART_CPB;
+               end
+               8'h04: begin
+                  wb_read_data_next_r = UART_STP;
+               end
+               8'h08: begin
+                  wb_read_data_next_r = UART_RDR;
+               end
+               8'h0C: begin
+                  wb_read_data_next_r = UART_TDR;
+               end
+               8'h10: begin
+                  wb_read_data_next_r = UART_CFG;
                end
             endcase
          end
       end
    end
+
+   always @(posedge clk_i) begin
+      if (rst_i) begin
+         UART_CPB <= 32'b0;
+         UART_STP <= 32'b0;
+         UART_RDR <= 32'b0;
+         UART_TDR <= 32'b0;
+         UART_CFG <= 32'b0;
+      end else begin
+         UART_CPB <= UART_CPB_NEXT;
+         UART_STP <= UART_STP_NEXT;
+         UART_RDR <= UART_RDR_NEXT;
+         UART_TDR <= UART_TDR_NEXT;
+         UART_CFG <= UART_CFG_NEXT;
+      end
+   end
+
+  
+   uart_tx uart_tx_dut (
+      .clk_i (clk_i),
+      .rst_i (rst_i),
+      .baud_div_i(UART_CPB),
+      .stop_bit_i(UART_STP[1:0]),
+      .we_i    (tx_enable),
+      .stall_i (~UART_CFG[0]),
+      .data_i  (UART_TDR[7:0]),
+      .complete_o (tx_complete),
+      .tx_o    (uart_tx_o)
+   );
+   
+   uart_rx uart_rx_dut (
+      .clk_i (clk_i),
+      .rst_i (rst_i),
+      .baud_div_i (UART_CPB),
+      .stall_i (0),
+      .data_o  (uart_rx_data),
+      .complete_o (rx_complete),
+      .rx_i    (uart_rx_i)
+   );
+
 endmodule

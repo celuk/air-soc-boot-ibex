@@ -120,7 +120,7 @@ assign wb_ack_o = wb_ack_r;
       num_bytes_r = 0;
       start_r = 0;
 
-      if(!wb_cyc_i) begin
+   
          if (CFG_YAZ_EN) begin //: Transmit enable bit. ‘1’ olduğu sürece I2C_TDR registerında bulunan veriyi I2C_NBY bayt kadar gönderir
             address_r = I2C_ADR[6:0];
             rd_wr_r = `LOW; //yaz -->0, Oku -->1
@@ -143,7 +143,6 @@ assign wb_ack_o = wb_ack_r;
             end
          end
 
-      end
 
 
       if (wb_cyc_i) begin
@@ -216,9 +215,8 @@ assign wb_ack_o = wb_ack_r;
       .ready_o              (ready_w),
       .read_finished_o      (read_finished_w),
       .write_finished_o     (write_finished_w),
-      .error_o              (error_w)
-      // TODO
-      //,.sda_drive            (sda_drive_w)
+      .error_o              (error_w),
+      .sda_drive_o          (sda_drive_w)
    );
    
 
