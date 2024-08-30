@@ -3,6 +3,16 @@ TEKNOFEST 2024 ÇİP TASARIMI MİKRODENETLEYİCİ KATEGORİSİ KASIRGA-HAVA
 
 CV32E40P RISC-V Core IP based SoC
 
+## Cadence ASIC Design
+
+Flow asic klasöründe var, rapor ve çıktılarıyla tam hali aşağıdaki drive linkinde:
+
+https://drive.google.com/file/d/1F1wVqM8RilMV8nuH__U9k4ssZyCk4paq/view?usp=sharing
+
+![asic](docs/air_soc_asic.png)
+
+Akış okulda bulunan Cadence lisansı ile geçirildi, serverda da dosyalar yok fakat önbelleklerin küçültülebileceği söylenmişti, header.vh'ta minimum size olan 64 byte yapıldı. Yaklaşık 1000um x 1000um, 100MHz fakat 7 DRC hatası var.
+
 ## Ortam Kurulumu
 
 Bu repoda nix tabanlı bir ortam kullanılmaktadır ve simülasyon ve derleme için gerekli araçlar Modelsim, riscv-gnu-toolchain, cocotb vs. otomatik olarak build edilir, kurulur. 
