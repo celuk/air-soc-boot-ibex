@@ -6,19 +6,24 @@
 //-----------------------------------------------
 int uart_txfull()
 {
-    uart_cfg uart_cfg;
-    return !uart_cfg.fields.cfg_2;
+    while ((UART_CFG & 0x4) == 0) { }
 }
 
 void zputchar(char c)
 {
-    while (uart_txfull())
-        ;
-    uart_cfg uart_c;
-    uart_c = *((volatile uart_cfg*)(UART_CFG));
-    uart_c.fields.cfg_2 = 0;
-    UART_CFG = uart_c.bits;
+    uart_txfull();
+
+    // TX complete bitini temizle
+    UART_CFG &= ~0x4;
+
+    // Veriyi gönder
     UART_TDR = c;
+
+    // TX enable bitini set et
+    UART_CFG = UART_CFG | 0x1;
+
+    // TX tamamlanana kadar bekle
+    uart_txfull();
 }
 
 //-----------------------------------------------
@@ -166,11 +171,11 @@ int uart_rxempty()
 
 char zgetchar()
 {
-    while (1) {
-        if (!uart_rxempty()) {
-            return (char)UART_RDR;
-        }
-    }
+    return (char)UART_RDR;
+    // while (1) {
+    //     if (!uart_rxempty()) {
+    //     }
+    // }
 }
 
 //-----------------------------------------------
@@ -242,13 +247,9 @@ size_t strlen(const char* s)
 void init_uart()
 {
     uart_cpb uart_cpb;
-    uart_cfg uart_cfg;
-    uart_stp uart_stp;
     uart_cpb.fields.data = CPU_CLK / BAUD_RATE;
-    uart_cfg.fields.cfg_0 = 0x1;
-    uart_cfg.fields.cfg_1 = 0x0;
-    uart_cfg.fields.cfg_2 = 0x0;
+    // TX enable bitini set et
+    UART_CFG = UART_CFG | 0x7;
     UART_CPB = uart_cpb.bits;
-    UART_STP = uart_stp.bits;
-    UART_CFG = uart_cfg.bits;
+    UART_STP = UART_STP | 0x1;
 }

@@ -54,6 +54,7 @@ module uart_tx (
          if (uart_clk_pulse) begin
             if ((state == STOP_BIT0) && (next == IDLE)) complete_o <= 1;
          end
+         if (next == IDLE) counter <= baud_div_i / 4;
          if (state == STOP_BIT0) begin
             casex (stop_bit_i)
                2'b00: begin
