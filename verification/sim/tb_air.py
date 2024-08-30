@@ -97,8 +97,13 @@ async def anabellek(dut):
 
         await RisingEdge(dut.clk_i)
         dut.rst_ni.value = 1
+
+        timeout = 0
         while True:
             await RisingEdge(dut.clk_i)
+            if timeout > TIMEOUT:
+                break
+            timeout += 1
     
 
 @cocotb.test()

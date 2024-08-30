@@ -29,8 +29,9 @@
 `define RAM_FPATH ""
 `define RAM_SIZE 131072 //256 * 1024
 
-`define USE_BOOTROM 1
-`define QSPI_SIM
+`define USE_BOOTROM 0
+
+//`define QSPI_SIM
 //`define I2C_SIM
 
 `define MEM_BASE_ADDR   32'h0000_0000

@@ -42,8 +42,8 @@ module ram32 #(
       end
    end
 
-   logic [31:0] boot_rom_addr;
-   logic [31:0] boot_rom_rdata;
+   reg [31:0] boot_rom_addr = 0;
+   wire [31:0] boot_rom_rdata;
    bootrom boot_mem (
       .addr_i(boot_rom_addr),
       .rdata_o(boot_rom_rdata)
@@ -51,16 +51,17 @@ module ram32 #(
 
    // TODO: do this for asic in reset
    initial begin
-      // Set all memory elements to zero
-      for (int i = 0; i < SIZE; i++) begin
-         mem[i] = 32'h0;
-      end
-      if (INIT_FILE != "") $readmemh(INIT_FILE, mem);
       if (USE_BOOTROM) begin
          for (int i = 0; i < SIZE; i++) begin
-            boot_rom_addr = i;
+            boot_rom_addr = 0;
             mem[i] = boot_rom_rdata;
          end
       end
+      else begin
+         for (int i = 0; i < SIZE; i++) begin
+            mem[i] = 32'h0;
+         end
+      end
+      if (INIT_FILE != "") $readmemh(INIT_FILE, mem);
    end
 endmodule

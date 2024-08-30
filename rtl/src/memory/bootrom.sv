@@ -1,4 +1,4 @@
-`define ADDR_WIDTH 14
+`define ADDR_WIDTH 32
 
 module bootrom (
    input logic [31:0] addr_i,
