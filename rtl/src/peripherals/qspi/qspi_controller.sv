@@ -1003,7 +1003,7 @@ module qspi_controller (
       end
 
       if(wb_cyc_i) begin
-         wb_ack_next_r <= wb_stb_i & !wb_ack_r;
+         wb_ack_next_r = wb_stb_i & !wb_ack_r;
          // Write to control registers
          if(wb_stb_i & wb_we_i & !wb_ack_o) begin
             case(wb_adr_i)

@@ -19,12 +19,12 @@ module uart_controller (
 );
 
 
-   reg [31:0] wb_read_data_r = 0;
-   reg [31:0] wb_read_data_next_r = 0;
+   reg [31:0] wb_read_data_r;
+   reg [31:0] wb_read_data_next_r;
    assign wb_dat_o = wb_read_data_r;
 
-   reg wb_ack_r = 0;
-   reg wb_ack_next_r = 0;
+   reg wb_ack_r;
+   reg wb_ack_next_r;
    assign wb_ack_o = wb_ack_r;
 
    reg [31:0] UART_CPB;
@@ -65,7 +65,7 @@ module uart_controller (
       end
 
       if (wb_cyc_i) begin
-         wb_ack_next_r <= wb_stb_i & !wb_ack_r;
+         wb_ack_next_r = wb_stb_i & !wb_ack_r;
          if (wb_stb_i & wb_we_i & !wb_ack_o) begin  // write
             case (wb_adr_i)
                8'h00: begin

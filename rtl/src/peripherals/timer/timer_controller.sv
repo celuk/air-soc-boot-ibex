@@ -53,7 +53,7 @@ always_comb begin
    TIM_EVC_NEXT = TIM_EVC;
 
    if(wb_cyc_i) begin
-      wb_ack_next_r <= wb_stb_i & !wb_ack_r;
+      wb_ack_next_r = wb_stb_i & !wb_ack_r;
       if(wb_stb_i & wb_we_i & !wb_ack_o) begin // write
          case(wb_adr_i)
             8'h00: begin

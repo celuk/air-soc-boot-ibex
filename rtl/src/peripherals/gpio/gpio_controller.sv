@@ -46,7 +46,7 @@ module gpio_controller (
       GPIO_IDR_NEXT[15:0] = gpio_i;
 
       if(wb_cyc_i) begin
-         wb_ack_next_r <= wb_stb_i & !wb_ack_r;
+         wb_ack_next_r = wb_stb_i & !wb_ack_r;
          if(wb_stb_i & wb_we_i & !wb_ack_o) begin // write
             case(wb_adr_i)
                8'h04: begin
