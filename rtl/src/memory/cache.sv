@@ -322,9 +322,9 @@ module cache_way #(
 
     always_ff @(posedge clk_i or negedge rst_ni) begin
         if (!rst_ni) begin
-            tags  = '{default: '1};
-            lines = '{default: '0};
-            dirty = '0;
+            tags  <= '{default: '1};
+            lines <= '{default: '0};
+            dirty <= '0;
         end
         else begin
             rtag_o   <= tags [rindex_i];
