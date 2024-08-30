@@ -8,7 +8,7 @@ module uart_tx (
    input  wire        clk_i,
    input  wire        rst_i,
    input  wire [31:0] baud_div_i,
-   input  wire [1:0]  stop_bit_i,
+   input  wire [ 1:0] stop_bit_i,
    input  wire        stall_i,
    input  wire        we_i,
    input  wire [ 7:0] data_i,
@@ -16,8 +16,8 @@ module uart_tx (
    output reg         tx_o
 );
 
-   reg [4:0] state;
-   reg [4:0] next;
+   reg  [ 4:0] state;
+   reg  [ 4:0] next;
 
    wire [32:0] baud_div = baud_div_i;
 
@@ -33,10 +33,10 @@ module uart_tx (
               DATA_7     = 5'd9,
               STOP_BIT0  = 5'd10;
 
-   reg  [ 7:0] write_buffer;
+   reg [ 7:0] write_buffer;
 
-   reg  [32:0] counter;
-   reg         uart_clk_pulse;
+   reg [32:0] counter;
+   reg        uart_clk_pulse;
 
    always @(posedge clk_i) begin
       if (rst_i) state <= IDLE;
@@ -98,8 +98,8 @@ module uart_tx (
 
    always @(*) begin
       case (state)
-         IDLE:       if (~stall_i) next = START_BIT;
-                     else next = IDLE;
+         IDLE:      if (~stall_i && !complete_o) next = START_BIT;
+ else next = IDLE;
          START_BIT: next = DATA_0;
          DATA_0:    next = DATA_1;
          DATA_1:    next = DATA_2;

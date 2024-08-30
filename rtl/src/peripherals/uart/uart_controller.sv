@@ -57,7 +57,7 @@ module uart_controller (
          UART_RDR_NEXT = uart_rx_data;
          UART_CFG_NEXT[1] = 1;
       end
-      if (UART_CFG[0] == 1) begin
+      if (UART_CFG[0] == 1 && !tx_complete) begin
          tx_enable = 1;
       end
       if (tx_complete) begin

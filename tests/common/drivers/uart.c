@@ -14,6 +14,10 @@ void zputchar(char c)
 {
     while (uart_txfull())
         ;
+    uart_cfg uart_c;
+    uart_c = *((volatile uart_cfg*)(UART_CFG));
+    uart_c.fields.cfg_2 = 0;
+    UART_CFG = uart_c.bits;
     UART_TDR = c;
 }
 
