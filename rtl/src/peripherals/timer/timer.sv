@@ -25,14 +25,14 @@ reg [63:0] counter;
 reg [63:0] counter_next;
 
 wire basa_don = TIM_CNT_R == TIM_ARE;
-wire amount = (counter == TIM_PRE +1);
+wire amount = (counter == TIM_PRE);
 
 always_comb begin
     TIM_CNT_NEXT_R = TIM_CNT_R;
     TIM_EVN_NEXT_R = TIM_EVN_R;
 
     counter_next = counter + 1;
-    if(counter == TIM_PRE+1) begin
+    if(counter == TIM_PRE) begin
         counter_next = 0;
     end
 
@@ -41,7 +41,7 @@ always_comb begin
             3'b000: begin
                 TIM_CNT_NEXT_R = TIM_MOD ? (TIM_CNT_R + amount) : (TIM_CNT_R - amount);
                 TIM_EVN_NEXT_R = TIM_EVN_R;
-                if(counter == TIM_PRE+1) begin
+                if(counter == TIM_PRE) begin
                     counter_next = 0;
                 end else begin
                     counter_next = counter + 1;
@@ -50,7 +50,7 @@ always_comb begin
             3'b001: begin
                 TIM_CNT_NEXT_R = 0;
                 TIM_EVN_NEXT_R = TIM_EVN_R + 1;
-                if(counter == TIM_PRE+1) begin
+                if(counter == TIM_PRE) begin
                     counter_next = 0;
                 end else begin
                     counter_next = counter + 1;
@@ -59,7 +59,7 @@ always_comb begin
             3'b010: begin
                 TIM_CNT_NEXT_R = TIM_MOD ? (TIM_CNT_R + amount) : (TIM_CNT_R - amount);
                 TIM_EVN_NEXT_R = 0;
-                if(counter == TIM_PRE+1) begin
+                if(counter == TIM_PRE) begin
                     counter_next = 0;
                 end else begin
                     counter_next = counter + 1;
@@ -68,7 +68,7 @@ always_comb begin
             3'b011: begin
                 TIM_CNT_NEXT_R = 0;
                 TIM_EVN_NEXT_R = 0;
-                if(counter == TIM_PRE+1) begin
+                if(counter == TIM_PRE) begin
                     counter_next = 0;
                 end else begin
                     counter_next = counter + 1;

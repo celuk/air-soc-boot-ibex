@@ -56,20 +56,117 @@ void init_uart(){
     UART_CTRL = uart_control.bits;
 }
 
-#define TIMER_LOW        (*(volatile uint32_t*)0xFF000000)
-#define TIMER_HIGH       (*(volatile uint32_t*)0xFF000004)
+#define TIM_BASE_ADDR  0xFF050000
+#define TIM_PRE_OFFSET 0x00
+#define TIM_ARE_OFFSET 0x04
+#define TIM_CLR_OFFSET 0x08
+#define TIM_ENA_OFFSET 0x0C
+#define TIM_MOD_OFFSET 0x10
+#define TIM_CNT_OFFSET 0x14
+#define TIM_EVN_OFFSET 0x18
+#define TIM_EVC_OFFSET 0x1C
 
-uint32_t get_timer_low(){
-    return TIMER_LOW;
+#define TIM_PRE (*(volatile uint32_t*) (TIM_BASE_ADDR + TIM_PRE_OFFSET))
+#define TIM_ARE (*(volatile uint32_t*) (TIM_BASE_ADDR + TIM_ARE_OFFSET))
+#define TIM_CLR (*(volatile uint32_t*) (TIM_BASE_ADDR + TIM_CLR_OFFSET))
+#define TIM_ENA (*(volatile uint32_t*) (TIM_BASE_ADDR + TIM_ENA_OFFSET))
+#define TIM_MOD (*(volatile uint32_t*) (TIM_BASE_ADDR + TIM_MOD_OFFSET))
+#define TIM_CNT (*(volatile uint32_t*) (TIM_BASE_ADDR + TIM_CNT_OFFSET))
+#define TIM_EVN (*(volatile uint32_t*) (TIM_BASE_ADDR + TIM_EVN_OFFSET))
+#define TIM_EVC (*(volatile uint32_t*) (TIM_BASE_ADDR + TIM_EVC_OFFSET))
+
+void init_timer()
+{
+    //TIM_PRE = 0;
+    //TIM_ENA = 1;
+    //TIM_MOD = 1;
+
+    timer_set_clr(1);
+    timer_set_evc(1);
+    timer_set_pre(0);
+    timer_set_are(0xFFFFFFFF);
+    timer_set_ena(1);
+    timer_set_mod(1);
+    timer_set_evc(0);
+    timer_set_clr(0);
 }
-uint64_t get_timer_high(){
-    return TIMER_HIGH;
+
+void timer_set_pre (unsigned int pre){
+    TIM_PRE = pre;
 }
-// TODO ust bitlere bakacaksak hem bura hem core_portme.hda degisiklik gerek
-uint32_t /*uint64_t*/ get_timer(){
-    //return (get_timer_high() << 32) + get_timer_low();
-    return get_timer_low();
+
+int timer_get_pre (){
+    return TIM_PRE;
 }
+
+void timer_set_are (unsigned int are){
+    TIM_ARE = are;
+}
+
+int timer_get_are (){
+    return TIM_ARE;
+}
+
+void timer_set_clr (unsigned int clr){
+    TIM_CLR = clr;
+}
+
+int timer_get_clr (){
+    return TIM_CLR;
+}
+
+void timer_set_ena (unsigned int ena){
+    TIM_ENA = ena;
+}
+
+int timer_get_ena (){
+    return TIM_ENA;
+}
+
+void timer_set_mod (unsigned int mod){
+    TIM_MOD = mod;
+}
+
+int timer_get_mod (){
+    return TIM_MOD;
+}
+
+int timer_get_cnt (){
+    return TIM_CNT;
+}
+
+int timer_get_evn (){
+    return TIM_EVN;
+}
+
+void timer_set_evc (unsigned int evc){
+    TIM_EVC = evc;
+}
+
+int timer_get_evc (){
+    return TIM_EVC;
+}
+
+#define US(x) (CPU_CLK/1000000 * x)
+
+void wait_for(uint32_t time){
+    init_timer();
+	uint32_t start = timer_get_cnt();
+	uint32_t end = timer_get_cnt();
+    uint32_t diff = end - start;
+	while(((diff)) < time){
+		end = timer_get_cnt();
+        if(end > start)
+            diff = end - start;
+        else
+            diff = start - end;
+	}
+}
+
+void wait_for_us(uint32_t time){
+    wait_for(US(time));
+}
+
 
 #if VALIDATION_RUN
 volatile ee_s32 seed1_volatile = 0x3415;
@@ -100,9 +197,9 @@ barebones_clock()
 //#error \
     "You must implement a method to measure time in barebones_clock()! This function should return current time.\n"
     //return (get_timer_high() << 32) + get_timer_low();//get_timer();
-  uint32_t val;
-  asm volatile ("rdcycle %0 ;\n":"=r" (val) ::);
-  return val;
+  //uint32_t val;
+  //asm volatile ("rdcycle %0 ;\n":"=r" (val) ::);
+  return timer_get_cnt(); //val;
 }
 /* Define : TIMER_RES_DIVIDER
         Divider to trade off timer resolution and total time that can be
@@ -191,6 +288,8 @@ portable_init(core_portable *p, int *argc, char *argv[])
     "Call board initialization routines in portable init (if needed), in particular initialize UART!\n"
 
     init_uart();
+
+    init_timer();
 
     (void)argc; // prevent unused warning
     (void)argv; // prevent unused warning
