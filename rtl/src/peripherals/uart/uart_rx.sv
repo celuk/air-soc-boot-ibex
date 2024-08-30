@@ -1,19 +1,23 @@
 // uart_verici.v
 `timescale 1ns / 1ps
 
-module uart_rx (
+
+// RX paketleri circuilar bir queue ya konulur.
+module uart_rx_old (
    input  wire        clk_i,
    input  wire        rst_i,
-   input  wire [31:0] baud_div_i,
-   input  wire        stall_i,
+   input  wire [15:0] baud_div_i,
+   input  wire        re_i,
    input  wire [ 1:0] stop_bit_i,
+   input  wire        stall_i,
    output wire [ 7:0] data_o,
-   output reg         complete_o,
+   output wire        full_o,
+   output wire        empty_o,
    input  wire        rx_i
 );
 
-   reg [3:0] state;
-   reg [3:0] next;
+   reg [4:0] state;
+   reg [4:0] next;
 
    localparam IDLE      = 4'd0,
               START_BIT = 4'd1,
@@ -25,13 +29,22 @@ module uart_rx (
               DATA_5    = 4'd7,
               DATA_6    = 4'd8,
               DATA_7    = 4'd9,
-              STOP_BIT  = 4'd10;
+              STOP_BIT_ONLY_ONE     = 4'd10,
+              STOP_BIT_ONE_________ = 4'd11,
+              STOP_BIT_ONE_AND_HALF = 4'd12,
+              STOP_BIT_ONE_OF_TWO   = 4'd13,
+              STOP_BIT_TWO_OF_TWO   = 4'd14;
 
-   reg [ 7:0] read_buffer;
-   reg [31:0] counter;
-   reg        uart_clk_pulse;
+   reg  [ 7:0] queue                [1:0];
+   reg  [ 0:0] read_ptr;
+   reg  [ 0:0] write_ptr;
+   reg  [15:0] counter;
+   reg         uart_clk_pulse;
 
-   assign data_o = read_buffer;
+   wire [ 4:0] limit = read_ptr - 1;
+   assign full_o  = (limit == write_ptr);
+   assign empty_o = (read_ptr == write_ptr);
+   assign data_o  = queue[read_ptr];
 
    reg [3:0] start_pattern;
    reg       start_r;
@@ -41,22 +54,44 @@ module uart_rx (
       else if (uart_clk_pulse) state <= next;
 
       if (rst_i) begin
+         read_ptr       <= 0;
+         write_ptr      <= 0;
          counter        <= 0;
          uart_clk_pulse <= 0;
          start_pattern  <= 0;
          start_r        <= 0;
-         read_buffer    <= 0;
-         complete_o     <= 0;
       end else begin
-         complete_o <= 0;
+         if (re_i) begin
+            read_ptr <= read_ptr + 1;
+         end
          if (uart_clk_pulse) begin
-            if ((state == STOP_BIT) && (next == IDLE)) begin
+            if ((state == STOP_BIT_ONLY_ONE) && (next == IDLE) && rx_i) begin
+               write_ptr <= write_ptr + 1;
+               start_r   <= 1'b0;
+            end
+            if ((state == STOP_BIT_ONLY_ONE) && (next == IDLE) && !rx_i) begin
                start_r <= 1'b0;
-               complete_o <= 1;
+               queue[write_ptr] <= 0;
+            end
+            if ((state == STOP_BIT_ONE_AND_HALF) && (next == IDLE) && rx_i) begin
+               write_ptr <= write_ptr + 1;
+               start_r   <= 1'b0;
+            end
+            if ((state == STOP_BIT_ONE_AND_HALF) && (next == IDLE) && !rx_i) begin
+               start_r <= 1'b0;
+               queue[write_ptr] <= 0;
+            end
+            if ((state == STOP_BIT_TWO_OF_TWO) && (next == IDLE) && rx_i) begin
+               write_ptr <= write_ptr + 1;
+               start_r   <= 1'b0;
+            end
+            if ((state == STOP_BIT_TWO_OF_TWO) && (next == IDLE) && !rx_i) begin
+               start_r <= 1'b0;
+               queue[write_ptr] <= 0;
             end
          end
          if (counter == baud_div_i) begin
-            counter        <= 0;
+            counter        <= (next == STOP_BIT_ONE_AND_HALF) ? (baud_div_i / 2) : 0;
             uart_clk_pulse <= 1'b1;
          end else begin
             if (start_r) counter <= counter + 1;
@@ -85,22 +120,31 @@ module uart_rx (
          DATA_4:    next = DATA_5;
          DATA_5:    next = DATA_6;
          DATA_6:    next = DATA_7;
-         DATA_7:    next = STOP_BIT;
-         STOP_BIT:  next = IDLE;
-         default:   next = IDLE;
+         // verilog_format: off
+         DATA_7: next = (stop_bit_i == 2'b00) ? STOP_BIT_ONLY_ONE     :
+                        (stop_bit_i == 2'b01) ? STOP_BIT_ONE_________ :
+                        (stop_bit_i == 2'b10) ? STOP_BIT_ONE_OF_TWO   :
+                                                           IDLE       ;
+         // verilog_format: on
+         STOP_BIT_ONLY_ONE:     next = IDLE;
+         STOP_BIT_ONE_________: next = rx_i ? STOP_BIT_ONE_AND_HALF : IDLE;
+         STOP_BIT_ONE_AND_HALF: next = IDLE;
+         STOP_BIT_ONE_OF_TWO:   next = rx_i ? STOP_BIT_TWO_OF_TWO : IDLE;
+         STOP_BIT_TWO_OF_TWO:   next = IDLE;
+         default:  next = IDLE;
       endcase
    end
    always @(posedge clk_i) begin
       if (uart_clk_pulse) begin
          case (state)
-            DATA_0: read_buffer[0] <= rx_i;
-            DATA_1: read_buffer[1] <= rx_i;
-            DATA_2: read_buffer[2] <= rx_i;
-            DATA_3: read_buffer[3] <= rx_i;
-            DATA_4: read_buffer[4] <= rx_i;
-            DATA_5: read_buffer[5] <= rx_i;
-            DATA_6: read_buffer[6] <= rx_i;
-            DATA_7: read_buffer[7] <= rx_i;
+            DATA_0: queue[write_ptr][0] <= rx_i;
+            DATA_1: queue[write_ptr][1] <= rx_i;
+            DATA_2: queue[write_ptr][2] <= rx_i;
+            DATA_3: queue[write_ptr][3] <= rx_i;
+            DATA_4: queue[write_ptr][4] <= rx_i;
+            DATA_5: queue[write_ptr][5] <= rx_i;
+            DATA_6: queue[write_ptr][6] <= rx_i;
+            DATA_7: queue[write_ptr][7] <= rx_i;
             default: begin
             end
          endcase
