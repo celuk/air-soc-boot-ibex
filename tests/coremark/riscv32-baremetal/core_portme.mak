@@ -40,7 +40,7 @@ PORT_CFLAGS = -O2 -mcmodel=medany -static -std=gnu99 -fno-common -nostdlib -nost
 #-DPREALLOCATE=1
 #-mcmodel=medlow
 FLAGS_STR = "$(PORT_CFLAGS) $(XCFLAGS) $(XLFLAGS) $(LFLAGS_END)"
-CFLAGS = $(PORT_CFLAGS) -march=rv32im -mabi=ilp32 -I$(PORT_DIR) -I. -DFLAGS_STR=\"$(FLAGS_STR)\" #-DCORE_DEBUG
+CFLAGS = $(PORT_CFLAGS) -march=rv32imc -mabi=ilp32 -I$(PORT_DIR) -I. -DFLAGS_STR=\"$(FLAGS_STR)\" #-DCORE_DEBUG
 # -DITERATIONS=1000
 #Flag: LFLAGS_END
 #	Define any libraries needed for linking or other flags that should come at the end of the link line (e.g. linker scripts).
