@@ -5,9 +5,6 @@
 
 `default_nettype none
 
-`define QSPI_SIM
-//`define I2C_SIM
-
 module air_soc (
    input wire clk_i,
    input wire rst_ni,
@@ -339,7 +336,8 @@ module air_soc (
 
    ram32 #(
       .SIZE     (`RAM_SIZE / 4),
-      .INIT_FILE(`RAM_FPATH)
+      .INIT_FILE(`RAM_FPATH),
+      .USE_BOOTROM(`USE_BOOTROM)
    ) main_memory (
       .clk_i   (clk_i),
       .rst_ni  (rst_ni),

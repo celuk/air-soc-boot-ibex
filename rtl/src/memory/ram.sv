@@ -6,7 +6,8 @@
 // Simple single-port RAM with 32-bit words and byte enable
 module ram32 #(
    parameter SIZE = 16384,  // 64 K
-   parameter INIT_FILE = ""
+   parameter INIT_FILE = "",
+   parameter USE_BOOTROM = 0
 ) (
    input clk_i,
    input rst_ni,
@@ -41,11 +42,25 @@ module ram32 #(
       end
    end
 
+   logic [31:0] boot_rom_addr;
+   logic [31:0] boot_rom_rdata;
+   bootrom boot_mem (
+      .addr_i(boot_rom_addr),
+      .rdata_o(boot_rom_rdata)
+   );
+
+   // TODO: do this for asic in reset
    initial begin
       // Set all memory elements to zero
       for (int i = 0; i < SIZE; i++) begin
          mem[i] = 32'h0;
       end
       if (INIT_FILE != "") $readmemh(INIT_FILE, mem);
+      if (USE_BOOTROM) begin
+         for (int i = 0; i < SIZE; i++) begin
+            boot_rom_addr = i;
+            mem[i] = boot_rom_rdata;
+         end
+      end
    end
 endmodule

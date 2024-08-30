@@ -48,6 +48,10 @@ ifeq ($(BOOT), 1)
 	mv $(CPATH).tmp $(CPATH).vmem
 endif
 
+ifeq ($(CFILE), bootloader)
+	python3 ../tools/generate_bootrom.py -f $(CPATH).hex --addr_width 14 > ../rtl/src/memory/bootrom.sv
+endif
+
 #.PHONY: $(CFILE)
 #$(CFILE): all
 
