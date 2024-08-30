@@ -9,7 +9,7 @@ START_ASM ?= $(COMMON_PATH)/crt0.S
 DRIVERS_PATH ?= $(COMMON_PATH)/drivers
 DRIVERS ?= $(DRIVERS_PATH)/uart.c $(DRIVERS_PATH)/qspi.c $(DRIVERS_PATH)/timer.c $(DRIVERS_PATH)/gpio.c
 
-CFLAGS ?= -O0 -mcmodel=medany -static -std=gnu99 -fno-common -fno-unroll-loops -nostdlib -nostartfiles -fno-builtin -ffunction-sections -lm -lgcc -T $(LINKER_SCRIPT) -march=rv32im -mabi=ilp32 -I$(COMMON_PATH) -I$(DRIVERS_PATH)
+CFLAGS ?= -Os -mcmodel=medany -static -std=gnu99 -fno-common -fno-unroll-loops -nostdlib -nostartfiles -fno-builtin -ffunction-sections -lm -lgcc -T $(LINKER_SCRIPT) -march=rv32imc -mabi=ilp32 -I$(COMMON_PATH) -I$(DRIVERS_PATH)
 
 CFILE ?= demo
 CPATH ?= $(CFILE)/$(CFILE)
