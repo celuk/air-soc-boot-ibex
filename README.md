@@ -109,5 +109,40 @@ make coremark
 
 ```bash
 make sim coremark
+
 make show
+```
+
+## Kendi Programınızı Yazma, Derleme ve Simüle Etme
+
+Örneğin `example.c` adlı bir c kodu yazıp derlemek ve çalıştırmak istiyorsunuz, o zaman `tests` dosyasında `example` adlı bir dosya oluşturun. Bu dosyanın içinde dosya ismiyle aynı olacak şekilde (ve driver isimlerinden (uart.c, qspi.c, vs.) farklı olacak şekilde) c kodunuzu yazın. Sonrasında derlemek ve çalıştırmak için tek yapmanız gereken aynı şekilde:
+
+```bash
+make compile example
+
+make sim example
+
+make show
+```
+
+## BOOTLOADER ve BOOTROM
+
+** Not: ** Bu kısımlar tam doğrulanmadı ve sıkıntılar var.
+
+Buraya kadar hepsi `0x00000080` adresinden bootlanarak içerideki unified main memory'e yazılmaktadır. Eğer bootloader ile simülasyonda 2. bir program yüklenmek istenirse bootloader derlenmeli ve `header.vh` dosyasında `QSPI_SIM` define edilmeli, s25fl128 flash modeline ise örnek olarak `.mem_file_name("../../../tests/demo/demo.vmem"),` 2. programın vmem dosya yolu parametre olarak verilmeli. 2. program `BOOT=1` opsiyonuyla compile edilmeli. (linkeri ve start assemblysi farklı)
+
+```bash
+make compile bootloader
+
+make compile demo BOOT=1
+
+make sim bootloader
+```
+
+Eğer main memory'e yazılan verilog kodunun içindeki bootrom (içinde qspi'dan okuyan bootloader kodu var) kullanılacaksa `header.vh`'ta `USE_BOOTROM` parametresi `1` yapılır ve:
+
+```bash
+make compile demo BOOT=1
+
+make sim bootloader
 ```
