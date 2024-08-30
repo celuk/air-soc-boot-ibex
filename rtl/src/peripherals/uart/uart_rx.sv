@@ -6,6 +6,7 @@ module uart_rx (
    input  wire        rst_i,
    input  wire [31:0] baud_div_i,
    input  wire        stall_i,
+   input  wire [ 1:0] stop_bit_i,
    output wire [ 7:0] data_o,
    output reg         complete_o,
    input  wire        rx_i
@@ -26,11 +27,11 @@ module uart_rx (
               DATA_7    = 4'd9,
               STOP_BIT  = 4'd10;
 
-   reg  [ 7:0] read_buffer;
-   reg  [31:0] counter;
-   reg         uart_clk_pulse;
+   reg [ 7:0] read_buffer;
+   reg [31:0] counter;
+   reg        uart_clk_pulse;
 
-   assign data_o  = read_buffer;
+   assign data_o = read_buffer;
 
    reg [3:0] start_pattern;
    reg       start_r;
@@ -50,7 +51,7 @@ module uart_rx (
          complete_o <= 0;
          if (uart_clk_pulse) begin
             if ((state == STOP_BIT) && (next == IDLE)) begin
-               start_r   <= 1'b0;
+               start_r <= 1'b0;
                complete_o <= 1;
             end
          end
@@ -74,8 +75,8 @@ module uart_rx (
 
    always @(*) begin
       case (state)
-         IDLE:       if (start_r && ~stall_i) next = START_BIT;
-                     else next = IDLE;
+         IDLE:      if (start_r && ~stall_i) next = START_BIT;
+ else next = IDLE;
          START_BIT: next = DATA_0;
          DATA_0:    next = DATA_1;
          DATA_1:    next = DATA_2;

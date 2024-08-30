@@ -165,19 +165,23 @@ void tekno_printf(const char* fmt, ...)
 
 int uart_rxempty()
 {
-    uart_cfg uart_cfg;
-    return uart_cfg.fields.cfg_1;
+    return (UART_CFG & 0x2) == 0; // RX complete biti kontrol ediliyor
 }
 
 char zgetchar()
 {
-    return (char)UART_RDR;
-    // while (1) {
-    //     if (!uart_rxempty()) {
-    //     }
-    // }
-}
+    // Veri gelene kadar bekle
+    while (uart_rxempty()) {
+        // Bekle
+    }
 
+    char c = (char)UART_RDR;
+
+    // RX complete bitini temizle
+    UART_CFG &= ~0x2;
+
+    return c;
+}
 //-----------------------------------------------
 // scan multiple characters.
 //-----------------------------------------------

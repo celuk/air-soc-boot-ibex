@@ -8,6 +8,7 @@ module uart_rx_old (
    input  wire        rst_i,
    input  wire [15:0] baud_div_i,
    input  wire        re_i,
+   input  wire [ 1:0] stop_bit_i,
    input  wire        stall_i,
    output wire [ 7:0] data_o,
    output wire        full_o,
@@ -15,8 +16,8 @@ module uart_rx_old (
    input  wire        rx_i
 );
 
-   reg [3:0] state;
-   reg [3:0] next;
+   reg [4:0] state;
+   reg [4:0] next;
 
    localparam IDLE      = 4'd0,
               START_BIT = 4'd1,
@@ -28,11 +29,15 @@ module uart_rx_old (
               DATA_5    = 4'd7,
               DATA_6    = 4'd8,
               DATA_7    = 4'd9,
-              STOP_BIT  = 4'd10;
+              STOP_BIT_ONLY_ONE     = 4'd10,
+              STOP_BIT_ONE_________ = 4'd11,
+              STOP_BIT_ONE_AND_HALF = 4'd12,
+              STOP_BIT_ONE_OF_TWO   = 4'd13,
+              STOP_BIT_TWO_OF_TWO   = 4'd14;
 
-   reg  [ 7:0] queue                [31:0];
-   reg  [ 4:0] read_ptr;
-   reg  [ 4:0] write_ptr;
+   reg  [ 7:0] queue                [1:0];
+   reg  [ 0:0] read_ptr;
+   reg  [ 0:0] write_ptr;
    reg  [15:0] counter;
    reg         uart_clk_pulse;
 
@@ -60,13 +65,33 @@ module uart_rx_old (
             read_ptr <= read_ptr + 1;
          end
          if (uart_clk_pulse) begin
-            if ((state == STOP_BIT) && (next == IDLE)) begin
+            if ((state == STOP_BIT_ONLY_ONE) && (next == IDLE) && rx_i) begin
                write_ptr <= write_ptr + 1;
                start_r   <= 1'b0;
             end
+            if ((state == STOP_BIT_ONLY_ONE) && (next == IDLE) && !rx_i) begin
+               start_r <= 1'b0;
+               queue[write_ptr] <= 0;
+            end
+            if ((state == STOP_BIT_ONE_AND_HALF) && (next == IDLE) && rx_i) begin
+               write_ptr <= write_ptr + 1;
+               start_r   <= 1'b0;
+            end
+            if ((state == STOP_BIT_ONE_AND_HALF) && (next == IDLE) && !rx_i) begin
+               start_r <= 1'b0;
+               queue[write_ptr] <= 0;
+            end
+            if ((state == STOP_BIT_TWO_OF_TWO) && (next == IDLE) && rx_i) begin
+               write_ptr <= write_ptr + 1;
+               start_r   <= 1'b0;
+            end
+            if ((state == STOP_BIT_TWO_OF_TWO) && (next == IDLE) && !rx_i) begin
+               start_r <= 1'b0;
+               queue[write_ptr] <= 0;
+            end
          end
          if (counter == baud_div_i) begin
-            counter        <= 0;
+            counter        <= (next == STOP_BIT_ONE_AND_HALF) ? (baud_div_i / 2) : 0;
             uart_clk_pulse <= 1'b1;
          end else begin
             if (start_r) counter <= counter + 1;
@@ -95,9 +120,18 @@ module uart_rx_old (
          DATA_4:    next = DATA_5;
          DATA_5:    next = DATA_6;
          DATA_6:    next = DATA_7;
-         DATA_7:    next = STOP_BIT;
-         STOP_BIT:  next = IDLE;
-         default:   next = IDLE;
+         // verilog_format: off
+         DATA_7: next = (stop_bit_i == 2'b00) ? STOP_BIT_ONLY_ONE     :
+                        (stop_bit_i == 2'b01) ? STOP_BIT_ONE_________ :
+                        (stop_bit_i == 2'b10) ? STOP_BIT_ONE_OF_TWO   :
+                                                           IDLE       ;
+         // verilog_format: on
+         STOP_BIT_ONLY_ONE:     next = IDLE;
+         STOP_BIT_ONE_________: next = rx_i ? STOP_BIT_ONE_AND_HALF : IDLE;
+         STOP_BIT_ONE_AND_HALF: next = IDLE;
+         STOP_BIT_ONE_OF_TWO:   next = rx_i ? STOP_BIT_TWO_OF_TWO : IDLE;
+         STOP_BIT_TWO_OF_TWO:   next = IDLE;
+         default:  next = IDLE;
       endcase
    end
    always @(posedge clk_i) begin

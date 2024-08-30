@@ -39,6 +39,8 @@ module uart_controller_old (
 
    reg tx_full_0;
    reg tx_full_1;
+   reg rx_full_0;
+   reg rx_full_1;
 
    uart_tx_old uart_tx_dut (
       .clk_i     (clk_i),
@@ -57,6 +59,7 @@ module uart_controller_old (
       .clk_i     (clk_i),
       .rst_i     (rst_i),
       .baud_div_i(baud_div),
+      .stop_bit_i(stop_bit[1:0]),
       .re_i      (rx_re),
       .stall_i   (~rx_en),
       .data_o    (rx_data),
@@ -66,13 +69,14 @@ module uart_controller_old (
    );
 
 
-   wire stopped = {tx_full_1, tx_full_0} == 2'b10;
+   wire tx_stopped = {tx_full_1, tx_full_0} == 2'b10;
+   wire rx_stopped = {rx_full_1, rx_full_0} == 2'b10;
 
    always @(posedge clk_i) begin
       if (rst_i) begin
          wb_ack_o <= 1'b0;
          baud_div <= 32'b0;
-         rx_en    <= 1'b0;
+         rx_en    <= 1'b1;
          tx_en    <= 1'b0;
          rx_re    <= 1'b0;
          tx_we    <= 1'b0;
@@ -131,8 +135,11 @@ module uart_controller_old (
             endcase
          end
 
-         if (stopped) begin
+         if (tx_stopped) begin
             cfg_2 <= 1'b1;
+         end
+         if (rx_stopped) begin
+            cfg_1 <= 1'b1;
          end
       end
    end

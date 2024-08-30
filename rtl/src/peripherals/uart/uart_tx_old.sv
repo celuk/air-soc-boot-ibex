@@ -31,10 +31,10 @@ module uart_tx_old (
               DATA_6                = 5'd8,
               DATA_7                = 5'd9,
               STOP_BIT_ONLY_ONE     = 5'd10,
-              STOP_BIT_ONE_________ = 5'd10,
-              STOP_BIT_ONE_AND_HALF = 5'd10,
-              STOP_BIT_ONE_OF_TWO   = 5'd10,
-              STOP_BIT_TWO_OF_TWO   = 5'd10;
+              STOP_BIT_ONE_________ = 5'd11,
+              STOP_BIT_ONE_AND_HALF = 5'd12,
+              STOP_BIT_ONE_OF_TWO   = 5'd13,
+              STOP_BIT_TWO_OF_TWO   = 5'd14;
 
    reg  [ 7:0] queue                [1:0];
 
