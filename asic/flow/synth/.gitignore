@@ -1,0 +1,8 @@
+/genus.cmd*
+/genus.log*
+*.swp
+/genus_synth.*
+/LEC
+/results
+/reports
+/.rs_*.tstamp
