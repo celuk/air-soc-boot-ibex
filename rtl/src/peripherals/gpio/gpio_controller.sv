@@ -50,10 +50,10 @@ module gpio_controller (
          if(wb_stb_i & wb_we_i & !wb_ack_o) begin // write
             case(wb_adr_i)
                8'h04: begin
-                  GPIO_ODR_NEXT[7:0  ] <= wb_sel_i[0] ? wb_dat_i[7:0  ] : GPIO_ODR[7:0  ];
-                  GPIO_ODR_NEXT[15:8 ] <= wb_sel_i[1] ? wb_dat_i[15:8 ] : GPIO_ODR[15:8 ];
-                  GPIO_ODR_NEXT[23:16] <= wb_sel_i[2] ? wb_dat_i[23:16] : GPIO_ODR[23:16];
-                  GPIO_ODR_NEXT[31:24] <= wb_sel_i[3] ? wb_dat_i[31:24] : GPIO_ODR[31:24];
+                  GPIO_ODR_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : GPIO_ODR[7:0  ];
+                  GPIO_ODR_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : GPIO_ODR[15:8 ];
+                  GPIO_ODR_NEXT[23:16] = wb_sel_i[2] ? wb_dat_i[23:16] : GPIO_ODR[23:16];
+                  GPIO_ODR_NEXT[31:24] = wb_sel_i[3] ? wb_dat_i[31:24] : GPIO_ODR[31:24];
                end
             endcase
          end 
