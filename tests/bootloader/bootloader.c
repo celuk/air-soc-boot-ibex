@@ -22,7 +22,7 @@ static const uint32_t size = depth * word_length;
 
 Code_ram code_ram;
 
-#define CODE_RAM_BASE_ADDR
+#define CODE_RAM_BASE_ADDR 0x00010000
 #define CODE_RAM (*(volatile uint32_t*) (CODE_RAM_BASE_ADDR))
 
 void Code_ram_init(Code_ram *self, uint32_t base_address, uint32_t size) {

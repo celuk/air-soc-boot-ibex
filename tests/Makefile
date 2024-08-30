@@ -1,10 +1,22 @@
 RISCVTYPE ?= riscv32-unknown-elf
 CC = $(RISCVTYPE)-gcc
 
+# use BOOT=1 while making if you will load the program from bootloader
+# e.g.
+# make compile bootloader
+# make compile demo BOOT=1
+BOOT ?= 0
+
+WITHBOOTLOADER ?=
+
+ifeq ($(BOOT), 1)
+    WITHBOOTLOADER := withbootloader
+endif
+
 COMMON_PATH ?= common
 
-LINKER_SCRIPT ?= $(COMMON_PATH)/link.ld
-START_ASM ?= $(COMMON_PATH)/crt0.S
+LINKER_SCRIPT ?= $(COMMON_PATH)/link$(WITHBOOTLOADER).ld
+START_ASM ?= $(COMMON_PATH)/crt0$(WITHBOOTLOADER).S
 
 DRIVERS_PATH ?= $(COMMON_PATH)/drivers
 DRIVERS ?= $(DRIVERS_PATH)/uart.c $(DRIVERS_PATH)/qspi.c $(DRIVERS_PATH)/timer.c $(DRIVERS_PATH)/gpio.c
@@ -30,6 +42,11 @@ all:
 	python3 ../tools/bin2hex.py $(CPATH).bin > $(CPATH).hex
 
 	$(RISCVTYPE)-objcopy -O verilog $(CPATH).riscv $(CPATH).vmem
+
+ifeq ($(BOOT), 1)
+	python3 ../tools/clear_adresses_for_qspi_boot.py -f $(CPATH).vmem > $(CPATH).tmp
+	mv $(CPATH).tmp $(CPATH).vmem
+endif
 
 #.PHONY: $(CFILE)
 #$(CFILE): all
