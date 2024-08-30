@@ -343,6 +343,7 @@ module qspi_controller (
                   // at least one byte should be transferred
                   //buffer_next[31:24] = QSPI_DR0[7:0];
                   
+                  // TODO: fix here
                   //buffer_next[`MAX_BIT-1 -: (QSPI_CCR_DATA_SIZE+1)*8] = QSPI_DRs[0 +: (QSPI_CCR_DATA_SIZE+1)*8];
                   for (i = 0; i < (QSPI_CCR_DATA_SIZE+1)*8; i = i + 1) begin
                      //buffer_next[`MAX_BIT-1 - i] = QSPI_DRs[i];
