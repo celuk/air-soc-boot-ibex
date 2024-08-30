@@ -44,7 +44,7 @@ all:
 	$(RISCVTYPE)-objcopy -O verilog $(CPATH).riscv $(CPATH).vmem
 
 ifeq ($(BOOT), 1)
-	python3 ../tools/clear_adresses_for_qspi_boot.py -f $(CPATH).vmem > $(CPATH).tmp
+	python3 ../tools/clear_adresses_for_qspi_boot.py -f $(CPATH).vmem --place_zero > $(CPATH).tmp
 	mv $(CPATH).tmp $(CPATH).vmem
 endif
 

@@ -1,11 +1,23 @@
 import argparse
 
-def remove_addresses_from_vmem_file(input_file):
+def process_vmem_file(input_file, place_zero):
     with open(input_file, 'r') as file:
         lines = file.readlines()
 
-    # Filter out lines that start with '@'
-    filtered_lines = [line for line in lines if not line.startswith('@')]
+    filtered_lines = []
+    previous_address = None
+
+    for line in lines:
+        if line.startswith('@'):
+            current_address = int(line[1:], 16)
+            if previous_address is not None and place_zero:
+                gap = current_address - previous_address
+                if gap > 0:
+                    zero_bytes = '00 ' * gap
+                    filtered_lines.append(zero_bytes.strip() + '\n')
+            previous_address = current_address
+        else:
+            filtered_lines.append(line)
 
     # Add @00000000 at the top
     filtered_lines.insert(0, '@00000000\n')
@@ -16,6 +28,7 @@ def remove_addresses_from_vmem_file(input_file):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process a vmem file.')
     parser.add_argument('--file', '-f', type=str, help='The input vmem file')
+    parser.add_argument('--place_zero', '-pz', action='store_true', help='Place zero bytes for gaps between addresses')
 
     args = parser.parse_args()
-    remove_addresses_from_vmem_file(args.file)
+    process_vmem_file(args.file, args.place_zero)

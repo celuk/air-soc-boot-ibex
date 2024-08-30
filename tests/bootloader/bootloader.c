@@ -57,22 +57,22 @@ void load_code_through_qspi()
         *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = data[1];
         address += 4;
         //*Code_ram_set(&code_ram, address) = data[2];
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = data[0];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = data[2];
         address += 4;
         //*Code_ram_set(&code_ram, address) = data[3];
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = data[0];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = data[3];
         address += 4;
         //*Code_ram_set(&code_ram, address) = data[4];
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = data[0];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = data[4];
         address += 4;
         //*Code_ram_set(&code_ram, address) = data[5];
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = data[0];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = data[5];
         address += 4;
         //*Code_ram_set(&code_ram, address) = data[6];
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = data[0];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = data[6];
         address += 4;
         //*Code_ram_set(&code_ram, address) = data[7];
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = data[0];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = data[7];
         address += 4;
     }
 }
