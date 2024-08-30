@@ -78,12 +78,13 @@ module cache #(
     logic [LINE_BYTE_W*8-1:0] way1_rline;
     logic                     way1_rdirty;
 
-    vproc_cache_way #(
+    cache_way #(
         .TAG_BIT_W    ( TAG_BIT_W      ),
         .INDEX_BIT_W  ( INDEX_BIT_W    ),
         .LINE_BYTE_W  ( LINE_BYTE_W    )
     ) way0 (
         .clk_i        ( clk_i          ),
+        .rst_ni       ( rst_ni         ),
         .windex_i     ( way_windex     ),
         .we_i         ( way0_we        ),
         .wtag_i       ( way_wtag       ),
@@ -96,12 +97,13 @@ module cache #(
         .rdirty_o     ( way0_rdirty    )
     );
 
-    vproc_cache_way #(
+    cache_way #(
         .TAG_BIT_W    ( TAG_BIT_W      ),
         .INDEX_BIT_W  ( INDEX_BIT_W    ),
         .LINE_BYTE_W  ( LINE_BYTE_W    )
     ) way1 (
         .clk_i        ( clk_i          ),
+        .rst_ni       ( rst_ni         ),
         .windex_i     ( way_windex     ),
         .we_i         ( way1_we        ),
         .wtag_i       ( way_wtag       ),
@@ -141,7 +143,8 @@ module cache #(
             mem_req_cnt_q.part.cnt   <= '0;
             mem_data_cnt_q.part.done <= 1'b1;
             mem_data_cnt_q.part.cnt  <= '0;
-        end else begin
+        end
+        else begin
             check_tag_q    <= check_tag_d;
             lru_q          <= lru_d;
             way0_valid_q   <= way0_valid_d;
@@ -290,12 +293,13 @@ module cache #(
 endmodule
 
 
-module vproc_cache_way #(
+module cache_way #(
         parameter int unsigned TAG_BIT_W   = 4,
         parameter int unsigned INDEX_BIT_W = 8,
         parameter int unsigned LINE_BYTE_W = 16
     )(
         input  logic                     clk_i,
+        input  logic                     rst_ni,
 
         input  logic [INDEX_BIT_W-1:0]   windex_i,
         input  logic                     we_i,
@@ -312,36 +316,41 @@ module vproc_cache_way #(
 
     localparam int unsigned WAY_LEN = 2 ** INDEX_BIT_W;
 
-    logic [TAG_BIT_W-1:0]     tags[WAY_LEN]  = '{default: '1};
-    logic [LINE_BYTE_W*8-1:0] lines[WAY_LEN] = '{default: '0}; //128'h00112233445566778899AABBCCDDEEFF};
-    logic [WAY_LEN-1:0]       dirty          = '0;
+    logic [TAG_BIT_W-1:0]     tags[WAY_LEN] ; //= '{default: '1};
+    logic [LINE_BYTE_W*8-1:0] lines[WAY_LEN]; //= '{default: '0}; //128'h00112233445566778899AABBCCDDEEFF};
+    logic [WAY_LEN-1:0]       dirty         ; //= '0;
 
-    always_ff @(posedge clk_i) begin
-        rtag_o   <= tags [rindex_i];
-        rline_o  <= lines[rindex_i];
-        rdirty_o <= dirty[rindex_i];
+    always_ff @(posedge clk_i or negedge rst_ni) begin
+        if (!rst_ni) begin
+            tags  = '{default: '1};
+            lines = '{default: '0};
+            dirty = '0;
+        end
+        else begin
+            rtag_o   <= tags [rindex_i];
+            rline_o  <= lines[rindex_i];
+            rdirty_o <= dirty[rindex_i];
 
-        if (we_i) begin
-            tags [windex_i] <= wtag_i;
-            dirty[windex_i] <= wdirty_i;
+            if (we_i) begin
+                tags [windex_i] <= wtag_i;
+                dirty[windex_i] <= wdirty_i;
 
-            if (rindex_i == windex_i) begin
-                rtag_o   <= wtag_i;
-                rdirty_o <= wdirty_i;
-            end
+                if (rindex_i == windex_i) begin
+                    rtag_o   <= wtag_i;
+                    rdirty_o <= wdirty_i;
+                end
 
-            for (int i = 0; i < LINE_BYTE_W; i++) begin
-                if (wline_be_i[i]) begin
-                    lines[windex_i][8*i +: 8] <= wline_data_i[8*i +: 8];
+                for (int i = 0; i < LINE_BYTE_W; i++) begin
+                    if (wline_be_i[i]) begin
+                        lines[windex_i][8*i +: 8] <= wline_data_i[8*i +: 8];
 
-                    if (rindex_i == windex_i) begin
-                        rline_o[8*i +: 8] <= wline_data_i[8*i +: 8];
+                        if (rindex_i == windex_i) begin
+                            rline_o[8*i +: 8] <= wline_data_i[8*i +: 8];
+                        end
                     end
                 end
             end
-
         end
     end
 
 endmodule
-

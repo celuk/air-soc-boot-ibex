@@ -18,12 +18,12 @@ module timer_controller (
    
 );
 
-reg [31:0] wb_read_data_r = 0;
-reg [31:0] wb_read_data_next_r = 0;
+reg [31:0] wb_read_data_r;
+reg [31:0] wb_read_data_next_r;
 assign wb_dat_o = wb_read_data_r;
 
-reg wb_ack_r = 0;
-reg wb_ack_next_r = 0;
+reg wb_ack_r;
+reg wb_ack_next_r;
 assign wb_ack_o = wb_ack_r;
 
 reg [31:0] TIM_PRE;
