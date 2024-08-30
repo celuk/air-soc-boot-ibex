@@ -244,7 +244,7 @@ void init_uart()
     uart_cfg.fields.cfg_0 = 0x1;
     uart_cfg.fields.cfg_1 = 0x0;
     uart_cfg.fields.cfg_2 = 0x0;
-    UART_CFG = uart_cfg.bits;
-    UART_STP = uart_stp.bits;
     UART_CPB = uart_cpb.bits;
+    UART_STP = uart_stp.bits;
+    UART_CFG = uart_cfg.bits;
 }
