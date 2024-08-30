@@ -9,6 +9,8 @@ Flow asic klasöründe var, rapor ve çıktılarıyla tam hali aşağıdaki driv
 
 https://drive.google.com/file/d/1F1wVqM8RilMV8nuH__U9k4ssZyCk4paq/view?usp=sharing
 
+Büyük oranda https://github.com/agh-riscv/mtm_ppcu_vlsi_riscv reposundaki scriptler kullanılıp gpdk045 pdk'si için uyarlanmıştır.
+
 ![asic](docs/air_soc_asic.png)
 
 Akış okulda bulunan Cadence lisansı ile geçirildi, serverda da dosyalar yok fakat önbelleklerin küçültülebileceği söylenmişti, header.vh'ta minimum size olan 64 byte yapıldı. Yaklaşık 1000um x 1000um, 100MHz fakat 7 DRC hatası var.
