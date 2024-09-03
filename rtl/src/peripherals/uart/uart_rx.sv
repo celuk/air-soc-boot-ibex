@@ -3,7 +3,7 @@
 
 
 // RX paketleri circuilar bir queue ya konulur.
-module uart_rx_old (
+module uart_rx (
    input  wire        clk_i,
    input  wire        rst_i,
    input  wire [15:0] baud_div_i,

@@ -5,7 +5,7 @@
 `include "header.vh"
 
 // Bu modulun tek gorevi wishbone sinyallerini UART registerlarina yazmak
-module uart_controller_old (
+module uart_controller (
    input  wire        clk_i,
    input  wire        rst_i,
    input  wire [ 7:0] wb_adr_i,
