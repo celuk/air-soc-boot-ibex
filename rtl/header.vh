@@ -31,7 +31,7 @@
 
 `define USE_BOOTROM 0
 
-//`define QSPI_SIM
+`define QSPI_SIM
 //`define I2C_SIM
 
 `define MEM_BASE_ADDR   32'h0000_0000

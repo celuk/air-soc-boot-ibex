@@ -3,10 +3,12 @@
 #include "timer.h"
 
 int main(){
-    //init_uart();
+    init_uart();
 
-    //wait_for_us(500);
-    wait_for_us(10);
+    tekno_printf("basladi\n");
+
+    wait_for_us(500);
+    //wait_for_us(10);
 
     qspi_set_ccr(
         /*inst_value*/       CMD_RESET,
@@ -19,7 +21,8 @@ int main(){
     );
     wait_for_not_busy();
 
-    wait_for_us(10);
+    wait_for_us(500);
+    //wait_for_us(10);
 
     QSPI_ADR = 0x00000000;
     qspi_set_ccr(
@@ -32,6 +35,8 @@ int main(){
         /*clear_status_reg*/ 1
     );
     wait_for_not_busy();
+
+    tekno_printf("READID: %x\n", QSPI_DR0);
 
     QSPI_ADR = 0x00000000;
     qspi_set_ccr(
@@ -106,6 +111,15 @@ int main(){
         /*clear_status_reg*/ 1
     );
     wait_for_not_busy();
+
+    tekno_printf("DR0: %x\n", QSPI_DR0);
+    tekno_printf("DR1: %x\n", QSPI_DR1);
+    tekno_printf("DR2: %x\n", QSPI_DR2);
+    tekno_printf("DR3: %x\n", QSPI_DR3);
+    tekno_printf("DR4: %x\n", QSPI_DR4);
+    tekno_printf("DR5: %x\n", QSPI_DR5);
+    tekno_printf("DR6: %x\n", QSPI_DR6);
+    tekno_printf("DR7: %x\n", QSPI_DR7);
 
     qspi_set_ccr(
         /*inst_value*/       CMD_WREN,
@@ -215,6 +229,15 @@ int main(){
     QSPI_DR6 = 0xaaaaaaaa;
     QSPI_DR7 = 0xaaaaaaaa;
 
+    tekno_printf("DR0: %x\n", QSPI_DR0);
+    tekno_printf("DR1: %x\n", QSPI_DR1);
+    tekno_printf("DR2: %x\n", QSPI_DR2);
+    tekno_printf("DR3: %x\n", QSPI_DR3);
+    tekno_printf("DR4: %x\n", QSPI_DR4);
+    tekno_printf("DR5: %x\n", QSPI_DR5);
+    tekno_printf("DR6: %x\n", QSPI_DR6);
+    tekno_printf("DR7: %x\n", QSPI_DR7);
+
     QSPI_ADR = 0x00000000;
     qspi_set_ccr(
         /*inst_value*/       CMD_PP,
@@ -251,6 +274,15 @@ int main(){
         /*clear_status_reg*/ 1
     );
     wait_for_not_busy();
+
+    tekno_printf("DR0: %x\n", QSPI_DR0);
+    tekno_printf("DR1: %x\n", QSPI_DR1);
+    tekno_printf("DR2: %x\n", QSPI_DR2);
+    tekno_printf("DR3: %x\n", QSPI_DR3);
+    tekno_printf("DR4: %x\n", QSPI_DR4);
+    tekno_printf("DR5: %x\n", QSPI_DR5);
+    tekno_printf("DR6: %x\n", QSPI_DR6);
+    tekno_printf("DR7: %x\n", QSPI_DR7);
 
     return 0;
 }

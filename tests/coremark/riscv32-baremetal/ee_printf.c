@@ -662,56 +662,29 @@ ee_vsprintf(char *buf, const char *fmt, va_list args)
 }
 
 ///////////////////////////////////////////////////////
-typedef union
+#define UART_TDR       (*(volatile uint32_t*)0xFF00000c)
+#define UART_CFG       (*(volatile uint32_t*)0xFF000010)
+
+int uart_txfull()
 {
-	struct {
-		unsigned int tx_en    : 1;
-		unsigned int rx_en 	  : 1;
-		unsigned int null	  : 14;
-		unsigned int baud_div : 16;
-	} fields;
-	uint32_t bits;
-}uart_ctrl;
-
-typedef union
-{
-	struct {
-		unsigned int tx_full  : 1;
-		unsigned int rx_full  : 1;
-		unsigned int tx_empty : 1;
-		unsigned int rx_empty : 1;
-		unsigned int null	  : 28;
-	} fields;
-	uint32_t bits;
-}uart_status;
-
-#define UART_STATUS      (*(volatile uint32_t*)0xFF000004)
-#define UART_RDATA       (*(volatile uint32_t*)0xFF000008)
-#define UART_WDATA       (*(volatile uint32_t*)0xFF00000c)
-
-//-----------------------------------------------
-// print a single character.
-//-----------------------------------------------
-int uart_txfull(){
-	uart_status uart_stat;
-	uart_stat.bits = UART_STATUS;
-	return uart_stat.fields.tx_full;
+    while ((UART_CFG & 0x4) == 0) { }
 }
 
 void zputchar(char c)
 {
-	while(uart_txfull());
-	UART_WDATA = c;
-}
+    uart_txfull();
 
-//-----------------------------------------------
-// print a string (char*).
-//-----------------------------------------------
+    // TX complete bitini temizle
+    UART_CFG &= ~0x4;
 
-void print(const char *p)
-{
-	while (*p)
-		zputchar(*(p++));
+    // Veriyi gönder
+    UART_TDR = c;
+
+    // TX enable bitini set et
+    UART_CFG = UART_CFG | 0x1;
+
+    // TX tamamlanana kadar bekle
+    uart_txfull();
 }
 
 
