@@ -1192,18 +1192,19 @@ module qspi_controller (
          prescaler_counter <= 6'b0;
       end
       else begin
-         if(prescaler_counter == prescaler - 1) begin
-            prescaler_counter <= 6'b0;
-            sck_r <= ~sck_r;
-         end
-         else begin
-            prescaler_counter <= prescaler_counter + 1;
-            sck_r <= sck_r;
-         end
+         sck_r <= ~sck_r;
+         //if(prescaler_counter == prescaler - 1) begin
+         //   prescaler_counter <= 6'b0;
+         //   sck_r <= ~sck_r;
+         //end
+         //else begin
+         //   prescaler_counter <= prescaler_counter + 1;
+         //   sck_r <= sck_r;
+         //end
       end
    end
 
-   assign qspi_sck_o = sclk; //(|bit_counter) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0; //sclk; //(state != IDLE) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0;
+   assign qspi_sck_o = sclk; //~qspi_cs_n_o & ~clk_i; //sck_r; //sclk; //(|bit_counter) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0; //sclk; //(state != IDLE) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0;
    
 
    /*

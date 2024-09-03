@@ -56,7 +56,7 @@ void wait_for_wip_done() {
     while (read_status_register(CMD_RDSR1) & 0x01);
 }
 
-void qspi_enable_quad(){
+void qspi_enable_quad_mode(){
     qspi_set_ccr(
         /*inst_value*/       CMD_WREN,
         /*data_mod*/         1,
@@ -82,6 +82,58 @@ void qspi_enable_quad(){
     );
     wait_for_not_busy();
     wait_for_wip_done();
+
+    qspi_set_ccr(
+        /*inst_value*/       CMD_WRDI,
+        /*data_mod*/         1,
+        /*wr_flash*/         0,
+        /*dummy_cycle*/      0,
+        /*data_size*/        0,
+        /*prescaler*/        1,
+        /*clear_status_reg*/ 1
+    );
+    wait_for_not_busy();
+    wait_for_wel_down();
+}
+
+void qspi_disable_quad_mode(){
+    qspi_set_ccr(
+        /*inst_value*/       CMD_WREN,
+        /*data_mod*/         1,
+        /*wr_flash*/         0,
+        /*dummy_cycle*/      0,
+        /*data_size*/        0,
+        /*prescaler*/        1,
+        /*clear_status_reg*/ 1
+    );
+    wait_for_not_busy();
+    wait_for_wel_set();
+
+    // 8bit CR | 8bit SR
+    QSPI_DR0 = 0x00000000; // CR[1] = 0 for single and dual mode
+    qspi_set_ccr(
+        /*inst_value*/       CMD_WRR,
+        /*data_mod*/         1,
+        /*wr_flash*/         1,
+        /*dummy_cycle*/      0,
+        /*data_size*/        1, // SR + CR = 2 byte
+        /*prescaler*/        1,
+        /*clear_status_reg*/ 1
+    );
+    wait_for_not_busy();
+    wait_for_wip_done();
+
+    qspi_set_ccr(
+        /*inst_value*/       CMD_WRDI,
+        /*data_mod*/         1,
+        /*wr_flash*/         0,
+        /*dummy_cycle*/      0,
+        /*data_size*/        0,
+        /*prescaler*/        1,
+        /*clear_status_reg*/ 1
+    );
+    wait_for_not_busy();
+    wait_for_wel_down();
 }
 
 uint32_t* qspi_read_qor(uint32_t address) {

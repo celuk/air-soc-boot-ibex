@@ -502,6 +502,10 @@ module air_soc (
       //.mem_file_name("none"),
       .otp_file_name("none"),
       .AddrRANGE(24'h00FFFF)
+      
+      //,.TimingModel   ( "S25FS128SAGMFI000_F_30pF" )
+      ,.TimingModel   ( "S25FL128SAGMFI000_F_30pF" )
+      ,.UserPreload   (1)
    ) flash (
       // Data Inputs/Outputs
       .SI(qspi_data_io[0]),
