@@ -93,7 +93,7 @@ module qspi_controller (
    wire [1:0] QSPI_CCR_DATA_MOD = QSPI_CCR[9:8];
    wire QSPI_CCR_WR = QSPI_CCR[10];
    wire [4:0] QSPI_CCR_DUMMY_CYC = QSPI_CCR[15:11];
-   wire [8:0] QSPI_CCR_DATA_SIZE = QSPI_CCR[24:16];
+   wire [4:0] QSPI_CCR_DATA_SIZE = QSPI_CCR[20:16];
    wire [5:0] QSPI_CCR_PRESCALER = QSPI_CCR[30:25];
    wire QSPI_CCR_CLEAR_STA = QSPI_CCR[31];
 
@@ -345,7 +345,7 @@ module qspi_controller (
                   
                   // TODO: fix here
                   //buffer_next[`MAX_BIT-1 -: (QSPI_CCR_DATA_SIZE+1)*8] = QSPI_DRs[0 +: (QSPI_CCR_DATA_SIZE+1)*8];
-                  for (i = 0; i < (QSPI_CCR_DATA_SIZE+1)*8; i = i + 1) begin
+                  for (i = 0; i < (QSPI_CCR_DATA_SIZE+1); i = i + 1) begin
                      //buffer_next[`MAX_BIT-1 - i] = QSPI_DRs[i];
                      buffer_next[`MAX_BIT-1 - i*8 -: 8] = QSPI_DRs[i*8 +: 8];
                   end
