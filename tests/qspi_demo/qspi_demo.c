@@ -202,7 +202,28 @@ int main(){
 
     qspi_enable_quad_mode();
 
-    QSPI_ADR = 0x000000f0;
+    qspi_set_ccr(
+        /*inst_value*/       CMD_WREN,
+        /*data_mod*/         1,
+        /*wr_flash*/         0,
+        /*dummy_cycle*/      0,
+        /*data_size*/        0,
+        /*prescaler*/        1,
+        /*clear_status_reg*/ 1
+    );
+    wait_for_not_busy();
+    wait_for_wel_set();
+
+    QSPI_DR0 = 0xbbbbbbbb;
+    QSPI_DR1 = 0xbbbbbbbb;
+    QSPI_DR2 = 0xbbbbbbbb;
+    QSPI_DR3 = 0xbbbbbbbb;
+    QSPI_DR4 = 0xbbbbbbbb;
+    QSPI_DR5 = 0xbbbbbbbb;
+    QSPI_DR6 = 0xbbbbbbbb;
+    QSPI_DR7 = 0xbbbbbbbb;
+
+    QSPI_ADR = 0x00000f00;
     qspi_set_ccr(
         /*inst_value*/       CMD_QPP,
         /*data_mod*/         3,
@@ -239,7 +260,7 @@ int main(){
     );
     wait_for_not_busy();
 
-    QSPI_ADR = 0x000000f0;
+    QSPI_ADR = 0x00000f00;
     qspi_set_ccr(
         /*inst_value*/       CMD_QOR,
         /*data_mod*/         3,
