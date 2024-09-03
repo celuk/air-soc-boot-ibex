@@ -85,15 +85,15 @@ async def anabellek(dut):
     for test in tests:
         dut.rst_ni.value = 0
         await RisingEdge(dut.clk_i)
-        if test != "bootloader":
-            for index, instruction in enumerate(tests[test]["instructions"]):
-                # fmt: off
-                #dut.ram_i.dp_ram_i.mem[(index << 2) + 0].value = (int(instruction, 16) >>  0) & 0xFF
-                #dut.ram_i.dp_ram_i.mem[(index << 2) + 1].value = (int(instruction, 16) >>  8) & 0xFF
-                #dut.ram_i.dp_ram_i.mem[(index << 2) + 2].value = (int(instruction, 16) >> 16) & 0xFF
-                #dut.ram_i.dp_ram_i.mem[(index << 2) + 3].value = (int(instruction, 16) >> 24) & 0xFF
-                # fmt: on
-                dut.main_memory.mem[index].value = int(instruction, 16)
+        #if test != "bootloader":
+        for index, instruction in enumerate(tests[test]["instructions"]):
+            # fmt: off
+            #dut.ram_i.dp_ram_i.mem[(index << 2) + 0].value = (int(instruction, 16) >>  0) & 0xFF
+            #dut.ram_i.dp_ram_i.mem[(index << 2) + 1].value = (int(instruction, 16) >>  8) & 0xFF
+            #dut.ram_i.dp_ram_i.mem[(index << 2) + 2].value = (int(instruction, 16) >> 16) & 0xFF
+            #dut.ram_i.dp_ram_i.mem[(index << 2) + 3].value = (int(instruction, 16) >> 24) & 0xFF
+            # fmt: on
+            dut.main_memory.mem[index].value = int(instruction, 16)
 
         await RisingEdge(dut.clk_i)
         dut.rst_ni.value = 1

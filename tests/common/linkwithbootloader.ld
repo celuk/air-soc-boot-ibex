@@ -11,15 +11,15 @@ __DYNAMIC = 0;
 
 MEMORY
 {
-    boot : ORIGIN = 0x00010000, LENGTH = 0x00002000 /*   8 kB */
-    ram  : ORIGIN = 0x00010100, LENGTH = 0x0003E000 /* 248 kB */
+    boot : ORIGIN = 0x00002000, LENGTH = 0x00002000 /*   8 kB */
+    ram  : ORIGIN = 0x00002100, LENGTH = 0x00009000 /* 248 kB */
 }
 
 STACK_LEN = 0x4000; /* 16 kB */
 
 SECTIONS
 {
-    .vectors 0x00010000 : {
+    .vectors 0x00002000 : {
         *(.vectors)
     } >boot
 
@@ -93,11 +93,11 @@ SECTIONS
         _stack_end = .;
     } >ram
 
-    .stab 0x00010000 (NOLOAD) : {
+    .stab 0x00002000 (NOLOAD) : {
         [ .stab ]
     }
 
-    .stabstr 0x00010000 (NOLOAD) : {
+    .stabstr 0x00002000 (NOLOAD) : {
         [ .stabstr ]
     }
 }

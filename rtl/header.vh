@@ -18,8 +18,8 @@
 
 // TODO: Handle if DCACHE_SZ is 0
 // Cache sizes must be at least mutiple of 64 --> e.g. 64, 128, 256, ...
-`define ICACHE_SZ 8192
-`define DCACHE_SZ 8192
+`define ICACHE_SZ 0
+`define DCACHE_SZ 64
 `define MEM_W 32
 `define ICACHE_LINE_W 64
 `define DCACHE_LINE_W 64
@@ -27,7 +27,7 @@
 `define DCACHE_WAY_LEN `DCACHE_SZ / (`DCACHE_LINE_W / 8) / 2
 
 `define RAM_FPATH ""
-`define RAM_SIZE 131072 //256 * 1024
+`define RAM_SIZE 131072 //32'h0002_0000 //131072 //256 * 1024
 
 `define USE_BOOTROM 0
 
