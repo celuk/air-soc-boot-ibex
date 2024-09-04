@@ -42,7 +42,7 @@ module uart_controller (
    reg rx_full_0;
    reg rx_full_1;
 
-   uart_tx_old uart_tx_dut (
+   uart_tx uart_tx_dut (
       .clk_i     (clk_i),
       .rst_i     (rst_i),
       .baud_div_i(baud_div),
@@ -55,7 +55,7 @@ module uart_controller (
       .tx_o      (uart_tx_o)
    );
 
-   uart_rx_old uart_rx_dut (
+   uart_rx uart_rx_dut (
       .clk_i     (clk_i),
       .rst_i     (rst_i),
       .baud_div_i(baud_div),
