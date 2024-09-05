@@ -57,4 +57,4 @@ endif
 
 .PHONY: clean
 clean:
-	rm -f $(CFILE)/*.log $(CFILE)/*.info $(CFILE)/index.html $(CFILE)/*.o $(CFILE)/*.s $(CFILE)/*.riscv $(CFILE)/*.bin $(CFILE)/*.hex $(CFILE)/*.vh $(CFILE)/*.vmem $(CFILE)/*.coe $(CFILE)/*.txt $(CFILE)/*.v $(CFILE)/*.dump
+	rm -f $(CFILE)/*.log $(CFILE)/*.info $(CFILE)/index.html $(CFILE)/*.o $(CFILE)/*.s $(CFILE)/*.riscv $(CFILE)/*.bin $(CFILE)/*.hex $(CFILE)/*.vh $(CFILE)/*.vmem $(CFILE)/*.coe $(CFILE)/*.txt $(CFILE)/*.v $(CFILE)/*.dump $(CFILE)/*.tmp
