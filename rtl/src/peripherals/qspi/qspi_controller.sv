@@ -93,7 +93,7 @@ module qspi_controller (
    wire [1:0] QSPI_CCR_DATA_MOD = QSPI_CCR[9:8];
    wire QSPI_CCR_WR = QSPI_CCR[10];
    wire [4:0] QSPI_CCR_DUMMY_CYC = QSPI_CCR[15:11];
-   wire [8:0] QSPI_CCR_DATA_SIZE = QSPI_CCR[24:16];
+   wire [4:0] QSPI_CCR_DATA_SIZE = QSPI_CCR[20:16];
    wire [5:0] QSPI_CCR_PRESCALER = QSPI_CCR[30:25];
    wire QSPI_CCR_CLEAR_STA = QSPI_CCR[31];
 
@@ -345,7 +345,7 @@ module qspi_controller (
                   
                   // TODO: fix here
                   //buffer_next[`MAX_BIT-1 -: (QSPI_CCR_DATA_SIZE+1)*8] = QSPI_DRs[0 +: (QSPI_CCR_DATA_SIZE+1)*8];
-                  for (i = 0; i < (QSPI_CCR_DATA_SIZE+1)*8; i = i + 1) begin
+                  for (i = 0; i < (QSPI_CCR_DATA_SIZE+1); i = i + 1) begin
                      //buffer_next[`MAX_BIT-1 - i] = QSPI_DRs[i];
                      buffer_next[`MAX_BIT-1 - i*8 -: 8] = QSPI_DRs[i*8 +: 8];
                   end
@@ -1192,18 +1192,19 @@ module qspi_controller (
          prescaler_counter <= 6'b0;
       end
       else begin
-         if(prescaler_counter == prescaler - 1) begin
-            prescaler_counter <= 6'b0;
-            sck_r <= ~sck_r;
-         end
-         else begin
-            prescaler_counter <= prescaler_counter + 1;
-            sck_r <= sck_r;
-         end
+         sck_r <= ~sck_r;
+         //if(prescaler_counter == prescaler - 1) begin
+         //   prescaler_counter <= 6'b0;
+         //   sck_r <= ~sck_r;
+         //end
+         //else begin
+         //   prescaler_counter <= prescaler_counter + 1;
+         //   sck_r <= sck_r;
+         //end
       end
    end
 
-   assign qspi_sck_o = sclk; //(|bit_counter) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0; //sclk; //(state != IDLE) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0;
+   assign qspi_sck_o = sclk; //~qspi_cs_n_o & ~clk_i; //sck_r; //sclk; //(|bit_counter) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0; //sclk; //(state != IDLE) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0;
    
 
    /*

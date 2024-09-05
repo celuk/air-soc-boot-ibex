@@ -5,7 +5,7 @@
 `include "header.vh"
 
 // Bu modulun tek gorevi wishbone sinyallerini UART registerlarina yazmak
-module uart_controller_old (
+module uart_controller (
    input  wire        clk_i,
    input  wire        rst_i,
    input  wire [ 7:0] wb_adr_i,
@@ -42,7 +42,7 @@ module uart_controller_old (
    reg rx_full_0;
    reg rx_full_1;
 
-   uart_tx_old uart_tx_dut (
+   uart_tx uart_tx_dut (
       .clk_i     (clk_i),
       .rst_i     (rst_i),
       .baud_div_i(baud_div),
@@ -55,7 +55,7 @@ module uart_controller_old (
       .tx_o      (uart_tx_o)
    );
 
-   uart_rx_old uart_rx_dut (
+   uart_rx uart_rx_dut (
       .clk_i     (clk_i),
       .rst_i     (rst_i),
       .baud_div_i(baud_div),

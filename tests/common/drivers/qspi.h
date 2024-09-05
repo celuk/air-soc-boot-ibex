@@ -81,7 +81,8 @@ unsigned int read_status_register(unsigned int cmd);
 void wait_for_wel_set();
 void wait_for_wip_done();
 void wait_for_wel_down();
-void qspi_enable_quad();
+void qspi_enable_quad_mode();
+void qspi_disable_quad_mode();
 
 //void qspi_wait_for_not_busy();
 //void qspi_wait_for_transaction_done();

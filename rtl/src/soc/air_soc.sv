@@ -9,8 +9,8 @@ module air_soc (
    input wire clk_i,
    input wire rst_ni,
 
-   // input  wire uart_rx_i,
-   // output wire uart_tx_o,
+   input  wire uart_rx_i,
+   output wire uart_tx_o,
 
    `ifndef QSPI_SIM
    output wire qspi_cs_n_o,
@@ -33,9 +33,6 @@ module air_soc (
    input  wire usb_dp_rx_i,
    input  wire usb_dn_rx_i
 );
-
-    wire uart_tx_o;
-    wire uart_rx_i = uart_tx_o;
 
    logic               mem_req;
    logic [       31:0] mem_addr;
@@ -505,6 +502,10 @@ module air_soc (
       //.mem_file_name("none"),
       .otp_file_name("none"),
       .AddrRANGE(24'h00FFFF)
+      
+      //,.TimingModel   ( "S25FS128SAGMFI000_F_30pF" )
+      ,.TimingModel   ( "S25FL128SAGMFI000_F_30pF" )
+      ,.UserPreload   (1)
    ) flash (
       // Data Inputs/Outputs
       .SI(qspi_data_io[0]),

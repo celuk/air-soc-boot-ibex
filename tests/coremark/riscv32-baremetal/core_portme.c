@@ -23,37 +23,15 @@ Original Author: Shay Gal-on
 #define CPU_CLK CLOCKS_PER_SEC //50000000  // 50 Mhz
 #define BAUD_RATE 115200
 
-typedef union
+#define UART_CPB       (*(volatile uint32_t*)0xFF000000)
+#define UART_STP       (*(volatile uint32_t*)0xFF000004)
+#define UART_CFG       (*(volatile uint32_t*)0xFF000010)
+
+void init_uart()
 {
-	struct {
-		unsigned int tx_en    : 1;
-		unsigned int rx_en 	  : 1;
-		unsigned int null	  : 14;
-		unsigned int baud_div : 16;
-	} fields;
-	uint32_t bits;
-}uart_ctrl;
-
-typedef union
-{
-	struct {
-		unsigned int tx_full  : 1;
-		unsigned int rx_full  : 1;
-		unsigned int tx_empty : 1;
-		unsigned int rx_empty : 1;
-		unsigned int null	  : 28;
-	} fields;
-	uint32_t bits;
-}uart_status;
-
-#define UART_CTRL        (*(volatile uint32_t*)0xFF000000)
-
-void init_uart(){
-    uart_ctrl uart_control;
-    uart_control.fields.tx_en = 0x1;
-    uart_control.fields.tx_en = 0x1;
-    uart_control.fields.baud_div = CPU_CLK/BAUD_RATE;
-    UART_CTRL = uart_control.bits;
+    UART_CFG = UART_CFG | 0x7;
+    UART_CPB = CPU_CLK / BAUD_RATE;
+    UART_STP = UART_STP | 0x1;
 }
 
 #define TIM_BASE_ADDR  0xFF050000

@@ -4,7 +4,7 @@
 
 // 1 bit start bit 8 veri bit no parity ve 1 stop bit
 // gonderme circular queue araciligi ile yapilir.
-module uart_tx_old (
+module uart_tx (
    input  wire        clk_i,
    input  wire        rst_i,
    input  wire [15:0] baud_div_i,
