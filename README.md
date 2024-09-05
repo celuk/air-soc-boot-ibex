@@ -3,6 +3,9 @@ TEKNOFEST 2024 ÇİP TASARIMI MİKRODENETLEYİCİ KATEGORİSİ KASIRGA-HAVA
 
 CV32E40P RISC-V Core IP based SoC
 
+## Son Commit
+30.08.2024 deadline'ı için [d19889fe20c4411b32c783840d87787adc001040](https://github.com/kasirgalabs/air-soc/tree/d19889fe20c4411b32c783840d87787adc001040) commitine bakılmalı.
+
 ## Cadence ASIC Design
 
 Flow asic klasöründe var, rapor ve çıktılarıyla tam hali aşağıdaki drive linkinde:
