@@ -5,13 +5,42 @@
 
 `default_nettype none
 
+`define ZC706
+
 module air_soc (
+   `ifdef ZC706
+   input wire clk_p,
+   input wire clk_n,
+   `else
    input wire clk_i,
+   `endif
+
    input wire rst_ni,
 
-   input  wire uart_rx_i,
+   //input  wire uart_rx_i,
+   
+   input  wire program_rx_i,
+   output wire prog_mode_led_o,
+   
    output wire uart_tx_o
 );
+
+   wire uart_rx_i;
+
+   logic system_reset_o;
+   wire rst_n = rst_ni & system_reset_o;
+
+   `ifdef ZC706
+   wire clk_i;
+   wire dummy;
+   clk_wiz_0 dutclk (
+      .clk_out1(clk_i),
+      .clk_in1_p(clk_p),
+      .clk_in1_n(clk_n),
+      .reset(~rst_ni),
+      .locked(dummy)
+   );
+   `endif
 
    logic               mem_req;
    logic [       31:0] mem_addr;
@@ -94,7 +123,7 @@ module air_soc (
    )
    cv32e40p_core_ip (
        .clk_i                    (clk_i),
-       .rst_ni                   (rst_ni),
+       .rst_ni                   (rst_n),
 
        .pulp_clock_en_i          (`PULP_CLOCK_EN), // PULP clock enable (only used if COREV_CLUSTER = 1)
        .scan_cg_en_i             (`SCAN_CG_EN), // Enable all clock gates for testing
@@ -151,7 +180,7 @@ module air_soc (
             .WAY_LEN    (`ICACHE_WAY_LEN)
          ) icache (
             .clk_i       (clk_i),
-            .rst_ni      (rst_ni),
+            .rst_ni      (rst_n),
             .hold_mem_i  (1'b0),
             .cpu_req_i   (instr_req),
             .cpu_addr_i  (instr_addr),
@@ -189,7 +218,7 @@ module air_soc (
             .WAY_LEN    (`DCACHE_WAY_LEN)
          ) dcache (
             .clk_i     (clk_i),
-            .rst_ni    (rst_ni),
+            .rst_ni    (rst_n),
             .hold_mem_i(1'b0),
 
             .cpu_req_i   (cache_req),
@@ -245,8 +274,8 @@ module air_soc (
    logic        req_write    [32];  // keeping track of whether the request was a write
    logic [31:0] imem_req_addr[32];  // keeping track of address for instruction memory requests
    logic [ 4:0] req_count;
-   always_ff @(posedge clk_i or negedge rst_ni) begin
-      if (~rst_ni) begin
+   always_ff @(posedge clk_i or negedge rst_n) begin
+      if (~rst_n) begin
          req_count <= '0;
       end else begin
          if (mem_rvalid) begin
@@ -278,8 +307,7 @@ module air_soc (
 
    ram32 #(
       .SIZE     (`RAM_SIZE / 4),
-      .INIT_FILE(`RAM_FPATH),
-      .USE_BOOTROM(`USE_BOOTROM)
+      .INIT_FILE(`RAM_FPATH)
    ) main_memory (
       .clk_i   (clk_i),
       .rst_ni  (rst_ni),
@@ -291,14 +319,14 @@ module air_soc (
       .rvalid_o(mem_rvalid),
       .rdata_o (mem_rdata)
 
-      //,.program_rx_i(program_rx_i),
-      //.system_reset_o(system_reset_o),
-      //.prog_mode_led_o(prog_mode_led_o)
+      ,.program_rx_i(program_rx_i)
+      ,.system_reset_o(system_reset_o)
+      ,.prog_mode_led_o(prog_mode_led_o)
    );
 
    obi_demux obi_demux_dut (
       .clk_i (clk_i),
-      .rst_ni(rst_ni),
+      .rst_ni(rst_n),
 
       .data_req_i   (data_req),
       .data_gnt_o   (data_gnt),
@@ -325,7 +353,7 @@ module air_soc (
       .uart_wdata_o (uart_wdata),
       .uart_gnt_i   (uart_gnt),
       .uart_rvalid_i(uart_rvalid),
-      .uart_rdata_i (uart_rdata)
+      .uart_rdata_i (uart_rdata),
 
       .timer_req_o   (timer_req),
       .timer_addr_o  (timer_addr),
@@ -339,7 +367,7 @@ module air_soc (
 
    uart_controller_obi uart (
       .clk_i   (clk_i),
-      .rst_ni  (rst_ni),
+      .rst_ni  (rst_n),
       .req_i   (uart_req),
       .we_i    (uart_we),
       .be_i    (uart_be),
@@ -354,7 +382,7 @@ module air_soc (
 
    timer_controller_obi timer (
       .clk_i   (clk_i),
-      .rst_ni  (rst_ni),
+      .rst_ni  (rst_n),
       .req_i   (timer_req),
       .we_i    (timer_we),
       .be_i    (timer_be),

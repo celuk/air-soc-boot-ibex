@@ -105,7 +105,7 @@ module uart_controller (
                end
                5'h4: begin
                   if (wb_stb_i & wb_we_i & !wb_ack_o) begin
-                     stop_bit <= wb_sel_i[0] ? wb_dat_i[2:0] : stop_bit[2:0];
+                     stop_bit <= wb_sel_i[0] ? wb_dat_i[1:0] : stop_bit[1:0];
                   end
                   wb_dat_o <= {30'b0, stop_bit};
                end

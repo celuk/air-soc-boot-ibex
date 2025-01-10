@@ -38,9 +38,20 @@ sim:
 	+@$(SUBMAKE) verification/sim clean
 	+@$(SUBMAKE) verification/sim air CFILE=$(ARGS)
 
+.PHONY: send
+send:
+	python3 ./tools/uart_send_data.py --port /dev/ttyUSB$(ARGS)
+
 .PHONY: show
 show:
-	vsim verification/sim/sim_build/vsim.wlf -do verification/sim/waveform/wave.do
+	picocom -b 115200 /dev/ttyUSB$(ARGS) --imap crcrlf
+
+%:
+	@:
+
+#.PHONY: show
+#show:
+#	vsim verification/sim/sim_build/vsim.wlf -do verification/sim/waveform/wave.do
 #-do verification/sim/waveform/wave.do
 
 .PHONY: clean

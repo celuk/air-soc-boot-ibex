@@ -64,6 +64,7 @@
             pkgs.python311Packages.mypy
             pkgs.python311Packages.pytest
             pkgs.python311Packages.riscof
+            pkgs.python311Packages.pyserial
 
             # QuestaSim
             (pkgs.callPackage ./nix/questa.nix { })
