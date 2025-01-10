@@ -17,7 +17,7 @@
 `define DM_EXCEPTION_ADDR 32'h0
 
 // TODO: Handle if DCACHE_SZ is 0
-// Cache sizes must be at least mutiple of 64 --> e.g. 64, 128, 256, ...
+// Cache sizes must be at least multiple of 64 --> e.g. 64, 128, 256, ...
 `define ICACHE_SZ 0
 `define DCACHE_SZ 64
 `define MEM_W 32
@@ -30,9 +30,6 @@
 `define RAM_SIZE 131072 //32'h0002_0000 //131072 //256 * 1024
 
 `define USE_BOOTROM 0
-
-`define QSPI_SIM
-//`define I2C_SIM
 
 `define MEM_BASE_ADDR   32'h0000_0000
 `define MEM_RANGE       32'h0F00_0000
@@ -50,13 +47,5 @@ PERIPHERALS
 
 `define UART_BASE_ADDR  32'hFF00_0000
 `define UART_RANGE      32'h0000_FFFF
-`define QSPI_BASE_ADDR  32'hFF01_0000
-`define QSPI_RANGE      32'h0000_FFFF
-`define I2C_BASE_ADDR   32'hFF02_0000
-`define I2C_RANGE       32'h0000_FFFF
-`define GPIO_BASE_ADDR  32'hFF03_0000
-`define GPIO_RANGE      32'h0000_FFFF
-`define USB_BASE_ADDR   32'hFF04_0000
-`define USB_RANGE       32'h0000_FFFF
 `define TIMER_BASE_ADDR 32'hFF05_0000
 `define TIMER_RANGE     32'h0000_FFFF

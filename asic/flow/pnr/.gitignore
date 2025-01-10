@@ -1,9 +1,0 @@
-.cadence
-ecoTimingDB
-results_pr
-saved
-timingReports
-.air_soc*
-*.log*
-*.cmd
-*.bin

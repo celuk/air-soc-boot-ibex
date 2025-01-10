@@ -10,28 +10,7 @@ module air_soc (
    input wire rst_ni,
 
    input  wire uart_rx_i,
-   output wire uart_tx_o,
-
-   `ifndef QSPI_SIM
-   output wire qspi_cs_n_o,
-   output wire qspi_sck_o,
-   inout wire [3:0] qspi_data_io,
-   `endif
-
-   `ifndef I2C_SIM
-   inout wire sda_io,
-   inout wire scl_io,
-   `endif
-
-   input wire [15:0] gpio_i,
-   output wire [15:0] gpio_o,
-
-   output wire usb_dp_pu_o,
-   output wire usb_tx_en_o,
-   output wire usb_dp_tx_o,
-   output wire usb_dn_tx_o,
-   input  wire usb_dp_rx_i,
-   input  wire usb_dn_rx_i
+   output wire uart_tx_o
 );
 
    logic               mem_req;
@@ -85,43 +64,6 @@ module air_soc (
    logic                timer_gnt;
    logic                timer_rvalid;
    logic [`MEM_W  -1:0] timer_rdata;
-
-   logic                gpio_req;
-   logic [       31:0]  gpio_addr;
-   logic                gpio_we;
-   logic [`MEM_W/8-1:0] gpio_be;
-   logic [`MEM_W  -1:0] gpio_wdata;
-   logic                gpio_gnt;
-   logic                gpio_rvalid;
-   logic [`MEM_W  -1:0] gpio_rdata;
-
-   logic                qspi_req;
-   logic [       31:0]  qspi_addr;
-   logic                qspi_we;
-   logic [`MEM_W/8-1:0] qspi_be;
-   logic [`MEM_W  -1:0] qspi_wdata;
-   logic                qspi_gnt;
-   logic                qspi_rvalid;
-   logic [`MEM_W  -1:0] qspi_rdata;
-
-   logic                i2c_req;
-   logic [       31:0]  i2c_addr;
-   logic                i2c_we;
-   logic [`MEM_W/8-1:0] i2c_be;
-   logic [`MEM_W  -1:0] i2c_wdata;
-   logic                i2c_gnt;
-   logic                i2c_rvalid;
-   logic [`MEM_W  -1:0] i2c_rdata;
-
-   logic                usb_req;
-   logic [       31:0]  usb_addr;
-   logic                usb_we;
-   logic [`MEM_W/8-1:0] usb_be;
-   logic [`MEM_W  -1:0] usb_wdata;
-   logic                usb_gnt;
-   logic                usb_rvalid;
-   logic [`MEM_W  -1:0] usb_rdata;
-
 
    // instruction cache
    logic               imem_req;
@@ -383,16 +325,7 @@ module air_soc (
       .uart_wdata_o (uart_wdata),
       .uart_gnt_i   (uart_gnt),
       .uart_rvalid_i(uart_rvalid),
-      .uart_rdata_i (uart_rdata),
-
-      .qspi_req_o   (qspi_req),
-      .qspi_addr_o  (qspi_addr),
-      .qspi_we_o    (qspi_we),
-      .qspi_be_o    (qspi_be),
-      .qspi_wdata_o (qspi_wdata),
-      .qspi_gnt_i   (qspi_gnt),
-      .qspi_rvalid_i(qspi_rvalid),
-      .qspi_rdata_i (qspi_rdata),
+      .uart_rdata_i (uart_rdata)
 
       .timer_req_o   (timer_req),
       .timer_addr_o  (timer_addr),
@@ -401,35 +334,7 @@ module air_soc (
       .timer_wdata_o (timer_wdata),
       .timer_gnt_i   (timer_gnt),
       .timer_rvalid_i(timer_rvalid),
-      .timer_rdata_i (timer_rdata),
-
-      .i2c_req_o   (i2c_req),
-      .i2c_addr_o  (i2c_addr),
-      .i2c_we_o    (i2c_we),
-      .i2c_be_o    (i2c_be),
-      .i2c_wdata_o (i2c_wdata),
-      .i2c_gnt_i   (i2c_gnt),
-      .i2c_rvalid_i(i2c_rvalid),
-      .i2c_rdata_i (i2c_rdata),
-
-      .gpio_req_o   (gpio_req),
-      .gpio_addr_o  (gpio_addr),
-      .gpio_we_o    (gpio_we),
-      .gpio_be_o    (gpio_be),
-      .gpio_wdata_o (gpio_wdata),
-      .gpio_gnt_i   (gpio_gnt),
-      .gpio_rvalid_i(gpio_rvalid),
-      .gpio_rdata_i (gpio_rdata),
-
-      .usb_req_o   (usb_req),
-      .usb_addr_o  (usb_addr),
-      .usb_we_o    (usb_we),
-      .usb_be_o    (usb_be),
-      .usb_wdata_o (usb_wdata),
-      .usb_gnt_i   (usb_gnt),
-      .usb_rvalid_i(usb_rvalid),
-      .usb_rdata_i (usb_rdata)
-
+      .timer_rdata_i (timer_rdata)
    );
 
    uart_controller_obi uart (
@@ -458,137 +363,6 @@ module air_soc (
       .gnt_o   (timer_gnt),
       .rvalid_o(timer_rvalid),
       .rdata_o (timer_rdata)
-   );
-
-   `ifdef QSPI_SIM
-   wire qspi_cs_n_o;
-   wire qspi_sck_o;
-   wire [3:0] qspi_data_io;
-   `endif
-
-   wire [3:0] qspi_data_i;
-   wire [3:0] qspi_data_o;
-   wire [1:0] qspi_out_mod_o;
-
-   assign qspi_data_io[0] = |qspi_out_mod_o   ? qspi_data_o[0] : 1'bZ;
-   assign qspi_data_io[1] = qspi_out_mod_o[1] ? qspi_data_o[1] : 1'bZ;
-   assign qspi_data_io[2] = &qspi_out_mod_o   ? qspi_data_o[2] : 1'bZ;
-   assign qspi_data_io[3] = &qspi_out_mod_o   ? qspi_data_o[3] : 1'bZ;
-
-   assign qspi_data_i = qspi_data_io;
-
-   qspi_controller_obi qspi (
-      .clk_i         (clk_i),
-      .rst_ni        (rst_ni),
-      .req_i         (qspi_req),
-      .we_i          (qspi_we),
-      .be_i          (qspi_be),
-      .addr_i        (qspi_addr),
-      .wdata_i       (qspi_wdata),
-      .gnt_o         (qspi_gnt),
-      .rvalid_o      (qspi_rvalid),
-      .rdata_o       (qspi_rdata),
-      .qspi_data_i   (qspi_data_i),
-      .qspi_data_o   (qspi_data_o),
-      .qspi_out_mod_o(qspi_out_mod_o),
-      .qspi_cs_n_o   (qspi_cs_n_o),
-      .qspi_sck_o    (qspi_sck_o)
-   );
-
-`ifdef QSPI_SIM
-   s25fl128s #(
-      .mem_file_name("../../../tests/demo/demo.vmem"),
-      //.mem_file_name("../../../rtl/sim/s25fl128s.mem"),
-      //.mem_file_name("none"),
-      .otp_file_name("none"),
-      .AddrRANGE(24'h00FFFF)
-      
-      //,.TimingModel   ( "S25FS128SAGMFI000_F_30pF" )
-      ,.TimingModel   ( "S25FL128SAGMFI000_F_30pF" )
-      ,.UserPreload   (1)
-   ) flash (
-      // Data Inputs/Outputs
-      .SI(qspi_data_io[0]),
-      .SO(qspi_data_io[1]),
-      // Controls
-      .SCK(qspi_sck_o),
-      .CSNeg(qspi_cs_n_o),
-      //.RSTNeg(1),
-      .WPNeg(qspi_data_io[2]),
-      .HOLDNeg(qspi_data_io[3])
-   );
-`endif
-
-   `ifdef I2C_SIM
-   wire sda_io;
-   wire scl_io;
-   `endif
-
-   logic sda_i;
-   logic sda_o;
-   logic sda_out_en_o;
-   logic scl_i;
-   logic scl_o;
-   logic scl_out_en_o;
-
-   assign sda_io = sda_out_en_o ? sda_o : 1'bZ;
-   assign sda_i = sda_io;
-
-   assign scl_io = scl_out_en_o ? scl_o : 1'bZ;
-   assign scl_i = scl_io;
-
-   i2c_controller_obi i2c (
-      .clk_i   (clk_i),
-      .rst_ni  (rst_ni),
-      .req_i   (i2c_req),
-      .we_i    (i2c_we),
-      .be_i    (i2c_be),
-      .addr_i  (i2c_addr),
-      .wdata_i (i2c_wdata),
-      .gnt_o   (i2c_gnt),
-      .rvalid_o(i2c_rvalid),
-      .rdata_o (i2c_rdata),
-      .sda_i   (sda_i),
-      .sda_o   (sda_o),
-      .scl_i   (scl_i),
-      .scl_o   (scl_o),
-      .sda_out_en_o(sda_out_en_o),
-      .scl_out_en_o(scl_out_en_o)
-   );
-
-   gpio_controller_obi gpio (
-      .clk_i   (clk_i),
-      .rst_ni  (rst_ni),
-      .req_i   (gpio_req),
-      .we_i    (gpio_we),
-      .be_i    (gpio_be),
-      .addr_i  (gpio_addr),
-      .wdata_i (gpio_wdata),
-      .gnt_o   (gpio_gnt),
-      .rvalid_o(gpio_rvalid),
-      .rdata_o (gpio_rdata),
-      .gpio_i  (gpio_i),
-      .gpio_o  (gpio_o)
-   );
-
-   usb_controller_obi usb (
-      .clk_i   (clk_i),
-      .rst_ni  (rst_ni),
-      .req_i   (usb_req),
-      .we_i    (usb_we),
-      .be_i    (usb_be),
-      .addr_i  (usb_addr),
-      .wdata_i (usb_wdata),
-      .gnt_o   (usb_gnt),
-      .rvalid_o(usb_rvalid),
-      .rdata_o (usb_rdata),
-
-      .dp_pu_o(usb_dp_pu_o),
-      .tx_en_o(usb_tx_en_o),
-      .dp_tx_o(usb_dp_tx_o),
-      .dn_tx_o(usb_dn_tx_o),
-      .dp_rx_i(usb_dp_rx_i),
-      .dn_rx_i(usb_dn_rx_i)
    );
 
 endmodule
