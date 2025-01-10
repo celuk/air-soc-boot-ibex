@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenRun Id="synth_1" LaunchPart="xc7z045ffg900-2" LaunchTime="1725017391" LaunchIncrCheckpoint="$PSRCDIR/utils_1/imports/synth_1/teknofest_wrapper.dcp">
+<GenRun Id="synth_1" LaunchPart="xc7z045ffg900-2" LaunchTime="1736539838">
   <File Type="VDS-TIMINGSUMMARY" Name="air_soc_timing_summary_synth.rpt"/>
   <File Type="RDS-DCP" Name="air_soc.dcp"/>
   <File Type="RDS-UTIL-PB" Name="air_soc_utilization_synth.pb"/>
@@ -114,15 +114,6 @@
       <FileInfo>
         <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/cv32e40p/rtl/vendor/pulp_platform_common_cells/src/cf_math_pkg.sv"/>
         <Attr Name="ImportTime" Val="1716297558"/>
-        <Attr Name="UsedIn" Val="synthesis"/>
-        <Attr Name="UsedIn" Val="implementation"/>
-        <Attr Name="UsedIn" Val="simulation"/>
-      </FileInfo>
-    </File>
-    <File Path="$PSRCDIR/sources_1/imports/rtl/src/memory/bootrom.sv">
-      <FileInfo>
-        <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/rtl/src/memory/bootrom.sv"/>
-        <Attr Name="ImportTime" Val="1725000986"/>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="implementation"/>
         <Attr Name="UsedIn" Val="simulation"/>
@@ -585,6 +576,15 @@
         <Attr Name="UsedIn" Val="simulation"/>
       </FileInfo>
     </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/wrapper/simpleuart.sv">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/rtl/src/wrapper/simpleuart.sv"/>
+        <Attr Name="ImportTime" Val="1723383536"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
     <File Path="$PSRCDIR/sources_1/imports/air-soc/rtl/src/tag_controller.sv">
       <FileInfo>
         <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/rtl/src/tag_controller.sv"/>
@@ -720,6 +720,16 @@
         <Attr Name="UsedIn" Val="simulation"/>
       </FileInfo>
     </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/memory/bootrom.sv">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/rtl/src/memory/bootrom.sv"/>
+        <Attr Name="ImportTime" Val="1725000986"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
     <File Path="$PSRCDIR/sources_1/imports/air-soc/rtl/src/timer_controller.sv">
       <FileInfo>
         <Attr Name="AutoDisabled" Val="1"/>
@@ -735,16 +745,6 @@
         <Attr Name="AutoDisabled" Val="1"/>
         <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/rtl/src/air_soc.sv"/>
         <Attr Name="ImportTime" Val="1716333899"/>
-        <Attr Name="UsedIn" Val="synthesis"/>
-        <Attr Name="UsedIn" Val="implementation"/>
-        <Attr Name="UsedIn" Val="simulation"/>
-      </FileInfo>
-    </File>
-    <File Path="$PSRCDIR/sources_1/imports/rtl/src/wrapper/simpleuart.sv">
-      <FileInfo>
-        <Attr Name="AutoDisabled" Val="1"/>
-        <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/rtl/src/wrapper/simpleuart.sv"/>
-        <Attr Name="ImportTime" Val="1723383536"/>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="implementation"/>
         <Attr Name="UsedIn" Val="simulation"/>
@@ -2103,20 +2103,14 @@
   </FileSet>
   <FileSet Name="utils" Type="Utils" RelSrcDir="$PSRCDIR/utils_1">
     <Filter Type="Utils"/>
-    <File Path="$PSRCDIR/utils_1/imports/synth_1/teknofest_wrapper.dcp">
-      <FileInfo>
-        <Attr Name="UsedIn" Val="synthesis"/>
-        <Attr Name="UsedIn" Val="implementation"/>
-        <Attr Name="UsedInSteps" Val="synth_1"/>
-        <Attr Name="AutoDcp" Val="1"/>
-      </FileInfo>
-    </File>
     <Config>
       <Option Name="TopAutoSet" Val="TRUE"/>
     </Config>
   </FileSet>
   <Strategy Version="1" Minor="2">
-    <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2022"/>
+    <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2022">
+      <Desc>Vivado Synthesis Defaults</Desc>
+    </StratHandle>
     <Step Id="synth_design"/>
   </Strategy>
   <BlockFileSet Type="BlockSrcs" Name="clk_wiz_0"/>

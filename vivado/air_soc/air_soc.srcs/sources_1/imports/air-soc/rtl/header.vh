@@ -26,7 +26,7 @@
 `define ICACHE_WAY_LEN `ICACHE_SZ / (`ICACHE_LINE_W / 8) / 2
 `define DCACHE_WAY_LEN `DCACHE_SZ / (`DCACHE_LINE_W / 8) / 2
 
-`define RAM_FPATH "/home/shc/projects/air-soc/tests/coremark/coremark_baremetal_static.hex"
+`define RAM_FPATH "" //"/home/shc/projects/air-soc/tests/coremark/coremark_baremetal_static.hex"
 `define RAM_SIZE 131072 //256 * 1024
 
 `define USE_BOOTROM 0

@@ -4,7 +4,7 @@
 
 set TIME_start [clock seconds] 
 namespace eval ::optrace {
-  variable script "/home/shc/projects/vivado/air_soc/air_soc/air_soc.runs/synth_1/air_soc.tcl"
+  variable script "/home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.runs/synth_1/air_soc.tcl"
   variable category "vivado_synth"
 }
 
@@ -79,103 +79,103 @@ set_param project.singleFileAddWarning.threshold 0
 set_param project.compositeFile.enableAutoGeneration 0
 set_param synth.vivado.isSynthRun true
 set_msg_config -source 4 -id {IP_Flow 19-2162} -severity warning -new_severity info
-set_property webtalk.parent_dir /home/shc/projects/vivado/air_soc/air_soc/air_soc.cache/wt [current_project]
-set_property parent.project_path /home/shc/projects/vivado/air_soc/air_soc/air_soc.xpr [current_project]
+set_property webtalk.parent_dir /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.cache/wt [current_project]
+set_property parent.project_path /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.xpr [current_project]
 set_property XPM_LIBRARIES XPM_CDC [current_project]
 set_property default_lib xil_defaultlib [current_project]
 set_property target_language Verilog [current_project]
 set_property board_part xilinx.com:zc706:part0:1.4 [current_project]
-set_property ip_output_repo /home/shc/projects/vivado/air_soc/air_soc/air_soc.cache/ip [current_project]
+set_property ip_output_repo /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.cache/ip [current_project]
 set_property ip_cache_permissions {read write} [current_project]
 OPTRACE "Creating in-memory project" END { }
 OPTRACE "Adding files" START { }
-read_verilog /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/rtl/header.vh
+read_verilog /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/rtl/header.vh
 read_verilog -library xil_defaultlib -sv {
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/rtl/src/RAM256x16_ASYNC.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/rtl/src/RAM256x8_ASYNC.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/rtl/src/RAM512x16_ASYNC.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/vendor/pulp_platform_common_cells/src/cf_math_pkg.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/memory/bootrom.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/memory/cache.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_aligner.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/include/cv32e40p_pkg.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_alu.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_alu_div.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/include/cv32e40p_apu_core_pkg.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_apu_disp.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/new/cv32e40p_clock_gate.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_compressed_decoder.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_controller.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_core.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_cs_registers.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/include/cv32e40p_fpu_pkg.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_decoder.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_ex_stage.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_ff_one.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_fifo.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_pkg.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_fp_wrapper.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_hwloop_regs.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_id_stage.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_if_stage.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_int_controller.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_load_store_unit.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_mult.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_obi_interface.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_popcnt.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_prefetch_buffer.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_prefetch_controller.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_register_file_latch.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_sleep_unit.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_top.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/rtl/src/datapath.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/rtl/src/dcache_controller.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_opgroup_block.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_opgroup_fmt_slice.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_top.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/gpio/gpio_controller.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/gpio/gpio_controller_obi.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/i2c/i2c_controller.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/i2c/i2c_controller_obi.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/i2c/i2c_master.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/rtl/src/icache_controller.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/vendor/pulp_platform_common_cells/src/lzc.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/rtl/src/main_memory_controller.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/databus/obi_demux.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/qspi/qspi_controller.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/qspi/qspi_controller_obi.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/memory/ram.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/vendor/pulp_platform_common_cells/src/rr_arb_tree.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/rtl/src/tag_controller.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/timer/timer.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/timer/timer_controller.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/timer/timer_controller_obi.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/uart/uart_controller.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/uart/uart_controller_obi.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/uart/uart_controller_old.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/uart/uart_rx.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/uart/uart_rx_old.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/uart/uart_tx.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/uart/uart_tx_old.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/usb/usb_controller.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/usb/usb_controller_obi.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/air-soc/rtl/src/wishbone_master.sv
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/soc/air_soc.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/rtl/src/RAM256x16_ASYNC.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/rtl/src/RAM256x8_ASYNC.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/rtl/src/RAM512x16_ASYNC.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/vendor/pulp_platform_common_cells/src/cf_math_pkg.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/memory/cache.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_aligner.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/include/cv32e40p_pkg.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_alu.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_alu_div.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/include/cv32e40p_apu_core_pkg.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_apu_disp.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/new/cv32e40p_clock_gate.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_compressed_decoder.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_controller.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_core.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_cs_registers.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/include/cv32e40p_fpu_pkg.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_decoder.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_ex_stage.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_ff_one.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_fifo.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_pkg.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_fp_wrapper.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_hwloop_regs.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_id_stage.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_if_stage.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_int_controller.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_load_store_unit.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_mult.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_obi_interface.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_popcnt.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_prefetch_buffer.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_prefetch_controller.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_register_file_latch.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_sleep_unit.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/cv32e40p_top.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/rtl/src/datapath.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/rtl/src/dcache_controller.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_opgroup_block.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_opgroup_fmt_slice.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_top.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/gpio/gpio_controller.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/gpio/gpio_controller_obi.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/i2c/i2c_controller.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/i2c/i2c_controller_obi.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/i2c/i2c_master.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/rtl/src/icache_controller.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/vendor/pulp_platform_common_cells/src/lzc.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/rtl/src/main_memory_controller.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/databus/obi_demux.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/qspi/qspi_controller.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/qspi/qspi_controller_obi.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/memory/ram.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/cv32e40p/rtl/vendor/pulp_platform_common_cells/src/rr_arb_tree.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/wrapper/simpleuart.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/rtl/src/tag_controller.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/timer/timer.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/timer/timer_controller.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/timer/timer_controller_obi.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/uart/uart_controller.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/uart/uart_controller_obi.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/uart/uart_controller_old.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/uart/uart_rx.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/uart/uart_rx_old.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/uart/uart_tx.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/uart/uart_tx_old.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/usb/usb_controller.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/usb/usb_controller_obi.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/air-soc/rtl/src/wishbone_master.sv
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/soc/air_soc.sv
 }
 read_verilog -library xil_defaultlib {
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/usb/bulk_endp.v
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/usb/ctrl_endp.v
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/usb/in_fifo.v
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/usb/out_fifo.v
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/usb/phy_rx.v
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/usb/phy_tx.v
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/usb/sie.v
-  /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/usb/usb_cdc.v
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/usb/bulk_endp.v
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/usb/ctrl_endp.v
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/usb/in_fifo.v
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/usb/out_fifo.v
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/usb/phy_rx.v
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/usb/phy_tx.v
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/usb/sie.v
+  /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/imports/rtl/src/peripherals/usb/usb_cdc.v
 }
-read_ip -quiet /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/ip/clk_wiz_0/clk_wiz_0.xci
-set_property used_in_implementation false [get_files -all /home/shc/projects/vivado/air_soc/air_soc/air_soc.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_board.xdc]
-set_property used_in_implementation false [get_files -all /home/shc/projects/vivado/air_soc/air_soc/air_soc.gen/sources_1/ip/clk_wiz_0/clk_wiz_0.xdc]
-set_property used_in_implementation false [get_files -all /home/shc/projects/vivado/air_soc/air_soc/air_soc.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_ooc.xdc]
+read_ip -quiet /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/ip/clk_wiz_0/clk_wiz_0.xci
+set_property used_in_implementation false [get_files -all /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_board.xdc]
+set_property used_in_implementation false [get_files -all /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.gen/sources_1/ip/clk_wiz_0/clk_wiz_0.xdc]
+set_property used_in_implementation false [get_files -all /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_ooc.xdc]
 
 OPTRACE "Adding files" END { }
 # Mark all dcp files as not used in implementation to prevent them from being
@@ -186,12 +186,10 @@ OPTRACE "Adding files" END { }
 foreach dcp [get_files -quiet -all -filter file_type=="Design\ Checkpoint"] {
   set_property used_in_implementation false $dcp
 }
-read_xdc /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/constrs_1/new/zc706.xdc
-set_property used_in_implementation false [get_files /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/constrs_1/new/zc706.xdc]
+read_xdc /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/constrs_1/new/zc706.xdc
+set_property used_in_implementation false [get_files /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/constrs_1/new/zc706.xdc]
 
 set_param ips.enableIPCacheLiteLoad 1
-
-read_checkpoint -auto_incremental -incremental /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/utils_1/imports/synth_1/teknofest_wrapper.dcp
 close [open __synthesis_is_running__ w]
 
 OPTRACE "synth_design" START { }

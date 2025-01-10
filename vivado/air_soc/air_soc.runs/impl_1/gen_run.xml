@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenRun Id="impl_1" LaunchPart="xc7z045ffg900-2" LaunchTime="1725017391">
+<GenRun Id="impl_1" LaunchPart="xc7z045ffg900-2" LaunchTime="1736539838">
   <File Type="POSTROUTE-PHYSOPT-RQS-RPT" Name="postroute_physopt_report_qor_suggestions_0.rpt"/>
   <File Type="ROUTE-RQS-RPT" Name="route_report_qor_suggestions_0.rpt"/>
   <File Type="POSTROUTE-PHYSOPT-RQS" Name="air_soc_postroute_physopted.rqs"/>
@@ -184,15 +184,6 @@
       <FileInfo>
         <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/cv32e40p/rtl/vendor/pulp_platform_common_cells/src/cf_math_pkg.sv"/>
         <Attr Name="ImportTime" Val="1716297558"/>
-        <Attr Name="UsedIn" Val="synthesis"/>
-        <Attr Name="UsedIn" Val="implementation"/>
-        <Attr Name="UsedIn" Val="simulation"/>
-      </FileInfo>
-    </File>
-    <File Path="$PSRCDIR/sources_1/imports/rtl/src/memory/bootrom.sv">
-      <FileInfo>
-        <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/rtl/src/memory/bootrom.sv"/>
-        <Attr Name="ImportTime" Val="1725000986"/>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="implementation"/>
         <Attr Name="UsedIn" Val="simulation"/>
@@ -655,6 +646,15 @@
         <Attr Name="UsedIn" Val="simulation"/>
       </FileInfo>
     </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/wrapper/simpleuart.sv">
+      <FileInfo>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/rtl/src/wrapper/simpleuart.sv"/>
+        <Attr Name="ImportTime" Val="1723383536"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
     <File Path="$PSRCDIR/sources_1/imports/air-soc/rtl/src/tag_controller.sv">
       <FileInfo>
         <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/rtl/src/tag_controller.sv"/>
@@ -790,6 +790,16 @@
         <Attr Name="UsedIn" Val="simulation"/>
       </FileInfo>
     </File>
+    <File Path="$PSRCDIR/sources_1/imports/rtl/src/memory/bootrom.sv">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/rtl/src/memory/bootrom.sv"/>
+        <Attr Name="ImportTime" Val="1725000986"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
     <File Path="$PSRCDIR/sources_1/imports/air-soc/rtl/src/timer_controller.sv">
       <FileInfo>
         <Attr Name="AutoDisabled" Val="1"/>
@@ -805,16 +815,6 @@
         <Attr Name="AutoDisabled" Val="1"/>
         <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/rtl/src/air_soc.sv"/>
         <Attr Name="ImportTime" Val="1716333899"/>
-        <Attr Name="UsedIn" Val="synthesis"/>
-        <Attr Name="UsedIn" Val="implementation"/>
-        <Attr Name="UsedIn" Val="simulation"/>
-      </FileInfo>
-    </File>
-    <File Path="$PSRCDIR/sources_1/imports/rtl/src/wrapper/simpleuart.sv">
-      <FileInfo>
-        <Attr Name="AutoDisabled" Val="1"/>
-        <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/rtl/src/wrapper/simpleuart.sv"/>
-        <Attr Name="ImportTime" Val="1723383536"/>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="implementation"/>
         <Attr Name="UsedIn" Val="simulation"/>
@@ -2173,20 +2173,14 @@
   </FileSet>
   <FileSet Name="utils" Type="Utils" RelSrcDir="$PSRCDIR/utils_1">
     <Filter Type="Utils"/>
-    <File Path="$PSRCDIR/utils_1/imports/synth_1/teknofest_wrapper.dcp">
-      <FileInfo>
-        <Attr Name="UsedIn" Val="synthesis"/>
-        <Attr Name="UsedIn" Val="implementation"/>
-        <Attr Name="UsedInSteps" Val="synth_1"/>
-        <Attr Name="AutoDcp" Val="1"/>
-      </FileInfo>
-    </File>
     <Config>
       <Option Name="TopAutoSet" Val="TRUE"/>
     </Config>
   </FileSet>
   <Strategy Version="1" Minor="2">
-    <StratHandle Name="Flow_RunPostRoutePhysOpt" Flow="Vivado Implementation 2022"/>
+    <StratHandle Name="Flow_RunPostRoutePhysOpt" Flow="Vivado Implementation 2022">
+      <Desc>Similar to the Implementation Run Defaults, but enables the physical optimization step (phys_opt_design) before and after routing.</Desc>
+    </StratHandle>
     <Step Id="init_design"/>
     <Step Id="opt_design"/>
     <Step Id="power_opt_design"/>

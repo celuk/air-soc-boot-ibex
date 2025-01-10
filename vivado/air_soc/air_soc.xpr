@@ -3,7 +3,7 @@
 <!--                                                         -->
 <!-- Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.   -->
 
-<Project Version="7" Minor="61" Path="/home/shc/projects/vivado/air_soc/air_soc/air_soc.xpr">
+<Project Version="7" Minor="61" Path="/home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.xpr">
   <DefaultLaunch Dir="$PRUNDIR"/>
   <Configuration>
     <Option Name="Id" Val="a2dd12944a96493080d2fdcc8ed4eec9"/>
@@ -192,15 +192,6 @@
         <FileInfo>
           <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/cv32e40p/rtl/vendor/pulp_platform_common_cells/src/cf_math_pkg.sv"/>
           <Attr Name="ImportTime" Val="1716297558"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/imports/rtl/src/memory/bootrom.sv">
-        <FileInfo>
-          <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/rtl/src/memory/bootrom.sv"/>
-          <Attr Name="ImportTime" Val="1725000986"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -663,6 +654,15 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
+      <File Path="$PSRCDIR/sources_1/imports/rtl/src/wrapper/simpleuart.sv">
+        <FileInfo>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/rtl/src/wrapper/simpleuart.sv"/>
+          <Attr Name="ImportTime" Val="1723383536"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <File Path="$PSRCDIR/sources_1/imports/air-soc/rtl/src/tag_controller.sv">
         <FileInfo>
           <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/rtl/src/tag_controller.sv"/>
@@ -798,6 +798,16 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
+      <File Path="$PSRCDIR/sources_1/imports/rtl/src/memory/bootrom.sv">
+        <FileInfo>
+          <Attr Name="AutoDisabled" Val="1"/>
+          <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/rtl/src/memory/bootrom.sv"/>
+          <Attr Name="ImportTime" Val="1725000986"/>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <File Path="$PSRCDIR/sources_1/imports/air-soc/rtl/src/timer_controller.sv">
         <FileInfo>
           <Attr Name="AutoDisabled" Val="1"/>
@@ -813,16 +823,6 @@
           <Attr Name="AutoDisabled" Val="1"/>
           <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/rtl/src/air_soc.sv"/>
           <Attr Name="ImportTime" Val="1716333899"/>
-          <Attr Name="UsedIn" Val="synthesis"/>
-          <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedIn" Val="simulation"/>
-        </FileInfo>
-      </File>
-      <File Path="$PSRCDIR/sources_1/imports/rtl/src/wrapper/simpleuart.sv">
-        <FileInfo>
-          <Attr Name="AutoDisabled" Val="1"/>
-          <Attr Name="ImportPath" Val="$PPRDIR/../../../air-soc/rtl/src/wrapper/simpleuart.sv"/>
-          <Attr Name="ImportTime" Val="1723383536"/>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
           <Attr Name="UsedIn" Val="simulation"/>
@@ -2211,7 +2211,6 @@
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
-          <Attr Name="UsedInSteps" Val="synth_1"/>
           <Attr Name="AutoDcp" Val="1"/>
         </FileInfo>
       </File>
@@ -2256,9 +2255,11 @@
     </Simulator>
   </Simulators>
   <Runs Version="1" Minor="19">
-    <Run Id="synth_1" Type="Ft3:Synth" SrcSet="sources_1" Part="xc7z045ffg900-2" ConstrsSet="constrs_1" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="true" IncrementalCheckpoint="$PSRCDIR/utils_1/imports/synth_1/teknofest_wrapper.dcp" WriteIncrSynthDcp="false" State="current" Dir="$PRUNDIR/synth_1" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/synth_1">
+    <Run Id="synth_1" Type="Ft3:Synth" SrcSet="sources_1" Part="xc7z045ffg900-2" ConstrsSet="constrs_1" Description="Vivado Synthesis Defaults" AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" State="current" Dir="$PRUNDIR/synth_1" IncludeInArchive="true" IsChild="false" AutoIncrementalDir="$PSRCDIR/utils_1/imports/synth_1" AutoRQSDir="$PSRCDIR/utils_1/imports/synth_1">
       <Strategy Version="1" Minor="2">
-        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2022"/>
+        <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2022">
+          <Desc>Vivado Synthesis Defaults</Desc>
+        </StratHandle>
         <Step Id="synth_design"/>
       </Strategy>
       <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
@@ -2278,7 +2279,9 @@
     </Run>
     <Run Id="impl_1" Type="Ft2:EntireDesign" Part="xc7z045ffg900-2" ConstrsSet="constrs_1" Description="Similar to the Implementation Run Defaults, but enables the physical optimization step (phys_opt_design) before and after routing." AutoIncrementalCheckpoint="false" WriteIncrSynthDcp="false" State="current" Dir="$PRUNDIR/impl_1" SynthRun="synth_1" IncludeInArchive="true" IsChild="false" GenFullBitstream="true" AutoIncrementalDir="$PSRCDIR/utils_1/imports/impl_1" AutoRQSDir="$PSRCDIR/utils_1/imports/impl_1">
       <Strategy Version="1" Minor="2">
-        <StratHandle Name="Flow_RunPostRoutePhysOpt" Flow="Vivado Implementation 2022"/>
+        <StratHandle Name="Flow_RunPostRoutePhysOpt" Flow="Vivado Implementation 2022">
+          <Desc>Similar to the Implementation Run Defaults, but enables the physical optimization step (phys_opt_design) before and after routing.</Desc>
+        </StratHandle>
         <Step Id="init_design"/>
         <Step Id="opt_design"/>
         <Step Id="power_opt_design"/>

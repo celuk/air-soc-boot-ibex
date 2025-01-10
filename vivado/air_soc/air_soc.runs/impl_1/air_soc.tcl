@@ -17,7 +17,7 @@ proc create_report { reportName command } {
   }
 }
 namespace eval ::optrace {
-  variable script "/home/shc/projects/vivado/air_soc/air_soc/air_soc.runs/impl_1/air_soc.tcl"
+  variable script "/home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.runs/impl_1/air_soc.tcl"
   variable category "vivado_impl"
 }
 
@@ -131,17 +131,17 @@ OPTRACE "create in-memory project" START { }
   set_param project.singleFileAddWarning.threshold 0
 OPTRACE "create in-memory project" END { }
 OPTRACE "set parameters" START { }
-  set_property webtalk.parent_dir /home/shc/projects/vivado/air_soc/air_soc/air_soc.cache/wt [current_project]
-  set_property parent.project_path /home/shc/projects/vivado/air_soc/air_soc/air_soc.xpr [current_project]
-  set_property ip_output_repo /home/shc/projects/vivado/air_soc/air_soc/air_soc.cache/ip [current_project]
+  set_property webtalk.parent_dir /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.cache/wt [current_project]
+  set_property parent.project_path /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.xpr [current_project]
+  set_property ip_output_repo /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.cache/ip [current_project]
   set_property ip_cache_permissions {read write} [current_project]
   set_property XPM_LIBRARIES XPM_CDC [current_project]
 OPTRACE "set parameters" END { }
 OPTRACE "add files" START { }
-  add_files -quiet /home/shc/projects/vivado/air_soc/air_soc/air_soc.runs/synth_1/air_soc.dcp
-  read_ip -quiet /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/sources_1/ip/clk_wiz_0/clk_wiz_0.xci
+  add_files -quiet /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.runs/synth_1/air_soc.dcp
+  read_ip -quiet /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/sources_1/ip/clk_wiz_0/clk_wiz_0.xci
 OPTRACE "read constraints: implementation" START { }
-  read_xdc /home/shc/projects/vivado/air_soc/air_soc/air_soc.srcs/constrs_1/new/zc706.xdc
+  read_xdc /home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.srcs/constrs_1/new/zc706.xdc
 OPTRACE "read constraints: implementation" END { }
 OPTRACE "add files" END { }
 OPTRACE "link_design" START { }

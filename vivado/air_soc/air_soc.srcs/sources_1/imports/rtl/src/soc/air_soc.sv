@@ -9,13 +9,19 @@ module air_soc (
    //input wire clk_i,
    input wire clk_p,
    input wire clk_n,
-   input wire rst_ni,
+   input wire rst_n,
 
-   input  wire uart_rx_i,
+   //input  wire uart_rx_i,
    output wire uart_tx_o
 
-   
+   ,input wire program_rx_i
+   ,output wire prog_mode_led_o
 );
+
+   logic system_reset_o;
+   wire rst_ni = rst_n & system_reset_o;
+
+   wire uart_rx_i;
 
    wire qspi_cs_n_o;
    wire qspi_sck_o;
@@ -40,7 +46,7 @@ clk_wiz_0 dutclk (
   .clk_out1(clk_i),
   .clk_in1_p(clk_p),
   .clk_in1_n(clk_n),
-  .reset(~rst_ni),
+  .reset(~rst_n),
   .locked(dummy)
 );
 
@@ -346,8 +352,7 @@ clk_wiz_0 dutclk (
 
    ram32 #(
       .SIZE     (`RAM_SIZE / 4),
-      .INIT_FILE(`RAM_FPATH),
-      .USE_BOOTROM(`USE_BOOTROM)
+      .INIT_FILE(`RAM_FPATH)
    ) main_memory (
       .clk_i   (clk_i),
       .rst_ni  (rst_ni),
@@ -359,9 +364,9 @@ clk_wiz_0 dutclk (
       .rvalid_o(mem_rvalid),
       .rdata_o (mem_rdata)
 
-      //,.program_rx_i(program_rx_i),
-      //.system_reset_o(system_reset_o),
-      //.prog_mode_led_o(prog_mode_led_o)
+      ,.program_rx_i(program_rx_i)
+      ,.system_reset_o(system_reset_o)
+      ,.prog_mode_led_o(prog_mode_led_o)
    );
 
    obi_demux obi_demux_dut (

@@ -20,7 +20,7 @@ else
 fi
 export LD_LIBRARY_PATH
 
-HD_PWD='/home/shc/projects/vivado/air_soc/air_soc/air_soc.runs/synth_1'
+HD_PWD='/home/shc/projects/air-soc-dram/vivado/air_soc/air_soc.runs/synth_1'
 cd "$HD_PWD"
 
 HD_LOG=runme.log
