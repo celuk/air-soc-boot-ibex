@@ -23,23 +23,67 @@ module air_soc (
    output wire prog_mode_led_o,
    
    output wire uart_tx_o
+
+   ,output wire ddr3_reset_n
+   ,output wire ddr3_cke
+   ,output wire ddr3_ck_p
+   ,output wire ddr3_ck_n
+   ,output wire ddr3_cs_n
+   ,output wire ddr3_ras_n
+   ,output wire ddr3_cas_n
+   ,output wire ddr3_we_n
+   ,output wire [2:0] ddr3_ba
+   ,output wire [13:0] ddr3_addr
+   ,output wire ddr3_odt
+   ,output wire [1:0] ddr3_dm
+   ,inout wire [1:0] ddr3_dqs_p
+   ,inout wire [1:0] ddr3_dqs_n
+   ,inout wire [15:0] ddr3_dq
 );
 
    wire uart_rx_i;
 
    logic system_reset_o;
+   //wire rst_n = rst_ni & system_reset_o;
+   `ifndef ZC706
    wire rst_n = rst_ni & system_reset_o;
-
-   `ifdef ZC706
+   `else
+   /*
    wire clk_i;
-   wire dummy;
+   wire clkwiz_locked;
    clk_wiz_0 dutclk (
-      .clk_out1(clk_i),
+      .clk_out1(clk_i), // 60 MHz
       .clk_in1_p(clk_p),
       .clk_in1_n(clk_n),
       .reset(~rst_ni),
-      .locked(dummy)
+      .locked(clkwiz_locked)
    );
+
+   wire rst_n = rst_ni & system_reset_o & clkwiz_locked;
+   */
+
+   wire pll_locked;
+   wire clk100;
+   wire clk_ddr;
+   wire clk_ref;
+   wire clk_ddr_dqs;
+   wire clk_i;
+   clk_wiz_1 u_pll
+   (
+      .clk_in1_p(clk_p),
+      .clk_in1_n(clk_n)
+   
+      ,.reset(~rst_ni)
+   
+      ,.clk_out1(clk100)      // 100
+      ,.clk_out2(clk_ddr)     // 400
+      ,.clk_out3(clk_ref)     // 200
+      ,.clk_out4(clk_ddr_dqs) // 400 (phase 90)
+      ,.clk_out5(clk_i)       // 60
+      ,.locked(pll_locked)
+   );
+
+   wire rst_n = rst_ni & system_reset_o & pll_locked;
    `endif
 
    logic               mem_req;
@@ -93,6 +137,15 @@ module air_soc (
    logic                timer_gnt;
    logic                timer_rvalid;
    logic [`MEM_W  -1:0] timer_rdata;
+
+   logic                dram_req;
+   logic [       31:0]  dram_addr;
+   logic                dram_we;
+   logic [`MEM_W/8-1:0] dram_be;
+   logic [`MEM_W  -1:0] dram_wdata;
+   logic                dram_gnt;
+   logic                dram_rvalid;
+   logic [`MEM_W  -1:0] dram_rdata;
 
    // instruction cache
    logic               imem_req;
@@ -363,9 +416,18 @@ module air_soc (
       .timer_gnt_i   (timer_gnt),
       .timer_rvalid_i(timer_rvalid),
       .timer_rdata_i (timer_rdata)
+
+      ,.dram_req_o   (dram_req)
+      ,.dram_addr_o  (dram_addr)
+      ,.dram_we_o    (dram_we)
+      ,.dram_be_o    (dram_be)
+      ,.dram_wdata_o (dram_wdata)
+      ,.dram_gnt_i   (dram_gnt)
+      ,.dram_rvalid_i(dram_rvalid)
+      ,.dram_rdata_i (dram_rdata)
    );
 
-   uart_controller_obi uart (
+   uart_controller_obi uart_dut (
       .clk_i   (clk_i),
       .rst_ni  (rst_n),
       .req_i   (uart_req),
@@ -380,7 +442,7 @@ module air_soc (
       .tx_o    (uart_tx_o)
    );
 
-   timer_controller_obi timer (
+   timer_controller_obi timer_dut (
       .clk_i   (clk_i),
       .rst_ni  (rst_n),
       .req_i   (timer_req),
@@ -391,6 +453,40 @@ module air_soc (
       .gnt_o   (timer_gnt),
       .rvalid_o(timer_rvalid),
       .rdata_o (timer_rdata)
+   );
+
+   dram_controller_obi dram_dut (
+      .clk_i   (clk_i),
+      .rst_ni  (rst_n),
+      .req_i   (dram_req),
+      .we_i    (dram_we),
+      .be_i    (dram_be),
+      .addr_i  (dram_addr),
+      .wdata_i (dram_wdata),
+      .gnt_o   (dram_gnt),
+      .rvalid_o(dram_rvalid),
+      .rdata_o (dram_rdata)
+
+      ,.ddr3_reset_n(ddr3_reset_n)
+      ,.ddr3_cke(ddr3_cke)
+      ,.ddr3_ck_p(ddr3_ck_p)
+      ,.ddr3_ck_n(ddr3_ck_n)
+      ,.ddr3_cs_n(ddr3_cs_n)
+      ,.ddr3_ras_n(ddr3_ras_n)
+      ,.ddr3_cas_n(ddr3_cas_n)
+      ,.ddr3_we_n(ddr3_we_n)
+      ,.ddr3_ba(ddr3_ba)
+      ,.ddr3_addr(ddr3_addr)
+      ,.ddr3_odt(ddr3_odt)
+      ,.ddr3_dm(ddr3_dm)
+      ,.ddr3_dqs_p(ddr3_dqs_p)
+      ,.ddr3_dqs_n(ddr3_dqs_n)
+      ,.ddr3_dq(ddr3_dq)
+
+      ,.clk100(clk100)
+      ,.clk_ddr(clk_ddr)
+      ,.clk_ref(clk_ref)
+      ,.clk_ddr_dqs(clk_ddr_dqs)
    );
 
 endmodule

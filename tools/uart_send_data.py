@@ -6,7 +6,7 @@ parser.add_argument("--port", type=str, default="/dev/ttyUSB1", required=True, h
 args = parser.parse_args()
 port = args.port
 baud_rate = 115200
-file = "/home/shc/projects/air-soc-dram/tests/coremark/coremark_baremetal_static.hex"
+file = "./tests/dram_demo/dram_demo.hex"
 program_sequence = "TEKNOFEST"
 file_format = 1
 
