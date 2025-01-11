@@ -53,9 +53,9 @@ pico:
 %:
 	@:
 
-#.PHONY: show
-#show:
-#	vsim verification/sim/sim_build/vsim.wlf -do verification/sim/waveform/wave.do
+.PHONY: show
+show:
+	vsim verification/sim/sim_build/vsim.wlf -do verification/sim/waveform/wave.do
 #-do verification/sim/waveform/wave.do
 
 .PHONY: clean

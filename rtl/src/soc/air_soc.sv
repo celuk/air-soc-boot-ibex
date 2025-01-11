@@ -5,8 +5,6 @@
 
 `default_nettype none
 
-`define ZC706
-
 module air_soc (
    `ifdef ZC706
    input wire clk_p,
@@ -47,6 +45,11 @@ module air_soc (
    //wire rst_n = rst_ni & system_reset_o;
    `ifndef ZC706
    wire rst_n = rst_ni & system_reset_o;
+
+   wire clk100;
+   wire clk_ddr;
+   wire clk_ref;
+   wire clk_ddr_dqs;
    `else
    /*
    wire clk_i;

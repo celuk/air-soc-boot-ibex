@@ -66,6 +66,15 @@ module dram_controller (
    //reg re_r_next = 0;
    //reg we_r_next = 0;
 
+   reg [31:0] trcd = 2;
+   reg [31:0] nonseq = 16;
+   reg [31:0] rwnonseq = 16;
+   reg [31:0] trp = 2;
+   reg [31:0] trfc = 26;
+   reg [31:0] rwseq = 13;
+   //reg [31:0] refcyc = 781; //2600; //500; //781;
+
+   `ifdef ZC706
    wire [31:0]    ram_addr = adr_r;
    wire           ram_wr = we_r;
    wire [127:0]   ram_wr_data = {96'h0, data_write_r};
@@ -77,14 +86,6 @@ module dram_controller (
    reg [15:0] ram_req_id = 0;
 
    assign data_read_w = ram_rd_data[31:0];
-
-   reg [31:0] trcd = 2;
-   reg [31:0] nonseq = 16;
-   reg [31:0] rwnonseq = 16;
-   reg [31:0] trp = 2;
-   reg [31:0] trfc = 26;
-   reg [31:0] rwseq = 13;
-   //reg [31:0] refcyc = 781; //2600; //500; //781;
 
    ddr3_controller controller(
       // user ports
@@ -126,15 +127,33 @@ module dram_controller (
       ,.trfc(trfc)
       ,.rwseq(rwseq)
    );
+   `else
+   wire [127:0]  ram_rd_data = 0;
+   wire         ram_accept = 1;
+   wire         ram_ack = 1;
 
+   assign data_read_w = ram_rd_data[31:0];
+   `endif
+
+   `ifdef ZC706
    reg ram_accept_r = 0;
-   reg ram_ack_r = 0; 
+   reg ram_ack_r = 0;
+   `else
+   reg ram_accept_r = 1;
+   reg ram_ack_r = 1;
+   `endif
 
    always @(posedge clk_i) begin
        if (rst_i) begin
            timer_r <= 32'h0;
+
+           `ifdef ZC706
            ram_accept_r <= 0;
            ram_ack_r <= 0;
+           `else
+           ram_accept_r <= 1;
+           ram_ack_r <= 1;
+           `endif
        end else begin
            if(timer_rst_r) begin
                timer_r <= 32'h0;
