@@ -1,5 +1,7 @@
 `timescale 1ns / 1ps
 
+`include "header.vh"
+
 module ram32 #(
    parameter SIZE = 16384,  // 64 K
    parameter INIT_FILE = ""
@@ -35,8 +37,8 @@ module ram32 #(
    localparam COL_WIDTH = 8;
    localparam RAM_DEPTH = SIZE*4;
    localparam ADDR_MSB = clogb2(RAM_DEPTH) + 1;
-   localparam CPU_CLK   = 60_000_000;
-   localparam BAUD_RATE = 115200;
+   localparam CPU_CLK   = `CPU_CLK;
+   localparam BAUD_RATE = `BAUD_RATE;
    
    reg [(NB_COL*COL_WIDTH)-1:0] ram [RAM_DEPTH-1:0];
    

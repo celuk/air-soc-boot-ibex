@@ -16,6 +16,9 @@
 `define HART_ID 32'h0
 `define DM_EXCEPTION_ADDR 32'h0
 
+`define CPU_CLK 50_000_000
+`define BAUD_RATE 115200
+
 // TODO: Handle if DCACHE_SZ is 0
 // Cache sizes must be at least multiple of 64 --> e.g. 64, 128, 256, ...
 `define ICACHE_SZ 0

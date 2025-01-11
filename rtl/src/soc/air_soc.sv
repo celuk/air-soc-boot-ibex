@@ -79,7 +79,7 @@ module air_soc (
       ,.clk_out2(clk_ddr)     // 400
       ,.clk_out3(clk_ref)     // 200
       ,.clk_out4(clk_ddr_dqs) // 400 (phase 90)
-      ,.clk_out5(clk_i)       // 60
+      ,.clk_out5(clk_i)       // 50
       ,.locked(pll_locked)
    );
 

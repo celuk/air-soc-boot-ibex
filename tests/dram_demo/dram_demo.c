@@ -9,6 +9,7 @@ int main()
     unsigned int address = 0x00002FFF;
     unsigned int data = 0x1234BAEF;
     dram_write(address, data);
+    tekno_printf("basladi");
     dram_write(0x00001FFF, 0x1234BEEF);
     dram_read(address);
 
