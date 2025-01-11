@@ -20,8 +20,8 @@ Original Author: Shay Gal-on
 
 
 
-#define CPU_CLK CLOCKS_PER_SEC //50000000  // 50 Mhz
-#define BAUD_RATE 115200
+//#define CPU_CLK CLOCKS_PER_SEC
+//#define BAUD_RATE 115200
 
 #define UART_CPB       (*(volatile uint32_t*)0xFF000000)
 #define UART_STP       (*(volatile uint32_t*)0xFF000004)

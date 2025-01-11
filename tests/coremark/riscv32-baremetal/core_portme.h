@@ -89,8 +89,10 @@ Original Author: Shay Gal-on
 
 #include <stdint.h>
 
+#include "defines.h"
+
 #define size_t long
-#define CLOCKS_PER_SEC 60000000
+#define CLOCKS_PER_SEC CPU_CLK
 
 typedef signed short   ee_s16;
 typedef unsigned short ee_u16;
