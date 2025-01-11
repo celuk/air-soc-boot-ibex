@@ -19,8 +19,8 @@
 `define ZC706
 //`define WODRAM
 
-//`define DDR_100MHZ
-`define DDR_MHZ 50
+`define DDR_100MHZ
+`define DDR_MHZ 100
 
 `define CPU_CLK 50_000_000
 `define BAUD_RATE 115200

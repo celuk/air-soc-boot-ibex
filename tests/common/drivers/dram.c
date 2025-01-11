@@ -3,7 +3,7 @@
 
 void init_dram(unsigned int wait_time){
     DRAM_TRCD = 2;
-    DRAM_TRFC = 25; // smaller than 26?
+    DRAM_TRFC = 15; // smaller than 26?
     DRAM_TRP = 2;
     DRAM_NONSEQ = 16;
     DRAM_RWNONSEQ = 16;
