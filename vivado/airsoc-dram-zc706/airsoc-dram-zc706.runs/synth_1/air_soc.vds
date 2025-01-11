@@ -2,13 +2,13 @@
 # Vivado v2022.2 (64-bit)
 # SW Build 3671981 on Fri Oct 14 04:59:54 MDT 2022
 # IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
-# Start of session at: Sat Jan 11 04:57:19 2025
-# Process ID: 3476043
+# Start of session at: Sat Jan 11 15:57:17 2025
+# Process ID: 3994358
 # Current directory: /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.runs/synth_1
 # Command line: vivado -log air_soc.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source air_soc.tcl
 # Log file: /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.runs/synth_1/air_soc.vds
 # Journal file: /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.runs/synth_1/vivado.jou
-# Running On: karpuz, OS: Linux, CPU Frequency: 800.162 MHz, CPU Physical cores: 12, Host memory: 67154 MB
+# Running On: karpuz, OS: Linux, CPU Frequency: 800.000 MHz, CPU Physical cores: 12, Host memory: 67154 MB
 #-----------------------------------------------------------
 source air_soc.tcl -notrace
 Command: read_checkpoint -auto_incremental -incremental /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.srcs/utils_1/imports/synth_1/air_soc.dcp
@@ -24,7 +24,7 @@ INFO: [Designutils 20-5440] No compile time benefit to using incremental synthes
 INFO: [Designutils 20-4379] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
 INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 4 processes.
 INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
-INFO: [Synth 8-7075] Helper process launched with PID 3476070
+INFO: [Synth 8-7075] Helper process launched with PID 3994393
 INFO: [Synth 8-11241] undeclared symbol 'REGCCE', assumed default net type 'wire' [/tools/Xilinx/Vivado/2022.2/data/verilog/src/unimacro/BRAM_SINGLE_MACRO.v:2170]
 WARNING: [Synth 8-11067] parameter 'OPCODE_SYSTEM' declared inside package 'cv32e40p_pkg' shall be treated as localparam [/home/shc/projects/air-soc-dram/cv32e40p/rtl/include/cv32e40p_pkg.sv:37]
 WARNING: [Synth 8-11067] parameter 'OPCODE_FENCE' declared inside package 'cv32e40p_pkg' shall be treated as localparam [/home/shc/projects/air-soc-dram/cv32e40p/rtl/include/cv32e40p_pkg.sv:38]
@@ -128,11 +128,11 @@ WARNING: [Synth 8-11067] parameter 'JT_JAL' declared inside package 'cv32e40p_pk
 WARNING: [Synth 8-11067] parameter 'JT_JALR' declared inside package 'cv32e40p_pkg' shall be treated as localparam [/home/shc/projects/air-soc-dram/cv32e40p/rtl/include/cv32e40p_pkg.sv:672]
 INFO: [Common 17-14] Message 'Synth 8-11067' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:02 ; elapsed = 00:00:02 . Memory (MB): peak = 2511.582 ; gain = 371.738 ; free physical = 12470 ; free virtual = 47298
-Synthesis current peak Physical Memory [PSS] (MB): peak = 1916.900; parent = 1717.798; children = 199.103
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3518.113; parent = 2518.523; children = 999.590
+Starting RTL Elaboration : Time (s): cpu = 00:00:02 ; elapsed = 00:00:02 . Memory (MB): peak = 2511.586 ; gain = 369.801 ; free physical = 9866 ; free virtual = 45465
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1916.773; parent = 1717.648; children = 199.125
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3518.117; parent = 2518.527; children = 999.590
 ---------------------------------------------------------------------------------
-INFO: [Synth 8-6157] synthesizing module 'air_soc' [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:10]
+INFO: [Synth 8-6157] synthesizing module 'air_soc' [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:8]
 INFO: [Synth 8-6157] synthesizing module 'cache' [/home/shc/projects/air-soc-dram/rtl/src/memory/cache.sv:6]
 	Parameter ADDR_BIT_W bound to: 32'b00000000000000000000000000100000 
 	Parameter CPU_BYTE_W bound to: 32'b00000000000000000000000000000100 
@@ -145,8 +145,8 @@ INFO: [Synth 8-6157] synthesizing module 'cache_way' [/home/shc/projects/air-soc
 	Parameter LINE_BYTE_W bound to: 32'b00000000000000000000000000001000 
 INFO: [Synth 8-6155] done synthesizing module 'cache_way' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/memory/cache.sv:296]
 INFO: [Synth 8-6155] done synthesizing module 'cache' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/memory/cache.sv:6]
-INFO: [Synth 8-6157] synthesizing module 'clk_wiz_1' [/home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.runs/synth_1/.Xil/Vivado-3476043-karpuz/realtime/clk_wiz_1_stub.v:5]
-INFO: [Synth 8-6155] done synthesizing module 'clk_wiz_1' (0#1) [/home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.runs/synth_1/.Xil/Vivado-3476043-karpuz/realtime/clk_wiz_1_stub.v:5]
+INFO: [Synth 8-6157] synthesizing module 'clk_wiz_1' [/home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.runs/synth_1/.Xil/Vivado-3994358-karpuz/realtime/clk_wiz_1_stub.v:5]
+INFO: [Synth 8-6155] done synthesizing module 'clk_wiz_1' (0#1) [/home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.runs/synth_1/.Xil/Vivado-3994358-karpuz/realtime/clk_wiz_1_stub.v:5]
 INFO: [Synth 8-6157] synthesizing module 'cv32e40p_top' [/home/shc/projects/air-soc-dram/cv32e40p/rtl/cv32e40p_top.sv:26]
 	Parameter COREV_PULP bound to: 1'b0 
 	Parameter COREV_CLUSTER bound to: 1'b0 
@@ -344,7 +344,7 @@ INFO: [Synth 8-294] found qualifier unique on case statement: implementing as pa
 INFO: [Synth 8-6155] done synthesizing module 'cv32e40p_cs_registers' (0#1) [/home/shc/projects/air-soc-dram/cv32e40p/rtl/cv32e40p_cs_registers.sv:30]
 INFO: [Synth 8-6155] done synthesizing module 'cv32e40p_core' (0#1) [/home/shc/projects/air-soc-dram/cv32e40p/rtl/cv32e40p_core.sv:31]
 INFO: [Synth 8-6155] done synthesizing module 'cv32e40p_top' (0#1) [/home/shc/projects/air-soc-dram/cv32e40p/rtl/cv32e40p_top.sv:26]
-WARNING: [Synth 8-693] zero replication count - replication ignored [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:358]
+WARNING: [Synth 8-693] zero replication count - replication ignored [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:399]
 INFO: [Synth 8-6157] synthesizing module 'ram32' [/home/shc/projects/air-soc-dram/rtl/src/memory/ram.sv:5]
 	Parameter SIZE bound to: 32768 - type: integer 
 	Parameter INIT_FILE bound to: (null) - type: string 
@@ -380,6 +380,7 @@ INFO: [Synth 8-6155] done synthesizing module 'timer_controller_obi' (0#1) [/hom
 INFO: [Synth 8-6157] synthesizing module 'dram_controller_obi' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller_obi.sv:2]
 INFO: [Synth 8-6157] synthesizing module 'dram_controller' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:6]
 INFO: [Synth 8-6157] synthesizing module 'ddr3_controller' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_controller.sv:3]
+	Parameter DDR_MHZ bound to: 100 - type: integer 
 INFO: [Synth 8-6157] synthesizing module 'ddr3_dfi_phy' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:25]
 	Parameter DQS_TAP_DELAY_INIT bound to: 27 - type: integer 
 	Parameter DQ_TAP_DELAY_INIT bound to: 0 - type: integer 
@@ -513,9 +514,9 @@ WARNING: [Synth 8-7071] port 'Q7' of module 'ISERDESE2' is unconnected for insta
 WARNING: [Synth 8-7071] port 'Q8' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in15' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2628]
 WARNING: [Synth 8-7023] instance 'u_serdes_dq_in15' of module 'ISERDESE2' has 28 connections declared, but only 24 given [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2628]
 INFO: [Synth 8-6155] done synthesizing module 'ddr3_dfi_phy' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:25]
-WARNING: [Synth 8-7071] port 'cfg_valid_i' of module 'ddr3_dfi_phy' is unconnected for instance 'u_phy' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_controller.sv:68]
-WARNING: [Synth 8-7071] port 'cfg_i' of module 'ddr3_dfi_phy' is unconnected for instance 'u_phy' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_controller.sv:68]
-WARNING: [Synth 8-7023] instance 'u_phy' of module 'ddr3_dfi_phy' has 38 connections declared, but only 36 given [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_controller.sv:68]
+WARNING: [Synth 8-7071] port 'cfg_valid_i' of module 'ddr3_dfi_phy' is unconnected for instance 'u_phy' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_controller.sv:72]
+WARNING: [Synth 8-7071] port 'cfg_i' of module 'ddr3_dfi_phy' is unconnected for instance 'u_phy' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_controller.sv:72]
+WARNING: [Synth 8-7023] instance 'u_phy' of module 'ddr3_dfi_phy' has 38 connections declared, but only 36 given [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_controller.sv:72]
 INFO: [Synth 8-6157] synthesizing module 'ddr3_core' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_core.sv:26]
 	Parameter DDR_MHZ bound to: 100 - type: integer 
 	Parameter DDR_WRITE_LATENCY bound to: 4 - type: integer 
@@ -537,11 +538,11 @@ INFO: [Synth 8-6155] done synthesizing module 'ddr3_dfi_fifo' (0#1) [/home/shc/p
 INFO: [Synth 8-6155] done synthesizing module 'ddr3_dfi_seq' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_seq.sv:26]
 INFO: [Synth 8-6155] done synthesizing module 'ddr3_core' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_core.sv:26]
 INFO: [Synth 8-6155] done synthesizing module 'ddr3_controller' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_controller.sv:3]
-WARNING: [Synth 8-151] case item 8'b00011000 is unreachable [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:205]
+WARNING: [Synth 8-151] case item 8'b00011000 is unreachable [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:232]
 INFO: [Synth 8-6155] done synthesizing module 'dram_controller' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:6]
 WARNING: [Synth 8-689] width (32) of port connection 'wb_adr_i' does not match port width (8) of module 'dram_controller' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller_obi.sv:44]
 INFO: [Synth 8-6155] done synthesizing module 'dram_controller_obi' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller_obi.sv:2]
-INFO: [Synth 8-6155] done synthesizing module 'air_soc' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:10]
+INFO: [Synth 8-6155] done synthesizing module 'air_soc' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:8]
 WARNING: [Synth 8-7137] Register rtag_o_reg in module cache_way has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/memory/cache.sv:330]
 WARNING: [Synth 8-7137] Register rline_o_reg in module cache_way has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/memory/cache.sv:331]
 WARNING: [Synth 8-7137] Register rdirty_o_reg in module cache_way has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/memory/cache.sv:332]
@@ -599,112 +600,112 @@ RAM "queue_reg" dissolved into registers
 WARNING: [Synth 8-3848] Net rx_full_0 in module/entity uart_controller does not have driver. [/home/shc/projects/air-soc-dram/rtl/src/peripherals/uart/uart_controller.sv:42]
 WARNING: [Synth 8-3848] Net rx_full_1 in module/entity uart_controller does not have driver. [/home/shc/projects/air-soc-dram/rtl/src/peripherals/uart/uart_controller.sv:43]
 WARNING: [Synth 8-6014] Unused sequential element wr_accept_q_reg was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_seq.sv:160]
-WARNING: [Synth 8-3848] Net dfi_rddata_dnv in module/entity ddr3_controller does not have driver. [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_controller.sv:60]
-WARNING: [Synth 8-6014] Unused sequential element command_r_reg[a10] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:169]
-WARNING: [Synth 8-6014] Unused sequential element command_r_reg[a12] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:169]
-WARNING: [Synth 8-6014] Unused sequential element command_r_reg[we_n] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:169]
-WARNING: [Synth 8-6014] Unused sequential element command_r_reg[cas_n] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:169]
-WARNING: [Synth 8-6014] Unused sequential element command_r_reg[ras_n] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:169]
-WARNING: [Synth 8-6014] Unused sequential element command_r_reg[cs_n] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:169]
-WARNING: [Synth 8-6014] Unused sequential element command_r_reg[cke] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:169]
-WARNING: [Synth 8-6014] Unused sequential element command_r_reg[rst_n] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:169]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[0] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[1] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[2] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[3] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[4] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[5] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[6] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[7] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[8] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[9] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[10] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[11] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[12] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[13] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[14] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[15] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[16] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[17] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[18] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[19] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[20] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[21] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[22] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[23] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[24] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[25] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[26] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[27] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[28] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[29] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[30] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[31] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
-WARNING: [Synth 8-7137] Register req_sources_reg[0] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[1] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[2] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[3] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[4] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[5] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[6] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[7] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[8] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[9] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[10] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[11] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[12] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[13] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[14] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[15] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[16] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[17] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[18] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[19] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[20] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[21] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[22] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[23] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[24] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[25] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[26] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[27] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[28] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[29] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[30] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_sources_reg[31] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
-WARNING: [Synth 8-7137] Register req_write_reg[0] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[1] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[2] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[3] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[4] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[5] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[6] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[7] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[8] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[9] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[10] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[11] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[12] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[13] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[14] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[15] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[16] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[17] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[18] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[19] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[20] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[21] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[22] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[23] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[24] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[25] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[26] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[27] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[28] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[29] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[30] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-7137] Register req_write_reg[31] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
-WARNING: [Synth 8-3848] Net uart_rx_i in module/entity air_soc does not have driver. [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:44]
+WARNING: [Synth 8-3848] Net dfi_rddata_dnv in module/entity ddr3_controller does not have driver. [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_controller.sv:64]
+WARNING: [Synth 8-6014] Unused sequential element command_r_reg[a10] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:196]
+WARNING: [Synth 8-6014] Unused sequential element command_r_reg[a12] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:196]
+WARNING: [Synth 8-6014] Unused sequential element command_r_reg[we_n] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:196]
+WARNING: [Synth 8-6014] Unused sequential element command_r_reg[cas_n] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:196]
+WARNING: [Synth 8-6014] Unused sequential element command_r_reg[ras_n] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:196]
+WARNING: [Synth 8-6014] Unused sequential element command_r_reg[cs_n] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:196]
+WARNING: [Synth 8-6014] Unused sequential element command_r_reg[cke] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:196]
+WARNING: [Synth 8-6014] Unused sequential element command_r_reg[rst_n] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:196]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[0] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[1] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[2] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[3] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[4] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[5] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[6] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[7] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[8] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[9] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[10] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[11] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[12] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[13] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[14] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[15] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[16] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[17] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[18] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[19] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[20] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[21] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[22] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[23] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[24] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[25] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[26] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[27] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[28] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[29] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[30] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[31] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:379]
+WARNING: [Synth 8-7137] Register req_sources_reg[0] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[1] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[2] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[3] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[4] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[5] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[6] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[7] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[8] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[9] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[10] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[11] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[12] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[13] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[14] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[15] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[16] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[17] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[18] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[19] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[20] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[21] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[22] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[23] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[24] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[25] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[26] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[27] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[28] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[29] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[30] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_sources_reg[31] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:377]
+WARNING: [Synth 8-7137] Register req_write_reg[0] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[1] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[2] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[3] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[4] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[5] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[6] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[7] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[8] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[9] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[10] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[11] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[12] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[13] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[14] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[15] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[16] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[17] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[18] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[19] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[20] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[21] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[22] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[23] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[24] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[25] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[26] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[27] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[28] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[29] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[30] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-7137] Register req_write_reg[31] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:378]
+WARNING: [Synth 8-3848] Net uart_rx_i in module/entity air_soc does not have driver. [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:65]
 WARNING: [Synth 8-7129] Port dfi_rddata_dnv_i[1] in module ddr3_dfi_seq is either unconnected or has no load
 WARNING: [Synth 8-7129] Port dfi_rddata_dnv_i[0] in module ddr3_dfi_seq is either unconnected or has no load
 WARNING: [Synth 8-7129] Port trcd[31] in module ddr3_dfi_seq is either unconnected or has no load
@@ -807,24 +808,24 @@ WARNING: [Synth 8-7129] Port trp[13] in module ddr3_dfi_seq is either unconnecte
 WARNING: [Synth 8-7129] Port trp[12] in module ddr3_dfi_seq is either unconnected or has no load
 INFO: [Common 17-14] Message 'Synth 8-7129' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 2759.676 ; gain = 619.832 ; free physical = 12276 ; free virtual = 47105
-Synthesis current peak Physical Memory [PSS] (MB): peak = 1922.398; parent = 1723.296; children = 199.103
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3759.270; parent = 2759.680; children = 999.590
+Finished RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 2759.680 ; gain = 617.895 ; free physical = 9769 ; free virtual = 45356
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1923.380; parent = 1724.255; children = 199.125
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3759.273; parent = 2759.684; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 2759.676 ; gain = 619.832 ; free physical = 12275 ; free virtual = 47104
-Synthesis current peak Physical Memory [PSS] (MB): peak = 1923.555; parent = 1724.452; children = 199.103
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3759.270; parent = 2759.680; children = 999.590
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 2759.680 ; gain = 617.895 ; free physical = 9769 ; free virtual = 45356
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1924.536; parent = 1725.411; children = 199.125
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3759.273; parent = 2759.684; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 2759.676 ; gain = 619.832 ; free physical = 12275 ; free virtual = 47104
-Synthesis current peak Physical Memory [PSS] (MB): peak = 1923.555; parent = 1724.452; children = 199.103
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3759.270; parent = 2759.680; children = 999.590
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 2759.680 ; gain = 617.895 ; free physical = 9769 ; free virtual = 45356
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1924.536; parent = 1725.411; children = 199.125
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3759.273; parent = 2759.684; children = 999.590
 ---------------------------------------------------------------------------------
-Netlist sorting complete. Time (s): cpu = 00:00:00.09 ; elapsed = 00:00:00.08 . Memory (MB): peak = 2759.676 ; gain = 0.000 ; free physical = 12284 ; free virtual = 47109
+Netlist sorting complete. Time (s): cpu = 00:00:00.08 ; elapsed = 00:00:00.08 . Memory (MB): peak = 2759.680 ; gain = 0.000 ; free physical = 9784 ; free virtual = 45371
 INFO: [Netlist 29-17] Analyzing 53 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
@@ -843,30 +844,30 @@ INFO: [Project 1-236] Implementation specific constraints were found while readi
 Resolution: To avoid this warning, move constraints listed in [.Xil/air_soc_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
 Completed Processing XDC Constraints
 
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2871.520 ; gain = 0.000 ; free physical = 12300 ; free virtual = 47124
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2874.523 ; gain = 0.000 ; free physical = 9715 ; free virtual = 45302
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 19 instances were transformed.
   IOBUF => IOBUF (IBUF, OBUFT): 16 instances
   IOBUFDS => IOBUFDS (IBUFDS, INV, OBUFTDS(x2)): 2 instances
   OBUFDS => OBUFDS_DUAL_BUF (INV, OBUFDS(x2)): 1 instance 
 
-Constraint Validation Runtime : Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.02 . Memory (MB): peak = 2871.520 ; gain = 0.000 ; free physical = 12300 ; free virtual = 47124
+Constraint Validation Runtime : Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 2874.523 ; gain = 0.000 ; free physical = 9715 ; free virtual = 45302
 INFO: [Designutils 20-5440] No compile time benefit to using incremental synthesis; A full resynthesis will be run
 INFO: [Designutils 20-4379] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
 INFO: [Synth 8-11241] undeclared symbol 'REGCCE', assumed default net type 'wire' [/tools/Xilinx/Vivado/2022.2/data/verilog/src/unimacro/BRAM_SINGLE_MACRO.v:2170]
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:11 ; elapsed = 00:00:11 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12420 ; free virtual = 47244
-Synthesis current peak Physical Memory [PSS] (MB): peak = 1923.555; parent = 1724.452; children = 199.103
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3839.098; parent = 2839.508; children = 999.590
+Finished Constraint Validation : Time (s): cpu = 00:00:11 ; elapsed = 00:00:11 . Memory (MB): peak = 2874.523 ; gain = 732.738 ; free physical = 9745 ; free virtual = 45342
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1924.536; parent = 1725.411; children = 199.125
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3842.102; parent = 2842.512; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
 Loading part: xc7z045ffg900-2
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:11 ; elapsed = 00:00:11 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12420 ; free virtual = 47244
-Synthesis current peak Physical Memory [PSS] (MB): peak = 1923.555; parent = 1724.452; children = 199.103
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3839.098; parent = 2839.508; children = 999.590
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:11 ; elapsed = 00:00:11 . Memory (MB): peak = 2874.523 ; gain = 732.738 ; free physical = 9744 ; free virtual = 45342
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1924.536; parent = 1725.411; children = 199.125
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3842.102; parent = 2842.512; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying 'set_property' XDC Constraints
@@ -877,9 +878,9 @@ Applied set_property IO_BUFFER_TYPE = NONE for clk_p. (constraint file  /home/sh
 Applied set_property CLOCK_BUFFER_TYPE = NONE for clk_p. (constraint file  /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_1/clk_wiz_1/clk_wiz_1_in_context.xdc, line 10).
 Applied set_property KEEP_HIERARCHY = SOFT for u_pll. (constraint file  auto generated constraint).
 ---------------------------------------------------------------------------------
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:11 ; elapsed = 00:00:11 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12420 ; free virtual = 47244
-Synthesis current peak Physical Memory [PSS] (MB): peak = 1923.555; parent = 1724.452; children = 199.103
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3839.098; parent = 2839.508; children = 999.590
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:11 ; elapsed = 00:00:11 . Memory (MB): peak = 2874.523 ; gain = 732.738 ; free physical = 9744 ; free virtual = 45342
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1924.536; parent = 1725.411; children = 199.125
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3842.102; parent = 2842.512; children = 999.590
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-802] inferred FSM for state register 'debug_fsm_cs_reg' in module 'cv32e40p_controller'
 INFO: [Synth 8-802] inferred FSM for state register 'State_SP_reg' in module 'cv32e40p_alu_div'
@@ -987,9 +988,9 @@ INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 
 ---------------------------------------------------------------------------------------------------
 INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'sequential' in module 'uart_rx'
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:14 ; elapsed = 00:00:15 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12456 ; free virtual = 47284
-Synthesis current peak Physical Memory [PSS] (MB): peak = 1945.093; parent = 1746.043; children = 199.103
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3839.098; parent = 2839.508; children = 999.590
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:14 ; elapsed = 00:00:15 . Memory (MB): peak = 2874.523 ; gain = 732.738 ; free physical = 9801 ; free virtual = 45385
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1945.088; parent = 1746.005; children = 199.125
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3842.102; parent = 2842.512; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start RTL Component Statistics 
@@ -1179,9 +1180,9 @@ DSP Report: operator mult_i/ is absorbed into DSP mult_i/.
 WARNING: [Synth 8-6841] Block RAM (ram_reg) originally specified as a Byte Wide Write Enable RAM cannot take advantage of ByteWide feature and is implemented with single write enable per RAM due to following reason.
 (address width (17) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired.)
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:47 ; elapsed = 00:00:50 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12432 ; free virtual = 47301
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2091.925; parent = 1892.875; children = 199.103
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3839.098; parent = 2839.508; children = 999.590
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:47 ; elapsed = 00:00:50 . Memory (MB): peak = 2874.523 ; gain = 732.738 ; free physical = 9888 ; free virtual = 45495
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2101.447; parent = 1902.364; children = 199.125
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3842.102; parent = 2842.512; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP, Shift Register and Retiming Reporting
@@ -1197,12 +1198,12 @@ Block RAM: Preliminary Mapping Report (see note below)
 Note: The table above is a preliminary report that shows the Block RAMs at the current stage of the synthesis flow. Some Block RAMs may be reimplemented as non Block RAM primitives later in the synthesis flow. Multiple instantiated Block RAMs are reported only once. 
 
 Distributed RAM: Preliminary Mapping Report (see note below)
-+------------------------------------------------+--------------------------------------+-----------+----------------------+--------------+
-|Module Name                                     | RTL Object                           | Inference | Size (Depth x Width) | Primitives   | 
-+------------------------------------------------+--------------------------------------+-----------+----------------------+--------------+
-|\dram_dut/dram_iface_dut/controller/u_ddr_core  | u_seq/u_write_fifo/ram_reg           | Implied   | 4 x 144              | RAM32M x 24  | 
-|i_1/uart_dut                                    | uart_iface_dut/uart_tx_dut/queue_reg | Implied   | 2 x 8                | RAM32M x 2   | 
-+------------------------------------------------+--------------------------------------+-----------+----------------------+--------------+
++----------------------------------------------------------+--------------------------------------+-----------+----------------------+--------------+
+|Module Name                                               | RTL Object                           | Inference | Size (Depth x Width) | Primitives   | 
++----------------------------------------------------------+--------------------------------------+-----------+----------------------+--------------+
+|\dram_dut/dram_iface_dut/ddr3_controller_inst/u_ddr_core  | u_seq/u_write_fifo/ram_reg           | Implied   | 4 x 144              | RAM32M x 24  | 
+|i_1/uart_dut                                              | uart_iface_dut/uart_tx_dut/queue_reg | Implied   | 2 x 8                | RAM32M x 2   | 
++----------------------------------------------------------+--------------------------------------+-----------+----------------------+--------------+
 
 Note: The table above is a preliminary report that shows the Distributed RAMs at the current stage of the synthesis flow. Some Distributed RAMs may be reimplemented as non Distributed RAM primitives later in the synthesis flow. Multiple instantiated RAMs are reported only once.
 
@@ -1228,17 +1229,17 @@ Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
 Start Applying XDC Timing Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:51 ; elapsed = 00:00:53 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12357 ; free virtual = 47197
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2139.401; parent = 1940.352; children = 199.103
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3839.098; parent = 2839.508; children = 999.590
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:51 ; elapsed = 00:00:54 . Memory (MB): peak = 2874.523 ; gain = 732.738 ; free physical = 9729 ; free virtual = 45338
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2139.260; parent = 1940.177; children = 199.125
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3842.102; parent = 2842.512; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Timing Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:00:52 ; elapsed = 00:00:54 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12341 ; free virtual = 47179
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2151.034; parent = 1951.984; children = 199.103
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3839.098; parent = 2839.508; children = 999.590
+Finished Timing Optimization : Time (s): cpu = 00:00:52 ; elapsed = 00:00:54 . Memory (MB): peak = 2874.523 ; gain = 732.738 ; free physical = 9719 ; free virtual = 45328
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2150.893; parent = 1951.810; children = 199.125
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3842.102; parent = 2842.512; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP, Shift Register and Retiming Reporting
@@ -1253,12 +1254,12 @@ Block RAM: Final Mapping Report
 
 
 Distributed RAM: Final Mapping Report
-+------------------------------------------------+--------------------------------------+-----------+----------------------+--------------+
-|Module Name                                     | RTL Object                           | Inference | Size (Depth x Width) | Primitives   | 
-+------------------------------------------------+--------------------------------------+-----------+----------------------+--------------+
-|\dram_dut/dram_iface_dut/controller/u_ddr_core  | u_seq/u_write_fifo/ram_reg           | Implied   | 4 x 144              | RAM32M x 24  | 
-|i_1/uart_dut                                    | uart_iface_dut/uart_tx_dut/queue_reg | Implied   | 2 x 8                | RAM32M x 2   | 
-+------------------------------------------------+--------------------------------------+-----------+----------------------+--------------+
++----------------------------------------------------------+--------------------------------------+-----------+----------------------+--------------+
+|Module Name                                               | RTL Object                           | Inference | Size (Depth x Width) | Primitives   | 
++----------------------------------------------------------+--------------------------------------+-----------+----------------------+--------------+
+|\dram_dut/dram_iface_dut/ddr3_controller_inst/u_ddr_core  | u_seq/u_write_fifo/ram_reg           | Implied   | 4 x 144              | RAM32M x 24  | 
+|i_1/uart_dut                                              | uart_iface_dut/uart_tx_dut/queue_reg | Implied   | 2 x 8                | RAM32M x 2   | 
++----------------------------------------------------------+--------------------------------------+-----------+----------------------+--------------+
 
 ---------------------------------------------------------------------------------
 Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
@@ -1331,9 +1332,9 @@ INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_3_3_5 (impl
 INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_3_3_6 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_3_3_7 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:00:54 ; elapsed = 00:00:57 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12260 ; free virtual = 47099
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2151.034; parent = 1951.984; children = 199.103
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3839.098; parent = 2839.508; children = 999.590
+Finished Technology Mapping : Time (s): cpu = 00:00:54 ; elapsed = 00:00:57 . Memory (MB): peak = 2874.523 ; gain = 732.738 ; free physical = 9711 ; free virtual = 45318
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2150.893; parent = 1951.810; children = 199.125
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3842.102; parent = 2842.512; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start IO Insertion
@@ -1351,62 +1352,62 @@ Start Final Netlist Cleanup
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:00:56 ; elapsed = 00:00:59 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12269 ; free virtual = 47107
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2151.034; parent = 1951.984; children = 199.103
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3845.035; parent = 2845.445; children = 999.590
+Finished IO Insertion : Time (s): cpu = 00:00:56 ; elapsed = 00:00:59 . Memory (MB): peak = 2874.523 ; gain = 732.738 ; free physical = 9737 ; free virtual = 45345
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2150.893; parent = 1951.810; children = 199.125
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3842.102; parent = 2842.512; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:00:56 ; elapsed = 00:00:59 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12269 ; free virtual = 47107
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2151.034; parent = 1951.984; children = 199.103
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3845.035; parent = 2845.445; children = 999.590
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:56 ; elapsed = 00:00:59 . Memory (MB): peak = 2874.523 ; gain = 732.738 ; free physical = 9738 ; free virtual = 45345
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2150.893; parent = 1951.810; children = 199.125
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3842.102; parent = 2842.512; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:57 ; elapsed = 00:00:59 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12271 ; free virtual = 47109
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2151.647; parent = 1952.598; children = 199.103
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3845.035; parent = 2845.445; children = 999.590
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:57 ; elapsed = 00:01:00 . Memory (MB): peak = 2874.523 ; gain = 732.738 ; free physical = 9741 ; free virtual = 45349
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2150.893; parent = 1951.810; children = 199.125
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3842.102; parent = 2842.512; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:00:57 ; elapsed = 00:00:59 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12271 ; free virtual = 47109
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2151.726; parent = 1952.676; children = 199.103
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3845.035; parent = 2845.445; children = 999.590
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:57 ; elapsed = 00:01:00 . Memory (MB): peak = 2874.523 ; gain = 732.738 ; free physical = 9744 ; free virtual = 45352
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2150.893; parent = 1951.810; children = 199.125
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3842.102; parent = 2842.512; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:57 ; elapsed = 00:01:00 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12271 ; free virtual = 47109
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2151.726; parent = 1952.676; children = 199.103
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3845.035; parent = 2845.445; children = 999.590
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:57 ; elapsed = 00:01:00 . Memory (MB): peak = 2874.523 ; gain = 732.738 ; free physical = 9744 ; free virtual = 45352
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2150.893; parent = 1951.810; children = 199.125
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3842.102; parent = 2842.512; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:00:57 ; elapsed = 00:01:00 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12271 ; free virtual = 47109
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2151.726; parent = 1952.676; children = 199.103
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3845.035; parent = 2845.445; children = 999.590
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:57 ; elapsed = 00:01:00 . Memory (MB): peak = 2874.523 ; gain = 732.738 ; free physical = 9744 ; free virtual = 45352
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2150.893; parent = 1951.810; children = 199.125
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3842.102; parent = 2842.512; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP, Shift Register and Retiming Reporting
 ---------------------------------------------------------------------------------
 
 Static Shift Register Report:
-+------------+-----------------------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
-|Module Name | RTL Name                                                              | Length | Width | Reset Signal | Pull out first Reg | Pull out last Reg | SRL16E | SRLC32E | 
-+------------+-----------------------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
-|air_soc     | dram_dut/dram_iface_dut/controller/u_phy/rd_en_q_reg[0]               | 11     | 1     | YES          | NO                 | YES               | 1      | 0       | 
-|air_soc     | dram_dut/dram_iface_dut/controller/u_ddr_core/u_seq/wr_en_q_reg[0]    | 4      | 1     | YES          | NO                 | YES               | 1      | 0       | 
-|air_soc     | dram_dut/dram_iface_dut/controller/u_ddr_core/u_seq/rd_data_q_reg[31] | 4      | 32    | YES          | NO                 | YES               | 32     | 0       | 
-+------------+-----------------------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
++------------+---------------------------------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|Module Name | RTL Name                                                                        | Length | Width | Reset Signal | Pull out first Reg | Pull out last Reg | SRL16E | SRLC32E | 
++------------+---------------------------------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|air_soc     | dram_dut/dram_iface_dut/ddr3_controller_inst/u_phy/rd_en_q_reg[0]               | 11     | 1     | YES          | NO                 | YES               | 1      | 0       | 
+|air_soc     | dram_dut/dram_iface_dut/ddr3_controller_inst/u_ddr_core/u_seq/wr_en_q_reg[0]    | 4      | 1     | YES          | NO                 | YES               | 1      | 0       | 
+|air_soc     | dram_dut/dram_iface_dut/ddr3_controller_inst/u_ddr_core/u_seq/rd_data_q_reg[31] | 4      | 32    | YES          | NO                 | YES               | 32     | 0       | 
++------------+---------------------------------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
 
 ---------------------------------------------------------------------------------
 Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
@@ -1471,20 +1472,20 @@ Report Cell Usage:
 |34    |OBUFDS     |     1|
 +------+-----------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:00:57 ; elapsed = 00:01:00 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12271 ; free virtual = 47109
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2151.772; parent = 1952.723; children = 199.103
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3845.035; parent = 2845.445; children = 999.590
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:57 ; elapsed = 00:01:00 . Memory (MB): peak = 2874.523 ; gain = 732.738 ; free physical = 9742 ; free virtual = 45350
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2150.893; parent = 1951.810; children = 199.125
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3842.102; parent = 2842.512; children = 999.590
 ---------------------------------------------------------------------------------
 Synthesis finished with 0 errors, 0 critical warnings and 35 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:00:55 ; elapsed = 00:00:58 . Memory (MB): peak = 2871.520 ; gain = 619.832 ; free physical = 12316 ; free virtual = 47154
-Synthesis Optimization Complete : Time (s): cpu = 00:00:57 ; elapsed = 00:01:00 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12316 ; free virtual = 47154
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:55 ; elapsed = 00:00:58 . Memory (MB): peak = 2874.523 ; gain = 617.895 ; free physical = 9750 ; free virtual = 45358
+Synthesis Optimization Complete : Time (s): cpu = 00:00:57 ; elapsed = 00:01:00 . Memory (MB): peak = 2874.523 ; gain = 732.738 ; free physical = 9750 ; free virtual = 45358
 INFO: [Project 1-571] Translating synthesized netlist
-Netlist sorting complete. Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.08 . Memory (MB): peak = 2871.520 ; gain = 0.000 ; free physical = 12450 ; free virtual = 47288
+Netlist sorting complete. Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.07 . Memory (MB): peak = 2874.523 ; gain = 0.000 ; free physical = 9858 ; free virtual = 45466
 INFO: [Netlist 29-17] Analyzing 1834 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 INFO: [Opt 31-138] Pushed 4 inverter(s) to 33 load pin(s).
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2875.391 ; gain = 0.000 ; free physical = 12452 ; free virtual = 47290
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2875.426 ; gain = 0.000 ; free physical = 9882 ; free virtual = 45490
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 1056 instances were transformed.
   IOBUF => IOBUF (IBUF, OBUFT): 16 instances
@@ -1496,12 +1497,12 @@ INFO: [Project 1-111] Unisim Transformation Summary:
   RAM32M => RAM32M (RAMD32(x6), RAMS32(x2)): 8 instances
   RAM32X1D => RAM32X1D (RAMD32(x2)): 4 instances
 
-Synth Design complete, checksum: 12b91fa
+Synth Design complete, checksum: f867df9e
 INFO: [Common 17-83] Releasing license: Synthesis
 279 Infos, 477 Warnings, 1 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:01:03 ; elapsed = 00:01:04 . Memory (MB): peak = 2875.391 ; gain = 1129.160 ; free physical = 12633 ; free virtual = 47471
+synth_design: Time (s): cpu = 00:01:03 ; elapsed = 00:01:04 . Memory (MB): peak = 2875.426 ; gain = 1129.254 ; free physical = 10110 ; free virtual = 45718
 INFO: [runtcl-6] Synthesis results are not added to the cache due to CRITICAL_WARNING
 INFO: [Common 17-1381] The checkpoint '/home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.runs/synth_1/air_soc.dcp' has been generated.
 INFO: [runtcl-4] Executing : report_utilization -file air_soc_utilization_synth.rpt -pb air_soc_utilization_synth.pb
-INFO: [Common 17-206] Exiting Vivado at Sat Jan 11 04:58:28 2025...
+INFO: [Common 17-206] Exiting Vivado at Sat Jan 11 15:58:27 2025...

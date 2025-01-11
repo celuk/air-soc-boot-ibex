@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2022.2 (lin64) Build 3671981 Fri Oct 14 04:59:54 MDT 2022
-| Date             : Sat Jan 11 05:00:53 2025
+| Date             : Sat Jan 11 16:00:47 2025
 | Host             : karpuz running 64-bit Ubuntu 22.04.5 LTS
 | Command          : report_power -file air_soc_power_routed.rpt -pb air_soc_power_summary_routed.pb -rpx air_soc_power_routed.rpx
 | Design           : air_soc
@@ -61,7 +61,7 @@ Table of Contents
 |   LUT as Distributed RAM |    <0.001 |       36 |     70400 |            0.05 |
 |   LUT as Shift Register  |    <0.001 |       34 |     70400 |            0.05 |
 |   Others                 |     0.000 |      128 |       --- |             --- |
-| Signals                  |     0.014 |    11624 |       --- |             --- |
+| Signals                  |     0.014 |    11618 |       --- |             --- |
 | Block RAM                |     0.063 |      128 |       545 |           23.49 |
 | MMCM                     |     0.100 |        1 |         8 |           12.50 |
 | DSPs                     |    <0.001 |        5 |       900 |            0.56 |
@@ -156,28 +156,28 @@ Table of Contents
 3.1 By Hierarchy
 ----------------
 
-+----------------------+-----------+
-| Name                 | Power (W) |
-+----------------------+-----------+
-| air_soc              |     0.528 |
-|   cv32e40p_core_ip   |     0.031 |
-|     core_i           |     0.031 |
-|       cs_registers_i |     0.001 |
-|       ex_stage_i     |     0.002 |
-|       id_stage_i     |     0.023 |
-|       if_stage_i     |     0.005 |
-|   dcache             |     0.006 |
-|     way0             |     0.002 |
-|     way1             |     0.003 |
-|   dram_dut           |     0.256 |
-|     dram_iface_dut   |     0.256 |
-|       controller     |     0.256 |
-|   main_memory        |     0.069 |
-|   obi_demux_dut      |     0.001 |
-|   timer_dut          |     0.002 |
-|     timer_iface_dut  |     0.002 |
-|   u_pll              |     0.108 |
-|     inst             |     0.108 |
-+----------------------+-----------+
++----------------------------+-----------+
+| Name                       | Power (W) |
++----------------------------+-----------+
+| air_soc                    |     0.528 |
+|   cv32e40p_core_ip         |     0.032 |
+|     core_i                 |     0.032 |
+|       cs_registers_i       |     0.001 |
+|       ex_stage_i           |     0.002 |
+|       id_stage_i           |     0.023 |
+|       if_stage_i           |     0.005 |
+|   dcache                   |     0.006 |
+|     way0                   |     0.002 |
+|     way1                   |     0.003 |
+|   dram_dut                 |     0.256 |
+|     dram_iface_dut         |     0.256 |
+|       ddr3_controller_inst |     0.256 |
+|   main_memory              |     0.069 |
+|   obi_demux_dut            |     0.001 |
+|   timer_dut                |     0.002 |
+|     timer_iface_dut        |     0.002 |
+|   u_pll                    |     0.108 |
+|     inst                   |     0.108 |
++----------------------------+-----------+
 
 
