@@ -6,15 +6,7 @@
 `default_nettype none
 
 module air_soc (
-   `ifdef ZC706
-   input wire clk_p,
-   input wire clk_n,
-   `elsif WODRAM
-   input wire clk_p,
-   input wire clk_n,
-   `else
    input wire clk_i,
-   `endif
 
    input wire rst_ni,
 
@@ -25,106 +17,29 @@ module air_soc (
    
    output wire uart_tx_o
 
-   `ifdef ZC706
-   ,output wire ddr3_reset_n
-   ,output wire ddr3_cke
-   ,output wire ddr3_ck_p
-   ,output wire ddr3_ck_n
-   ,output wire ddr3_cs_n
-   ,output wire ddr3_ras_n
-   ,output wire ddr3_cas_n
-   ,output wire ddr3_we_n
-   ,output wire [2:0] ddr3_ba
-   ,output wire [13:0] ddr3_addr
-   ,output wire ddr3_odt
-   ,output wire [1:0] ddr3_dm
-   ,inout wire [1:0] ddr3_dqs_p
-   ,inout wire [1:0] ddr3_dqs_n
-   ,inout wire [15:0] ddr3_dq
+   `ifndef QSPI_SIM
+   ,output wire qspi_cs_n_o
+   //,output wire qspi_sck_o
+   ,inout wire [3:0] qspi_data_io
    `endif
 );
-
-   `ifndef ZC706
-   wire ddr3_reset_n;
-   wire ddr3_cke;
-   wire ddr3_ck_p;
-   wire ddr3_ck_n;
-   wire ddr3_cs_n;
-   wire ddr3_ras_n;
-   wire ddr3_cas_n;
-   wire ddr3_we_n;
-   wire [2:0] ddr3_ba;
-   wire [13:0] ddr3_addr;
-   wire ddr3_odt;
-   wire [1:0] ddr3_dm;
-   wire [1:0] ddr3_dqs_p;
-   wire [1:0] ddr3_dqs_n;
-   wire [15:0] ddr3_dq;
-   `endif
 
    wire uart_rx_i;
 
    logic system_reset_o;
-   //wire rst_n = rst_ni & system_reset_o;
-   `ifndef ZC706
-
-   wire clk100;
-   wire clk_ddr;
-   wire clk_ref;
-   wire clk_ddr_dqs;
-
-   `ifdef WODRAM
-   wire clk_i;
+   `ifdef BASYS3
+   wire clkwiz_o;
    wire clkwiz_locked;
    clk_wiz_0 dutclk (
-      .clk_out1(clk_i),
-      .clk_in1_p(clk_p),
-      .clk_in1_n(clk_n),
+      .clk_out1(clkwiz_o),
+      .clk_in1(clk_i),
       .reset(~rst_ni),
       .locked(clkwiz_locked)
    );
    wire rst_n = rst_ni & system_reset_o & clkwiz_locked;
    `else
+   wire clkwiz_o = clk_i;
    wire rst_n = rst_ni & system_reset_o;
-   `endif
-
-   `else
-   /*
-   wire clk_i;
-   wire clkwiz_locked;
-   clk_wiz_0 dutclk (
-      .clk_out1(clk_i), // 60 MHz
-      .clk_in1_p(clk_p),
-      .clk_in1_n(clk_n),
-      .reset(~rst_ni),
-      .locked(clkwiz_locked)
-   );
-
-   wire rst_n = rst_ni & system_reset_o & clkwiz_locked;
-   */
-
-   wire pll_locked;
-   wire clk100;
-   wire clk_ddr;
-   wire clk_ref;
-   wire clk_ddr_dqs;
-   wire clk_i;
-   clk_wiz_1 u_pll
-   (
-      .clk_in1_p(clk_p),
-      .clk_in1_n(clk_n)
-   
-      ,.reset(~rst_ni)
-   
-      ,.clk_out1(clk100)      // 100
-      ,.clk_out2(clk_ddr)     // 400
-      ,.clk_out3(clk_ref)     // 200
-      ,.clk_out4(clk_ddr_dqs) // 400 (phase 90)
-      ,.clk_out5(clk_i)       // 50
-      ,.locked(pll_locked)
-   );
-
-   wire rst_n = rst_ni & system_reset_o & pll_locked;
    `endif
 
    logic               mem_req;
@@ -179,14 +94,14 @@ module air_soc (
    logic                timer_rvalid;
    logic [`MEM_W  -1:0] timer_rdata;
 
-   logic                dram_req;
-   logic [       31:0]  dram_addr;
-   logic                dram_we;
-   logic [`MEM_W/8-1:0] dram_be;
-   logic [`MEM_W  -1:0] dram_wdata;
-   logic                dram_gnt;
-   logic                dram_rvalid;
-   logic [`MEM_W  -1:0] dram_rdata;
+   logic                qspi_req;
+   logic [       31:0]  qspi_addr;
+   logic                qspi_we;
+   logic [`MEM_W/8-1:0] qspi_be;
+   logic [`MEM_W  -1:0] qspi_wdata;
+   logic                qspi_gnt;
+   logic                qspi_rvalid;
+   logic [`MEM_W  -1:0] qspi_rdata;
 
    // instruction cache
    logic               imem_req;
@@ -216,7 +131,7 @@ module air_soc (
        .NUM_MHPMCOUNTERS         ( `NUM_MHPMCOUNTERS )
    )
    cv32e40p_core_ip (
-       .clk_i                    (clk_i),
+       .clk_i                    (clkwiz_o),
        .rst_ni                   (rst_n),
 
        .pulp_clock_en_i          (`PULP_CLOCK_EN), // PULP clock enable (only used if COREV_CLUSTER = 1)
@@ -273,7 +188,7 @@ module air_soc (
             .LINE_BYTE_W(`ICACHE_LINE_W / 8),
             .WAY_LEN    (`ICACHE_WAY_LEN)
          ) icache (
-            .clk_i       (clk_i),
+            .clk_i       (clkwiz_o),
             .rst_ni      (rst_n),
             .hold_mem_i  (1'b0),
             .cpu_req_i   (instr_req),
@@ -311,7 +226,7 @@ module air_soc (
             .LINE_BYTE_W(`DCACHE_LINE_W / 8),
             .WAY_LEN    (`DCACHE_WAY_LEN)
          ) dcache (
-            .clk_i     (clk_i),
+            .clk_i     (clkwiz_o),
             .rst_ni    (rst_n),
             .hold_mem_i(1'b0),
 
@@ -368,7 +283,7 @@ module air_soc (
    logic        req_write    [32];  // keeping track of whether the request was a write
    logic [31:0] imem_req_addr[32];  // keeping track of address for instruction memory requests
    logic [ 4:0] req_count;
-   always_ff @(posedge clk_i or negedge rst_n) begin
+   always_ff @(posedge clkwiz_o or negedge rst_n) begin
       if (~rst_n) begin
          req_count <= '0;
       end else begin
@@ -403,7 +318,7 @@ module air_soc (
       .SIZE     (`RAM_SIZE / 4),
       .INIT_FILE(`RAM_FPATH)
    ) main_memory (
-      .clk_i   (clk_i),
+      .clk_i   (clkwiz_o),
       .rst_ni  (rst_ni),
       .req_i   (mem_req),
       .we_i    (mem_req & mem_we),
@@ -419,7 +334,7 @@ module air_soc (
    );
 
    obi_demux obi_demux_dut (
-      .clk_i (clk_i),
+      .clk_i (clkwiz_o),
       .rst_ni(rst_n),
 
       .data_req_i   (data_req),
@@ -458,18 +373,18 @@ module air_soc (
       .timer_rvalid_i(timer_rvalid),
       .timer_rdata_i (timer_rdata)
 
-      ,.dram_req_o   (dram_req)
-      ,.dram_addr_o  (dram_addr)
-      ,.dram_we_o    (dram_we)
-      ,.dram_be_o    (dram_be)
-      ,.dram_wdata_o (dram_wdata)
-      ,.dram_gnt_i   (dram_gnt)
-      ,.dram_rvalid_i(dram_rvalid)
-      ,.dram_rdata_i (dram_rdata)
+      ,.qspi_req_o   (qspi_req)
+      ,.qspi_addr_o  (qspi_addr)
+      ,.qspi_we_o    (qspi_we)
+      ,.qspi_be_o    (qspi_be)
+      ,.qspi_wdata_o (qspi_wdata)
+      ,.qspi_gnt_i   (qspi_gnt)
+      ,.qspi_rvalid_i(qspi_rvalid)
+      ,.qspi_rdata_i (qspi_rdata)
    );
 
    uart_controller_obi uart_dut (
-      .clk_i   (clk_i),
+      .clk_i   (clkwiz_o),
       .rst_ni  (rst_n),
       .req_i   (uart_req),
       .we_i    (uart_we),
@@ -484,7 +399,7 @@ module air_soc (
    );
 
    timer_controller_obi timer_dut (
-      .clk_i   (clk_i),
+      .clk_i   (clkwiz_o),
       .rst_ni  (rst_n),
       .req_i   (timer_req),
       .we_i    (timer_we),
@@ -496,38 +411,117 @@ module air_soc (
       .rdata_o (timer_rdata)
    );
 
-   dram_controller_obi dram_dut (
-      .clk_i   (clk_i),
-      .rst_ni  (rst_n),
-      .req_i   (dram_req),
-      .we_i    (dram_we),
-      .be_i    (dram_be),
-      .addr_i  (dram_addr),
-      .wdata_i (dram_wdata),
-      .gnt_o   (dram_gnt),
-      .rvalid_o(dram_rvalid),
-      .rdata_o (dram_rdata)
+   `ifdef QSPI_SIM
+   wire qspi_cs_n_o;
+   wire qspi_sck_o;
+   wire [3:0] qspi_data_io;
 
-      ,.ddr3_reset_n(ddr3_reset_n)
-      ,.ddr3_cke(ddr3_cke)
-      ,.ddr3_ck_p(ddr3_ck_p)
-      ,.ddr3_ck_n(ddr3_ck_n)
-      ,.ddr3_cs_n(ddr3_cs_n)
-      ,.ddr3_ras_n(ddr3_ras_n)
-      ,.ddr3_cas_n(ddr3_cas_n)
-      ,.ddr3_we_n(ddr3_we_n)
-      ,.ddr3_ba(ddr3_ba)
-      ,.ddr3_addr(ddr3_addr)
-      ,.ddr3_odt(ddr3_odt)
-      ,.ddr3_dm(ddr3_dm)
-      ,.ddr3_dqs_p(ddr3_dqs_p)
-      ,.ddr3_dqs_n(ddr3_dqs_n)
-      ,.ddr3_dq(ddr3_dq)
+   s25fl128s #(
+      .mem_file_name("../../../tests/demo/demo.vmem"),
+      //.mem_file_name("../../../rtl/sim/s25fl128s.mem"),
+      //.mem_file_name("none"),
+      .otp_file_name("none"),
+      .AddrRANGE(24'h00FFFF)
+      
+      //,.TimingModel   ( "S25FS128SAGMFI000_F_30pF" )
+      ,.TimingModel   ( "S25FL128SAGMFI000_F_30pF" )
+      ,.UserPreload   (1)
+   ) flash (
+      // Data Inputs/Outputs
+      .SI(qspi_data_io[0]),
+      .SO(qspi_data_io[1]),
+      // Controls
+      .SCK(qspi_sck_o),
+      .CSNeg(qspi_cs_n_o),
+      //.RSTNeg(1),
+      .WPNeg(qspi_data_io[2]),
+      .HOLDNeg(qspi_data_io[3])
+   );
+   `endif
 
-      ,.clk100(clk100)
-      ,.clk_ddr(clk_ddr)
-      ,.clk_ref(clk_ref)
-      ,.clk_ddr_dqs(clk_ddr_dqs)
+   wire [3:0] qspi_data_i;
+   wire [3:0] qspi_data_o;
+   wire [1:0] qspi_out_mod_o;
+   `ifdef BASYS3
+   IOBUF
+   io_buf0
+   (
+        .I(qspi_data_o[0])
+       ,.O(qspi_data_i[0])
+       ,.T(~(|qspi_out_mod_o))
+       ,.IO(qspi_data_io[0])
+   );
+      
+   IOBUF
+   io_buf1
+   (
+        .I(qspi_data_o[1])
+       ,.O(qspi_data_i[1])
+       ,.T(~qspi_out_mod_o[1])
+       ,.IO(qspi_data_io[1])
+      );
+      
+   IOBUF
+   io_buf2
+   (
+        .I(qspi_data_o[2])
+       ,.O(qspi_data_i[2])
+       ,.T(~(&qspi_out_mod_o))
+       ,.IO(qspi_data_io[2])
+      );
+      
+   IOBUF
+   io_buf3
+   (
+        .I(qspi_data_o[3])
+       ,.O(qspi_data_i[3])
+       ,.T(~(&qspi_out_mod_o))
+       ,.IO(qspi_data_io[3])
+   );
+
+   logic qspi_sck_o;
+   STARTUPE2 #(
+		.PROG_USR("FALSE"),
+		.SIM_CCLK_FREQ(0.0)
+	) STARTUPE2_inst (
+	   .CFGCLK(),
+	   .CFGMCLK(),
+	   .EOS(),
+	   .PREQ(),
+	   .CLK(1'b0),
+	   .GSR(1'b0),
+	   .GTS(1'b0),
+	   .KEYCLEARB(1'b0),
+	   .PACK(1'b0),
+	   .USRCCLKO(qspi_sck_o),
+	   .USRCCLKTS(1'b0),
+	   .USRDONEO(1'b1),
+	   .USRDONETS(1'b1)
+	);
+   `else
+   assign qspi_data_io[0] = |qspi_out_mod_o   ? qspi_data_o[0] : 1'bZ;
+   assign qspi_data_io[1] = qspi_out_mod_o[1] ? qspi_data_o[1] : 1'bZ;
+   assign qspi_data_io[2] = &qspi_out_mod_o   ? qspi_data_o[2] : 1'bZ;
+   assign qspi_data_io[3] = &qspi_out_mod_o   ? qspi_data_o[3] : 1'bZ;
+   assign qspi_data_i = qspi_data_io;
+   `endif
+
+   qspi_controller_obi qspi (
+      .clk_i         (clkwiz_o),
+      .rst_ni        (rst_ni),
+      .req_i         (qspi_req),
+      .we_i          (qspi_we),
+      .be_i          (qspi_be),
+      .addr_i        (qspi_addr),
+      .wdata_i       (qspi_wdata),
+      .gnt_o         (qspi_gnt),
+      .rvalid_o      (qspi_rvalid),
+      .rdata_o       (qspi_rdata),
+      .qspi_data_i   (qspi_data_i),
+      .qspi_data_o   (qspi_data_o),
+      .qspi_out_mod_o(qspi_out_mod_o),
+      .qspi_cs_n_o   (qspi_cs_n_o),
+      .qspi_sck_o    (qspi_sck_o)
    );
 
 endmodule

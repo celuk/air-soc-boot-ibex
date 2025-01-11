@@ -16,12 +16,6 @@
 `define HART_ID 32'h0
 `define DM_EXCEPTION_ADDR 32'h0
 
-`define ZC706
-//`define WODRAM
-
-`define DDR_100MHZ
-`define DDR_MHZ 100
-
 `define CPU_CLK 50_000_000
 `define BAUD_RATE 115200
 
@@ -35,13 +29,14 @@
 `define ICACHE_WAY_LEN `ICACHE_SZ / (`ICACHE_LINE_W / 8) / 2
 `define DCACHE_WAY_LEN `DCACHE_SZ / (`DCACHE_LINE_W / 8) / 2
 
-`define RAM_FPATH ""
+`define RAM_FPATH "../../../tests/qspi_demo/qspi_demo.hex"
 `define RAM_SIZE 131072 //32'h0002_0000 //131072 //256 * 1024
-
-`define USE_BOOTROM 0
 
 `define MEM_BASE_ADDR   32'h0000_0000
 `define MEM_RANGE       32'h0F00_0000
+
+//`define BASYS3
+`define QSPI_SIM
 
 /*
 PERIPHERALS
@@ -56,7 +51,7 @@ PERIPHERALS
 
 `define UART_BASE_ADDR  32'hFF00_0000
 `define UART_RANGE      32'h0000_FFFF
+`define QSPI_BASE_ADDR  32'hFF01_0000
+`define QSPI_RANGE      32'h0000_FFFF
 `define TIMER_BASE_ADDR 32'hFF05_0000
 `define TIMER_RANGE     32'h0000_FFFF
-`define DRAM_BASE_ADDR  32'hFF06_0000
-`define DRAM_RANGE      32'h0000_FFFF
