@@ -1,6 +1,7 @@
 #include "uart.h"
 #include "defines.h"
 
+/*
 //-----------------------------------------------
 // print a single character.
 //-----------------------------------------------
@@ -25,6 +26,7 @@ void zputchar(char c)
     // TX tamamlanana kadar bekle
     uart_txfull();
 }
+*/
 
 //-----------------------------------------------
 // print a string (char*).
@@ -217,6 +219,7 @@ int zscan(char* buffer, int max_size, int echo)
     return length;
 }
 
+/*
 //-----------------------------------------------
 // string compare.
 // compares all chars in two strings.
@@ -247,6 +250,7 @@ size_t strlen(const char* s)
         p++;
     return p - s;
 }
+*/
 
 void init_uart()
 {

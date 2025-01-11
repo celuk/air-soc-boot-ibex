@@ -15,13 +15,15 @@ endif
 
 COMMON_PATH ?= common
 
-LINKER_SCRIPT ?= $(COMMON_PATH)/link$(WITHBOOTLOADER).ld
-START_ASM ?= $(COMMON_PATH)/crt0$(WITHBOOTLOADER).S
+LINKER_SCRIPT ?= coremark/riscv32-baremetal/link.ld
+#$(COMMON_PATH)/link$(WITHBOOTLOADER).ld
+START_ASM ?= coremark/riscv32-baremetal/crt0.S
+#$(COMMON_PATH)/crt0$(WITHBOOTLOADER).S
 
 DRIVERS_PATH ?= $(COMMON_PATH)/drivers
-DRIVERS ?= $(DRIVERS_PATH)/uart.c $(DRIVERS_PATH)/timer.c $(DRIVERS_PATH)/dram.c
+DRIVERS ?= $(DRIVERS_PATH)/uart.c $(DRIVERS_PATH)/timer.c $(DRIVERS_PATH)/dram.c coremark/riscv32-baremetal/syscalls.c coremark/riscv32-baremetal/ee_printf.c
 
-CFLAGS ?= -Os -mcmodel=medany -static -std=gnu99 -fno-common -fno-unroll-loops -nostdlib -nostartfiles -fno-builtin -ffunction-sections -lm -lgcc -T $(LINKER_SCRIPT) -march=rv32im -mabi=ilp32 -I$(COMMON_PATH) -I$(DRIVERS_PATH)
+CFLAGS ?= -Os -mcmodel=medany -static -std=gnu99 -fno-common -fno-unroll-loops -nostdlib -nostartfiles -fno-builtin -ffunction-sections -lm -lgcc -T $(LINKER_SCRIPT) -march=rv32im -mabi=ilp32 -I$(COMMON_PATH) -I$(DRIVERS_PATH) -Icoremark -Icoremark/riscv32-baremetal -DITERATIONS=2000
 
 CFILE ?= demo
 CPATH ?= $(CFILE)/$(CFILE)
