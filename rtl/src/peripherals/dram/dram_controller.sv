@@ -87,10 +87,18 @@ module dram_controller (
 
    assign data_read_w = ram_rd_data[31:0];
 
-   ddr3_controller controller(
+   ddr3_controller 
+   #(
+      .DDR_MHZ(`DDR_MHZ)
+   )
+   ddr3_controller_inst(
       // user ports
       .rst_i(reset_i),
+      `ifdef DDR_100MHZ
       .clk(clk100),
+      `else
+      .clk(clk_i),
+      `endif
       .clk_ddr(clk_ddr),
       .clk_ref(clk_ref),
       .clk_ddr_dqs(clk_ddr_dqs),

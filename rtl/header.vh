@@ -16,8 +16,11 @@
 `define HART_ID 32'h0
 `define DM_EXCEPTION_ADDR 32'h0
 
-//`define ZC706
-`define WODRAM
+`define ZC706
+//`define WODRAM
+
+//`define DDR_100MHZ
+`define DDR_MHZ 50
 
 `define CPU_CLK 50_000_000
 `define BAUD_RATE 115200

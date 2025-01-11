@@ -1,6 +1,10 @@
 `timescale 1ns / 1ps
 
-module ddr3_controller(
+module ddr3_controller
+#(
+    parameter DDR_MHZ          = 100
+)
+(
     input rst_i,
     input clk,
     input clk_ddr,
@@ -130,7 +134,7 @@ ddr3_core
 #(
      .DDR_WRITE_LATENCY(4)
     ,.DDR_READ_LATENCY(4)
-    ,.DDR_MHZ(100)
+    ,.DDR_MHZ(DDR_MHZ)
 )
 u_ddr_core
 (
