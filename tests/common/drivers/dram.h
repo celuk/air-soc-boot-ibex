@@ -55,7 +55,7 @@ typedef union
 	uint32_t bits;
 } command_t;
 
-void init_dram();
+void init_dram(unsigned int wait_time);
 void set_dram_address(uint32_t address);
 void write_dram_data(uint32_t data);
 uint32_t read_dram_data();

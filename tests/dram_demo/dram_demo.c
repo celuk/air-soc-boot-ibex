@@ -5,7 +5,7 @@
 int main()
 {
     init_uart();
-    init_dram();
+    init_dram(500);
 
     unsigned int address = 0x00002FFF;
     unsigned int data = 0x1234BAEF;
@@ -20,6 +20,8 @@ int main()
     ee_printf("data: %x\n", dram_read(0x00001FFF));
     ee_printf("data: %x\n", dram_read(0x0000100F));
     ee_printf("data: %x\n", dram_read(address));
+
+    ee_printf("bitti\n");
     
     return 0;
 }

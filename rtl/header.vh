@@ -17,6 +17,7 @@
 `define DM_EXCEPTION_ADDR 32'h0
 
 //`define ZC706
+`define WODRAM
 
 `define CPU_CLK 50_000_000
 `define BAUD_RATE 115200

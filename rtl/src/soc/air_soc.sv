@@ -9,6 +9,9 @@ module air_soc (
    `ifdef ZC706
    input wire clk_p,
    input wire clk_n,
+   `elsif WODRAM
+   input wire clk_p,
+   input wire clk_n,
    `else
    input wire clk_i,
    `endif
@@ -22,6 +25,7 @@ module air_soc (
    
    output wire uart_tx_o
 
+   `ifdef ZC706
    ,output wire ddr3_reset_n
    ,output wire ddr3_cke
    ,output wire ddr3_ck_p
@@ -37,19 +41,53 @@ module air_soc (
    ,inout wire [1:0] ddr3_dqs_p
    ,inout wire [1:0] ddr3_dqs_n
    ,inout wire [15:0] ddr3_dq
+   `endif
 );
+
+   `ifndef ZC706
+   wire ddr3_reset_n;
+   wire ddr3_cke;
+   wire ddr3_ck_p;
+   wire ddr3_ck_n;
+   wire ddr3_cs_n;
+   wire ddr3_ras_n;
+   wire ddr3_cas_n;
+   wire ddr3_we_n;
+   wire [2:0] ddr3_ba;
+   wire [13:0] ddr3_addr;
+   wire ddr3_odt;
+   wire [1:0] ddr3_dm;
+   wire [1:0] ddr3_dqs_p;
+   wire [1:0] ddr3_dqs_n;
+   wire [15:0] ddr3_dq;
+   `endif
 
    wire uart_rx_i;
 
    logic system_reset_o;
    //wire rst_n = rst_ni & system_reset_o;
    `ifndef ZC706
-   wire rst_n = rst_ni & system_reset_o;
 
    wire clk100;
    wire clk_ddr;
    wire clk_ref;
    wire clk_ddr_dqs;
+
+   `ifdef WODRAM
+   wire clk_i;
+   wire clkwiz_locked;
+   clk_wiz_0 dutclk (
+      .clk_out1(clk_i),
+      .clk_in1_p(clk_p),
+      .clk_in1_n(clk_n),
+      .reset(~rst_ni),
+      .locked(clkwiz_locked)
+   );
+   wire rst_n = rst_ni & system_reset_o & clkwiz_locked;
+   `else
+   wire rst_n = rst_ni & system_reset_o;
+   `endif
+
    `else
    /*
    wire clk_i;

@@ -1,7 +1,7 @@
 #include "dram.h"
 #include "defines.h"
 
-void init_dram(){
+void init_dram(unsigned int wait_time){
     DRAM_TRCD = 2;
     DRAM_TRFC = 25; // smaller than 26?
     DRAM_TRP = 2;
@@ -9,7 +9,7 @@ void init_dram(){
     DRAM_RWNONSEQ = 16;
     DRAM_RWSEQ = 13;
     DRAM_PWRUP = 1;
-    wait_for_dram(US(2000));
+    wait_for_dram(US(wait_time));
 }
 
 void set_dram_address(uint32_t address){
