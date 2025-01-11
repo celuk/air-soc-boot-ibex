@@ -2,13 +2,17 @@ import serial
 import argparse
 
 parser = argparse.ArgumentParser(description="Send data to the UART")
-parser.add_argument("--port", type=str, default="/dev/ttyUSB1", required=True, help="Serial port to use")
+parser.add_argument("--port", '-p', type=str, default="/dev/ttyUSB1", required=False, help="Serial port to use")
+parser.add_argument("--baud_rate", '-b', type=int, default=115200, help="Baud rate to use")
+parser.add_argument("--file", '-f', type=str, default="./tests/dram_demo/dram_demo.hex", help="File to send")
+parser.add_argument("--file_format", '-ff', type=int, default=1, help="File format to send")
+parser.add_argument("--program_sequence", '-ps', type=str, default="TEKNOFEST", help="Program sequence to send")
 args = parser.parse_args()
 port = args.port
-baud_rate = 115200
-file = "./tests/dram_demo/dram_demo.hex"
-program_sequence = "TEKNOFEST"
-file_format = 1
+baud_rate = args.baud_rate
+file = args.file #"./tests/coremark/coremark_baremetal_static.hex"
+file_format = args.file_format
+program_sequence = args.program_sequence
 
 if file_format == 1:
     program_data = open(file, 'r').read()

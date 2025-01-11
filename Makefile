@@ -40,10 +40,14 @@ sim:
 
 .PHONY: send
 send:
-	python3 ./tools/uart_send_data.py --port /dev/ttyUSB$(ARGS)
+	@if [ "$(MAKECMDGOALS)" = "send" ]; then \
+		python3 ./tools/uart_send_data.py; \
+	else \
+		python3 ./tools/uart_send_data.py --port /dev/ttyUSB$(word 2, $(MAKECMDGOALS)) --file $(word 3, $(MAKECMDGOALS)); \
+	fi
 
-.PHONY: show
-show:
+.PHONY: pico
+pico:
 	picocom -b 115200 /dev/ttyUSB$(ARGS) --imap crcrlf
 
 %:
