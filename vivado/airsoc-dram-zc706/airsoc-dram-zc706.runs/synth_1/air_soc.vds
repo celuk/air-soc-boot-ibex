@@ -2,24 +2,29 @@
 # Vivado v2022.2 (64-bit)
 # SW Build 3671981 on Fri Oct 14 04:59:54 MDT 2022
 # IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
-# Start of session at: Sat Jan 11 00:17:18 2025
-# Process ID: 3147222
+# Start of session at: Sat Jan 11 04:57:19 2025
+# Process ID: 3476043
 # Current directory: /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.runs/synth_1
 # Command line: vivado -log air_soc.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source air_soc.tcl
 # Log file: /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.runs/synth_1/air_soc.vds
 # Journal file: /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.runs/synth_1/vivado.jou
-# Running On: karpuz, OS: Linux, CPU Frequency: 800.000 MHz, CPU Physical cores: 12, Host memory: 67154 MB
+# Running On: karpuz, OS: Linux, CPU Frequency: 800.162 MHz, CPU Physical cores: 12, Host memory: 67154 MB
 #-----------------------------------------------------------
 source air_soc.tcl -notrace
+Command: read_checkpoint -auto_incremental -incremental /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.srcs/utils_1/imports/synth_1/air_soc.dcp
+INFO: [Vivado 12-5825] Read reference checkpoint from /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.srcs/utils_1/imports/synth_1/air_soc.dcp for incremental synthesis
+INFO: [Vivado 12-7989] Please ensure there are no constraint changes
 Command: synth_design -top air_soc -part xc7z045ffg900-2
 Starting synth_design
 Attempting to get a license for feature 'Synthesis' and/or device 'xc7z045'
 INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7z045'
 INFO: [Common 17-86] Your Synthesis license expires in 29 day(s)
 INFO: [Device 21-403] Loading part xc7z045ffg900-2
+INFO: [Designutils 20-5440] No compile time benefit to using incremental synthesis; A full resynthesis will be run
+INFO: [Designutils 20-4379] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
 INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 4 processes.
 INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
-INFO: [Synth 8-7075] Helper process launched with PID 3147284
+INFO: [Synth 8-7075] Helper process launched with PID 3476070
 INFO: [Synth 8-11241] undeclared symbol 'REGCCE', assumed default net type 'wire' [/tools/Xilinx/Vivado/2022.2/data/verilog/src/unimacro/BRAM_SINGLE_MACRO.v:2170]
 WARNING: [Synth 8-11067] parameter 'OPCODE_SYSTEM' declared inside package 'cv32e40p_pkg' shall be treated as localparam [/home/shc/projects/air-soc-dram/cv32e40p/rtl/include/cv32e40p_pkg.sv:37]
 WARNING: [Synth 8-11067] parameter 'OPCODE_FENCE' declared inside package 'cv32e40p_pkg' shall be treated as localparam [/home/shc/projects/air-soc-dram/cv32e40p/rtl/include/cv32e40p_pkg.sv:38]
@@ -123,9 +128,9 @@ WARNING: [Synth 8-11067] parameter 'JT_JAL' declared inside package 'cv32e40p_pk
 WARNING: [Synth 8-11067] parameter 'JT_JALR' declared inside package 'cv32e40p_pkg' shall be treated as localparam [/home/shc/projects/air-soc-dram/cv32e40p/rtl/include/cv32e40p_pkg.sv:672]
 INFO: [Common 17-14] Message 'Synth 8-11067' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:02 ; elapsed = 00:00:02 . Memory (MB): peak = 2509.820 ; gain = 368.801 ; free physical = 1631 ; free virtual = 36504
-Synthesis current peak Physical Memory [PSS] (MB): peak = 1788.778; parent = 1632.933; children = 155.846
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3515.348; parent = 2515.762; children = 999.586
+Starting RTL Elaboration : Time (s): cpu = 00:00:02 ; elapsed = 00:00:02 . Memory (MB): peak = 2511.582 ; gain = 371.738 ; free physical = 12470 ; free virtual = 47298
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1916.900; parent = 1717.798; children = 199.103
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3518.113; parent = 2518.523; children = 999.590
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-6157] synthesizing module 'air_soc' [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:10]
 INFO: [Synth 8-6157] synthesizing module 'cache' [/home/shc/projects/air-soc-dram/rtl/src/memory/cache.sv:6]
@@ -140,8 +145,8 @@ INFO: [Synth 8-6157] synthesizing module 'cache_way' [/home/shc/projects/air-soc
 	Parameter LINE_BYTE_W bound to: 32'b00000000000000000000000000001000 
 INFO: [Synth 8-6155] done synthesizing module 'cache_way' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/memory/cache.sv:296]
 INFO: [Synth 8-6155] done synthesizing module 'cache' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/memory/cache.sv:6]
-INFO: [Synth 8-6157] synthesizing module 'clk_wiz_0' [/home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.runs/synth_1/.Xil/Vivado-3147222-karpuz/realtime/clk_wiz_0_stub.v:5]
-INFO: [Synth 8-6155] done synthesizing module 'clk_wiz_0' (0#1) [/home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.runs/synth_1/.Xil/Vivado-3147222-karpuz/realtime/clk_wiz_0_stub.v:5]
+INFO: [Synth 8-6157] synthesizing module 'clk_wiz_1' [/home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.runs/synth_1/.Xil/Vivado-3476043-karpuz/realtime/clk_wiz_1_stub.v:5]
+INFO: [Synth 8-6155] done synthesizing module 'clk_wiz_1' (0#1) [/home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.runs/synth_1/.Xil/Vivado-3476043-karpuz/realtime/clk_wiz_1_stub.v:5]
 INFO: [Synth 8-6157] synthesizing module 'cv32e40p_top' [/home/shc/projects/air-soc-dram/cv32e40p/rtl/cv32e40p_top.sv:26]
 	Parameter COREV_PULP bound to: 1'b0 
 	Parameter COREV_CLUSTER bound to: 1'b0 
@@ -339,17 +344,17 @@ INFO: [Synth 8-294] found qualifier unique on case statement: implementing as pa
 INFO: [Synth 8-6155] done synthesizing module 'cv32e40p_cs_registers' (0#1) [/home/shc/projects/air-soc-dram/cv32e40p/rtl/cv32e40p_cs_registers.sv:30]
 INFO: [Synth 8-6155] done synthesizing module 'cv32e40p_core' (0#1) [/home/shc/projects/air-soc-dram/cv32e40p/rtl/cv32e40p_core.sv:31]
 INFO: [Synth 8-6155] done synthesizing module 'cv32e40p_top' (0#1) [/home/shc/projects/air-soc-dram/cv32e40p/rtl/cv32e40p_top.sv:26]
-WARNING: [Synth 8-693] zero replication count - replication ignored [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:305]
-INFO: [Synth 8-6157] synthesizing module 'ram32' [/home/shc/projects/air-soc-dram/rtl/src/memory/ram.sv:3]
+WARNING: [Synth 8-693] zero replication count - replication ignored [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:358]
+INFO: [Synth 8-6157] synthesizing module 'ram32' [/home/shc/projects/air-soc-dram/rtl/src/memory/ram.sv:5]
 	Parameter SIZE bound to: 32768 - type: integer 
 	Parameter INIT_FILE bound to: (null) - type: string 
-WARNING: [Synth 8-6896] loop limit (65536) exceeded inside initial block, initial block items will be ignored [/home/shc/projects/air-soc-dram/rtl/src/memory/ram.sv:55]
+WARNING: [Synth 8-6896] loop limit (65536) exceeded inside initial block, initial block items will be ignored [/home/shc/projects/air-soc-dram/rtl/src/memory/ram.sv:57]
 INFO: [Synth 8-6157] synthesizing module 'simpleuart' [/home/shc/projects/air-soc-dram/rtl/src/memory/simpleuart.sv:20]
-	Parameter DEFAULT_DIV bound to: 520 - type: integer 
+	Parameter DEFAULT_DIV bound to: 434 - type: integer 
 INFO: [Synth 8-6155] done synthesizing module 'simpleuart' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/memory/simpleuart.sv:20]
-INFO: [Synth 8-6155] done synthesizing module 'ram32' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/memory/ram.sv:3]
+INFO: [Synth 8-6155] done synthesizing module 'ram32' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/memory/ram.sv:5]
 INFO: [Synth 8-6157] synthesizing module 'obi_demux' [/home/shc/projects/air-soc-dram/rtl/src/databus/obi_demux.sv:6]
-INFO: [Synth 8-155] case statement is not full and has no default [/home/shc/projects/air-soc-dram/rtl/src/databus/obi_demux.sv:117]
+INFO: [Synth 8-155] case statement is not full and has no default [/home/shc/projects/air-soc-dram/rtl/src/databus/obi_demux.sv:136]
 INFO: [Synth 8-6155] done synthesizing module 'obi_demux' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/databus/obi_demux.sv:6]
 INFO: [Synth 8-6157] synthesizing module 'uart_controller_obi' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/uart/uart_controller_obi.sv:2]
 INFO: [Synth 8-6157] synthesizing module 'uart_controller' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/uart/uart_controller.sv:8]
@@ -372,6 +377,170 @@ INFO: [Synth 8-6155] done synthesizing module 'timer' (0#1) [/home/shc/projects/
 INFO: [Synth 8-6155] done synthesizing module 'timer_controller' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/peripherals/timer/timer_controller.sv:6]
 WARNING: [Synth 8-689] width (32) of port connection 'wb_adr_i' does not match port width (8) of module 'timer_controller' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/timer/timer_controller_obi.sv:23]
 INFO: [Synth 8-6155] done synthesizing module 'timer_controller_obi' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/peripherals/timer/timer_controller_obi.sv:2]
+INFO: [Synth 8-6157] synthesizing module 'dram_controller_obi' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller_obi.sv:2]
+INFO: [Synth 8-6157] synthesizing module 'dram_controller' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:6]
+INFO: [Synth 8-6157] synthesizing module 'ddr3_controller' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_controller.sv:3]
+INFO: [Synth 8-6157] synthesizing module 'ddr3_dfi_phy' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:25]
+	Parameter DQS_TAP_DELAY_INIT bound to: 27 - type: integer 
+	Parameter DQ_TAP_DELAY_INIT bound to: 0 - type: integer 
+	Parameter TPHY_RDLAT bound to: 5 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'OBUFDS' [/tools/Xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:90676]
+	Parameter IOSTANDARD bound to: DIFF_SSTL135 - type: string 
+INFO: [Synth 8-6155] done synthesizing module 'OBUFDS' (0#1) [/tools/Xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:90676]
+INFO: [Synth 8-6157] synthesizing module 'IOBUFDS' [/tools/Xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:75919]
+	Parameter IOSTANDARD bound to: DIFF_SSTL135 - type: string 
+INFO: [Synth 8-6155] done synthesizing module 'IOBUFDS' (0#1) [/tools/Xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:75919]
+INFO: [Synth 8-6157] synthesizing module 'OSERDESE2' [/tools/Xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:94875]
+	Parameter DATA_RATE_OQ bound to: DDR - type: string 
+	Parameter DATA_RATE_TQ bound to: BUF - type: string 
+	Parameter DATA_WIDTH bound to: 8 - type: integer 
+	Parameter SERDES_MODE bound to: MASTER - type: string 
+	Parameter TRISTATE_WIDTH bound to: 1 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'OSERDESE2' (0#1) [/tools/Xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:94875]
+INFO: [Synth 8-6157] synthesizing module 'IOBUF' [/tools/Xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:75902]
+	Parameter IOSTANDARD bound to: SSTL135 - type: string 
+	Parameter SLEW bound to: FAST - type: string 
+INFO: [Synth 8-6155] done synthesizing module 'IOBUF' (0#1) [/tools/Xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:75902]
+INFO: [Synth 8-6157] synthesizing module 'IDELAYE2' [/tools/Xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:73445]
+	Parameter CINVCTRL_SEL bound to: FALSE - type: string 
+	Parameter DELAY_SRC bound to: IDATAIN - type: string 
+	Parameter HIGH_PERFORMANCE_MODE bound to: TRUE - type: string 
+	Parameter IDELAY_TYPE bound to: VARIABLE - type: string 
+	Parameter IDELAY_VALUE bound to: 27 - type: integer 
+	Parameter PIPE_SEL bound to: FALSE - type: string 
+	Parameter REFCLK_FREQUENCY bound to: 200.000000 - type: double 
+	Parameter SIGNAL_PATTERN bound to: CLOCK - type: string 
+INFO: [Synth 8-6155] done synthesizing module 'IDELAYE2' (0#1) [/tools/Xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:73445]
+INFO: [Synth 8-6157] synthesizing module 'IDELAYCTRL' [/tools/Xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:73432]
+	Parameter SIM_DEVICE bound to: 7SERIES - type: string 
+INFO: [Synth 8-6155] done synthesizing module 'IDELAYCTRL' (0#1) [/tools/Xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:73432]
+INFO: [Synth 8-6157] synthesizing module 'IDELAYE2__parameterized0' [/tools/Xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:73445]
+	Parameter CINVCTRL_SEL bound to: FALSE - type: string 
+	Parameter DELAY_SRC bound to: IDATAIN - type: string 
+	Parameter HIGH_PERFORMANCE_MODE bound to: TRUE - type: string 
+	Parameter IDELAY_TYPE bound to: VARIABLE - type: string 
+	Parameter IDELAY_VALUE bound to: 0 - type: integer 
+	Parameter PIPE_SEL bound to: FALSE - type: string 
+	Parameter REFCLK_FREQUENCY bound to: 200.000000 - type: double 
+	Parameter SIGNAL_PATTERN bound to: DATA - type: string 
+INFO: [Synth 8-6155] done synthesizing module 'IDELAYE2__parameterized0' (0#1) [/tools/Xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:73445]
+INFO: [Synth 8-6157] synthesizing module 'ISERDESE2' [/tools/Xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:78437]
+	Parameter DATA_RATE bound to: DDR - type: string 
+	Parameter DATA_WIDTH bound to: 4 - type: integer 
+	Parameter INTERFACE_TYPE bound to: MEMORY - type: string 
+	Parameter IOBDELAY bound to: IFD - type: string 
+	Parameter NUM_CE bound to: 1 - type: integer 
+	Parameter SERDES_MODE bound to: MASTER - type: string 
+INFO: [Synth 8-6155] done synthesizing module 'ISERDESE2' (0#1) [/tools/Xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:78437]
+WARNING: [Synth 8-7071] port 'Q5' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in0' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1473]
+WARNING: [Synth 8-7071] port 'Q6' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in0' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1473]
+WARNING: [Synth 8-7071] port 'Q7' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in0' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1473]
+WARNING: [Synth 8-7071] port 'Q8' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in0' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1473]
+WARNING: [Synth 8-7023] instance 'u_serdes_dq_in0' of module 'ISERDESE2' has 28 connections declared, but only 24 given [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1473]
+WARNING: [Synth 8-7071] port 'Q5' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in1' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1550]
+WARNING: [Synth 8-7071] port 'Q6' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in1' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1550]
+WARNING: [Synth 8-7071] port 'Q7' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in1' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1550]
+WARNING: [Synth 8-7071] port 'Q8' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in1' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1550]
+WARNING: [Synth 8-7023] instance 'u_serdes_dq_in1' of module 'ISERDESE2' has 28 connections declared, but only 24 given [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1550]
+WARNING: [Synth 8-7071] port 'Q5' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in2' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1627]
+WARNING: [Synth 8-7071] port 'Q6' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in2' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1627]
+WARNING: [Synth 8-7071] port 'Q7' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in2' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1627]
+WARNING: [Synth 8-7071] port 'Q8' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in2' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1627]
+WARNING: [Synth 8-7023] instance 'u_serdes_dq_in2' of module 'ISERDESE2' has 28 connections declared, but only 24 given [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1627]
+WARNING: [Synth 8-7071] port 'Q5' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in3' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1704]
+WARNING: [Synth 8-7071] port 'Q6' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in3' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1704]
+WARNING: [Synth 8-7071] port 'Q7' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in3' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1704]
+WARNING: [Synth 8-7071] port 'Q8' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in3' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1704]
+WARNING: [Synth 8-7023] instance 'u_serdes_dq_in3' of module 'ISERDESE2' has 28 connections declared, but only 24 given [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1704]
+WARNING: [Synth 8-7071] port 'Q5' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in4' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1781]
+WARNING: [Synth 8-7071] port 'Q6' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in4' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1781]
+WARNING: [Synth 8-7071] port 'Q7' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in4' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1781]
+WARNING: [Synth 8-7071] port 'Q8' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in4' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1781]
+WARNING: [Synth 8-7023] instance 'u_serdes_dq_in4' of module 'ISERDESE2' has 28 connections declared, but only 24 given [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1781]
+WARNING: [Synth 8-7071] port 'Q5' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in5' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1858]
+WARNING: [Synth 8-7071] port 'Q6' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in5' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1858]
+WARNING: [Synth 8-7071] port 'Q7' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in5' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1858]
+WARNING: [Synth 8-7071] port 'Q8' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in5' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1858]
+WARNING: [Synth 8-7023] instance 'u_serdes_dq_in5' of module 'ISERDESE2' has 28 connections declared, but only 24 given [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1858]
+WARNING: [Synth 8-7071] port 'Q5' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in6' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1935]
+WARNING: [Synth 8-7071] port 'Q6' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in6' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1935]
+WARNING: [Synth 8-7071] port 'Q7' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in6' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1935]
+WARNING: [Synth 8-7071] port 'Q8' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in6' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1935]
+WARNING: [Synth 8-7023] instance 'u_serdes_dq_in6' of module 'ISERDESE2' has 28 connections declared, but only 24 given [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:1935]
+WARNING: [Synth 8-7071] port 'Q5' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in7' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2012]
+WARNING: [Synth 8-7071] port 'Q6' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in7' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2012]
+WARNING: [Synth 8-7071] port 'Q7' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in7' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2012]
+WARNING: [Synth 8-7071] port 'Q8' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in7' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2012]
+WARNING: [Synth 8-7023] instance 'u_serdes_dq_in7' of module 'ISERDESE2' has 28 connections declared, but only 24 given [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2012]
+WARNING: [Synth 8-7071] port 'Q5' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in8' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2089]
+WARNING: [Synth 8-7071] port 'Q6' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in8' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2089]
+WARNING: [Synth 8-7071] port 'Q7' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in8' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2089]
+WARNING: [Synth 8-7071] port 'Q8' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in8' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2089]
+WARNING: [Synth 8-7023] instance 'u_serdes_dq_in8' of module 'ISERDESE2' has 28 connections declared, but only 24 given [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2089]
+WARNING: [Synth 8-7071] port 'Q5' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in9' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2166]
+WARNING: [Synth 8-7071] port 'Q6' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in9' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2166]
+WARNING: [Synth 8-7071] port 'Q7' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in9' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2166]
+WARNING: [Synth 8-7071] port 'Q8' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in9' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2166]
+WARNING: [Synth 8-7023] instance 'u_serdes_dq_in9' of module 'ISERDESE2' has 28 connections declared, but only 24 given [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2166]
+WARNING: [Synth 8-7071] port 'Q5' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in10' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2243]
+WARNING: [Synth 8-7071] port 'Q6' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in10' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2243]
+WARNING: [Synth 8-7071] port 'Q7' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in10' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2243]
+WARNING: [Synth 8-7071] port 'Q8' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in10' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2243]
+WARNING: [Synth 8-7023] instance 'u_serdes_dq_in10' of module 'ISERDESE2' has 28 connections declared, but only 24 given [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2243]
+WARNING: [Synth 8-7071] port 'Q5' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in11' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2320]
+WARNING: [Synth 8-7071] port 'Q6' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in11' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2320]
+WARNING: [Synth 8-7071] port 'Q7' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in11' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2320]
+WARNING: [Synth 8-7071] port 'Q8' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in11' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2320]
+WARNING: [Synth 8-7023] instance 'u_serdes_dq_in11' of module 'ISERDESE2' has 28 connections declared, but only 24 given [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2320]
+WARNING: [Synth 8-7071] port 'Q5' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in12' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2397]
+WARNING: [Synth 8-7071] port 'Q6' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in12' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2397]
+WARNING: [Synth 8-7071] port 'Q7' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in12' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2397]
+WARNING: [Synth 8-7071] port 'Q8' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in12' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2397]
+WARNING: [Synth 8-7023] instance 'u_serdes_dq_in12' of module 'ISERDESE2' has 28 connections declared, but only 24 given [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2397]
+WARNING: [Synth 8-7071] port 'Q5' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in13' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2474]
+WARNING: [Synth 8-7071] port 'Q6' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in13' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2474]
+WARNING: [Synth 8-7071] port 'Q7' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in13' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2474]
+WARNING: [Synth 8-7071] port 'Q8' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in13' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2474]
+WARNING: [Synth 8-7023] instance 'u_serdes_dq_in13' of module 'ISERDESE2' has 28 connections declared, but only 24 given [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2474]
+WARNING: [Synth 8-7071] port 'Q5' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in14' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2551]
+WARNING: [Synth 8-7071] port 'Q6' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in14' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2551]
+WARNING: [Synth 8-7071] port 'Q7' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in14' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2551]
+WARNING: [Synth 8-7071] port 'Q8' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in14' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2551]
+WARNING: [Synth 8-7023] instance 'u_serdes_dq_in14' of module 'ISERDESE2' has 28 connections declared, but only 24 given [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2551]
+WARNING: [Synth 8-7071] port 'Q5' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in15' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2628]
+WARNING: [Synth 8-7071] port 'Q6' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in15' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2628]
+WARNING: [Synth 8-7071] port 'Q7' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in15' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2628]
+WARNING: [Synth 8-7071] port 'Q8' of module 'ISERDESE2' is unconnected for instance 'u_serdes_dq_in15' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2628]
+WARNING: [Synth 8-7023] instance 'u_serdes_dq_in15' of module 'ISERDESE2' has 28 connections declared, but only 24 given [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:2628]
+INFO: [Synth 8-6155] done synthesizing module 'ddr3_dfi_phy' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv:25]
+WARNING: [Synth 8-7071] port 'cfg_valid_i' of module 'ddr3_dfi_phy' is unconnected for instance 'u_phy' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_controller.sv:68]
+WARNING: [Synth 8-7071] port 'cfg_i' of module 'ddr3_dfi_phy' is unconnected for instance 'u_phy' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_controller.sv:68]
+WARNING: [Synth 8-7023] instance 'u_phy' of module 'ddr3_dfi_phy' has 38 connections declared, but only 36 given [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_controller.sv:68]
+INFO: [Synth 8-6157] synthesizing module 'ddr3_core' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_core.sv:26]
+	Parameter DDR_MHZ bound to: 100 - type: integer 
+	Parameter DDR_WRITE_LATENCY bound to: 4 - type: integer 
+	Parameter DDR_READ_LATENCY bound to: 4 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'ddr3_fifo' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_core.sv:652]
+	Parameter WIDTH bound to: 16 - type: integer 
+	Parameter DEPTH bound to: 8 - type: integer 
+	Parameter ADDR_W bound to: 3 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'ddr3_fifo' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_core.sv:652]
+INFO: [Synth 8-6157] synthesizing module 'ddr3_dfi_seq' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_seq.sv:26]
+	Parameter DDR_MHZ bound to: 100 - type: integer 
+	Parameter DDR_WRITE_LATENCY bound to: 4 - type: integer 
+	Parameter DDR_READ_LATENCY bound to: 4 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'ddr3_dfi_fifo' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_seq.sv:434]
+	Parameter WIDTH bound to: 144 - type: integer 
+	Parameter DEPTH bound to: 4 - type: integer 
+	Parameter ADDR_W bound to: 2 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'ddr3_dfi_fifo' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_seq.sv:434]
+INFO: [Synth 8-6155] done synthesizing module 'ddr3_dfi_seq' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_seq.sv:26]
+INFO: [Synth 8-6155] done synthesizing module 'ddr3_core' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_core.sv:26]
+INFO: [Synth 8-6155] done synthesizing module 'ddr3_controller' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_controller.sv:3]
+WARNING: [Synth 8-151] case item 8'b00011000 is unreachable [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:205]
+INFO: [Synth 8-6155] done synthesizing module 'dram_controller' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:6]
+WARNING: [Synth 8-689] width (32) of port connection 'wb_adr_i' does not match port width (8) of module 'dram_controller' [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller_obi.sv:44]
+INFO: [Synth 8-6155] done synthesizing module 'dram_controller_obi' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller_obi.sv:2]
 INFO: [Synth 8-6155] done synthesizing module 'air_soc' (0#1) [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:10]
 WARNING: [Synth 8-7137] Register rtag_o_reg in module cache_way has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/memory/cache.sv:330]
 WARNING: [Synth 8-7137] Register rline_o_reg in module cache_way has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/memory/cache.sv:331]
@@ -429,271 +598,288 @@ Reason is one or more of the following :
 RAM "queue_reg" dissolved into registers
 WARNING: [Synth 8-3848] Net rx_full_0 in module/entity uart_controller does not have driver. [/home/shc/projects/air-soc-dram/rtl/src/peripherals/uart/uart_controller.sv:42]
 WARNING: [Synth 8-3848] Net rx_full_1 in module/entity uart_controller does not have driver. [/home/shc/projects/air-soc-dram/rtl/src/peripherals/uart/uart_controller.sv:43]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[0] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[1] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[2] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[3] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[4] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[5] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[6] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[7] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[8] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[9] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[10] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[11] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[12] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[13] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[14] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[15] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[16] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[17] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[18] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[19] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[20] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[21] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[22] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[23] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[24] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[25] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[26] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[27] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[28] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[29] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[30] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[31] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:285]
-WARNING: [Synth 8-7137] Register req_sources_reg[0] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[1] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[2] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[3] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[4] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[5] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[6] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[7] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[8] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[9] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[10] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[11] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[12] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[13] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[14] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[15] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[16] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[17] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[18] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[19] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[20] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[21] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[22] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[23] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[24] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[25] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[26] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[27] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[28] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[29] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[30] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_sources_reg[31] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:283]
-WARNING: [Synth 8-7137] Register req_write_reg[0] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[1] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[2] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[3] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[4] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[5] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[6] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[7] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[8] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[9] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[10] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[11] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[12] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[13] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[14] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[15] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[16] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[17] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[18] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[19] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[20] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[21] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[22] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[23] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[24] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[25] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[26] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[27] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[28] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[29] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[30] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-7137] Register req_write_reg[31] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:284]
-WARNING: [Synth 8-3848] Net uart_rx_i in module/entity air_soc does not have driver. [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:28]
-WARNING: [Synth 8-7129] Port TIM_CLR[31] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[30] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[29] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[28] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[27] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[26] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[25] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[24] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[23] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[22] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[21] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[20] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[19] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[18] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[17] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[16] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[15] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[14] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[13] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[12] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[11] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[10] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[9] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[8] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[7] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[6] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[5] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[4] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[3] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[2] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_CLR[1] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[31] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[30] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[29] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[28] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[27] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[26] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[25] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[24] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[23] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[22] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[21] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[20] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[19] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[18] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[17] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[16] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[15] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[14] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[13] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[12] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[11] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[10] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[9] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[8] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[7] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[6] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[5] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[4] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[3] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[2] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_ENA[1] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[31] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[30] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[29] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[28] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[27] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[26] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[25] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[24] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[23] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[22] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[21] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[20] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[19] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[18] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[17] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[16] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[15] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[14] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[13] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[12] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[11] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[10] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[9] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[8] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[7] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[6] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[5] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[4] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[3] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[2] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port TIM_EVC[1] in module timer is either unconnected or has no load
-WARNING: [Synth 8-7129] Port addr_i[31] in module timer_controller_obi is either unconnected or has no load
-WARNING: [Synth 8-7129] Port addr_i[30] in module timer_controller_obi is either unconnected or has no load
-WARNING: [Synth 8-7129] Port addr_i[29] in module timer_controller_obi is either unconnected or has no load
-WARNING: [Synth 8-7129] Port addr_i[28] in module timer_controller_obi is either unconnected or has no load
-WARNING: [Synth 8-7129] Port addr_i[27] in module timer_controller_obi is either unconnected or has no load
-WARNING: [Synth 8-7129] Port addr_i[26] in module timer_controller_obi is either unconnected or has no load
-WARNING: [Synth 8-7129] Port addr_i[25] in module timer_controller_obi is either unconnected or has no load
+WARNING: [Synth 8-6014] Unused sequential element wr_accept_q_reg was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_seq.sv:160]
+WARNING: [Synth 8-3848] Net dfi_rddata_dnv in module/entity ddr3_controller does not have driver. [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_controller.sv:60]
+WARNING: [Synth 8-6014] Unused sequential element command_r_reg[a10] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:169]
+WARNING: [Synth 8-6014] Unused sequential element command_r_reg[a12] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:169]
+WARNING: [Synth 8-6014] Unused sequential element command_r_reg[we_n] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:169]
+WARNING: [Synth 8-6014] Unused sequential element command_r_reg[cas_n] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:169]
+WARNING: [Synth 8-6014] Unused sequential element command_r_reg[ras_n] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:169]
+WARNING: [Synth 8-6014] Unused sequential element command_r_reg[cs_n] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:169]
+WARNING: [Synth 8-6014] Unused sequential element command_r_reg[cke] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:169]
+WARNING: [Synth 8-6014] Unused sequential element command_r_reg[rst_n] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv:169]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[0] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[1] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[2] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[3] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[4] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[5] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[6] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[7] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[8] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[9] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[10] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[11] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[12] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[13] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[14] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[15] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[16] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[17] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[18] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[19] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[20] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[21] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[22] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[23] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[24] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[25] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[26] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[27] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[28] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[29] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[30] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[31] was removed.  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:338]
+WARNING: [Synth 8-7137] Register req_sources_reg[0] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[1] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[2] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[3] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[4] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[5] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[6] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[7] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[8] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[9] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[10] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[11] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[12] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[13] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[14] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[15] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[16] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[17] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[18] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[19] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[20] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[21] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[22] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[23] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[24] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[25] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[26] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[27] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[28] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[29] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[30] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_sources_reg[31] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:336]
+WARNING: [Synth 8-7137] Register req_write_reg[0] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[1] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[2] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[3] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[4] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[5] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[6] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[7] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[8] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[9] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[10] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[11] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[12] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[13] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[14] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[15] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[16] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[17] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[18] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[19] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[20] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[21] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[22] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[23] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[24] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[25] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[26] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[27] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[28] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[29] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[30] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-7137] Register req_write_reg[31] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:337]
+WARNING: [Synth 8-3848] Net uart_rx_i in module/entity air_soc does not have driver. [/home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv:44]
+WARNING: [Synth 8-7129] Port dfi_rddata_dnv_i[1] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port dfi_rddata_dnv_i[0] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[31] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[30] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[29] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[28] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[27] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[26] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[25] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[24] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[23] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[22] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[21] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[20] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[19] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[18] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[17] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[16] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[15] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[14] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[13] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[12] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[11] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[10] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[9] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[8] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[7] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trcd[6] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[31] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[30] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[29] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[28] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[27] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[26] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[25] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[24] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[23] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[22] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[21] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[20] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[19] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[18] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[17] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[16] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[15] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[14] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[13] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[12] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[11] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[10] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[9] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[8] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[7] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port nonseq[6] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[31] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[30] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[29] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[28] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[27] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[26] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[25] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[24] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[23] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[22] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[21] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[20] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[19] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[18] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[17] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[16] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[15] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[14] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[13] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[12] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[11] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[10] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[9] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[8] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[7] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port rwnonseq[6] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trp[31] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trp[30] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trp[29] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trp[28] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trp[27] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trp[26] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trp[25] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trp[24] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trp[23] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trp[22] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trp[21] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trp[20] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trp[19] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trp[18] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trp[17] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trp[16] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trp[15] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trp[14] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trp[13] in module ddr3_dfi_seq is either unconnected or has no load
+WARNING: [Synth 8-7129] Port trp[12] in module ddr3_dfi_seq is either unconnected or has no load
 INFO: [Common 17-14] Message 'Synth 8-7129' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 2754.914 ; gain = 613.895 ; free physical = 1654 ; free virtual = 36531
-Synthesis current peak Physical Memory [PSS] (MB): peak = 1788.778; parent = 1632.933; children = 155.846
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3754.504; parent = 2754.918; children = 999.586
+Finished RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 2759.676 ; gain = 619.832 ; free physical = 12276 ; free virtual = 47105
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1922.398; parent = 1723.296; children = 199.103
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3759.270; parent = 2759.680; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 2754.914 ; gain = 613.895 ; free physical = 1653 ; free virtual = 36530
-Synthesis current peak Physical Memory [PSS] (MB): peak = 1788.933; parent = 1633.087; children = 155.846
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3754.504; parent = 2754.918; children = 999.586
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 2759.676 ; gain = 619.832 ; free physical = 12275 ; free virtual = 47104
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1923.555; parent = 1724.452; children = 199.103
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3759.270; parent = 2759.680; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 2754.914 ; gain = 613.895 ; free physical = 1654 ; free virtual = 36531
-Synthesis current peak Physical Memory [PSS] (MB): peak = 1788.933; parent = 1633.087; children = 155.846
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3754.504; parent = 2754.918; children = 999.586
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 2759.676 ; gain = 619.832 ; free physical = 12275 ; free virtual = 47104
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1923.555; parent = 1724.452; children = 199.103
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3759.270; parent = 2759.680; children = 999.590
 ---------------------------------------------------------------------------------
-Netlist sorting complete. Time (s): cpu = 00:00:00.08 ; elapsed = 00:00:00.07 . Memory (MB): peak = 2754.914 ; gain = 0.000 ; free physical = 1652 ; free virtual = 36528
+Netlist sorting complete. Time (s): cpu = 00:00:00.09 ; elapsed = 00:00:00.08 . Memory (MB): peak = 2759.676 ; gain = 0.000 ; free physical = 12284 ; free virtual = 47109
+INFO: [Netlist 29-17] Analyzing 53 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 
 Processing XDC Constraints
 Initializing timing engine
-Parsing XDC File [/home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0/clk_wiz_0_in_context.xdc] for cell 'dutclk'
-Finished Parsing XDC File [/home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0/clk_wiz_0_in_context.xdc] for cell 'dutclk'
+Parsing XDC File [/home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_1/clk_wiz_1/clk_wiz_1_in_context.xdc] for cell 'u_pll'
+Finished Parsing XDC File [/home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_1/clk_wiz_1/clk_wiz_1_in_context.xdc] for cell 'u_pll'
 Parsing XDC File [/home/shc/projects/air-soc-dram/xdc/zc706.xdc]
 CRITICAL WARNING: [Constraints 18-1056] Clock 'clk_200mhz_p' completely overrides clock 'clk_p'.
 New: create_clock -period 5.000 -name clk_200mhz_p [get_ports clk_p], [/home/shc/projects/air-soc-dram/xdc/zc706.xdc:5]
-Previous: create_clock -period 5.000 [get_ports clk_p], [/home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0/clk_wiz_0_in_context.xdc:1]
+Previous: create_clock -period 5.000 [get_ports clk_p], [/home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_1/clk_wiz_1/clk_wiz_1_in_context.xdc:1]
 Resolution: Review the constraint files and remove the redundant clock definition(s). If the clock constraints are not saved in a file, you can first save the constraints to an XDC file and reload the design once the constraints have been corrected.
 Finished Parsing XDC File [/home/shc/projects/air-soc-dram/xdc/zc706.xdc]
 INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/home/shc/projects/air-soc-dram/xdc/zc706.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/air_soc_propImpl.xdc].
 Resolution: To avoid this warning, move constraints listed in [.Xil/air_soc_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
 Completed Processing XDC Constraints
 
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2870.758 ; gain = 0.000 ; free physical = 1561 ; free virtual = 36437
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2871.520 ; gain = 0.000 ; free physical = 12300 ; free virtual = 47124
 INFO: [Project 1-111] Unisim Transformation Summary:
-No Unisim elements were transformed.
+  A total of 19 instances were transformed.
+  IOBUF => IOBUF (IBUF, OBUFT): 16 instances
+  IOBUFDS => IOBUFDS (IBUFDS, INV, OBUFTDS(x2)): 2 instances
+  OBUFDS => OBUFDS_DUAL_BUF (INV, OBUFDS(x2)): 1 instance 
 
-Constraint Validation Runtime : Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 2870.758 ; gain = 0.000 ; free physical = 1561 ; free virtual = 36437
+Constraint Validation Runtime : Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.02 . Memory (MB): peak = 2871.520 ; gain = 0.000 ; free physical = 12300 ; free virtual = 47124
+INFO: [Designutils 20-5440] No compile time benefit to using incremental synthesis; A full resynthesis will be run
+INFO: [Designutils 20-4379] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
 INFO: [Synth 8-11241] undeclared symbol 'REGCCE', assumed default net type 'wire' [/tools/Xilinx/Vivado/2022.2/data/verilog/src/unimacro/BRAM_SINGLE_MACRO.v:2170]
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:11 ; elapsed = 00:00:11 . Memory (MB): peak = 2870.758 ; gain = 729.738 ; free physical = 1670 ; free virtual = 36546
-Synthesis current peak Physical Memory [PSS] (MB): peak = 1801.357; parent = 1645.517; children = 155.846
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3838.332; parent = 2838.746; children = 999.586
+Finished Constraint Validation : Time (s): cpu = 00:00:11 ; elapsed = 00:00:11 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12420 ; free virtual = 47244
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1923.555; parent = 1724.452; children = 199.103
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3839.098; parent = 2839.508; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
 Loading part: xc7z045ffg900-2
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:11 ; elapsed = 00:00:11 . Memory (MB): peak = 2870.758 ; gain = 729.738 ; free physical = 1670 ; free virtual = 36546
-Synthesis current peak Physical Memory [PSS] (MB): peak = 1801.506; parent = 1645.696; children = 155.846
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3838.332; parent = 2838.746; children = 999.586
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:11 ; elapsed = 00:00:11 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12420 ; free virtual = 47244
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1923.555; parent = 1724.452; children = 199.103
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3839.098; parent = 2839.508; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying 'set_property' XDC Constraints
 ---------------------------------------------------------------------------------
-Applied set_property IO_BUFFER_TYPE = NONE for clk_n. (constraint file  /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0/clk_wiz_0_in_context.xdc, line 3).
-Applied set_property CLOCK_BUFFER_TYPE = NONE for clk_n. (constraint file  /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0/clk_wiz_0_in_context.xdc, line 4).
-Applied set_property IO_BUFFER_TYPE = NONE for clk_p. (constraint file  /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0/clk_wiz_0_in_context.xdc, line 5).
-Applied set_property CLOCK_BUFFER_TYPE = NONE for clk_p. (constraint file  /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0/clk_wiz_0_in_context.xdc, line 6).
-Applied set_property KEEP_HIERARCHY = SOFT for dutclk. (constraint file  auto generated constraint).
+Applied set_property IO_BUFFER_TYPE = NONE for clk_n. (constraint file  /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_1/clk_wiz_1/clk_wiz_1_in_context.xdc, line 7).
+Applied set_property CLOCK_BUFFER_TYPE = NONE for clk_n. (constraint file  /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_1/clk_wiz_1/clk_wiz_1_in_context.xdc, line 8).
+Applied set_property IO_BUFFER_TYPE = NONE for clk_p. (constraint file  /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_1/clk_wiz_1/clk_wiz_1_in_context.xdc, line 9).
+Applied set_property CLOCK_BUFFER_TYPE = NONE for clk_p. (constraint file  /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_1/clk_wiz_1/clk_wiz_1_in_context.xdc, line 10).
+Applied set_property KEEP_HIERARCHY = SOFT for u_pll. (constraint file  auto generated constraint).
 ---------------------------------------------------------------------------------
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:11 ; elapsed = 00:00:11 . Memory (MB): peak = 2870.758 ; gain = 729.738 ; free physical = 1670 ; free virtual = 36547
-Synthesis current peak Physical Memory [PSS] (MB): peak = 1802.182; parent = 1646.372; children = 155.846
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3838.332; parent = 2838.746; children = 999.586
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:11 ; elapsed = 00:00:11 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12420 ; free virtual = 47244
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1923.555; parent = 1724.452; children = 199.103
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3839.098; parent = 2839.508; children = 999.590
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-802] inferred FSM for state register 'debug_fsm_cs_reg' in module 'cv32e40p_controller'
 INFO: [Synth 8-802] inferred FSM for state register 'State_SP_reg' in module 'cv32e40p_alu_div'
@@ -801,9 +987,9 @@ INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 
 ---------------------------------------------------------------------------------------------------
 INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'sequential' in module 'uart_rx'
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 2870.758 ; gain = 729.738 ; free physical = 1608 ; free virtual = 36487
-Synthesis current peak Physical Memory [PSS] (MB): peak = 1824.233; parent = 1668.424; children = 155.846
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3838.332; parent = 2838.746; children = 999.586
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:14 ; elapsed = 00:00:15 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12456 ; free virtual = 47284
+Synthesis current peak Physical Memory [PSS] (MB): peak = 1945.093; parent = 1746.043; children = 199.103
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3839.098; parent = 2839.508; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start RTL Component Statistics 
@@ -815,12 +1001,13 @@ Detailed RTL Component Info :
 	   2 Input   32 Bit       Adders := 13    
 	   3 Input   32 Bit       Adders := 2     
 	   5 Input   32 Bit       Adders := 1     
+	   2 Input   20 Bit       Adders := 1     
 	   2 Input   16 Bit       Adders := 1     
-	   2 Input    6 Bit       Adders := 4     
+	   2 Input    6 Bit       Adders := 5     
 	   2 Input    5 Bit       Adders := 4     
-	   2 Input    4 Bit       Adders := 7     
-	   2 Input    3 Bit       Adders := 9     
-	   2 Input    2 Bit       Adders := 25    
+	   2 Input    4 Bit       Adders := 8     
+	   2 Input    3 Bit       Adders := 13    
+	   2 Input    2 Bit       Adders := 29    
 	   3 Input    2 Bit       Adders := 1     
 	   2 Input    1 Bit       Adders := 7     
 +---XORs : 
@@ -829,61 +1016,72 @@ Detailed RTL Component Info :
 	   2 Input      4 Bit         XORs := 1     
 	   2 Input      1 Bit         XORs := 2     
 +---Registers : 
+	              128 Bit    Registers := 1     
 	               72 Bit    Registers := 1     
 	               64 Bit    Registers := 14    
-	               32 Bit    Registers := 59    
+	               32 Bit    Registers := 72    
 	               31 Bit    Registers := 1     
 	               27 Bit    Registers := 10    
 	               24 Bit    Registers := 1     
+	               20 Bit    Registers := 1     
 	               16 Bit    Registers := 2     
-	               15 Bit    Registers := 1     
+	               15 Bit    Registers := 10    
+	               14 Bit    Registers := 1     
 	               12 Bit    Registers := 1     
 	               10 Bit    Registers := 1     
-	                8 Bit    Registers := 4     
-	                7 Bit    Registers := 1     
-	                6 Bit    Registers := 9     
+	                8 Bit    Registers := 6     
+	                7 Bit    Registers := 3     
+	                6 Bit    Registers := 10    
 	                5 Bit    Registers := 6     
-	                4 Bit    Registers := 13    
-	                3 Bit    Registers := 3     
-	                2 Bit    Registers := 25    
-	                1 Bit    Registers := 162   
+	                4 Bit    Registers := 21    
+	                3 Bit    Registers := 7     
+	                2 Bit    Registers := 31    
+	                1 Bit    Registers := 188   
 +---Multipliers : 
 	              32x32  Multipliers := 1     
 +---RAMs : 
 	            4096K Bit	(131072 X 32 bit)          RAMs := 1     
+	              576 Bit	(4 X 144 bit)          RAMs := 1     
+	              128 Bit	(8 X 16 bit)          RAMs := 1     
 	               16 Bit	(2 X 8 bit)          RAMs := 1     
 +---Muxes : 
 	   2 Input   72 Bit        Muxes := 1     
 	   6 Input   72 Bit        Muxes := 1     
 	   2 Input   64 Bit        Muxes := 28    
-	   4 Input   64 Bit        Muxes := 2     
 	   8 Input   64 Bit        Muxes := 1     
+	   4 Input   64 Bit        Muxes := 2     
 	   2 Input   36 Bit        Muxes := 6     
 	   2 Input   33 Bit        Muxes := 1     
-	   2 Input   32 Bit        Muxes := 152   
-	   4 Input   32 Bit        Muxes := 21    
+	   4 Input   32 Bit        Muxes := 22    
+	   5 Input   32 Bit        Muxes := 8     
+	   2 Input   32 Bit        Muxes := 149   
 	   3 Input   32 Bit        Muxes := 10    
 	   8 Input   32 Bit        Muxes := 3     
 	  18 Input   32 Bit        Muxes := 1     
-	   5 Input   32 Bit        Muxes := 7     
 	  32 Input   32 Bit        Muxes := 1     
 	  22 Input   32 Bit        Muxes := 1     
 	   6 Input   32 Bit        Muxes := 5     
 	   7 Input   32 Bit        Muxes := 6     
 	   2 Input   31 Bit        Muxes := 1     
-	   4 Input   27 Bit        Muxes := 2     
 	   2 Input   27 Bit        Muxes := 11    
+	   4 Input   27 Bit        Muxes := 2     
 	   2 Input   24 Bit        Muxes := 4     
+	   2 Input   20 Bit        Muxes := 1     
 	   2 Input   17 Bit        Muxes := 3     
 	   2 Input   16 Bit        Muxes := 9     
 	   3 Input   16 Bit        Muxes := 1     
 	   9 Input   16 Bit        Muxes := 1     
+	   2 Input   15 Bit        Muxes := 3     
 	   2 Input   12 Bit        Muxes := 1     
+	   2 Input   11 Bit        Muxes := 2     
 	   2 Input   10 Bit        Muxes := 3     
-	   2 Input    8 Bit        Muxes := 152   
+	   2 Input    9 Bit        Muxes := 1     
+	   2 Input    8 Bit        Muxes := 156   
+	   3 Input    8 Bit        Muxes := 2     
 	   9 Input    8 Bit        Muxes := 1     
 	   2 Input    7 Bit        Muxes := 1     
-	   2 Input    6 Bit        Muxes := 17    
+	   2 Input    6 Bit        Muxes := 22    
+	   3 Input    6 Bit        Muxes := 1     
 	  10 Input    6 Bit        Muxes := 1     
 	  21 Input    6 Bit        Muxes := 2     
 	   4 Input    6 Bit        Muxes := 4     
@@ -898,43 +1096,45 @@ Detailed RTL Component Info :
 	  18 Input    5 Bit        Muxes := 1     
 	   5 Input    5 Bit        Muxes := 1     
 	  38 Input    5 Bit        Muxes := 1     
-	   2 Input    4 Bit        Muxes := 54    
+	   2 Input    4 Bit        Muxes := 69    
+	   4 Input    4 Bit        Muxes := 5     
+	   8 Input    4 Bit        Muxes := 4     
+	   3 Input    4 Bit        Muxes := 3     
 	   7 Input    4 Bit        Muxes := 1     
 	   5 Input    4 Bit        Muxes := 2     
-	   3 Input    4 Bit        Muxes := 2     
 	   9 Input    4 Bit        Muxes := 1     
 	   6 Input    4 Bit        Muxes := 4     
 	  10 Input    4 Bit        Muxes := 1     
-	   4 Input    4 Bit        Muxes := 4     
 	  15 Input    4 Bit        Muxes := 3     
-	   4 Input    3 Bit        Muxes := 5     
-	   2 Input    3 Bit        Muxes := 16    
+	   2 Input    3 Bit        Muxes := 26    
+	   3 Input    3 Bit        Muxes := 3     
+	   4 Input    3 Bit        Muxes := 7     
 	  21 Input    3 Bit        Muxes := 2     
 	   9 Input    3 Bit        Muxes := 1     
 	  16 Input    3 Bit        Muxes := 3     
-	   3 Input    3 Bit        Muxes := 2     
 	   5 Input    3 Bit        Muxes := 2     
 	   6 Input    3 Bit        Muxes := 2     
 	   7 Input    3 Bit        Muxes := 1     
-	   2 Input    2 Bit        Muxes := 73    
-	   4 Input    2 Bit        Muxes := 8     
+	   2 Input    2 Bit        Muxes := 79    
+	   4 Input    2 Bit        Muxes := 9     
+	   5 Input    2 Bit        Muxes := 5     
+	   7 Input    2 Bit        Muxes := 3     
 	   3 Input    2 Bit        Muxes := 4     
-	   5 Input    2 Bit        Muxes := 3     
 	  21 Input    2 Bit        Muxes := 11    
-	   7 Input    2 Bit        Muxes := 2     
 	   9 Input    2 Bit        Muxes := 2     
 	  16 Input    2 Bit        Muxes := 3     
 	   6 Input    2 Bit        Muxes := 5     
-	   2 Input    1 Bit        Muxes := 457   
+	   2 Input    1 Bit        Muxes := 506   
+	   8 Input    1 Bit        Muxes := 4     
+	   3 Input    1 Bit        Muxes := 20    
+	   5 Input    1 Bit        Muxes := 15    
+	  13 Input    1 Bit        Muxes := 11    
 	   4 Input    1 Bit        Muxes := 27    
-	   3 Input    1 Bit        Muxes := 12    
 	   6 Input    1 Bit        Muxes := 17    
 	   7 Input    1 Bit        Muxes := 4     
-	   8 Input    1 Bit        Muxes := 2     
 	  12 Input    1 Bit        Muxes := 1     
 	  10 Input    1 Bit        Muxes := 1     
 	  21 Input    1 Bit        Muxes := 26    
-	   5 Input    1 Bit        Muxes := 14    
 	  17 Input    1 Bit        Muxes := 1     
 	   9 Input    1 Bit        Muxes := 13    
 	  19 Input    1 Bit        Muxes := 1     
@@ -979,29 +1179,30 @@ DSP Report: operator mult_i/ is absorbed into DSP mult_i/.
 WARNING: [Synth 8-6841] Block RAM (ram_reg) originally specified as a Byte Wide Write Enable RAM cannot take advantage of ByteWide feature and is implemented with single write enable per RAM due to following reason.
 (address width (17) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired.)
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:47 ; elapsed = 00:00:50 . Memory (MB): peak = 2870.758 ; gain = 729.738 ; free physical = 1531 ; free virtual = 36407
-Synthesis current peak Physical Memory [PSS] (MB): peak = 1975.929; parent = 1820.119; children = 155.846
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3838.332; parent = 2838.746; children = 999.586
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:47 ; elapsed = 00:00:50 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12432 ; free virtual = 47301
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2091.925; parent = 1892.875; children = 199.103
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3839.098; parent = 2839.508; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP, Shift Register and Retiming Reporting
 ---------------------------------------------------------------------------------
 
 Block RAM: Preliminary Mapping Report (see note below)
-+------------+------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+
-|Module Name | RTL Object | PORT A (Depth x Width) | W | R | PORT B (Depth x Width)  | W | R | Ports driving FF | RAMB18 | RAMB36 | 
-+------------+------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+
-|main_memory | ram_reg    | 128 K x 32(READ_FIRST) | W |   | 128 K x 32(WRITE_FIRST) |   | R | Port A and B     | 0      | 128    | 
-+------------+------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+
++----------------+------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+
+|Module Name     | RTL Object | PORT A (Depth x Width) | W | R | PORT B (Depth x Width)  | W | R | Ports driving FF | RAMB18 | RAMB36 | 
++----------------+------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+
+|i_1/main_memory | ram_reg    | 128 K x 32(READ_FIRST) | W |   | 128 K x 32(WRITE_FIRST) |   | R | Port A and B     | 0      | 128    | 
++----------------+------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+
 
 Note: The table above is a preliminary report that shows the Block RAMs at the current stage of the synthesis flow. Some Block RAMs may be reimplemented as non Block RAM primitives later in the synthesis flow. Multiple instantiated Block RAMs are reported only once. 
 
 Distributed RAM: Preliminary Mapping Report (see note below)
-+------------+--------------------------------------+-----------+----------------------+-------------+
-|Module Name | RTL Object                           | Inference | Size (Depth x Width) | Primitives  | 
-+------------+--------------------------------------+-----------+----------------------+-------------+
-|uart        | uart_iface_dut/uart_tx_dut/queue_reg | Implied   | 2 x 8                | RAM32M x 2  | 
-+------------+--------------------------------------+-----------+----------------------+-------------+
++------------------------------------------------+--------------------------------------+-----------+----------------------+--------------+
+|Module Name                                     | RTL Object                           | Inference | Size (Depth x Width) | Primitives   | 
++------------------------------------------------+--------------------------------------+-----------+----------------------+--------------+
+|\dram_dut/dram_iface_dut/controller/u_ddr_core  | u_seq/u_write_fifo/ram_reg           | Implied   | 4 x 144              | RAM32M x 24  | 
+|i_1/uart_dut                                    | uart_iface_dut/uart_tx_dut/queue_reg | Implied   | 2 x 8                | RAM32M x 2   | 
++------------------------------------------------+--------------------------------------+-----------+----------------------+--------------+
 
 Note: The table above is a preliminary report that shows the Distributed RAMs at the current stage of the synthesis flow. Some Distributed RAMs may be reimplemented as non Distributed RAM primitives later in the synthesis flow. Multiple instantiated RAMs are reported only once.
 
@@ -1027,36 +1228,37 @@ Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
 Start Applying XDC Timing Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:50 ; elapsed = 00:00:53 . Memory (MB): peak = 2870.758 ; gain = 729.738 ; free physical = 1411 ; free virtual = 36286
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2011.823; parent = 1856.014; children = 155.846
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3838.332; parent = 2838.746; children = 999.586
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:51 ; elapsed = 00:00:53 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12357 ; free virtual = 47197
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2139.401; parent = 1940.352; children = 199.103
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3839.098; parent = 2839.508; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Timing Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:00:53 ; elapsed = 00:00:56 . Memory (MB): peak = 2870.758 ; gain = 729.738 ; free physical = 1392 ; free virtual = 36268
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2030.710; parent = 1874.900; children = 155.846
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3838.332; parent = 2838.746; children = 999.586
+Finished Timing Optimization : Time (s): cpu = 00:00:52 ; elapsed = 00:00:54 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12341 ; free virtual = 47179
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2151.034; parent = 1951.984; children = 199.103
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3839.098; parent = 2839.508; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP, Shift Register and Retiming Reporting
 ---------------------------------------------------------------------------------
 
 Block RAM: Final Mapping Report
-+------------+------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+
-|Module Name | RTL Object | PORT A (Depth x Width) | W | R | PORT B (Depth x Width)  | W | R | Ports driving FF | RAMB18 | RAMB36 | 
-+------------+------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+
-|main_memory | ram_reg    | 128 K x 32(READ_FIRST) | W |   | 128 K x 32(WRITE_FIRST) |   | R | Port A and B     | 0      | 128    | 
-+------------+------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+
++----------------+------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+
+|Module Name     | RTL Object | PORT A (Depth x Width) | W | R | PORT B (Depth x Width)  | W | R | Ports driving FF | RAMB18 | RAMB36 | 
++----------------+------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+
+|i_1/main_memory | ram_reg    | 128 K x 32(READ_FIRST) | W |   | 128 K x 32(WRITE_FIRST) |   | R | Port A and B     | 0      | 128    | 
++----------------+------------+------------------------+---+---+-------------------------+---+---+------------------+--------+--------+
 
 
 Distributed RAM: Final Mapping Report
-+------------+--------------------------------------+-----------+----------------------+-------------+
-|Module Name | RTL Object                           | Inference | Size (Depth x Width) | Primitives  | 
-+------------+--------------------------------------+-----------+----------------------+-------------+
-|uart        | uart_iface_dut/uart_tx_dut/queue_reg | Implied   | 2 x 8                | RAM32M x 2  | 
-+------------+--------------------------------------+-----------+----------------------+-------------+
++------------------------------------------------+--------------------------------------+-----------+----------------------+--------------+
+|Module Name                                     | RTL Object                           | Inference | Size (Depth x Width) | Primitives   | 
++------------------------------------------------+--------------------------------------+-----------+----------------------+--------------+
+|\dram_dut/dram_iface_dut/controller/u_ddr_core  | u_seq/u_write_fifo/ram_reg           | Implied   | 4 x 144              | RAM32M x 24  | 
+|i_1/uart_dut                                    | uart_iface_dut/uart_tx_dut/queue_reg | Implied   | 2 x 8                | RAM32M x 2   | 
++------------------------------------------------+--------------------------------------+-----------+----------------------+--------------+
 
 ---------------------------------------------------------------------------------
 Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
@@ -1064,10 +1266,6 @@ Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
 ---------------------------------------------------------------------------------
 Start Technology Mapping
 ---------------------------------------------------------------------------------
-WARNING: [Synth 8-3332] Sequential element (uart/uart_iface_dut/uart_rx_dut/FSM_sequential_state_reg[3]) is unused and will be removed from module air_soc.
-WARNING: [Synth 8-3332] Sequential element (uart/uart_iface_dut/uart_rx_dut/FSM_sequential_state_reg[2]) is unused and will be removed from module air_soc.
-WARNING: [Synth 8-3332] Sequential element (uart/uart_iface_dut/uart_rx_dut/FSM_sequential_state_reg[1]) is unused and will be removed from module air_soc.
-WARNING: [Synth 8-3332] Sequential element (uart/uart_iface_dut/uart_rx_dut/FSM_sequential_state_reg[0]) is unused and will be removed from module air_soc.
 INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_0_1_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_0_1_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_0_1_2 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
@@ -1133,9 +1331,9 @@ INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_3_3_5 (impl
 INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_3_3_6 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_3_3_7 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:00:55 ; elapsed = 00:00:59 . Memory (MB): peak = 2870.758 ; gain = 729.738 ; free physical = 1396 ; free virtual = 36271
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2030.710; parent = 1874.900; children = 155.846
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3863.332; parent = 2863.746; children = 999.586
+Finished Technology Mapping : Time (s): cpu = 00:00:54 ; elapsed = 00:00:57 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12260 ; free virtual = 47099
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2151.034; parent = 1951.984; children = 199.103
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3839.098; parent = 2839.508; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start IO Insertion
@@ -1153,49 +1351,65 @@ Start Final Netlist Cleanup
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:00:57 ; elapsed = 00:01:01 . Memory (MB): peak = 2870.758 ; gain = 729.738 ; free physical = 1399 ; free virtual = 36274
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2030.710; parent = 1874.900; children = 155.846
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3863.332; parent = 2863.746; children = 999.586
+Finished IO Insertion : Time (s): cpu = 00:00:56 ; elapsed = 00:00:59 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12269 ; free virtual = 47107
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2151.034; parent = 1951.984; children = 199.103
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3845.035; parent = 2845.445; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:00:57 ; elapsed = 00:01:01 . Memory (MB): peak = 2870.758 ; gain = 729.738 ; free physical = 1399 ; free virtual = 36274
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2030.710; parent = 1874.900; children = 155.846
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3863.332; parent = 2863.746; children = 999.586
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:56 ; elapsed = 00:00:59 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12269 ; free virtual = 47107
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2151.034; parent = 1951.984; children = 199.103
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3845.035; parent = 2845.445; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:58 ; elapsed = 00:01:01 . Memory (MB): peak = 2870.758 ; gain = 729.738 ; free physical = 1400 ; free virtual = 36275
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2030.710; parent = 1874.900; children = 155.846
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3863.332; parent = 2863.746; children = 999.586
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:57 ; elapsed = 00:00:59 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12271 ; free virtual = 47109
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2151.647; parent = 1952.598; children = 199.103
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3845.035; parent = 2845.445; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:00:58 ; elapsed = 00:01:01 . Memory (MB): peak = 2870.758 ; gain = 729.738 ; free physical = 1400 ; free virtual = 36275
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2030.710; parent = 1874.900; children = 155.846
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3863.332; parent = 2863.746; children = 999.586
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:57 ; elapsed = 00:00:59 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12271 ; free virtual = 47109
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2151.726; parent = 1952.676; children = 199.103
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3845.035; parent = 2845.445; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:58 ; elapsed = 00:01:02 . Memory (MB): peak = 2870.758 ; gain = 729.738 ; free physical = 1400 ; free virtual = 36275
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2030.710; parent = 1874.900; children = 155.846
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3863.332; parent = 2863.746; children = 999.586
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:57 ; elapsed = 00:01:00 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12271 ; free virtual = 47109
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2151.726; parent = 1952.676; children = 199.103
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3845.035; parent = 2845.445; children = 999.590
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:00:58 ; elapsed = 00:01:02 . Memory (MB): peak = 2870.758 ; gain = 729.738 ; free physical = 1400 ; free virtual = 36275
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2030.710; parent = 1874.900; children = 155.846
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3863.332; parent = 2863.746; children = 999.586
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:57 ; elapsed = 00:01:00 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12271 ; free virtual = 47109
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2151.726; parent = 1952.676; children = 199.103
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3845.035; parent = 2845.445; children = 999.590
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Static Shift Register Report:
++------------+-----------------------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|Module Name | RTL Name                                                              | Length | Width | Reset Signal | Pull out first Reg | Pull out last Reg | SRL16E | SRLC32E | 
++------------+-----------------------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|air_soc     | dram_dut/dram_iface_dut/controller/u_phy/rd_en_q_reg[0]               | 11     | 1     | YES          | NO                 | YES               | 1      | 0       | 
+|air_soc     | dram_dut/dram_iface_dut/controller/u_ddr_core/u_seq/wr_en_q_reg[0]    | 4      | 1     | YES          | NO                 | YES               | 1      | 0       | 
+|air_soc     | dram_dut/dram_iface_dut/controller/u_ddr_core/u_seq/rd_data_q_reg[31] | 4      | 32    | YES          | NO                 | YES               | 32     | 0       | 
++------------+-----------------------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Writing Synthesis Report
@@ -1217,66 +1431,77 @@ Report BlackBoxes:
 +------+--------------+----------+
 |      |BlackBox name |Instances |
 +------+--------------+----------+
-|1     |clk_wiz_0     |         1|
+|1     |clk_wiz_1     |         1|
 +------+--------------+----------+
 
 Report Cell Usage: 
-+------+---------+------+
-|      |Cell     |Count |
-+------+---------+------+
-|1     |clk_wiz  |     1|
-|2     |BUFG     |    12|
-|3     |CARRY4   |   247|
-|4     |DSP48E1  |     5|
-|6     |LUT1     |    18|
-|7     |LUT2     |   662|
-|8     |LUT3     |  1937|
-|9     |LUT4     |   979|
-|10    |LUT5     |  1290|
-|11    |LUT6     |  2635|
-|12    |MUXF7    |   300|
-|13    |MUXF8    |    19|
-|14    |RAM32M   |     1|
-|15    |RAM32X1D |     2|
-|16    |RAMB36E1 |   128|
-|18    |FDCE     |  1855|
-|19    |FDPE     |   226|
-|20    |FDRE     |  1050|
-|21    |FDSE     |     4|
-|22    |LD       |    33|
-|23    |LDC      |   992|
-|24    |IBUF     |     2|
-|25    |OBUF     |     2|
-+------+---------+------+
++------+-----------+------+
+|      |Cell       |Count |
++------+-----------+------+
+|1     |clk_wiz    |     1|
+|2     |BUFG       |    12|
+|3     |CARRY4     |   265|
+|4     |DSP48E1    |     5|
+|6     |IDELAYCTRL |     1|
+|7     |IDELAYE2   |    18|
+|9     |ISERDESE2  |    16|
+|10    |LUT1       |    42|
+|11    |LUT2       |   763|
+|12    |LUT3       |  1995|
+|13    |LUT4       |  1242|
+|14    |LUT5       |  1254|
+|15    |LUT6       |  2799|
+|16    |MUXF7      |   320|
+|17    |MUXF8      |    26|
+|18    |OSERDESE2  |    20|
+|19    |RAM32M     |     8|
+|20    |RAM32X1D   |     4|
+|21    |RAMB36E1   |   128|
+|23    |SRL16E     |    34|
+|24    |FDCE       |  1892|
+|25    |FDPE       |   226|
+|26    |FDRE       |  1628|
+|27    |FDSE       |    28|
+|28    |LD         |    33|
+|29    |LDC        |   992|
+|30    |IBUF       |     2|
+|31    |IOBUF      |    16|
+|32    |IOBUFDS    |     2|
+|33    |OBUF       |    28|
+|34    |OBUFDS     |     1|
++------+-----------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:00:58 ; elapsed = 00:01:02 . Memory (MB): peak = 2870.758 ; gain = 729.738 ; free physical = 1400 ; free virtual = 36275
-Synthesis current peak Physical Memory [PSS] (MB): peak = 2030.710; parent = 1874.900; children = 155.846
-Synthesis current peak Virtual Memory [VSS] (MB): peak = 3863.332; parent = 2863.746; children = 999.586
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:57 ; elapsed = 00:01:00 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12271 ; free virtual = 47109
+Synthesis current peak Physical Memory [PSS] (MB): peak = 2151.772; parent = 1952.723; children = 199.103
+Synthesis current peak Virtual Memory [VSS] (MB): peak = 3845.035; parent = 2845.445; children = 999.590
 ---------------------------------------------------------------------------------
-Synthesis finished with 0 errors, 0 critical warnings and 825 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:00:56 ; elapsed = 00:01:00 . Memory (MB): peak = 2870.758 ; gain = 613.895 ; free physical = 1449 ; free virtual = 36325
-Synthesis Optimization Complete : Time (s): cpu = 00:00:58 ; elapsed = 00:01:02 . Memory (MB): peak = 2870.758 ; gain = 729.738 ; free physical = 1450 ; free virtual = 36326
+Synthesis finished with 0 errors, 0 critical warnings and 35 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:55 ; elapsed = 00:00:58 . Memory (MB): peak = 2871.520 ; gain = 619.832 ; free physical = 12316 ; free virtual = 47154
+Synthesis Optimization Complete : Time (s): cpu = 00:00:57 ; elapsed = 00:01:00 . Memory (MB): peak = 2871.520 ; gain = 731.676 ; free physical = 12316 ; free virtual = 47154
 INFO: [Project 1-571] Translating synthesized netlist
-Netlist sorting complete. Time (s): cpu = 00:00:00.06 ; elapsed = 00:00:00.07 . Memory (MB): peak = 2870.758 ; gain = 0.000 ; free physical = 1553 ; free virtual = 36429
-INFO: [Netlist 29-17] Analyzing 1727 Unisim elements for replacement
+Netlist sorting complete. Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.08 . Memory (MB): peak = 2871.520 ; gain = 0.000 ; free physical = 12450 ; free virtual = 47288
+INFO: [Netlist 29-17] Analyzing 1834 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
-INFO: [Opt 31-138] Pushed 1 inverter(s) to 1 load pin(s).
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2890.723 ; gain = 0.000 ; free physical = 1501 ; free virtual = 36377
+INFO: [Opt 31-138] Pushed 4 inverter(s) to 33 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2875.391 ; gain = 0.000 ; free physical = 12452 ; free virtual = 47290
 INFO: [Project 1-111] Unisim Transformation Summary:
-  A total of 1028 instances were transformed.
+  A total of 1056 instances were transformed.
+  IOBUF => IOBUF (IBUF, OBUFT): 16 instances
+  IOBUFDS => IOBUFDS (IBUFDS, INV, OBUFTDS(x2)): 2 instances
   LD => LDCE: 32 instances
   LD => LDCE (inverted pins: G): 1 instance 
   LDC => LDCE: 992 instances
-  RAM32M => RAM32M (RAMD32(x6), RAMS32(x2)): 1 instance 
-  RAM32X1D => RAM32X1D (RAMD32(x2)): 2 instances
+  OBUFDS => OBUFDS_DUAL_BUF (INV, OBUFDS(x2)): 1 instance 
+  RAM32M => RAM32M (RAMD32(x6), RAMS32(x2)): 8 instances
+  RAM32X1D => RAM32X1D (RAMD32(x2)): 4 instances
 
-Synth Design complete, checksum: 6cb2ef7f
+Synth Design complete, checksum: 12b91fa
 INFO: [Common 17-83] Releasing license: Synthesis
-239 Infos, 386 Warnings, 1 Critical Warnings and 0 Errors encountered.
+279 Infos, 477 Warnings, 1 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:01:04 ; elapsed = 00:01:06 . Memory (MB): peak = 2890.723 ; gain = 1144.316 ; free physical = 1695 ; free virtual = 36570
+synth_design: Time (s): cpu = 00:01:03 ; elapsed = 00:01:04 . Memory (MB): peak = 2875.391 ; gain = 1129.160 ; free physical = 12633 ; free virtual = 47471
 INFO: [runtcl-6] Synthesis results are not added to the cache due to CRITICAL_WARNING
 INFO: [Common 17-1381] The checkpoint '/home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.runs/synth_1/air_soc.dcp' has been generated.
 INFO: [runtcl-4] Executing : report_utilization -file air_soc_utilization_synth.rpt -pb air_soc_utilization_synth.pb
-INFO: [Common 17-206] Exiting Vivado at Sat Jan 11 00:18:30 2025...
+INFO: [Common 17-206] Exiting Vivado at Sat Jan 11 04:58:28 2025...

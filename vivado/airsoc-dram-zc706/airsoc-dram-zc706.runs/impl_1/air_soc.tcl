@@ -122,6 +122,7 @@ start_step init_design
 set ACTIVE_STEP init_design
 set rc [catch {
   create_msg_db init_design.pb
+  set_param xicom.use_bs_reader 1
   set_param chipscope.maxJobs 5
 OPTRACE "create in-memory project" START { }
   create_project -in_memory -part xc7z045ffg900-2
@@ -138,7 +139,7 @@ OPTRACE "set parameters" START { }
 OPTRACE "set parameters" END { }
 OPTRACE "add files" START { }
   add_files -quiet /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.runs/synth_1/air_soc.dcp
-  read_ip -quiet /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.srcs/sources_1/ip/clk_wiz_0/clk_wiz_0.xci
+  read_ip -quiet /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.srcs/sources_1/ip/clk_wiz_1/clk_wiz_1.xci
 OPTRACE "read constraints: implementation" START { }
   read_xdc /home/shc/projects/air-soc-dram/xdc/zc706.xdc
 OPTRACE "read constraints: implementation" END { }

@@ -70,6 +70,7 @@ proc create_report { reportName command } {
   }
 }
 OPTRACE "synth_1" START { ROLLUP_AUTO }
+set_param xicom.use_bs_reader 1
 set_param chipscope.maxJobs 5
 OPTRACE "Creating in-memory project" START { }
 create_project -in_memory -part xc7z045ffg900-2
@@ -123,6 +124,12 @@ read_verilog -library xil_defaultlib -sv {
   /home/shc/projects/air-soc-dram/cv32e40p/rtl/cv32e40p_register_file_latch.sv
   /home/shc/projects/air-soc-dram/cv32e40p/rtl/cv32e40p_sleep_unit.sv
   /home/shc/projects/air-soc-dram/cv32e40p/rtl/cv32e40p_top.sv
+  /home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_controller.sv
+  /home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_core.sv
+  /home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_phy.sv
+  /home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/ddr3_dfi_seq.sv
+  /home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller.sv
+  /home/shc/projects/air-soc-dram/rtl/src/peripherals/dram/dram_controller_obi.sv
   /home/shc/projects/air-soc-dram/cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_opgroup_block.sv
   /home/shc/projects/air-soc-dram/cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_opgroup_fmt_slice.sv
   /home/shc/projects/air-soc-dram/cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_top.sv
@@ -140,10 +147,10 @@ read_verilog -library xil_defaultlib -sv {
   /home/shc/projects/air-soc-dram/rtl/src/peripherals/uart/uart_tx.sv
   /home/shc/projects/air-soc-dram/rtl/src/soc/air_soc.sv
 }
-read_ip -quiet /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.srcs/sources_1/ip/clk_wiz_0/clk_wiz_0.xci
-set_property used_in_implementation false [get_files -all /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_board.xdc]
-set_property used_in_implementation false [get_files -all /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0.xdc]
-set_property used_in_implementation false [get_files -all /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_ooc.xdc]
+read_ip -quiet /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.srcs/sources_1/ip/clk_wiz_1/clk_wiz_1.xci
+set_property used_in_implementation false [get_files -all /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_1/clk_wiz_1_board.xdc]
+set_property used_in_implementation false [get_files -all /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_1/clk_wiz_1.xdc]
+set_property used_in_implementation false [get_files -all /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_1/clk_wiz_1_ooc.xdc]
 
 OPTRACE "Adding files" END { }
 # Mark all dcp files as not used in implementation to prevent them from being
@@ -158,6 +165,8 @@ read_xdc /home/shc/projects/air-soc-dram/xdc/zc706.xdc
 set_property used_in_implementation false [get_files /home/shc/projects/air-soc-dram/xdc/zc706.xdc]
 
 set_param ips.enableIPCacheLiteLoad 1
+
+read_checkpoint -auto_incremental -incremental /home/shc/projects/air-soc-dram/vivado/airsoc-dram-zc706/airsoc-dram-zc706.srcs/utils_1/imports/synth_1/air_soc.dcp
 close [open __synthesis_is_running__ w]
 
 OPTRACE "synth_design" START { }
