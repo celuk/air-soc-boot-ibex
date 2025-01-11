@@ -1,10 +1,7 @@
 #include "uart.h"
 #include "defines.h"
 
-/*
-//-----------------------------------------------
-// print a single character.
-//-----------------------------------------------
+#ifndef USE_COREMARK_UTILS
 int uart_txfull()
 {
     while ((UART_CFG & 0x4) == 0) { }
@@ -26,7 +23,7 @@ void zputchar(char c)
     // TX tamamlanana kadar bekle
     uart_txfull();
 }
-*/
+#endif
 
 //-----------------------------------------------
 // print a string (char*).
@@ -219,12 +216,7 @@ int zscan(char* buffer, int max_size, int echo)
     return length;
 }
 
-/*
-//-----------------------------------------------
-// string compare.
-// compares all chars in two strings.
-//-----------------------------------------------
-
+#ifndef USE_COREMARK_UTILS
 int strcmp(const char* p1, const char* p2)
 {
     const unsigned char* s1 = (const unsigned char*)p1;
@@ -239,10 +231,6 @@ int strcmp(const char* p1, const char* p2)
     return c1 - c2;
 }
 
-//-----------------------------------------------
-// strlen
-//-----------------------------------------------
-
 size_t strlen(const char* s)
 {
     const char* p = s;
@@ -250,7 +238,7 @@ size_t strlen(const char* s)
         p++;
     return p - s;
 }
-*/
+#endif
 
 void init_uart()
 {

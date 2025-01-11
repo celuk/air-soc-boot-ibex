@@ -213,6 +213,17 @@ void portable_fini(core_portable *p);
 #endif
 #endif
 
+
+static int skip_atoi(const char **s);
+static char *number(char *str, long num, int base, int size, int precision, int type);
+static char *eaddr(char *str, unsigned char *addr, int size, int precision, int type);
+static char *iaddr(char *str, unsigned char *addr, int size, int precision, int type);
+#include <stdarg.h>
+static int ee_vsprintf(char *buf, const char *fmt, va_list args);
+int uart_txfull();
+void zputchar(char c);
+void uart_send_char(char c);
+
 int ee_printf(const char *fmt, ...);
 
 #endif /* CORE_PORTME_H */
