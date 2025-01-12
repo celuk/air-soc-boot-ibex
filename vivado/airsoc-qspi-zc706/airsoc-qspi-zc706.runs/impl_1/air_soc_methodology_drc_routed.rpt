@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 -----------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2022.2 (win64) Build 3671981 Fri Oct 14 05:00:03 MDT 2022
-| Date         : Sun Jan 12 02:30:55 2025
+| Date         : Sun Jan 12 04:18:31 2025
 | Host         : DESKTOP-NCDM7BC running 64-bit major release  (build 9200)
 | Command      : report_methodology -file air_soc_methodology_drc_routed.rpt -pb air_soc_methodology_drc_routed.pb -rpx air_soc_methodology_drc_routed.rpx
 | Design       : air_soc
@@ -23,7 +23,7 @@ Table of Contents
           Floorplan: design_1
       Design limits: <entire design considered>
              Max violations: <unlimited>
-             Violations found: 108
+             Violations found: 92
 +-----------+------------------+------------------------------------------------------------------+------------+
 | Rule      | Severity         | Description                                                      | Violations |
 +-----------+------------------+------------------------------------------------------------------+------------+
@@ -32,7 +32,7 @@ Table of Contents
 | DPIR-1    | Warning          | Asynchronous driver check                                        | 32         |
 | LUTAR-1   | Warning          | LUT drives async reset alert                                     | 1          |
 | SYNTH-10  | Warning          | Wide multiplier                                                  | 3          |
-| SYNTH-15  | Warning          | Byte wide write enable not inferred                              | 32         |
+| SYNTH-15  | Warning          | Byte wide write enable not inferred                              | 16         |
 | TIMING-56 | Warning          | Missing logically or physically excluded clock groups constraint | 2          |
 | LATCH-1   | Advisory         | Existing latches in the design                                   | 1          |
 +-----------+------------------+------------------------------------------------------------------+------------+
@@ -412,162 +412,82 @@ Related violations: <none>
 
 SYNTH-15#1 Warning
 Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_0_0_0 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
+Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_0_0 because address width (14) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
 Related violations: <none>
 
 SYNTH-15#2 Warning
 Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_0_0_1 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
+Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_0_1 because address width (14) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
 Related violations: <none>
 
 SYNTH-15#3 Warning
 Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_0_0_2 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
+Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_0_2 because address width (14) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
 Related violations: <none>
 
 SYNTH-15#4 Warning
 Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_0_0_3 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
+Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_0_3 because address width (14) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
 Related violations: <none>
 
 SYNTH-15#5 Warning
 Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_0_0_4 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
+Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_1_0 because address width (14) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
 Related violations: <none>
 
 SYNTH-15#6 Warning
 Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_0_0_5 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
+Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_1_1 because address width (14) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
 Related violations: <none>
 
 SYNTH-15#7 Warning
 Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_0_0_6 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
+Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_1_2 because address width (14) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
 Related violations: <none>
 
 SYNTH-15#8 Warning
 Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_0_0_7 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
+Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_1_3 because address width (14) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
 Related violations: <none>
 
 SYNTH-15#9 Warning
 Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_1_0_0 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
+Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_2_0 because address width (14) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
 Related violations: <none>
 
 SYNTH-15#10 Warning
 Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_1_0_1 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
+Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_2_1 because address width (14) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
 Related violations: <none>
 
 SYNTH-15#11 Warning
 Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_1_0_2 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
+Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_2_2 because address width (14) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
 Related violations: <none>
 
 SYNTH-15#12 Warning
 Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_1_0_3 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
+Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_2_3 because address width (14) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
 Related violations: <none>
 
 SYNTH-15#13 Warning
 Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_1_0_4 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
+Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_3_0 because address width (14) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
 Related violations: <none>
 
 SYNTH-15#14 Warning
 Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_1_0_5 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
+Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_3_1 because address width (14) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
 Related violations: <none>
 
 SYNTH-15#15 Warning
 Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_1_0_6 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
+Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_3_2 because address width (14) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
 Related violations: <none>
 
 SYNTH-15#16 Warning
 Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_1_0_7 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
-Related violations: <none>
-
-SYNTH-15#17 Warning
-Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_2_0_0 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
-Related violations: <none>
-
-SYNTH-15#18 Warning
-Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_2_0_1 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
-Related violations: <none>
-
-SYNTH-15#19 Warning
-Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_2_0_2 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
-Related violations: <none>
-
-SYNTH-15#20 Warning
-Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_2_0_3 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
-Related violations: <none>
-
-SYNTH-15#21 Warning
-Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_2_0_4 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
-Related violations: <none>
-
-SYNTH-15#22 Warning
-Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_2_0_5 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
-Related violations: <none>
-
-SYNTH-15#23 Warning
-Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_2_0_6 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
-Related violations: <none>
-
-SYNTH-15#24 Warning
-Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_2_0_7 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
-Related violations: <none>
-
-SYNTH-15#25 Warning
-Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_3_0_0 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
-Related violations: <none>
-
-SYNTH-15#26 Warning
-Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_3_0_1 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
-Related violations: <none>
-
-SYNTH-15#27 Warning
-Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_3_0_2 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
-Related violations: <none>
-
-SYNTH-15#28 Warning
-Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_3_0_3 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
-Related violations: <none>
-
-SYNTH-15#29 Warning
-Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_3_0_4 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
-Related violations: <none>
-
-SYNTH-15#30 Warning
-Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_3_0_5 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
-Related violations: <none>
-
-SYNTH-15#31 Warning
-Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_3_0_6 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
-Related violations: <none>
-
-SYNTH-15#32 Warning
-Byte wide write enable not inferred  
-Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_3_0_7 because address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
+Byte wide write enable (BWWE) is not inferred for Block RAM main_memory/ram_reg_3_3 because address width (14) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired..
 Related violations: <none>
 
 TIMING-56#1 Warning

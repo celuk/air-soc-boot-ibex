@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2022.2 (win64) Build 3671981 Fri Oct 14 05:00:03 MDT 2022
-| Date             : Sun Jan 12 02:31:05 2025
+| Date             : Sun Jan 12 04:18:40 2025
 | Host             : DESKTOP-NCDM7BC running 64-bit major release  (build 9200)
 | Command          : report_power -file air_soc_power_routed.rpt -pb air_soc_power_summary_routed.pb -rpx air_soc_power_routed.rpx
 | Design           : air_soc
@@ -30,14 +30,14 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.260        |
+| Total On-Chip Power (W)  | 0.243        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.186        |
-| Device Static (W)        | 0.074        |
+| Dynamic (W)              | 0.171        |
+| Device Static (W)        | 0.073        |
 | Effective TJA (C/W)      | 5.0          |
-| Max Ambient (C)          | 83.7         |
-| Junction Temperature (C) | 26.3         |
+| Max Ambient (C)          | 83.8         |
+| Junction Temperature (C) | 26.2         |
 | Confidence Level         | Low          |
 | Setting File             | ---          |
 | Simulation Activity File | ---          |
@@ -52,21 +52,21 @@ Table of Contents
 +--------------------------+-----------+----------+-----------+-----------------+
 | On-Chip                  | Power (W) | Used     | Available | Utilization (%) |
 +--------------------------+-----------+----------+-----------+-----------------+
-| Clocks                   |     0.027 |        8 |       --- |             --- |
-| Slice Logic              |     0.008 |    17237 |       --- |             --- |
-|   LUT as Logic           |     0.007 |     9329 |     20800 |           44.85 |
+| Clocks                   |     0.026 |        8 |       --- |             --- |
+| Slice Logic              |     0.007 |    16728 |       --- |             --- |
+|   LUT as Logic           |     0.007 |     9015 |     20800 |           43.34 |
 |   CARRY4                 |    <0.001 |      253 |      8150 |            3.10 |
-|   Register               |    <0.001 |     4855 |     41600 |           11.67 |
-|   F7/F8 Muxes            |    <0.001 |      367 |     32600 |            1.13 |
+|   Register               |    <0.001 |     4852 |     41600 |           11.66 |
+|   F7/F8 Muxes            |    <0.001 |      368 |     32600 |            1.13 |
 |   LUT as Distributed RAM |    <0.001 |        6 |      9600 |            0.06 |
-|   Others                 |     0.000 |      120 |       --- |             --- |
-| Signals                  |     0.012 |    14396 |       --- |             --- |
-| Block RAM                |     0.032 |       32 |        50 |           64.00 |
+|   Others                 |     0.000 |      119 |       --- |             --- |
+| Signals                  |     0.012 |    13920 |       --- |             --- |
+| Block RAM                |     0.017 |       16 |        50 |           32.00 |
 | MMCM                     |     0.106 |        1 |         5 |           20.00 |
 | DSPs                     |    <0.001 |        5 |        90 |            5.56 |
-| I/O                      |    <0.001 |       10 |       106 |            9.43 |
-| Static Power             |     0.074 |          |           |                 |
-| Total                    |     0.260 |          |           |                 |
+| I/O                      |     0.003 |       11 |       106 |           10.38 |
+| Static Power             |     0.073 |          |           |                 |
+| Total                    |     0.243 |          |           |                 |
 +--------------------------+-----------+----------+-----------+-----------------+
 
 
@@ -76,16 +76,16 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) | Powerup (A) | Budget (A)  | Margin (A) |
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
-| Vccint    |       1.000 |     0.088 |       0.078 |      0.011 |       NA    | Unspecified | NA         |
+| Vccint    |       1.000 |     0.071 |       0.061 |      0.010 |       NA    | Unspecified | NA         |
 | Vccaux    |       1.800 |     0.071 |       0.059 |      0.013 |       NA    | Unspecified | NA         |
-| Vcco33    |       3.300 |     0.001 |       0.000 |      0.001 |       NA    | Unspecified | NA         |
+| Vcco33    |       3.300 |     0.002 |       0.001 |      0.001 |       NA    | Unspecified | NA         |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco18    |       1.800 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco15    |       1.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco135   |       1.350 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco12    |       1.200 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vccaux_io |       1.800 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
-| Vccbram   |       1.000 |     0.004 |       0.003 |      0.001 |       NA    | Unspecified | NA         |
+| Vccbram   |       1.000 |     0.002 |       0.001 |      0.001 |       NA    | Unspecified | NA         |
 | MGTAVcc   |       1.000 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | MGTAVtt   |       1.200 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vccadc    |       1.800 |     0.020 |       0.000 |      0.020 |       NA    | Unspecified | NA         |
@@ -150,19 +150,19 @@ Table of Contents
 +----------------------+-----------+
 | Name                 | Power (W) |
 +----------------------+-----------+
-| air_soc              |     0.186 |
-|   cv32e40p_core_ip   |     0.033 |
-|     core_i           |     0.033 |
-|       cs_registers_i |     0.002 |
+| air_soc              |     0.171 |
+|   cv32e40p_core_ip   |     0.030 |
+|     core_i           |     0.030 |
+|       cs_registers_i |     0.001 |
 |       ex_stage_i     |     0.002 |
-|       id_stage_i     |     0.023 |
-|       if_stage_i     |     0.005 |
+|       id_stage_i     |     0.021 |
+|       if_stage_i     |     0.004 |
 |   dcache             |     0.006 |
 |     way0             |     0.002 |
 |     way1             |     0.003 |
 |   dutclk             |     0.106 |
 |     inst             |     0.106 |
-|   main_memory        |     0.035 |
+|   main_memory        |     0.020 |
 |   obi_demux_dut      |     0.002 |
 |   qspi               |     0.002 |
 |     qspi_iface_dut   |     0.002 |

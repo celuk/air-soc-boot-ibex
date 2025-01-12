@@ -19,7 +19,9 @@ module air_soc (
 
    `ifndef QSPI_SIM
    ,output wire qspi_cs_n_o
-   //,output wire qspi_sck_o
+   `ifdef EXT_FLASH
+   ,output wire qspi_sck_o
+   `endif
    ,inout wire [3:0] qspi_data_io
    `endif
 );
@@ -479,6 +481,7 @@ module air_soc (
        ,.IO(qspi_data_io[3])
    );
 
+   `ifndef EXT_FLASH
    logic qspi_sck_o;
    STARTUPE2 #(
 		.PROG_USR("FALSE"),
@@ -498,6 +501,7 @@ module air_soc (
 	   .USRDONEO(1'b1),
 	   .USRDONETS(1'b1)
 	);
+   `endif
    `else
    assign qspi_data_io[0] = |qspi_out_mod_o   ? qspi_data_o[0] : 1'bZ;
    assign qspi_data_io[1] = qspi_out_mod_o[1] ? qspi_data_o[1] : 1'bZ;

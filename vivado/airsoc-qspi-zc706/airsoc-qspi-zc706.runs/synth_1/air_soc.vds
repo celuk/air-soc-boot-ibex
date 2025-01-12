@@ -2,8 +2,8 @@
 # Vivado v2022.2 (64-bit)
 # SW Build 3671981 on Fri Oct 14 05:00:03 MDT 2022
 # IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
-# Start of session at: Sun Jan 12 02:21:35 2025
-# Process ID: 22304
+# Start of session at: Sun Jan 12 04:08:37 2025
+# Process ID: 17612
 # Current directory: D:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1
 # Command line: vivado.exe -log air_soc.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source air_soc.tcl
 # Log file: D:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/air_soc.vds
@@ -11,7 +11,7 @@
 # Running On: DESKTOP-NCDM7BC, OS: Windows, CPU Frequency: 2592 MHz, CPU Physical cores: 6, Host memory: 17050 MB
 #-----------------------------------------------------------
 source air_soc.tcl -notrace
-create_project: Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 1003.527 ; gain = 119.172
+create_project: Time (s): cpu = 00:00:05 ; elapsed = 00:00:10 . Memory (MB): peak = 1002.609 ; gain = 118.449
 Command: read_checkpoint -auto_incremental -incremental D:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.srcs/utils_1/imports/synth_1/air_soc.dcp
 INFO: [Vivado 12-5825] Read reference checkpoint from D:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.srcs/utils_1/imports/synth_1/air_soc.dcp for incremental synthesis
 INFO: [Vivado 12-7989] Please ensure there are no constraint changes
@@ -24,7 +24,7 @@ INFO: [Designutils 20-5440] No compile time benefit to using incremental synthes
 INFO: [Designutils 20-4379] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
 INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
 INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
-INFO: [Synth 8-7075] Helper process launched with PID 17616
+INFO: [Synth 8-7075] Helper process launched with PID 6800
 INFO: [Synth 8-11241] undeclared symbol 'REGCCE', assumed default net type 'wire' [D:/tools/Xilinx/Vivado/2022.2/data/verilog/src/unimacro/BRAM_SINGLE_MACRO.v:2170]
 WARNING: [Synth 8-11067] parameter 'OPCODE_SYSTEM' declared inside package 'cv32e40p_pkg' shall be treated as localparam [D:/gitcls/air-soc-qspi/cv32e40p/rtl/include/cv32e40p_pkg.sv:37]
 WARNING: [Synth 8-11067] parameter 'OPCODE_FENCE' declared inside package 'cv32e40p_pkg' shall be treated as localparam [D:/gitcls/air-soc-qspi/cv32e40p/rtl/include/cv32e40p_pkg.sv:38]
@@ -128,7 +128,7 @@ WARNING: [Synth 8-11067] parameter 'JT_JAL' declared inside package 'cv32e40p_pk
 WARNING: [Synth 8-11067] parameter 'JT_JALR' declared inside package 'cv32e40p_pkg' shall be treated as localparam [D:/gitcls/air-soc-qspi/cv32e40p/rtl/include/cv32e40p_pkg.sv:672]
 INFO: [Common 17-14] Message 'Synth 8-11067' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 1823.699 ; gain = 408.395
+Starting RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1823.648 ; gain = 408.418
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-6157] synthesizing module 'air_soc' [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:8]
 INFO: [Synth 8-6157] synthesizing module 'cache' [D:/gitcls/air-soc-qspi/rtl/src/memory/cache.sv:6]
@@ -143,8 +143,8 @@ INFO: [Synth 8-6157] synthesizing module 'cache_way' [D:/gitcls/air-soc-qspi/rtl
 	Parameter LINE_BYTE_W bound to: 32'b00000000000000000000000000001000 
 INFO: [Synth 8-6155] done synthesizing module 'cache_way' (0#1) [D:/gitcls/air-soc-qspi/rtl/src/memory/cache.sv:296]
 INFO: [Synth 8-6155] done synthesizing module 'cache' (0#1) [D:/gitcls/air-soc-qspi/rtl/src/memory/cache.sv:6]
-INFO: [Synth 8-6157] synthesizing module 'clk_wiz_0' [D:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/.Xil/Vivado-22304-DESKTOP-NCDM7BC/realtime/clk_wiz_0_stub.v:5]
-INFO: [Synth 8-6155] done synthesizing module 'clk_wiz_0' (0#1) [D:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/.Xil/Vivado-22304-DESKTOP-NCDM7BC/realtime/clk_wiz_0_stub.v:5]
+INFO: [Synth 8-6157] synthesizing module 'clk_wiz_0' [D:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/.Xil/Vivado-17612-DESKTOP-NCDM7BC/realtime/clk_wiz_0_stub.v:5]
+INFO: [Synth 8-6155] done synthesizing module 'clk_wiz_0' (0#1) [D:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/.Xil/Vivado-17612-DESKTOP-NCDM7BC/realtime/clk_wiz_0_stub.v:5]
 INFO: [Synth 8-6157] synthesizing module 'cv32e40p_top' [D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_top.sv:26]
 	Parameter COREV_PULP bound to: 1'b0 
 	Parameter COREV_CLUSTER bound to: 1'b0 
@@ -342,9 +342,9 @@ INFO: [Synth 8-294] found qualifier unique on case statement: implementing as pa
 INFO: [Synth 8-6155] done synthesizing module 'cv32e40p_cs_registers' (0#1) [D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_cs_registers.sv:30]
 INFO: [Synth 8-6155] done synthesizing module 'cv32e40p_core' (0#1) [D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_core.sv:31]
 INFO: [Synth 8-6155] done synthesizing module 'cv32e40p_top' (0#1) [D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_top.sv:26]
-WARNING: [Synth 8-693] zero replication count - replication ignored [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:314]
+WARNING: [Synth 8-693] zero replication count - replication ignored [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:316]
 INFO: [Synth 8-6157] synthesizing module 'ram32' [D:/gitcls/air-soc-qspi/rtl/src/memory/ram.sv:5]
-	Parameter SIZE bound to: 5120 - type: integer 
+	Parameter SIZE bound to: 4096 - type: integer 
 	Parameter INIT_FILE bound to: (null) - type: string 
 INFO: [Synth 8-6157] synthesizing module 'simpleuart' [D:/gitcls/air-soc-qspi/rtl/src/memory/simpleuart.sv:20]
 	Parameter DEFAULT_DIV bound to: 434 - type: integer 
@@ -376,11 +376,6 @@ WARNING: [Synth 8-689] width (32) of port connection 'wb_adr_i' does not match p
 INFO: [Synth 8-6155] done synthesizing module 'timer_controller_obi' (0#1) [D:/gitcls/air-soc-qspi/rtl/src/peripherals/timer/timer_controller_obi.sv:2]
 INFO: [Synth 8-6157] synthesizing module 'IOBUF' [D:/tools/Xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:75902]
 INFO: [Synth 8-6155] done synthesizing module 'IOBUF' (0#1) [D:/tools/Xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:75902]
-WARNING: [Synth 8-4446] all outputs are unconnected for this instance and logic may be removed [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:486]
-INFO: [Synth 8-6157] synthesizing module 'STARTUPE2' [D:/tools/Xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:131814]
-	Parameter PROG_USR bound to: FALSE - type: string 
-	Parameter SIM_CCLK_FREQ bound to: 0.000000 - type: double 
-INFO: [Synth 8-6155] done synthesizing module 'STARTUPE2' (0#1) [D:/tools/Xilinx/Vivado/2022.2/scripts/rt/data/unisim_comp.v:131814]
 INFO: [Synth 8-6157] synthesizing module 'qspi_controller_obi' [D:/gitcls/air-soc-qspi/rtl/src/peripherals/qspi/qspi_controller_obi.sv:2]
 INFO: [Synth 8-6157] synthesizing module 'qspi_controller' [D:/gitcls/air-soc-qspi/rtl/src/peripherals/qspi/qspi_controller.sv:34]
 INFO: [Synth 8-155] case statement is not full and has no default [D:/gitcls/air-soc-qspi/rtl/src/peripherals/qspi/qspi_controller.sv:252]
@@ -449,103 +444,103 @@ WARNING: [Synth 8-3848] Net rx_full_1 in module/entity uart_controller does not 
 WARNING: [Synth 8-6014] Unused sequential element qspi_cs_r_reg was removed.  [D:/gitcls/air-soc-qspi/rtl/src/peripherals/qspi/qspi_controller.sv:1115]
 WARNING: [Synth 8-6014] Unused sequential element sck_r_reg was removed.  [D:/gitcls/air-soc-qspi/rtl/src/peripherals/qspi/qspi_controller.sv:1191]
 WARNING: [Synth 8-6014] Unused sequential element prescaler_counter_reg was removed.  [D:/gitcls/air-soc-qspi/rtl/src/peripherals/qspi/qspi_controller.sv:1192]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[0] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[1] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[2] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[3] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[4] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[5] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[6] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[7] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[8] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[9] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[10] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[11] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[12] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[13] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[14] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[15] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[16] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[17] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[18] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[19] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[20] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[21] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[22] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[23] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[24] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[25] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[26] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[27] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[28] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[29] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[30] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[31] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
-WARNING: [Synth 8-7137] Register req_sources_reg[0] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[1] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[2] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[3] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[4] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[5] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[6] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[7] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[8] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[9] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[10] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[11] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[12] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[13] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[14] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[15] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[16] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[17] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[18] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[19] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[20] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[21] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[22] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[23] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[24] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[25] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[26] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[27] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[28] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[29] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[30] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_sources_reg[31] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:292]
-WARNING: [Synth 8-7137] Register req_write_reg[0] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[1] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[2] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[3] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[4] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[5] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[6] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[7] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[8] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[9] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[10] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[11] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[12] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[13] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[14] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[15] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[16] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[17] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[18] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[19] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[20] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[21] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[22] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[23] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[24] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[25] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[26] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[27] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[28] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[29] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[30] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-7137] Register req_write_reg[31] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:293]
-WARNING: [Synth 8-3848] Net uart_rx_i in module/entity air_soc does not have driver. [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:27]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[0] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[1] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[2] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[3] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[4] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[5] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[6] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[7] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[8] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[9] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[10] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[11] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[12] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[13] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[14] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[15] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[16] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[17] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[18] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[19] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[20] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[21] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[22] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[23] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[24] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[25] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[26] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[27] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[28] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[29] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[30] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-6014] Unused sequential element imem_req_addr_reg[31] was removed.  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:296]
+WARNING: [Synth 8-7137] Register req_sources_reg[0] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[1] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[2] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[3] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[4] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[5] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[6] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[7] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[8] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[9] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[10] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[11] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[12] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[13] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[14] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[15] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[16] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[17] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[18] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[19] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[20] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[21] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[22] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[23] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[24] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[25] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[26] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[27] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[28] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[29] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[30] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_sources_reg[31] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:294]
+WARNING: [Synth 8-7137] Register req_write_reg[0] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[1] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[2] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[3] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[4] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[5] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[6] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[7] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[8] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[9] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[10] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[11] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[12] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[13] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[14] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[15] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[16] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[17] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[18] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[19] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[20] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[21] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[22] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[23] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[24] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[25] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[26] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[27] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[28] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[29] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[30] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-7137] Register req_write_reg[31] in module air_soc has both Set and reset with same priority. This may cause simulation mismatches. Consider rewriting code  [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:295]
+WARNING: [Synth 8-3848] Net uart_rx_i in module/entity air_soc does not have driver. [D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv:29]
 WARNING: [Synth 8-7129] Port addr_i[31] in module qspi_controller_obi is either unconnected or has no load
 WARNING: [Synth 8-7129] Port addr_i[30] in module qspi_controller_obi is either unconnected or has no load
 WARNING: [Synth 8-7129] Port addr_i[29] in module qspi_controller_obi is either unconnected or has no load
@@ -648,19 +643,19 @@ WARNING: [Synth 8-7129] Port TIM_EVC[19] in module timer is either unconnected o
 WARNING: [Synth 8-7129] Port TIM_EVC[18] in module timer is either unconnected or has no load
 INFO: [Common 17-14] Message 'Synth 8-7129' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:13 ; elapsed = 00:00:13 . Memory (MB): peak = 2038.664 ; gain = 623.359
+Finished RTL Elaboration : Time (s): cpu = 00:00:12 ; elapsed = 00:00:14 . Memory (MB): peak = 2035.469 ; gain = 620.238
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 2038.664 ; gain = 623.359
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 2035.469 ; gain = 620.238
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 2038.664 ; gain = 623.359
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:13 ; elapsed = 00:00:14 . Memory (MB): peak = 2035.469 ; gain = 620.238
 ---------------------------------------------------------------------------------
-Netlist sorting complete. Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.422 . Memory (MB): peak = 2038.664 ; gain = 0.000
-INFO: [Netlist 29-17] Analyzing 5 Unisim elements for replacement
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.398 . Memory (MB): peak = 2035.469 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 4 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 
@@ -674,24 +669,24 @@ INFO: [Project 1-236] Implementation specific constraints were found while readi
 Resolution: To avoid this warning, move constraints listed in [.Xil/air_soc_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
 Completed Processing XDC Constraints
 
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.004 . Memory (MB): peak = 2111.984 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.009 . Memory (MB): peak = 2126.523 ; gain = 0.000
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 4 instances were transformed.
   IOBUF => IOBUF (IBUF, OBUFT): 4 instances
 
-Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.046 . Memory (MB): peak = 2111.984 ; gain = 0.000
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.066 . Memory (MB): peak = 2126.523 ; gain = 0.000
 INFO: [Designutils 20-5440] No compile time benefit to using incremental synthesis; A full resynthesis will be run
 INFO: [Designutils 20-4379] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
 INFO: [Synth 8-11241] undeclared symbol 'REGCCE', assumed default net type 'wire' [D:/tools/Xilinx/Vivado/2022.2/data/verilog/src/unimacro/BRAM_SINGLE_MACRO.v:2170]
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:27 ; elapsed = 00:00:27 . Memory (MB): peak = 2111.984 ; gain = 696.680
+Finished Constraint Validation : Time (s): cpu = 00:00:26 ; elapsed = 00:00:29 . Memory (MB): peak = 2126.523 ; gain = 711.293
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
 Loading part: xc7a35tcpg236-1
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:27 ; elapsed = 00:00:27 . Memory (MB): peak = 2111.984 ; gain = 696.680
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:26 ; elapsed = 00:00:29 . Memory (MB): peak = 2126.523 ; gain = 711.293
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying 'set_property' XDC Constraints
@@ -700,7 +695,7 @@ Applied set_property IO_BUFFER_TYPE = NONE for clk_i. (constraint file  d:/gitcl
 Applied set_property CLOCK_BUFFER_TYPE = NONE for clk_i. (constraint file  d:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0/clk_wiz_0_in_context.xdc, line 4).
 Applied set_property KEEP_HIERARCHY = SOFT for dutclk. (constraint file  auto generated constraint).
 ---------------------------------------------------------------------------------
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:27 ; elapsed = 00:00:27 . Memory (MB): peak = 2111.984 ; gain = 696.680
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:26 ; elapsed = 00:00:29 . Memory (MB): peak = 2126.523 ; gain = 711.293
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-802] inferred FSM for state register 'debug_fsm_cs_reg' in module 'cv32e40p_controller'
 INFO: [Synth 8-802] inferred FSM for state register 'State_SP_reg' in module 'cv32e40p_alu_div'
@@ -779,7 +774,7 @@ INFO: [Synth 8-3354] encoded FSM with state register 'mulh_CS_reg' using encodin
 ---------------------------------------------------------------------------------------------------
 INFO: [Synth 8-3354] encoded FSM with state register 'state_prog_reg' using encoding 'one-hot' in module 'ram32'
 WARNING: [Synth 8-6841] Block RAM (ram_reg) originally specified as a Byte Wide Write Enable RAM cannot take advantage of ByteWide feature and is implemented with single write enable per RAM due to following reason.
-(address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired.)
+(address width (14) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired.)
 ---------------------------------------------------------------------------------------------------
                    State |                     New Encoding |                Previous Encoding 
 ---------------------------------------------------------------------------------------------------
@@ -808,7 +803,7 @@ INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 
 ---------------------------------------------------------------------------------------------------
 INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'sequential' in module 'uart_rx'
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:35 ; elapsed = 00:00:36 . Memory (MB): peak = 2111.984 ; gain = 696.680
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:34 ; elapsed = 00:00:37 . Memory (MB): peak = 2126.523 ; gain = 711.293
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start RTL Component Statistics 
@@ -856,7 +851,7 @@ Detailed RTL Component Info :
 +---Multipliers : 
 	              32x32  Multipliers := 1     
 +---RAMs : 
-	             640K Bit	(20480 X 32 bit)          RAMs := 1     
+	             512K Bit	(16384 X 32 bit)          RAMs := 1     
 	               16 Bit	(2 X 8 bit)          RAMs := 1     
 +---Muxes : 
 	   2 Input  256 Bit        Muxes := 65    
@@ -890,7 +885,7 @@ Detailed RTL Component Info :
 	   2 Input   16 Bit        Muxes := 24    
 	   3 Input   16 Bit        Muxes := 1     
 	   9 Input   16 Bit        Muxes := 1     
-	   2 Input   15 Bit        Muxes := 1     
+	   2 Input   14 Bit        Muxes := 1     
 	   2 Input   12 Bit        Muxes := 1     
 	   2 Input   10 Bit        Muxes := 3     
 	   2 Input    8 Bit        Muxes := 152   
@@ -993,9 +988,9 @@ DSP Report: Generating DSP mult_i/, operation Mode is: (PCIN>>17)+A*B.
 DSP Report: operator mult_i/ is absorbed into DSP mult_i/.
 DSP Report: operator mult_i/ is absorbed into DSP mult_i/.
 WARNING: [Synth 8-6841] Block RAM (ram_reg) originally specified as a Byte Wide Write Enable RAM cannot take advantage of ByteWide feature and is implemented with single write enable per RAM due to following reason.
-(address width (15) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired.)
+(address width (14) is more than optimal threshold of 12. Implementing using BWWE will require more logic and timing would be suboptimal. Please use attribute ram_decomp = power if BWWE is desired.)
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:02:02 ; elapsed = 00:02:03 . Memory (MB): peak = 2293.508 ; gain = 878.203
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:02:00 ; elapsed = 00:02:04 . Memory (MB): peak = 2287.734 ; gain = 872.504
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP, Shift Register and Retiming Reporting
@@ -1005,7 +1000,7 @@ Block RAM: Preliminary Mapping Report (see note below)
 +----------------+------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
 |Module Name     | RTL Object | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | RAMB18 | RAMB36 | 
 +----------------+------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
-|i_0/main_memory | ram_reg    | 20 K x 32(READ_FIRST)  | W |   | 20 K x 32(WRITE_FIRST) |   | R | Port A and B     | 0      | 32     | 
+|i_0/main_memory | ram_reg    | 16 K x 32(READ_FIRST)  | W |   | 16 K x 32(WRITE_FIRST) |   | R | Port A and B     | 0      | 16     | 
 +----------------+------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
 
 Note: The table above is a preliminary report that shows the Block RAMs at the current stage of the synthesis flow. Some Block RAMs may be reimplemented as non Block RAM primitives later in the synthesis flow. Multiple instantiated Block RAMs are reported only once. 
@@ -1041,13 +1036,13 @@ Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
 Start Applying XDC Timing Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:02:12 ; elapsed = 00:02:13 . Memory (MB): peak = 2293.508 ; gain = 878.203
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:02:10 ; elapsed = 00:02:14 . Memory (MB): peak = 2287.734 ; gain = 872.504
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Timing Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:02:14 ; elapsed = 00:02:16 . Memory (MB): peak = 2293.508 ; gain = 878.203
+Finished Timing Optimization : Time (s): cpu = 00:02:12 ; elapsed = 00:02:17 . Memory (MB): peak = 2287.734 ; gain = 872.504
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP, Shift Register and Retiming Reporting
@@ -1057,7 +1052,7 @@ Block RAM: Final Mapping Report
 +----------------+------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
 |Module Name     | RTL Object | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | RAMB18 | RAMB36 | 
 +----------------+------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
-|i_0/main_memory | ram_reg    | 20 K x 32(READ_FIRST)  | W |   | 20 K x 32(WRITE_FIRST) |   | R | Port A and B     | 0      | 32     | 
+|i_0/main_memory | ram_reg    | 16 K x 32(READ_FIRST)  | W |   | 16 K x 32(WRITE_FIRST) |   | R | Port A and B     | 0      | 16     | 
 +----------------+------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+
 
 
@@ -1074,40 +1069,24 @@ Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
 ---------------------------------------------------------------------------------
 Start Technology Mapping
 ---------------------------------------------------------------------------------
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_0_0_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_0_0_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_0_0_2 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_0_0_3 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_0_0_4 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_0_0_5 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_0_0_6 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_0_0_7 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_1_0_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_1_0_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_1_0_2 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_1_0_3 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_1_0_4 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_1_0_5 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_1_0_6 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_1_0_7 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_2_0_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_2_0_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_2_0_2 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_2_0_3 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_2_0_4 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_2_0_5 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_2_0_6 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_2_0_7 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_3_0_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_3_0_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_3_0_2 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_3_0_3 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_3_0_4 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_3_0_5 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_3_0_6 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
-INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_3_0_7 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_0_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_0_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_0_2 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_0_3 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_1_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_1_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_1_2 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_1_3 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_2_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_2_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_2_2 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_2_3 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_3_0 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_3_1 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_3_2 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance main_memory/ram_reg_3_3 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:02:22 ; elapsed = 00:02:23 . Memory (MB): peak = 2293.508 ; gain = 878.203
+Finished Technology Mapping : Time (s): cpu = 00:02:19 ; elapsed = 00:02:24 . Memory (MB): peak = 2287.734 ; gain = 872.504
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start IO Insertion
@@ -1125,37 +1104,37 @@ Start Final Netlist Cleanup
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:02:28 ; elapsed = 00:02:29 . Memory (MB): peak = 2293.508 ; gain = 878.203
+Finished IO Insertion : Time (s): cpu = 00:02:26 ; elapsed = 00:02:31 . Memory (MB): peak = 2287.734 ; gain = 872.504
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:02:28 ; elapsed = 00:02:29 . Memory (MB): peak = 2293.508 ; gain = 878.203
+Finished Renaming Generated Instances : Time (s): cpu = 00:02:26 ; elapsed = 00:02:31 . Memory (MB): peak = 2287.734 ; gain = 872.504
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:02:30 ; elapsed = 00:02:31 . Memory (MB): peak = 2293.508 ; gain = 878.203
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:02:27 ; elapsed = 00:02:32 . Memory (MB): peak = 2287.734 ; gain = 872.504
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:02:30 ; elapsed = 00:02:31 . Memory (MB): peak = 2293.508 ; gain = 878.203
+Finished Renaming Generated Ports : Time (s): cpu = 00:02:28 ; elapsed = 00:02:32 . Memory (MB): peak = 2287.734 ; gain = 872.504
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:02:31 ; elapsed = 00:02:33 . Memory (MB): peak = 2293.508 ; gain = 878.203
+Finished Handling Custom Attributes : Time (s): cpu = 00:02:29 ; elapsed = 00:02:34 . Memory (MB): peak = 2287.734 ; gain = 872.504
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:02:31 ; elapsed = 00:02:33 . Memory (MB): peak = 2293.508 ; gain = 878.203
+Finished Renaming Generated Nets : Time (s): cpu = 00:02:29 ; elapsed = 00:02:34 . Memory (MB): peak = 2287.734 ; gain = 872.504
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Writing Synthesis Report
@@ -1181,48 +1160,47 @@ Report BlackBoxes:
 +------+--------------+----------+
 
 Report Cell Usage: 
-+------+----------+------+
-|      |Cell      |Count |
-+------+----------+------+
-|1     |clk_wiz   |     1|
-|2     |BUFG      |    12|
-|3     |CARRY4    |   253|
-|4     |DSP48E1   |     5|
-|6     |LUT1      |    12|
-|7     |LUT2      |   893|
-|8     |LUT3      |  2104|
-|9     |LUT4      |  1966|
-|10    |LUT5      |  1471|
-|11    |LUT6      |  5186|
-|12    |MUXF7     |   338|
-|13    |MUXF8     |    29|
-|14    |RAM32M    |     1|
-|15    |RAM32X1D  |     2|
-|16    |RAMB36E1  |    32|
-|17    |STARTUPE2 |     1|
-|18    |FDCE      |  1888|
-|19    |FDPE      |   226|
-|20    |FDRE      |  1712|
-|21    |FDSE      |     4|
-|22    |LD        |    33|
-|23    |LDC       |   992|
-|24    |IBUF      |     2|
-|25    |IOBUF     |     4|
-|26    |OBUF      |     3|
-+------+----------+------+
++------+---------+------+
+|      |Cell     |Count |
++------+---------+------+
+|1     |clk_wiz  |     1|
+|2     |BUFG     |    12|
+|3     |CARRY4   |   253|
+|4     |DSP48E1  |     5|
+|6     |LUT1     |    12|
+|7     |LUT2     |   901|
+|8     |LUT3     |  2108|
+|9     |LUT4     |  1457|
+|10    |LUT5     |  1476|
+|11    |LUT6     |  5172|
+|12    |MUXF7    |   339|
+|13    |MUXF8    |    29|
+|14    |RAM32M   |     1|
+|15    |RAM32X1D |     2|
+|16    |RAMB36E1 |    16|
+|17    |FDCE     |  1886|
+|18    |FDPE     |   226|
+|19    |FDRE     |  1711|
+|20    |FDSE     |     4|
+|21    |LD       |    33|
+|22    |LDC      |   992|
+|23    |IBUF     |     2|
+|24    |IOBUF    |     4|
+|25    |OBUF     |     4|
++------+---------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:02:31 ; elapsed = 00:02:33 . Memory (MB): peak = 2293.508 ; gain = 878.203
+Finished Writing Synthesis Report : Time (s): cpu = 00:02:29 ; elapsed = 00:02:34 . Memory (MB): peak = 2287.734 ; gain = 872.504
 ---------------------------------------------------------------------------------
 Synthesis finished with 0 errors, 0 critical warnings and 35 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:02:11 ; elapsed = 00:02:27 . Memory (MB): peak = 2293.508 ; gain = 804.883
-Synthesis Optimization Complete : Time (s): cpu = 00:02:31 ; elapsed = 00:02:33 . Memory (MB): peak = 2293.508 ; gain = 878.203
+Synthesis Optimization Runtime : Time (s): cpu = 00:02:10 ; elapsed = 00:02:26 . Memory (MB): peak = 2287.734 ; gain = 781.449
+Synthesis Optimization Complete : Time (s): cpu = 00:02:29 ; elapsed = 00:02:34 . Memory (MB): peak = 2287.734 ; gain = 872.504
 INFO: [Project 1-571] Translating synthesized netlist
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.265 . Memory (MB): peak = 2293.508 ; gain = 0.000
-INFO: [Netlist 29-17] Analyzing 1690 Unisim elements for replacement
-INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.258 . Memory (MB): peak = 2287.734 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 1674 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 1 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 INFO: [Opt 31-138] Pushed 1 inverter(s) to 1 load pin(s).
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.004 . Memory (MB): peak = 2293.508 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.004 . Memory (MB): peak = 2287.734 ; gain = 0.000
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 1032 instances were transformed.
   IOBUF => IOBUF (IBUF, OBUFT): 4 instances
@@ -1232,11 +1210,11 @@ INFO: [Project 1-111] Unisim Transformation Summary:
   RAM32M => RAM32M (RAMD32(x6), RAMS32(x2)): 1 instance 
   RAM32X1D => RAM32X1D (RAMD32(x2)): 2 instances
 
-Synth Design complete, checksum: 9701fe41
+Synth Design complete, checksum: b98570ad
 INFO: [Common 17-83] Releasing license: Synthesis
-225 Infos, 386 Warnings, 0 Critical Warnings and 0 Errors encountered.
+207 Infos, 385 Warnings, 0 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:02:40 ; elapsed = 00:02:42 . Memory (MB): peak = 2293.508 ; gain = 1255.168
+synth_design: Time (s): cpu = 00:02:37 ; elapsed = 00:02:53 . Memory (MB): peak = 2287.734 ; gain = 1250.340
 INFO: [Common 17-1381] The checkpoint 'D:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/air_soc.dcp' has been generated.
 INFO: [runtcl-4] Executing : report_utilization -file air_soc_utilization_synth.rpt -pb air_soc_utilization_synth.pb
-INFO: [Common 17-206] Exiting Vivado at Sun Jan 12 02:24:30 2025...
+INFO: [Common 17-206] Exiting Vivado at Sun Jan 12 04:12:04 2025...
