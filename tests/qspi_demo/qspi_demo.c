@@ -1,13 +1,13 @@
 #include "qspi.h"
-//#include "uart.h"
-//#include "timer.h"
+#include "uart.h"
+#include "timer.h"
 
 int main(){
-    //init_uart();
+    init_uart();
 
-    //tekno_printf("basladi\n");
+    tekno_printf("basladi\n");
 
-    //wait_for_us(500);
+    wait_for_us(500);
     //wait_for_us(10);
 
     qspi_set_ccr(
@@ -21,7 +21,7 @@ int main(){
     );
     wait_for_not_busy();
 
-    //wait_for_us(500);
+    wait_for_us(500);
     //wait_for_us(10);
 
     QSPI_ADR = 0x00000000;
@@ -36,7 +36,7 @@ int main(){
     );
     wait_for_not_busy();
 
-    //tekno_printf("READID: %x\n", QSPI_DR0);
+    tekno_printf("READID: %x\n", QSPI_DR0);
 
     QSPI_ADR = 0x00000000;
     qspi_set_ccr(
@@ -50,7 +50,7 @@ int main(){
     );
     wait_for_not_busy();
 
-    //tekno_printf("READ1: %x\n", QSPI_DR0);
+    tekno_printf("READ1: %x\n", QSPI_DR0);
 
     QSPI_ADR = 0x00000000;
     qspi_set_ccr(
@@ -64,11 +64,11 @@ int main(){
     );
     wait_for_not_busy();
 
-    //tekno_printf("READ2: %x\n", QSPI_DR0);
+    tekno_printf("READ2: %x\n", QSPI_DR0);
 
     qspi_enable_quad_mode();
 
-    //tekno_printf("quad_enabled: %x\n", QSPI_DR0);
+    tekno_printf("quad_enabled: %x\n", QSPI_DR0);
 
     QSPI_ADR = 0x00000000;
     qspi_set_ccr(
@@ -82,14 +82,14 @@ int main(){
     );
     wait_for_not_busy();
 
-    //tekno_printf("DR0: %x\n", QSPI_DR0);
-    //tekno_printf("DR1: %x\n", QSPI_DR1);
-    //tekno_printf("DR2: %x\n", QSPI_DR2);
-    //tekno_printf("DR3: %x\n", QSPI_DR3);
-    //tekno_printf("DR4: %x\n", QSPI_DR4);
-    //tekno_printf("DR5: %x\n", QSPI_DR5);
-    //tekno_printf("DR6: %x\n", QSPI_DR6);
-    //tekno_printf("DR7: %x\n", QSPI_DR7);
+    tekno_printf("DR0: %x\n", QSPI_DR0);
+    tekno_printf("DR1: %x\n", QSPI_DR1);
+    tekno_printf("DR2: %x\n", QSPI_DR2);
+    tekno_printf("DR3: %x\n", QSPI_DR3);
+    tekno_printf("DR4: %x\n", QSPI_DR4);
+    tekno_printf("DR5: %x\n", QSPI_DR5);
+    tekno_printf("DR6: %x\n", QSPI_DR6);
+    tekno_printf("DR7: %x\n", QSPI_DR7);
 
     qspi_disable_quad_mode();
 
@@ -163,14 +163,14 @@ int main(){
     QSPI_DR6 = 0xaaaaaaaa;
     QSPI_DR7 = 0xaaaaaaaa;
 
-    //tekno_printf("DR0: %x\n", QSPI_DR0);
-    //tekno_printf("DR1: %x\n", QSPI_DR1);
-    //tekno_printf("DR2: %x\n", QSPI_DR2);
-    //tekno_printf("DR3: %x\n", QSPI_DR3);
-    //tekno_printf("DR4: %x\n", QSPI_DR4);
-    //tekno_printf("DR5: %x\n", QSPI_DR5);
-    //tekno_printf("DR6: %x\n", QSPI_DR6);
-    //tekno_printf("DR7: %x\n", QSPI_DR7);
+    tekno_printf("DR0: %x\n", QSPI_DR0);
+    tekno_printf("DR1: %x\n", QSPI_DR1);
+    tekno_printf("DR2: %x\n", QSPI_DR2);
+    tekno_printf("DR3: %x\n", QSPI_DR3);
+    tekno_printf("DR4: %x\n", QSPI_DR4);
+    tekno_printf("DR5: %x\n", QSPI_DR5);
+    tekno_printf("DR6: %x\n", QSPI_DR6);
+    tekno_printf("DR7: %x\n", QSPI_DR7);
 
     QSPI_ADR = 0x00000000;
     qspi_set_ccr(
@@ -197,14 +197,14 @@ int main(){
     wait_for_not_busy();
     wait_for_wel_down();
 
-    //tekno_printf("DR0: %x\n", QSPI_DR0);
-    //tekno_printf("DR1: %x\n", QSPI_DR1);
-    //tekno_printf("DR2: %x\n", QSPI_DR2);
-    //tekno_printf("DR3: %x\n", QSPI_DR3);
-    //tekno_printf("DR4: %x\n", QSPI_DR4);
-    //tekno_printf("DR5: %x\n", QSPI_DR5);
-    //tekno_printf("DR6: %x\n", QSPI_DR6);
-    //tekno_printf("DR7: %x\n", QSPI_DR7);
+    tekno_printf("DR0: %x\n", QSPI_DR0);
+    tekno_printf("DR1: %x\n", QSPI_DR1);
+    tekno_printf("DR2: %x\n", QSPI_DR2);
+    tekno_printf("DR3: %x\n", QSPI_DR3);
+    tekno_printf("DR4: %x\n", QSPI_DR4);
+    tekno_printf("DR5: %x\n", QSPI_DR5);
+    tekno_printf("DR6: %x\n", QSPI_DR6);
+    tekno_printf("DR7: %x\n", QSPI_DR7);
 
     qspi_enable_quad_mode();
 
@@ -278,14 +278,14 @@ int main(){
     );
     wait_for_not_busy();
 
-    //tekno_printf("DR0: %x\n", QSPI_DR0);
-    //tekno_printf("DR1: %x\n", QSPI_DR1);
-    //tekno_printf("DR2: %x\n", QSPI_DR2);
-    //tekno_printf("DR3: %x\n", QSPI_DR3);
-    //tekno_printf("DR4: %x\n", QSPI_DR4);
-    //tekno_printf("DR5: %x\n", QSPI_DR5);
-    //tekno_printf("DR6: %x\n", QSPI_DR6);
-    //tekno_printf("DR7: %x\n", QSPI_DR7);
+    tekno_printf("DR0: %x\n", QSPI_DR0);
+    tekno_printf("DR1: %x\n", QSPI_DR1);
+    tekno_printf("DR2: %x\n", QSPI_DR2);
+    tekno_printf("DR3: %x\n", QSPI_DR3);
+    tekno_printf("DR4: %x\n", QSPI_DR4);
+    tekno_printf("DR5: %x\n", QSPI_DR5);
+    tekno_printf("DR6: %x\n", QSPI_DR6);
+    tekno_printf("DR7: %x\n", QSPI_DR7);
 
     return 0;
 }
