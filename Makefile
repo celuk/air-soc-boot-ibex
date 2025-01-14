@@ -48,7 +48,7 @@ send:
 
 .PHONY: pico
 pico:
-	picocom -b 115200 /dev/ttyUSB$(ARGS) --imap crcrlf
+	picocom -b 115200 /dev/ttyUSB$(ARGS) --imap lfcrlf
 
 %:
 	@:
