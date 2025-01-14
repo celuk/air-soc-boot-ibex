@@ -1,7 +1,7 @@
 // Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2022.2 (win64) Build 3671981 Fri Oct 14 05:00:03 MDT 2022
-// Date        : Sun Jan 12 02:14:58 2025
+// Date        : Tue Jan 14 22:30:30 2025
 // Host        : DESKTOP-NCDM7BC running 64-bit major release  (build 9200)
 // Command     : write_verilog -force -mode funcsim
 //               d:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_sim_netlist.v
@@ -91,12 +91,12 @@ module clk_wiz_0_clk_wiz
   (* BOX_TYPE = "PRIMITIVE" *) 
   MMCME2_ADV #(
     .BANDWIDTH("OPTIMIZED"),
-    .CLKFBOUT_MULT_F(10.000000),
+    .CLKFBOUT_MULT_F(9.125000),
     .CLKFBOUT_PHASE(0.000000),
     .CLKFBOUT_USE_FINE_PS("FALSE"),
     .CLKIN1_PERIOD(10.000000),
     .CLKIN2_PERIOD(0.000000),
-    .CLKOUT0_DIVIDE_F(20.000000),
+    .CLKOUT0_DIVIDE_F(36.500000),
     .CLKOUT0_DUTY_CYCLE(0.500000),
     .CLKOUT0_PHASE(0.000000),
     .CLKOUT0_USE_FINE_PS("FALSE"),

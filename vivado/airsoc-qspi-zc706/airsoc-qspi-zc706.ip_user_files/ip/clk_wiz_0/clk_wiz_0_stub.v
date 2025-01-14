@@ -1,7 +1,7 @@
 // Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2022.2 (win64) Build 3671981 Fri Oct 14 05:00:03 MDT 2022
-// Date        : Sun Jan 12 02:14:58 2025
+// Date        : Tue Jan 14 22:30:30 2025
 // Host        : DESKTOP-NCDM7BC running 64-bit major release  (build 9200)
 // Command     : write_verilog -force -mode synth_stub
 //               d:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_stub.v

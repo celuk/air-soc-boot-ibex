@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2022.2 (win64) Build 3671981 Fri Oct 14 05:00:03 MDT 2022
-| Date             : Sun Jan 12 04:18:40 2025
+| Date             : Tue Jan 14 23:01:12 2025
 | Host             : DESKTOP-NCDM7BC running 64-bit major release  (build 9200)
 | Command          : report_power -file air_soc_power_routed.rpt -pb air_soc_power_summary_routed.pb -rpx air_soc_power_routed.rpx
 | Design           : air_soc
@@ -30,14 +30,14 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.243        |
+| Total On-Chip Power (W)  | 0.219        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.171        |
+| Dynamic (W)              | 0.146        |
 | Device Static (W)        | 0.073        |
 | Effective TJA (C/W)      | 5.0          |
-| Max Ambient (C)          | 83.8         |
-| Junction Temperature (C) | 26.2         |
+| Max Ambient (C)          | 83.9         |
+| Junction Temperature (C) | 26.1         |
 | Confidence Level         | Low          |
 | Setting File             | ---          |
 | Simulation Activity File | ---          |
@@ -52,21 +52,21 @@ Table of Contents
 +--------------------------+-----------+----------+-----------+-----------------+
 | On-Chip                  | Power (W) | Used     | Available | Utilization (%) |
 +--------------------------+-----------+----------+-----------+-----------------+
-| Clocks                   |     0.026 |        8 |       --- |             --- |
-| Slice Logic              |     0.007 |    16728 |       --- |             --- |
-|   LUT as Logic           |     0.007 |     9015 |     20800 |           43.34 |
+| Clocks                   |     0.013 |        8 |       --- |             --- |
+| Slice Logic              |     0.004 |    16728 |       --- |             --- |
+|   LUT as Logic           |     0.003 |     9012 |     20800 |           43.33 |
 |   CARRY4                 |    <0.001 |      253 |      8150 |            3.10 |
 |   Register               |    <0.001 |     4852 |     41600 |           11.66 |
 |   F7/F8 Muxes            |    <0.001 |      368 |     32600 |            1.13 |
 |   LUT as Distributed RAM |    <0.001 |        6 |      9600 |            0.06 |
-|   Others                 |     0.000 |      119 |       --- |             --- |
-| Signals                  |     0.012 |    13920 |       --- |             --- |
-| Block RAM                |     0.017 |       16 |        50 |           32.00 |
-| MMCM                     |     0.106 |        1 |         5 |           20.00 |
+|   Others                 |     0.000 |      120 |       --- |             --- |
+| Signals                  |     0.005 |    13919 |       --- |             --- |
+| Block RAM                |     0.008 |       16 |        50 |           32.00 |
+| MMCM                     |     0.116 |        1 |         5 |           20.00 |
 | DSPs                     |    <0.001 |        5 |        90 |            5.56 |
-| I/O                      |     0.003 |       11 |       106 |           10.38 |
+| I/O                      |    <0.001 |       10 |       106 |            9.43 |
 | Static Power             |     0.073 |          |           |                 |
-| Total                    |     0.243 |          |           |                 |
+| Total                    |     0.219 |          |           |                 |
 +--------------------------+-----------+----------+-----------+-----------------+
 
 
@@ -76,16 +76,16 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) | Powerup (A) | Budget (A)  | Margin (A) |
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
-| Vccint    |       1.000 |     0.071 |       0.061 |      0.010 |       NA    | Unspecified | NA         |
-| Vccaux    |       1.800 |     0.071 |       0.059 |      0.013 |       NA    | Unspecified | NA         |
-| Vcco33    |       3.300 |     0.002 |       0.001 |      0.001 |       NA    | Unspecified | NA         |
+| Vccint    |       1.000 |     0.040 |       0.030 |      0.010 |       NA    | Unspecified | NA         |
+| Vccaux    |       1.800 |     0.077 |       0.064 |      0.013 |       NA    | Unspecified | NA         |
+| Vcco33    |       3.300 |     0.001 |       0.000 |      0.001 |       NA    | Unspecified | NA         |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco18    |       1.800 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco15    |       1.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco135   |       1.350 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco12    |       1.200 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vccaux_io |       1.800 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
-| Vccbram   |       1.000 |     0.002 |       0.001 |      0.001 |       NA    | Unspecified | NA         |
+| Vccbram   |       1.000 |     0.001 |       0.001 |      0.001 |       NA    | Unspecified | NA         |
 | MGTAVcc   |       1.000 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | MGTAVtt   |       1.200 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vccadc    |       1.800 |     0.020 |       0.000 |      0.020 |       NA    | Unspecified | NA         |
@@ -133,8 +133,8 @@ Table of Contents
 | Clock                | Domain                         | Constraint (ns) |
 +----------------------+--------------------------------+-----------------+
 | clk_i                | clk_i                          |            10.0 |
-| clk_out1_clk_wiz_0   | dutclk/inst/clk_out1_clk_wiz_0 |            20.0 |
-| clk_out1_clk_wiz_0_1 | dutclk/inst/clk_out1_clk_wiz_0 |            20.0 |
+| clk_out1_clk_wiz_0   | dutclk/inst/clk_out1_clk_wiz_0 |            40.0 |
+| clk_out1_clk_wiz_0_1 | dutclk/inst/clk_out1_clk_wiz_0 |            40.0 |
 | clkfbout_clk_wiz_0   | dutclk/inst/clkfbout_clk_wiz_0 |            10.0 |
 | clkfbout_clk_wiz_0_1 | dutclk/inst/clkfbout_clk_wiz_0 |            10.0 |
 | sys_clk_pin          | clk_i                          |            10.0 |
@@ -147,27 +147,23 @@ Table of Contents
 3.1 By Hierarchy
 ----------------
 
-+----------------------+-----------+
-| Name                 | Power (W) |
-+----------------------+-----------+
-| air_soc              |     0.171 |
-|   cv32e40p_core_ip   |     0.030 |
-|     core_i           |     0.030 |
-|       cs_registers_i |     0.001 |
-|       ex_stage_i     |     0.002 |
-|       id_stage_i     |     0.021 |
-|       if_stage_i     |     0.004 |
-|   dcache             |     0.006 |
-|     way0             |     0.002 |
-|     way1             |     0.003 |
-|   dutclk             |     0.106 |
-|     inst             |     0.106 |
-|   main_memory        |     0.020 |
-|   obi_demux_dut      |     0.002 |
-|   qspi               |     0.002 |
-|     qspi_iface_dut   |     0.002 |
-|   timer_dut          |     0.001 |
-|     timer_iface_dut  |     0.001 |
-+----------------------+-----------+
++--------------------+-----------+
+| Name               | Power (W) |
++--------------------+-----------+
+| air_soc            |     0.146 |
+|   cv32e40p_core_ip |     0.014 |
+|     core_i         |     0.014 |
+|       ex_stage_i   |     0.001 |
+|       id_stage_i   |     0.010 |
+|       if_stage_i   |     0.002 |
+|   dcache           |     0.003 |
+|     way0           |     0.001 |
+|     way1           |     0.001 |
+|   dutclk           |     0.116 |
+|     inst           |     0.116 |
+|   main_memory      |     0.010 |
+|   qspi             |     0.001 |
+|     qspi_iface_dut |     0.001 |
++--------------------+-----------+
 
 
