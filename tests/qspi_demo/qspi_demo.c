@@ -6,12 +6,7 @@
 int main(){
     init_uart();
 
-    ee_printf("basladi\n");
-    ee_printf("basladi\n");
-    ee_printf("basladi\n");
-
     wait_for_us(500);
-    //wait_for_us(10);
 
     qspi_set_ccr(
         /*inst_value*/       CMD_RESET,
@@ -24,11 +19,7 @@ int main(){
     );
     wait_for_not_busy();
 
-    ee_printf("basladi\n");
-    ee_printf("basladi\n");
-    ee_printf("basladi\n");
     wait_for_us(500);
-    //wait_for_us(10);
 
     QSPI_ADR = 0x00000000;
     qspi_set_ccr(
