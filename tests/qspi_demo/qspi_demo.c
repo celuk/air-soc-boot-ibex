@@ -6,6 +6,8 @@ int main(){
     init_uart();
 
     tekno_printf("basladi\n");
+    tekno_printf("basladi\n");
+    tekno_printf("basladi\n");
 
     wait_for_us(500);
     //wait_for_us(10);
@@ -21,6 +23,9 @@ int main(){
     );
     wait_for_not_busy();
 
+    tekno_printf("basladi\n");
+    tekno_printf("basladi\n");
+    tekno_printf("basladi\n");
     wait_for_us(500);
     //wait_for_us(10);
 
@@ -54,20 +59,30 @@ int main(){
 
     QSPI_ADR = 0x00000000;
     qspi_set_ccr(
-        /*inst_value*/       CMD_DOR,
-        /*data_mod*/         2,
+        /*inst_value*/       CMD_RDCR,
+        /*data_mod*/         1,
         /*wr_flash*/         0,
-        /*dummy_cycle*/      8, // if below 50mhz it can be 0
-        /*data_size*/        31,
+        /*dummy_cycle*/      0,
+        /*data_size*/        0,
         /*prescaler*/        1,
         /*clear_status_reg*/ 1
     );
     wait_for_not_busy();
-
-    tekno_printf("READ2: %x\n", QSPI_DR0);
+    tekno_printf("quad_enabled?: %x\n", QSPI_DR0);
 
     qspi_enable_quad_mode();
 
+    QSPI_ADR = 0x00000000;
+    qspi_set_ccr(
+        /*inst_value*/       CMD_RDCR,
+        /*data_mod*/         1,
+        /*wr_flash*/         0,
+        /*dummy_cycle*/      0,
+        /*data_size*/        0,
+        /*prescaler*/        1,
+        /*clear_status_reg*/ 1
+    );
+    wait_for_not_busy();
     tekno_printf("quad_enabled: %x\n", QSPI_DR0);
 
     QSPI_ADR = 0x00000000;
@@ -92,6 +107,18 @@ int main(){
     tekno_printf("DR7: %x\n", QSPI_DR7);
 
     qspi_disable_quad_mode();
+    QSPI_ADR = 0x00000000;
+    qspi_set_ccr(
+        /*inst_value*/       CMD_RDCR,
+        /*data_mod*/         1,
+        /*wr_flash*/         0,
+        /*dummy_cycle*/      0,
+        /*data_size*/        0,
+        /*prescaler*/        1,
+        /*clear_status_reg*/ 1
+    );
+    wait_for_not_busy();
+    tekno_printf("quad_disabled?: %x\n", QSPI_DR0);
 
     QSPI_ADR = 0x00000000;
     qspi_set_ccr(
@@ -117,18 +144,7 @@ int main(){
     wait_for_not_busy();
     wait_for_wel_set();
 
-    QSPI_ADR = 0x00000000;
-    qspi_set_ccr(
-        /*inst_value*/       CMD_SE,
-        /*data_mod*/         1,
-        /*wr_flash*/         0,
-        /*dummy_cycle*/      0,
-        /*data_size*/        0,
-        /*prescaler*/        1,
-        /*clear_status_reg*/ 1
-    );
-    wait_for_not_busy();
-    wait_for_wip_done();
+    
 
     qspi_set_ccr(
         /*inst_value*/       CMD_WRDI,
@@ -206,7 +222,33 @@ int main(){
     tekno_printf("DR6: %x\n", QSPI_DR6);
     tekno_printf("DR7: %x\n", QSPI_DR7);
 
+    QSPI_ADR = 0x00000000;
+    qspi_set_ccr(
+        /*inst_value*/       CMD_RDCR,
+        /*data_mod*/         1,
+        /*wr_flash*/         0,
+        /*dummy_cycle*/      0,
+        /*data_size*/        0,
+        /*prescaler*/        1,
+        /*clear_status_reg*/ 1
+    );
+    wait_for_not_busy();
+    tekno_printf("quad_enabled?: %x\n", QSPI_DR0);
+
     qspi_enable_quad_mode();
+
+    QSPI_ADR = 0x00000000;
+    qspi_set_ccr(
+        /*inst_value*/       CMD_RDCR,
+        /*data_mod*/         1,
+        /*wr_flash*/         0,
+        /*dummy_cycle*/      0,
+        /*data_size*/        0,
+        /*prescaler*/        1,
+        /*clear_status_reg*/ 1
+    );
+    wait_for_not_busy();
+    tekno_printf("quad_enabled: %x\n", QSPI_DR0);
 
     qspi_set_ccr(
         /*inst_value*/       CMD_WREN,
@@ -220,27 +262,7 @@ int main(){
     wait_for_not_busy();
     wait_for_wel_set();
 
-    QSPI_DR0 = 0xbbbbbbbb;
-    QSPI_DR1 = 0xbbbbbbbb;
-    QSPI_DR2 = 0xbbbbbbbb;
-    QSPI_DR3 = 0xbbbbbbbb;
-    QSPI_DR4 = 0xbbbbbbbb;
-    QSPI_DR5 = 0xbbbbbbbb;
-    QSPI_DR6 = 0xbbbbbbbb;
-    QSPI_DR7 = 0xbbbbbbbb;
-
-    QSPI_ADR = 0x00000f00;
-    qspi_set_ccr(
-        /*inst_value*/       CMD_QPP,
-        /*data_mod*/         3,
-        /*wr_flash*/         1,
-        /*dummy_cycle*/      0,
-        /*data_size*/        31,
-        /*prescaler*/        1,
-        /*clear_status_reg*/ 1
-    );
-    wait_for_not_busy();
-    wait_for_wip_done();
+    
 
     qspi_set_ccr(
         /*inst_value*/       CMD_WRDI,

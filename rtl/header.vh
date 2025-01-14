@@ -16,7 +16,7 @@
 `define HART_ID 32'h0
 `define DM_EXCEPTION_ADDR 32'h0
 
-`define CPU_CLK 50_000_000
+`define CPU_CLK 25_000_000
 `define BAUD_RATE 115200
 
 // TODO: Handle if DCACHE_SZ is 0
@@ -36,7 +36,7 @@
 `define MEM_RANGE       32'h0F00_0000
 
 `define BASYS3
-`define EXT_FLASH
+//`define EXT_FLASH
 //`define QSPI_SIM
 
 /*
