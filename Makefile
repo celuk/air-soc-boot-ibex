@@ -50,6 +50,10 @@ send:
 pico:
 	picocom -b 115200 /dev/ttyUSB$(ARGS) --imap lfcrlf
 
+.PHONY: vmem2carr
+vmem2carr:
+	python3 ./tools/vmem2carr.py -f $(ARGS)
+
 %:
 	@:
 
