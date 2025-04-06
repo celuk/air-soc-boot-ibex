@@ -21,24 +21,45 @@ def parse_demo_file(filename):
 
     return memory_blocks
 
+def group_into_uint32(bytes_list):
+    """Convert list of hex bytes into uint32 values (assuming little-endian)"""
+    uint32_values = []
+    
+    for i in range(0, len(bytes_list), 4):
+        # Make sure we have 4 bytes to process
+        if i+3 < len(bytes_list):
+            # RISC-V is little-endian, so the bytes are ordered from least significant to most significant
+            byte0 = bytes_list[i]
+            byte1 = bytes_list[i+1]
+            byte2 = bytes_list[i+2]
+            byte3 = bytes_list[i+3]
+            
+            # Combine the bytes into a single uint32 hex value
+            uint32_value = f"{byte3}{byte2}{byte1}{byte0}"
+            uint32_values.append(uint32_value)
+    
+    return uint32_values
+
 def generate_c_arrays_print(memory_blocks):
     for addr, bytes_list in memory_blocks.items():
+        uint32_values = group_into_uint32(bytes_list)
         array_name = f"mem_{addr}"
-        print(f"unsigned char {array_name}[] = {{")
-        for i in range(0, len(bytes_list), 8):
-            chunk = bytes_list[i:i+8]
-            formatted = ", ".join(f"0x{b}" for b in chunk)
+        print(f"unsigned int {array_name}[] = {{")
+        for i in range(0, len(uint32_values), 4):
+            chunk = uint32_values[i:i+4]
+            formatted = ", ".join(f"0x{v}" for v in chunk)
             print(f"    {formatted},")
         print("};\n")
 
 def generate_c_arrays(memory_blocks, output_file):
     with open(output_file, "w") as f:
         for addr, bytes_list in memory_blocks.items():
+            uint32_values = group_into_uint32(bytes_list)
             array_name = f"mem_{addr}"
-            f.write(f"unsigned char {array_name}[] = {{\n")
-            for i in range(0, len(bytes_list), 8):
-                chunk = bytes_list[i:i+8]
-                formatted = ", ".join(f"0x{b}" for b in chunk)
+            f.write(f"unsigned int {array_name}[] = {{\n")
+            for i in range(0, len(uint32_values), 4):
+                chunk = uint32_values[i:i+4]
+                formatted = ", ".join(f"0x{v}" for v in chunk)
                 f.write(f"    {formatted},\n")
             f.write("};\n\n")
 
