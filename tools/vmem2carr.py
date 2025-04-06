@@ -44,6 +44,10 @@ def generate_c_arrays_print(memory_blocks):
     for addr, bytes_list in memory_blocks.items():
         uint32_values = group_into_uint32(bytes_list)
         array_name = f"mem_{addr}"
+        len_name = f"len_{addr}"
+        byte_length = len(bytes_list)
+        
+        print(f"const unsigned int {len_name} = {byte_length}; // Byte length")
         print(f"unsigned int {array_name}[] = {{")
         for i in range(0, len(uint32_values), 4):
             chunk = uint32_values[i:i+4]
@@ -56,6 +60,10 @@ def generate_c_arrays(memory_blocks, output_file):
         for addr, bytes_list in memory_blocks.items():
             uint32_values = group_into_uint32(bytes_list)
             array_name = f"mem_{addr}"
+            len_name = f"len_{addr}"
+            byte_length = len(bytes_list)
+            
+            f.write(f"const unsigned int {len_name} = {byte_length}; // Byte length\n")
             f.write(f"unsigned int {array_name}[] = {{\n")
             for i in range(0, len(uint32_values), 4):
                 chunk = uint32_values[i:i+4]
