@@ -133,6 +133,6 @@ parser = argparse.ArgumentParser(description="Convert hex memory dump to c array
 parser.add_argument("--file", '-f', help="Path to the input file")
 args = parser.parse_args()
 memory_blocks = parse_demo_file(args.file)
-base_name = os.path.splitext(args.file)[0]
-output_file = base_name + ".carr"
+base_dir = os.path.dirname(args.file)
+output_file = os.path.join(os.path.dirname(base_dir), "common", "gen_mem_blocks.h")
 generate_c_struct_arrays(memory_blocks, output_file)
