@@ -71,10 +71,60 @@ def generate_c_arrays(memory_blocks, output_file):
                 f.write(f"    {formatted},\n")
             f.write("};\n\n")
 
+def generate_c_struct_arrays(memory_blocks, output_file):
+    with open(output_file, "w") as f:
+        # Write header with struct definition
+        f.write("#ifndef MEMORY_BLOCKS_H\n")
+        f.write("#define MEMORY_BLOCKS_H\n\n")
+        
+        f.write("// Memory block structure definition\n")
+        f.write("typedef struct {\n")
+        f.write("    unsigned int address;  // Start address of the memory block\n")
+        f.write("    unsigned int length;   // Length in bytes\n")
+        f.write("    const unsigned int* data; // Pointer to the data array\n")
+        f.write("} memory_block_t;\n\n")
+        
+        # Write each data array
+        block_names = []
+        
+        for addr, bytes_list in memory_blocks.items():
+            # Convert address to proper format for C identifier
+            addr_hex = addr  # Keep original for display/reference
+            
+            # Create array name based on address
+            array_name = f"memory_data_0x{addr_hex}"
+            block_names.append((addr_hex, array_name, len(bytes_list)))
+            
+            uint32_values = group_into_uint32(bytes_list)
+            
+            f.write(f"// Memory block for address 0x{addr_hex} (length: {len(bytes_list)} bytes)\n")
+            f.write("static const unsigned int " + array_name + "[] = {\n")
+            
+            for i in range(0, len(uint32_values), 4):
+                chunk = uint32_values[i:i+4]
+                formatted = ", ".join(f"0x{v}" for v in chunk)
+                f.write("    " + formatted + ",\n")
+            
+            f.write("};\n\n")
+        
+        # Write the block registry
+        f.write("// Memory block registry\n")
+        f.write("static const memory_block_t memory_blocks[] = {\n")
+        
+        for addr, array_name, length in block_names:
+            f.write(f"    {{ 0x{addr}, {length}, {array_name} }},\n")
+        
+        f.write("};\n\n")
+        
+        # Write number of blocks macro
+        f.write(f"#define NUM_MEMORY_BLOCKS {len(block_names)}\n\n")
+        
+        f.write("#endif // MEMORY_BLOCKS_H\n")
+
 parser = argparse.ArgumentParser(description="Convert hex memory dump to c arrays")
 parser.add_argument("--file", '-f', help="Path to the input file")
 args = parser.parse_args()
 memory_blocks = parse_demo_file(args.file)
 base_name = os.path.splitext(args.file)[0]
 output_file = base_name + ".carr"
-generate_c_arrays(memory_blocks, output_file)
+generate_c_struct_arrays(memory_blocks, output_file)

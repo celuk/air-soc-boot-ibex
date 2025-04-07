@@ -7,6 +7,9 @@ CC = $(RISCVTYPE)-gcc
 # make compile demo BOOT=1
 BOOT ?= 0
 
+## clearing addresses from vmem
+BOOT_CLR ?= 0
+
 WITHBOOTLOADER ?=
 
 ifeq ($(BOOT), 1)
@@ -21,7 +24,7 @@ START_ASM ?= $(COMMON_PATH)/crt0$(WITHBOOTLOADER).S
 DRIVERS_PATH ?= $(COMMON_PATH)/drivers
 DRIVERS ?= $(DRIVERS_PATH)/uart.c $(DRIVERS_PATH)/qspi.c $(DRIVERS_PATH)/timer.c
 
-CFLAGS ?= -O2 -mcmodel=medany -static -std=gnu99 -fno-common -fno-unroll-loops -nostdlib -nostartfiles -fno-builtin-memset -fno-builtin -ffunction-sections -lm -lgcc -T $(LINKER_SCRIPT) -march=rv32im -mabi=ilp32 -I$(COMMON_PATH) -I$(DRIVERS_PATH)
+CFLAGS ?= -Os -mcmodel=medany -static -std=gnu99 -fno-common -fno-unroll-loops -nostdlib -nostartfiles -fno-builtin-memset -fno-builtin -ffunction-sections -lm -lgcc -T $(LINKER_SCRIPT) -march=rv32im -mabi=ilp32 -I$(COMMON_PATH) -I$(DRIVERS_PATH)
 
 CFILE ?= demo
 CPATH ?= $(CFILE)/$(CFILE)
@@ -43,7 +46,7 @@ all:
 
 	$(RISCVTYPE)-objcopy -O verilog $(CPATH).riscv $(CPATH).vmem
 
-ifeq ($(BOOT), 1)
+ifeq ($(BOOT_CLR), 1)
 	python3 ../tools/clear_adresses_for_qspi_boot.py -f $(CPATH).vmem --place_zero > $(CPATH).tmp
 	mv $(CPATH).tmp $(CPATH).vmem
 endif
