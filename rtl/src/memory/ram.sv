@@ -73,16 +73,28 @@ module ram32 #(
 
    //int boot_index;
 
-   always_ff @(posedge clk_i or negedge rst_ni) begin
+   generate
+   if (INIT_FILE != "") begin: use_init_file
+     initial
+       $readmemh(INIT_FILE, ram, 0, RAM_DEPTH-1);
+   end else begin: init_bram_to_zero
+     integer ram_index;
+     initial
+       for (ram_index = 0; ram_index < RAM_DEPTH; ram_index = ram_index + 1)
+         ram[ram_index] = {(NB_COL*COL_WIDTH){1'b0}};
+   end
+   endgenerate
+
+   always @(posedge clk_i) begin
       if (!rst_ni) begin
           if (`USE_BOOTROM) begin
               //boot_index <= 0;
               boot_rom_addr <= 0;
           end
-          else begin
-              for (int ram_index = 0; ram_index < RAM_DEPTH; ram_index = ram_index + 1)
-                 ram[ram_index] <= {(NB_COL*COL_WIDTH){1'b0}};
-          end
+          //else begin
+          //    for (int ram_index = 0; ram_index < RAM_DEPTH; ram_index = ram_index + 1)
+          //       ram[ram_index] <= {(NB_COL*COL_WIDTH){1'b0}};
+          //end
           rdata_o <= 0;
           rvalid_o <= '0;
           system_reset_o <= 0;
