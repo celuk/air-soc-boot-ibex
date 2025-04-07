@@ -107,12 +107,20 @@ def generate_c_struct_arrays(memory_blocks, output_file):
             
             f.write("};\n\n")
         
+        # Find the base address (lowest address in the memory blocks)
+        addresses = [int(addr, 16) for addr in memory_blocks.keys()]
+        base_address = min(addresses) if addresses else 0
+
         # Write the block registry
         f.write("// Memory block registry\n")
         f.write("static const memory_block_t memory_blocks[] = {\n")
         
         for addr, array_name, length in block_names:
-            f.write(f"    {{ 0x{addr}, {length}, {array_name} }},\n")
+            # Subtract the base address from each address to start from 0
+            relative_addr = hex(int(addr, 16) - base_address).rstrip('L')
+            # Ensure proper formatting with leading zeros
+            relative_addr = relative_addr[2:].zfill(8)  # Remove '0x' prefix and pad to 8 chars
+            f.write(f"    {{ 0x{relative_addr}, {length}, {array_name} }},\n")
         
         f.write("};\n\n")
         
