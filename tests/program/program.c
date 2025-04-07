@@ -1,5 +1,6 @@
 #include "qspi.h"
 #include "timer.h"
+#include "uart.h"
 #include "defines.h"
 
 const unsigned int len_00000000 = 132; // Byte length
@@ -194,6 +195,19 @@ unsigned int mem_00000B14[] = {
 };
 
 void qspi_32byte_write(unsigned int* data, unsigned int addr){
+
+    qspi_set_ccr(
+        /*inst_value*/       CMD_WREN,
+        /*data_mod*/         1,
+        /*wr_flash*/         0,
+        /*dummy_cycle*/      0,
+        /*data_size*/        0,
+        /*prescaler*/        1,
+        /*clear_status_reg*/ 1
+    );
+    wait_for_not_busy();
+    wait_for_wel_set();
+
     QSPI_DR0 = data[0];
     QSPI_DR1 = data[1];
     QSPI_DR2 = data[2];
@@ -215,6 +229,8 @@ void qspi_32byte_write(unsigned int* data, unsigned int addr){
     );
     wait_for_not_busy();
     wait_for_wip_done();
+
+    tekno_printf("Wrote 32 bytes to address: %x\n", addr);
 }
 
 void write_flash_data(void) {
@@ -359,6 +375,11 @@ void write_flash_data(void) {
 }
 
 int main() {
+
+    init_uart();
+
+    tekno_printf("QSPI write started\n");
+
     wait_for_us(500);
 
     qspi_set_ccr(
@@ -374,17 +395,7 @@ int main() {
 
     wait_for_us(500);
 
-    qspi_set_ccr(
-        /*inst_value*/       CMD_WREN,
-        /*data_mod*/         1,
-        /*wr_flash*/         0,
-        /*dummy_cycle*/      0,
-        /*data_size*/        0,
-        /*prescaler*/        1,
-        /*clear_status_reg*/ 1
-    );
-    wait_for_not_busy();
-    wait_for_wel_set();
+    qspi_enable_quad_mode();
 
     //QSPI_DR0 = 0xbbbbbbbb;
     //QSPI_DR1 = 0xbbbbbbbb;
@@ -421,6 +432,8 @@ int main() {
     //wait_for_wel_down();
 
     write_flash_data();
+    
+    tekno_printf("QSPI write done\n");
 
     return 0;
 }

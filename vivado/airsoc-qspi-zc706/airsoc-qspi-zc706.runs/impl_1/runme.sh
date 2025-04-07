@@ -24,7 +24,7 @@ else
 fi
 export LD_LIBRARY_PATH
 
-HD_PWD='D:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/impl_1'
+HD_PWD='D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/impl_1'
 cd "$HD_PWD"
 
 HD_LOG=runme.log

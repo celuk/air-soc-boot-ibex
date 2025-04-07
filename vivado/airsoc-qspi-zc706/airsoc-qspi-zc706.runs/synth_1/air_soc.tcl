@@ -4,7 +4,7 @@
 
 set TIME_start [clock seconds] 
 namespace eval ::optrace {
-  variable script "D:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/air_soc.tcl"
+  variable script "D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/air_soc.tcl"
   variable category "vivado_synth"
 }
 
@@ -71,7 +71,6 @@ proc create_report { reportName command } {
 }
 OPTRACE "synth_1" START { ROLLUP_AUTO }
 set_param chipscope.maxJobs 3
-set_param xicom.use_bs_reader 1
 OPTRACE "Creating in-memory project" START { }
 create_project -in_memory -part xc7a35tcpg236-1
 
@@ -79,73 +78,73 @@ set_param project.singleFileAddWarning.threshold 0
 set_param project.compositeFile.enableAutoGeneration 0
 set_param synth.vivado.isSynthRun true
 set_msg_config -source 4 -id {IP_Flow 19-2162} -severity warning -new_severity info
-set_property webtalk.parent_dir D:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.cache/wt [current_project]
-set_property parent.project_path D:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.xpr [current_project]
+set_property webtalk.parent_dir D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.cache/wt [current_project]
+set_property parent.project_path D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.xpr [current_project]
 set_property XPM_LIBRARIES XPM_CDC [current_project]
 set_property default_lib xil_defaultlib [current_project]
 set_property target_language Verilog [current_project]
-set_property ip_output_repo d:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.cache/ip [current_project]
+set_property ip_output_repo d:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.cache/ip [current_project]
 set_property ip_cache_permissions {read write} [current_project]
 OPTRACE "Creating in-memory project" END { }
 OPTRACE "Adding files" START { }
-read_verilog D:/gitcls/air-soc-qspi/rtl/header.vh
+read_verilog D:/gitcls/air-soc-boot/rtl/header.vh
 read_verilog -library xil_defaultlib -sv {
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/vendor/pulp_platform_common_cells/src/cf_math_pkg.sv
-  D:/gitcls/air-soc-qspi/rtl/src/memory/cache.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_aligner.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/include/cv32e40p_pkg.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_alu.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_alu_div.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/include/cv32e40p_apu_core_pkg.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_apu_disp.sv
-  D:/gitcls/air-soc-qspi/rtl/src/util/cv32e40p_clock_gate.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_compressed_decoder.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_controller.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_core.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_cs_registers.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/include/cv32e40p_fpu_pkg.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_decoder.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_ex_stage.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_ff_one.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_fifo.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_pkg.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_fp_wrapper.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_hwloop_regs.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_id_stage.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_if_stage.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_int_controller.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_load_store_unit.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_mult.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_obi_interface.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_popcnt.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_prefetch_buffer.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_prefetch_controller.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_register_file_latch.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_sleep_unit.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/cv32e40p_top.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_opgroup_block.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_opgroup_fmt_slice.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_top.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/vendor/pulp_platform_common_cells/src/lzc.sv
-  D:/gitcls/air-soc-qspi/rtl/src/databus/obi_demux.sv
-  D:/gitcls/air-soc-qspi/rtl/src/peripherals/qspi/qspi_controller.sv
-  D:/gitcls/air-soc-qspi/rtl/src/peripherals/qspi/qspi_controller_obi.sv
-  D:/gitcls/air-soc-qspi/rtl/src/memory/ram.sv
-  D:/gitcls/air-soc-qspi/cv32e40p/rtl/vendor/pulp_platform_common_cells/src/rr_arb_tree.sv
-  D:/gitcls/air-soc-qspi/rtl/src/memory/simpleuart.sv
-  D:/gitcls/air-soc-qspi/rtl/src/peripherals/timer/timer.sv
-  D:/gitcls/air-soc-qspi/rtl/src/peripherals/timer/timer_controller.sv
-  D:/gitcls/air-soc-qspi/rtl/src/peripherals/timer/timer_controller_obi.sv
-  D:/gitcls/air-soc-qspi/rtl/src/peripherals/uart/uart_controller.sv
-  D:/gitcls/air-soc-qspi/rtl/src/peripherals/uart/uart_controller_obi.sv
-  D:/gitcls/air-soc-qspi/rtl/src/peripherals/uart/uart_rx.sv
-  D:/gitcls/air-soc-qspi/rtl/src/peripherals/uart/uart_tx.sv
-  D:/gitcls/air-soc-qspi/rtl/src/soc/air_soc.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/vendor/pulp_platform_common_cells/src/cf_math_pkg.sv
+  D:/gitcls/air-soc-boot/rtl/src/memory/bootrom.sv
+  D:/gitcls/air-soc-boot/rtl/src/memory/cache.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_aligner.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/include/cv32e40p_pkg.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_alu.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_alu_div.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/include/cv32e40p_apu_core_pkg.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_apu_disp.sv
+  D:/gitcls/air-soc-boot/rtl/src/util/cv32e40p_clock_gate.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_compressed_decoder.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_controller.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_core.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_cs_registers.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/include/cv32e40p_fpu_pkg.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_decoder.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_ex_stage.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_ff_one.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_fifo.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_pkg.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_fp_wrapper.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_hwloop_regs.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_id_stage.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_if_stage.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_int_controller.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_load_store_unit.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_mult.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_obi_interface.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_popcnt.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_prefetch_buffer.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_prefetch_controller.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_register_file_latch.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_sleep_unit.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_top.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_opgroup_block.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_opgroup_fmt_slice.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_top.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/vendor/pulp_platform_common_cells/src/lzc.sv
+  D:/gitcls/air-soc-boot/rtl/src/databus/obi_demux.sv
+  D:/gitcls/air-soc-boot/rtl/src/peripherals/qspi/qspi_controller.sv
+  D:/gitcls/air-soc-boot/rtl/src/peripherals/qspi/qspi_controller_obi.sv
+  D:/gitcls/air-soc-boot/rtl/src/memory/ram.sv
+  D:/gitcls/air-soc-boot/cv32e40p/rtl/vendor/pulp_platform_common_cells/src/rr_arb_tree.sv
+  D:/gitcls/air-soc-boot/rtl/src/peripherals/timer/timer.sv
+  D:/gitcls/air-soc-boot/rtl/src/peripherals/timer/timer_controller.sv
+  D:/gitcls/air-soc-boot/rtl/src/peripherals/timer/timer_controller_obi.sv
+  D:/gitcls/air-soc-boot/rtl/src/peripherals/uart/uart_controller.sv
+  D:/gitcls/air-soc-boot/rtl/src/peripherals/uart/uart_controller_obi.sv
+  D:/gitcls/air-soc-boot/rtl/src/peripherals/uart/uart_rx.sv
+  D:/gitcls/air-soc-boot/rtl/src/peripherals/uart/uart_tx.sv
+  D:/gitcls/air-soc-boot/rtl/src/soc/air_soc.sv
 }
-read_ip -quiet d:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.srcs/sources_1/ip/clk_wiz_0/clk_wiz_0.xci
-set_property used_in_implementation false [get_files -all d:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_board.xdc]
-set_property used_in_implementation false [get_files -all d:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0.xdc]
-set_property used_in_implementation false [get_files -all d:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_ooc.xdc]
+read_ip -quiet D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.srcs/sources_1/ip/clk_wiz_0/clk_wiz_0.xci
+set_property used_in_implementation false [get_files -all d:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_board.xdc]
+set_property used_in_implementation false [get_files -all d:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0.xdc]
+set_property used_in_implementation false [get_files -all d:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_ooc.xdc]
 
 OPTRACE "Adding files" END { }
 # Mark all dcp files as not used in implementation to prevent them from being
@@ -156,12 +155,12 @@ OPTRACE "Adding files" END { }
 foreach dcp [get_files -quiet -all -filter file_type=="Design\ Checkpoint"] {
   set_property used_in_implementation false $dcp
 }
-read_xdc D:/gitcls/air-soc-qspi/xdc/basys3.xdc
-set_property used_in_implementation false [get_files D:/gitcls/air-soc-qspi/xdc/basys3.xdc]
+read_xdc D:/gitcls/air-soc-boot/xdc/basys3.xdc
+set_property used_in_implementation false [get_files D:/gitcls/air-soc-boot/xdc/basys3.xdc]
 
 set_param ips.enableIPCacheLiteLoad 1
 
-read_checkpoint -auto_incremental -incremental D:/gitcls/air-soc-qspi/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.srcs/utils_1/imports/synth_1/air_soc.dcp
+read_checkpoint -auto_incremental -incremental D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.srcs/utils_1/imports/synth_1/air_soc.dcp
 close [open __synthesis_is_running__ w]
 
 OPTRACE "synth_design" START { }

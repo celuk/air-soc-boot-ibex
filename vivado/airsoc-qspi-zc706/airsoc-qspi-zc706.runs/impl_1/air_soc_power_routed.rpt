@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2022.2 (win64) Build 3671981 Fri Oct 14 05:00:03 MDT 2022
-| Date             : Wed Jan 15 00:45:15 2025
+| Date             : Mon Apr  7 04:12:32 2025
 | Host             : DESKTOP-NCDM7BC running 64-bit major release  (build 9200)
 | Command          : report_power -file air_soc_power_routed.rpt -pb air_soc_power_summary_routed.pb -rpx air_soc_power_routed.rpx
 | Design           : air_soc
@@ -30,11 +30,11 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.222        |
+| Total On-Chip Power (W)  | 0.226        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.150        |
-| Device Static (W)        | 0.073        |
+| Dynamic (W)              | 0.154        |
+| Device Static (W)        | 0.072        |
 | Effective TJA (C/W)      | 5.0          |
 | Max Ambient (C)          | 83.9         |
 | Junction Temperature (C) | 26.1         |
@@ -52,21 +52,20 @@ Table of Contents
 +--------------------------+-----------+----------+-----------+-----------------+
 | On-Chip                  | Power (W) | Used     | Available | Utilization (%) |
 +--------------------------+-----------+----------+-----------+-----------------+
-| Clocks                   |     0.014 |        8 |       --- |             --- |
-| Slice Logic              |     0.004 |    16727 |       --- |             --- |
-|   LUT as Logic           |     0.003 |     9013 |     20800 |           43.33 |
-|   CARRY4                 |    <0.001 |      253 |      8150 |            3.10 |
-|   Register               |    <0.001 |     4852 |     41600 |           11.66 |
-|   F7/F8 Muxes            |    <0.001 |      368 |     32600 |            1.13 |
-|   LUT as Distributed RAM |    <0.001 |        6 |      9600 |            0.06 |
-|   Others                 |     0.000 |      119 |       --- |             --- |
-| Signals                  |     0.005 |    14010 |       --- |             --- |
-| Block RAM                |     0.008 |       16 |        50 |           32.00 |
+| Clocks                   |     0.017 |        8 |       --- |             --- |
+| Slice Logic              |     0.005 |    24510 |       --- |             --- |
+|   LUT as Logic           |     0.004 |    10600 |     20800 |           50.96 |
+|   LUT as Distributed RAM |    <0.001 |     5638 |      9600 |           58.73 |
+|   CARRY4                 |    <0.001 |      212 |      8150 |            2.60 |
+|   F7/F8 Muxes            |    <0.001 |     1287 |     32600 |            3.95 |
+|   Register               |    <0.001 |     4626 |     41600 |           11.12 |
+|   Others                 |     0.000 |      118 |       --- |             --- |
+| Signals                  |     0.016 |    18496 |       --- |             --- |
 | MMCM                     |     0.116 |        1 |         5 |           20.00 |
 | DSPs                     |    <0.001 |        5 |        90 |            5.56 |
-| I/O                      |     0.002 |       11 |       106 |           10.38 |
-| Static Power             |     0.073 |          |           |                 |
-| Total                    |     0.222 |          |           |                 |
+| I/O                      |    <0.001 |        8 |       106 |            7.55 |
+| Static Power             |     0.072 |          |           |                 |
+| Total                    |     0.226 |          |           |                 |
 +--------------------------+-----------+----------+-----------+-----------------+
 
 
@@ -76,7 +75,7 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) | Powerup (A) | Budget (A)  | Margin (A) |
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
-| Vccint    |       1.000 |     0.042 |       0.032 |      0.010 |       NA    | Unspecified | NA         |
+| Vccint    |       1.000 |     0.048 |       0.038 |      0.010 |       NA    | Unspecified | NA         |
 | Vccaux    |       1.800 |     0.077 |       0.064 |      0.013 |       NA    | Unspecified | NA         |
 | Vcco33    |       3.300 |     0.001 |       0.000 |      0.001 |       NA    | Unspecified | NA         |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
@@ -85,7 +84,7 @@ Table of Contents
 | Vcco135   |       1.350 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vcco12    |       1.200 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vccaux_io |       1.800 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
-| Vccbram   |       1.000 |     0.001 |       0.001 |      0.001 |       NA    | Unspecified | NA         |
+| Vccbram   |       1.000 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | MGTAVcc   |       1.000 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | MGTAVtt   |       1.200 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
 | Vccadc    |       1.800 |     0.020 |       0.000 |      0.020 |       NA    | Unspecified | NA         |
@@ -150,20 +149,17 @@ Table of Contents
 +--------------------+-----------+
 | Name               | Power (W) |
 +--------------------+-----------+
-| air_soc            |     0.150 |
-|   cv32e40p_core_ip |     0.016 |
-|     core_i         |     0.016 |
-|       ex_stage_i   |     0.001 |
-|       id_stage_i   |     0.012 |
-|       if_stage_i   |     0.002 |
-|   dcache           |     0.003 |
-|     way0           |     0.001 |
+| air_soc            |     0.154 |
+|   cv32e40p_core_ip |     0.018 |
+|     core_i         |     0.018 |
+|       id_stage_i   |     0.013 |
+|       if_stage_i   |     0.004 |
+|   dcache           |     0.002 |
 |     way1           |     0.001 |
 |   dutclk           |     0.116 |
 |     inst           |     0.116 |
-|   main_memory      |     0.010 |
-|   qspi             |     0.001 |
-|     qspi_iface_dut |     0.001 |
+|   main_memory      |     0.016 |
+|     boot_mem       |     0.002 |
 +--------------------+-----------+
 
 
