@@ -48,7 +48,8 @@ void load_code_through_qspi()
     qspi_enable_quad_mode();
     uint32_t address = 0x00000000;
     uint32_t* data; //= qspi_read_qor(address);
-    for (uint32_t i = 0; i < Code_ram_get_size(&code_ram); i += 32) {
+    //for (uint32_t i = 0; i < Code_ram_get_size(&code_ram); i += 32) {
+    while(data[7] != 0xFFFFFFFF) {
         data = qspi_read_qor(address);
 
         if(data[0] == 0xFFFFFFFF) {
