@@ -2,8 +2,8 @@
 # Vivado v2022.2 (64-bit)
 # SW Build 3671981 on Fri Oct 14 05:00:03 MDT 2022
 # IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
-# Start of session at: Mon Apr  7 03:47:50 2025
-# Process ID: 24648
+# Start of session at: Wed Apr  9 01:31:12 2025
+# Process ID: 6472
 # Current directory: D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1
 # Command line: vivado.exe -log air_soc.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source air_soc.tcl
 # Log file: D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/air_soc.vds
@@ -11,6 +11,7 @@
 # Running On: DESKTOP-NCDM7BC, OS: Windows, CPU Frequency: 2592 MHz, CPU Physical cores: 6, Host memory: 17050 MB
 #-----------------------------------------------------------
 source air_soc.tcl -notrace
+create_project: Time (s): cpu = 00:00:05 ; elapsed = 00:00:14 . Memory (MB): peak = 1003.680 ; gain = 119.082
 Command: read_checkpoint -auto_incremental -incremental D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.srcs/utils_1/imports/synth_1/air_soc.dcp
 INFO: [Vivado 12-5825] Read reference checkpoint from D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.srcs/utils_1/imports/synth_1/air_soc.dcp for incremental synthesis
 INFO: [Vivado 12-7989] Please ensure there are no constraint changes
@@ -23,7 +24,7 @@ INFO: [Designutils 20-5440] No compile time benefit to using incremental synthes
 INFO: [Designutils 20-4379] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
 INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
 INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
-INFO: [Synth 8-7075] Helper process launched with PID 17448
+INFO: [Synth 8-7075] Helper process launched with PID 6044
 INFO: [Synth 8-11241] undeclared symbol 'REGCCE', assumed default net type 'wire' [D:/tools/Xilinx/Vivado/2022.2/data/verilog/src/unimacro/BRAM_SINGLE_MACRO.v:2170]
 WARNING: [Synth 8-11067] parameter 'OPCODE_SYSTEM' declared inside package 'cv32e40p_pkg' shall be treated as localparam [D:/gitcls/air-soc-boot/cv32e40p/rtl/include/cv32e40p_pkg.sv:37]
 WARNING: [Synth 8-11067] parameter 'OPCODE_FENCE' declared inside package 'cv32e40p_pkg' shall be treated as localparam [D:/gitcls/air-soc-boot/cv32e40p/rtl/include/cv32e40p_pkg.sv:38]
@@ -127,7 +128,7 @@ WARNING: [Synth 8-11067] parameter 'JT_JAL' declared inside package 'cv32e40p_pk
 WARNING: [Synth 8-11067] parameter 'JT_JALR' declared inside package 'cv32e40p_pkg' shall be treated as localparam [D:/gitcls/air-soc-boot/cv32e40p/rtl/include/cv32e40p_pkg.sv:672]
 INFO: [Common 17-14] Message 'Synth 8-11067' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 1823.582 ; gain = 407.566
+Starting RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:07 . Memory (MB): peak = 1824.055 ; gain = 409.172
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-6157] synthesizing module 'air_soc' [D:/gitcls/air-soc-boot/rtl/src/soc/air_soc.sv:8]
 INFO: [Synth 8-6157] synthesizing module 'cache' [D:/gitcls/air-soc-boot/rtl/src/memory/cache.sv:6]
@@ -142,8 +143,8 @@ INFO: [Synth 8-6157] synthesizing module 'cache_way' [D:/gitcls/air-soc-boot/rtl
 	Parameter LINE_BYTE_W bound to: 32'b00000000000000000000000000001000 
 INFO: [Synth 8-6155] done synthesizing module 'cache_way' (0#1) [D:/gitcls/air-soc-boot/rtl/src/memory/cache.sv:296]
 INFO: [Synth 8-6155] done synthesizing module 'cache' (0#1) [D:/gitcls/air-soc-boot/rtl/src/memory/cache.sv:6]
-INFO: [Synth 8-6157] synthesizing module 'clk_wiz_0' [D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/.Xil/Vivado-24648-DESKTOP-NCDM7BC/realtime/clk_wiz_0_stub.v:5]
-INFO: [Synth 8-6155] done synthesizing module 'clk_wiz_0' (0#1) [D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/.Xil/Vivado-24648-DESKTOP-NCDM7BC/realtime/clk_wiz_0_stub.v:5]
+INFO: [Synth 8-6157] synthesizing module 'clk_wiz_0' [D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/.Xil/Vivado-6472-DESKTOP-NCDM7BC/realtime/clk_wiz_0_stub.v:5]
+INFO: [Synth 8-6155] done synthesizing module 'clk_wiz_0' (0#1) [D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/.Xil/Vivado-6472-DESKTOP-NCDM7BC/realtime/clk_wiz_0_stub.v:5]
 INFO: [Synth 8-6157] synthesizing module 'cv32e40p_top' [D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_top.sv:26]
 	Parameter COREV_PULP bound to: 1'b0 
 	Parameter COREV_CLUSTER bound to: 1'b0 
@@ -345,8 +346,8 @@ WARNING: [Synth 8-693] zero replication count - replication ignored [D:/gitcls/a
 INFO: [Synth 8-6157] synthesizing module 'ram32' [D:/gitcls/air-soc-boot/rtl/src/memory/ram.sv:5]
 	Parameter SIZE bound to: 2048 - type: integer 
 	Parameter INIT_FILE bound to: (null) - type: string 
-INFO: [Synth 8-6157] synthesizing module 'bootrom' [D:/gitcls/air-soc-boot/rtl/src/memory/bootrom.sv:3]
-INFO: [Synth 8-6155] done synthesizing module 'bootrom' (0#1) [D:/gitcls/air-soc-boot/rtl/src/memory/bootrom.sv:3]
+INFO: [Synth 8-6157] synthesizing module 'bootrom' [D:/gitcls/air-soc-boot/rtl/src/memory/bootrom.sv:1]
+INFO: [Synth 8-6155] done synthesizing module 'bootrom' (0#1) [D:/gitcls/air-soc-boot/rtl/src/memory/bootrom.sv:1]
 INFO: [Synth 8-6155] done synthesizing module 'ram32' (0#1) [D:/gitcls/air-soc-boot/rtl/src/memory/ram.sv:5]
 INFO: [Synth 8-6157] synthesizing module 'obi_demux' [D:/gitcls/air-soc-boot/rtl/src/databus/obi_demux.sv:6]
 INFO: [Synth 8-155] case statement is not full and has no default [D:/gitcls/air-soc-boot/rtl/src/databus/obi_demux.sv:136]
@@ -646,18 +647,18 @@ WARNING: [Synth 8-7129] Port TIM_EVC[19] in module timer is either unconnected o
 WARNING: [Synth 8-7129] Port TIM_EVC[18] in module timer is either unconnected or has no load
 INFO: [Common 17-14] Message 'Synth 8-7129' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 2031.754 ; gain = 615.738
+Finished RTL Elaboration : Time (s): cpu = 00:00:11 ; elapsed = 00:00:13 . Memory (MB): peak = 2031.672 ; gain = 616.789
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 2031.754 ; gain = 615.738
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:12 ; elapsed = 00:00:14 . Memory (MB): peak = 2031.672 ; gain = 616.789
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 2031.754 ; gain = 615.738
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:12 ; elapsed = 00:00:14 . Memory (MB): peak = 2031.672 ; gain = 616.789
 ---------------------------------------------------------------------------------
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.383 . Memory (MB): peak = 2031.754 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.399 . Memory (MB): peak = 2031.672 ; gain = 0.000
 INFO: [Netlist 29-17] Analyzing 5 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
@@ -677,24 +678,24 @@ INFO: [Project 1-236] Implementation specific constraints were found while readi
 Resolution: To avoid this warning, move constraints listed in [.Xil/air_soc_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
 Completed Processing XDC Constraints
 
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.004 . Memory (MB): peak = 2124.434 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.004 . Memory (MB): peak = 2118.688 ; gain = 0.000
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 4 instances were transformed.
   IOBUF => IOBUF (IBUF, OBUFT): 4 instances
 
-Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.042 . Memory (MB): peak = 2124.434 ; gain = 0.000
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.048 . Memory (MB): peak = 2118.688 ; gain = 0.000
 INFO: [Designutils 20-5440] No compile time benefit to using incremental synthesis; A full resynthesis will be run
 INFO: [Designutils 20-4379] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
 INFO: [Synth 8-11241] undeclared symbol 'REGCCE', assumed default net type 'wire' [D:/tools/Xilinx/Vivado/2022.2/data/verilog/src/unimacro/BRAM_SINGLE_MACRO.v:2170]
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:25 ; elapsed = 00:00:25 . Memory (MB): peak = 2124.434 ; gain = 708.418
+Finished Constraint Validation : Time (s): cpu = 00:00:25 ; elapsed = 00:00:28 . Memory (MB): peak = 2118.688 ; gain = 703.805
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
 Loading part: xc7a35tcpg236-1
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:25 ; elapsed = 00:00:25 . Memory (MB): peak = 2124.434 ; gain = 708.418
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:25 ; elapsed = 00:00:28 . Memory (MB): peak = 2118.688 ; gain = 703.805
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying 'set_property' XDC Constraints
@@ -703,7 +704,7 @@ Applied set_property IO_BUFFER_TYPE = NONE for clk_i. (constraint file  d:/gitcl
 Applied set_property CLOCK_BUFFER_TYPE = NONE for clk_i. (constraint file  d:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0/clk_wiz_0_in_context.xdc, line 4).
 Applied set_property KEEP_HIERARCHY = SOFT for dutclk. (constraint file  auto generated constraint).
 ---------------------------------------------------------------------------------
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:25 ; elapsed = 00:00:25 . Memory (MB): peak = 2124.434 ; gain = 708.418
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:25 ; elapsed = 00:00:28 . Memory (MB): peak = 2118.688 ; gain = 703.805
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-802] inferred FSM for state register 'debug_fsm_cs_reg' in module 'cv32e40p_controller'
 INFO: [Synth 8-802] inferred FSM for state register 'State_SP_reg' in module 'cv32e40p_alu_div'
@@ -797,7 +798,7 @@ INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 
 ---------------------------------------------------------------------------------------------------
 INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'sequential' in module 'uart_rx'
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:33 ; elapsed = 00:00:33 . Memory (MB): peak = 2124.434 ; gain = 708.418
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:32 ; elapsed = 00:00:37 . Memory (MB): peak = 2118.688 ; gain = 703.805
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start RTL Component Statistics 
@@ -976,7 +977,7 @@ DSP Report: Generating DSP mult_i/, operation Mode is: (PCIN>>17)+A*B.
 DSP Report: operator mult_i/ is absorbed into DSP mult_i/.
 DSP Report: operator mult_i/ is absorbed into DSP mult_i/.
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:02:42 ; elapsed = 00:02:43 . Memory (MB): peak = 2345.801 ; gain = 929.785
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:02:41 ; elapsed = 00:02:47 . Memory (MB): peak = 2330.574 ; gain = 915.691
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP, Shift Register and Retiming Reporting
@@ -1022,13 +1023,13 @@ Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
 Start Applying XDC Timing Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:02:52 ; elapsed = 00:02:53 . Memory (MB): peak = 2345.801 ; gain = 929.785
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:02:51 ; elapsed = 00:02:57 . Memory (MB): peak = 2330.574 ; gain = 915.691
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Timing Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:02:56 ; elapsed = 00:02:57 . Memory (MB): peak = 2345.801 ; gain = 929.785
+Finished Timing Optimization : Time (s): cpu = 00:02:55 ; elapsed = 00:03:01 . Memory (MB): peak = 2330.574 ; gain = 915.691
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP, Shift Register and Retiming Reporting
@@ -1049,7 +1050,7 @@ Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
 Start Technology Mapping
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:03:07 ; elapsed = 00:03:07 . Memory (MB): peak = 2345.801 ; gain = 929.785
+Finished Technology Mapping : Time (s): cpu = 00:03:05 ; elapsed = 00:03:12 . Memory (MB): peak = 2330.574 ; gain = 915.691
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start IO Insertion
@@ -1067,37 +1068,37 @@ Start Final Netlist Cleanup
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:03:14 ; elapsed = 00:03:15 . Memory (MB): peak = 2345.801 ; gain = 929.785
+Finished IO Insertion : Time (s): cpu = 00:03:14 ; elapsed = 00:03:20 . Memory (MB): peak = 2330.574 ; gain = 915.691
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:03:14 ; elapsed = 00:03:15 . Memory (MB): peak = 2345.801 ; gain = 929.785
+Finished Renaming Generated Instances : Time (s): cpu = 00:03:14 ; elapsed = 00:03:20 . Memory (MB): peak = 2330.574 ; gain = 915.691
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:03:17 ; elapsed = 00:03:18 . Memory (MB): peak = 2345.801 ; gain = 929.785
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:03:16 ; elapsed = 00:03:23 . Memory (MB): peak = 2330.574 ; gain = 915.691
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:03:17 ; elapsed = 00:03:18 . Memory (MB): peak = 2345.801 ; gain = 929.785
+Finished Renaming Generated Ports : Time (s): cpu = 00:03:16 ; elapsed = 00:03:23 . Memory (MB): peak = 2330.574 ; gain = 915.691
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:03:19 ; elapsed = 00:03:19 . Memory (MB): peak = 2345.801 ; gain = 929.785
+Finished Handling Custom Attributes : Time (s): cpu = 00:03:18 ; elapsed = 00:03:24 . Memory (MB): peak = 2330.574 ; gain = 915.691
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:03:19 ; elapsed = 00:03:19 . Memory (MB): peak = 2345.801 ; gain = 929.785
+Finished Renaming Generated Nets : Time (s): cpu = 00:03:18 ; elapsed = 00:03:24 . Memory (MB): peak = 2330.574 ; gain = 915.691
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Writing Synthesis Report
@@ -1131,20 +1132,20 @@ Report Cell Usage:
 |3     |CARRY4    |   212|
 |4     |DSP48E1   |     5|
 |6     |LUT1      |    13|
-|7     |LUT2      |   699|
-|8     |LUT3      |  2150|
-|9     |LUT4      |  1301|
-|10    |LUT5      |  1703|
-|11    |LUT6      |  6759|
-|12    |MUXF7     |   984|
-|13    |MUXF8     |   303|
+|7     |LUT2      |   698|
+|8     |LUT3      |  2144|
+|9     |LUT4      |  1304|
+|10    |LUT5      |  1697|
+|11    |LUT6      |  6809|
+|12    |MUXF7     |   993|
+|13    |MUXF8     |   309|
 |14    |RAM32M    |     1|
 |15    |RAM32X1D  |     2|
 |16    |RAM64M    |  1408|
 |17    |STARTUPE2 |     1|
 |18    |FDCE      |  1876|
 |19    |FDPE      |   226|
-|20    |FDRE      |  1497|
+|20    |FDRE      |  1502|
 |21    |FDSE      |     2|
 |22    |LD        |    33|
 |23    |LDC       |   992|
@@ -1153,18 +1154,18 @@ Report Cell Usage:
 |26    |OBUF      |     2|
 +------+----------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:03:19 ; elapsed = 00:03:20 . Memory (MB): peak = 2345.801 ; gain = 929.785
+Finished Writing Synthesis Report : Time (s): cpu = 00:03:18 ; elapsed = 00:03:24 . Memory (MB): peak = 2330.574 ; gain = 915.691
 ---------------------------------------------------------------------------------
 Synthesis finished with 0 errors, 0 critical warnings and 33 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:03:00 ; elapsed = 00:03:14 . Memory (MB): peak = 2345.801 ; gain = 837.105
-Synthesis Optimization Complete : Time (s): cpu = 00:03:19 ; elapsed = 00:03:20 . Memory (MB): peak = 2345.801 ; gain = 929.785
+Synthesis Optimization Runtime : Time (s): cpu = 00:03:00 ; elapsed = 00:03:17 . Memory (MB): peak = 2330.574 ; gain = 828.676
+Synthesis Optimization Complete : Time (s): cpu = 00:03:18 ; elapsed = 00:03:24 . Memory (MB): peak = 2330.574 ; gain = 915.691
 INFO: [Project 1-571] Translating synthesized netlist
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.339 . Memory (MB): peak = 2345.801 ; gain = 0.000
-INFO: [Netlist 29-17] Analyzing 3945 Unisim elements for replacement
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.327 . Memory (MB): peak = 2330.574 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 3960 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 1 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 INFO: [Opt 31-138] Pushed 1 inverter(s) to 1 load pin(s).
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.010 . Memory (MB): peak = 2345.801 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.010 . Memory (MB): peak = 2330.574 ; gain = 0.000
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 2440 instances were transformed.
   IOBUF => IOBUF (IBUF, OBUFT): 4 instances
@@ -1175,11 +1176,11 @@ INFO: [Project 1-111] Unisim Transformation Summary:
   RAM32X1D => RAM32X1D (RAMD32(x2)): 2 instances
   RAM64M => RAM64M (RAMD64E(x4)): 1408 instances
 
-Synth Design complete, checksum: cae4b5ec
+Synth Design complete, checksum: e99645a3
 INFO: [Common 17-83] Releasing license: Synthesis
 191 Infos, 389 Warnings, 0 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:03:29 ; elapsed = 00:03:31 . Memory (MB): peak = 2345.801 ; gain = 1307.562
+synth_design: Time (s): cpu = 00:03:29 ; elapsed = 00:03:45 . Memory (MB): peak = 2330.574 ; gain = 1291.828
 INFO: [Common 17-1381] The checkpoint 'D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/air_soc.dcp' has been generated.
 INFO: [runtcl-4] Executing : report_utilization -file air_soc_utilization_synth.rpt -pb air_soc_utilization_synth.pb
-INFO: [Common 17-206] Exiting Vivado at Mon Apr  7 03:51:34 2025...
+INFO: [Common 17-206] Exiting Vivado at Wed Apr  9 01:36:10 2025...

@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 -------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version     : Vivado v.2022.2 (win64) Build 3671981 Fri Oct 14 05:00:03 MDT 2022
-| Date             : Mon Apr  7 04:12:32 2025
+| Date             : Wed Apr  9 01:57:19 2025
 | Host             : DESKTOP-NCDM7BC running 64-bit major release  (build 9200)
 | Command          : report_power -file air_soc_power_routed.rpt -pb air_soc_power_summary_routed.pb -rpx air_soc_power_routed.rpx
 | Design           : air_soc
@@ -30,10 +30,10 @@ Table of Contents
 ----------
 
 +--------------------------+--------------+
-| Total On-Chip Power (W)  | 0.226        |
+| Total On-Chip Power (W)  | 0.225        |
 | Design Power Budget (W)  | Unspecified* |
 | Power Budget Margin (W)  | NA           |
-| Dynamic (W)              | 0.154        |
+| Dynamic (W)              | 0.153        |
 | Device Static (W)        | 0.072        |
 | Effective TJA (C/W)      | 5.0          |
 | Max Ambient (C)          | 83.9         |
@@ -53,19 +53,19 @@ Table of Contents
 | On-Chip                  | Power (W) | Used     | Available | Utilization (%) |
 +--------------------------+-----------+----------+-----------+-----------------+
 | Clocks                   |     0.017 |        8 |       --- |             --- |
-| Slice Logic              |     0.005 |    24510 |       --- |             --- |
-|   LUT as Logic           |     0.004 |    10600 |     20800 |           50.96 |
+| Slice Logic              |     0.005 |    24570 |       --- |             --- |
+|   LUT as Logic           |     0.004 |    10632 |     20800 |           51.12 |
 |   LUT as Distributed RAM |    <0.001 |     5638 |      9600 |           58.73 |
 |   CARRY4                 |    <0.001 |      212 |      8150 |            2.60 |
-|   F7/F8 Muxes            |    <0.001 |     1287 |     32600 |            3.95 |
-|   Register               |    <0.001 |     4626 |     41600 |           11.12 |
+|   F7/F8 Muxes            |    <0.001 |     1302 |     32600 |            3.99 |
+|   Register               |    <0.001 |     4631 |     41600 |           11.13 |
 |   Others                 |     0.000 |      118 |       --- |             --- |
-| Signals                  |     0.016 |    18496 |       --- |             --- |
+| Signals                  |     0.015 |    18528 |       --- |             --- |
 | MMCM                     |     0.116 |        1 |         5 |           20.00 |
 | DSPs                     |    <0.001 |        5 |        90 |            5.56 |
 | I/O                      |    <0.001 |        8 |       106 |            7.55 |
 | Static Power             |     0.072 |          |           |                 |
-| Total                    |     0.226 |          |           |                 |
+| Total                    |     0.225 |          |           |                 |
 +--------------------------+-----------+----------+-----------+-----------------+
 
 
@@ -75,7 +75,7 @@ Table of Contents
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
 | Source    | Voltage (V) | Total (A) | Dynamic (A) | Static (A) | Powerup (A) | Budget (A)  | Margin (A) |
 +-----------+-------------+-----------+-------------+------------+-------------+-------------+------------+
-| Vccint    |       1.000 |     0.048 |       0.038 |      0.010 |       NA    | Unspecified | NA         |
+| Vccint    |       1.000 |     0.047 |       0.037 |      0.010 |       NA    | Unspecified | NA         |
 | Vccaux    |       1.800 |     0.077 |       0.064 |      0.013 |       NA    | Unspecified | NA         |
 | Vcco33    |       3.300 |     0.001 |       0.000 |      0.001 |       NA    | Unspecified | NA         |
 | Vcco25    |       2.500 |     0.000 |       0.000 |      0.000 |       NA    | Unspecified | NA         |
@@ -149,10 +149,10 @@ Table of Contents
 +--------------------+-----------+
 | Name               | Power (W) |
 +--------------------+-----------+
-| air_soc            |     0.154 |
-|   cv32e40p_core_ip |     0.018 |
-|     core_i         |     0.018 |
-|       id_stage_i   |     0.013 |
+| air_soc            |     0.153 |
+|   cv32e40p_core_ip |     0.017 |
+|     core_i         |     0.017 |
+|       id_stage_i   |     0.012 |
 |       if_stage_i   |     0.004 |
 |   dcache           |     0.002 |
 |     way1           |     0.001 |
