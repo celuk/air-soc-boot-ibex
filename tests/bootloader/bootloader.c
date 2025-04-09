@@ -149,7 +149,7 @@ static inline void update_trap_vector_base_address()
 
 static inline void jump_to_loaded_software()
 {
-    asm ("j 0x2100");
+    asm volatile ("j 0x2100");
 }
 
 int main()
