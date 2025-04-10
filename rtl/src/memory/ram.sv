@@ -98,8 +98,11 @@ module ram32 #(
    assign wr_addr_ram = (prog_mode_led_o && ram_prog_data_valid) ? prog_addr : mem_addr;
    assign wr_data_ram = (prog_mode_led_o && ram_prog_data_valid) ? ram_prog_data : wdata_i;
 
+   reg  prog_sys_rst_n = 1;
+   wire rst_n = rst_ni && prog_sys_rst_n;
+
    always @(posedge clk_i) begin
-      if (!(rst_ni && system_reset_o)) begin
+      if (!rst_n) begin
         prog_addr <= 'h0;
       end else begin
         if (prog_mode_led_o && ram_prog_data_valid) begin
@@ -134,7 +137,7 @@ module ram32 #(
    reg [31:0] prog_intr_ctr;
    
    reg  prog_inst_valid;
-   reg  prog_sys_rst_n = 1;
+   
    wire ram_prog_rd_en;
    
    assign ram_prog_data       = prog_instruction;
@@ -295,11 +298,11 @@ module ram32 #(
       .reg_dat_do  (prog_uart_do)
    );
 
-   //reg programmed = 0;
+   reg programmed = 0;
 
    always @(posedge clk_i) begin
-      if (!rst_ni) begin
-          if (`USE_BOOTROM) begin
+      if (!rst_n) begin
+          if (`USE_BOOTROM && !programmed) begin
               //boot_index <= 0;
               boot_rom_addr <= 0;
               boot_rstn <= 0;
@@ -314,7 +317,7 @@ module ram32 #(
           //programmed <= 0;
       end
       else begin
-          if (`USE_BOOTROM && boot_rom_addr < RAM_DEPTH) begin
+          if (`USE_BOOTROM && !programmed && boot_rom_addr < RAM_DEPTH) begin
               //boot_rom_addr <= boot_index;
               ram[boot_rom_addr] <= boot_rom_rdata;
               boot_rom_addr <= boot_rom_addr + 1;
@@ -325,12 +328,12 @@ module ram32 #(
                       ram[wr_addr_ram][i*8+:8] <= wr_data_ram[i*8+:8];
           end
           rdata_o <= ram[mem_addr];
-          if (!(`USE_BOOTROM && boot_rom_addr < RAM_DEPTH)) begin
+          if (!(`USE_BOOTROM && !programmed && boot_rom_addr < RAM_DEPTH)) begin
               rvalid_o <= req_i;
               //system_reset_o <= 1;
               boot_rstn <= 1;
           end
-          //if(prog_sys_rst_n == 1'b0) programmed <= 1;
+          if(prog_sys_rst_n == 1'b0) programmed <= 1;
       end
    end
 
