@@ -133,6 +133,7 @@ read_verilog -library xil_defaultlib -sv {
   D:/gitcls/air-soc-boot/rtl/src/peripherals/qspi/qspi_controller_obi.sv
   D:/gitcls/air-soc-boot/rtl/src/memory/ram.sv
   D:/gitcls/air-soc-boot/cv32e40p/rtl/vendor/pulp_platform_common_cells/src/rr_arb_tree.sv
+  D:/gitcls/air-soc-boot/rtl/src/memory/simpleuart.sv
   D:/gitcls/air-soc-boot/rtl/src/peripherals/timer/timer.sv
   D:/gitcls/air-soc-boot/rtl/src/peripherals/timer/timer_controller.sv
   D:/gitcls/air-soc-boot/rtl/src/peripherals/timer/timer_controller_obi.sv

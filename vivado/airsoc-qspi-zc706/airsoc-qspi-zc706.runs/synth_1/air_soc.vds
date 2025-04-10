@@ -2,8 +2,8 @@
 # Vivado v2022.2 (64-bit)
 # SW Build 3671981 on Fri Oct 14 05:00:03 MDT 2022
 # IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
-# Start of session at: Wed Apr  9 17:39:35 2025
-# Process ID: 26172
+# Start of session at: Thu Apr 10 02:39:58 2025
+# Process ID: 14444
 # Current directory: D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1
 # Command line: vivado.exe -log air_soc.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source air_soc.tcl
 # Log file: D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/air_soc.vds
@@ -11,6 +11,7 @@
 # Running On: DESKTOP-NCDM7BC, OS: Windows, CPU Frequency: 2592 MHz, CPU Physical cores: 6, Host memory: 17050 MB
 #-----------------------------------------------------------
 source air_soc.tcl -notrace
+create_project: Time (s): cpu = 00:00:04 ; elapsed = 00:00:12 . Memory (MB): peak = 1003.625 ; gain = 118.973
 Command: read_checkpoint -auto_incremental -incremental D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.srcs/utils_1/imports/synth_1/air_soc.dcp
 INFO: [Vivado 12-5825] Read reference checkpoint from D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.srcs/utils_1/imports/synth_1/air_soc.dcp for incremental synthesis
 INFO: [Vivado 12-7989] Please ensure there are no constraint changes
@@ -23,7 +24,7 @@ INFO: [Designutils 20-5440] No compile time benefit to using incremental synthes
 INFO: [Designutils 20-4379] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
 INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
 INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
-INFO: [Synth 8-7075] Helper process launched with PID 23504
+INFO: [Synth 8-7075] Helper process launched with PID 11096
 INFO: [Synth 8-11241] undeclared symbol 'REGCCE', assumed default net type 'wire' [D:/tools/Xilinx/Vivado/2022.2/data/verilog/src/unimacro/BRAM_SINGLE_MACRO.v:2170]
 WARNING: [Synth 8-11067] parameter 'OPCODE_SYSTEM' declared inside package 'cv32e40p_pkg' shall be treated as localparam [D:/gitcls/air-soc-boot/cv32e40p/rtl/include/cv32e40p_pkg.sv:37]
 WARNING: [Synth 8-11067] parameter 'OPCODE_FENCE' declared inside package 'cv32e40p_pkg' shall be treated as localparam [D:/gitcls/air-soc-boot/cv32e40p/rtl/include/cv32e40p_pkg.sv:38]
@@ -127,7 +128,7 @@ WARNING: [Synth 8-11067] parameter 'JT_JAL' declared inside package 'cv32e40p_pk
 WARNING: [Synth 8-11067] parameter 'JT_JALR' declared inside package 'cv32e40p_pkg' shall be treated as localparam [D:/gitcls/air-soc-boot/cv32e40p/rtl/include/cv32e40p_pkg.sv:672]
 INFO: [Common 17-14] Message 'Synth 8-11067' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 ---------------------------------------------------------------------------------
-Starting RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 1821.406 ; gain = 409.188
+Starting RTL Elaboration : Time (s): cpu = 00:00:05 ; elapsed = 00:00:08 . Memory (MB): peak = 1825.188 ; gain = 409.246
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-6157] synthesizing module 'air_soc' [D:/gitcls/air-soc-boot/rtl/src/soc/air_soc.sv:8]
 INFO: [Synth 8-6157] synthesizing module 'cache' [D:/gitcls/air-soc-boot/rtl/src/memory/cache.sv:6]
@@ -142,8 +143,8 @@ INFO: [Synth 8-6157] synthesizing module 'cache_way' [D:/gitcls/air-soc-boot/rtl
 	Parameter LINE_BYTE_W bound to: 32'b00000000000000000000000000001000 
 INFO: [Synth 8-6155] done synthesizing module 'cache_way' (0#1) [D:/gitcls/air-soc-boot/rtl/src/memory/cache.sv:296]
 INFO: [Synth 8-6155] done synthesizing module 'cache' (0#1) [D:/gitcls/air-soc-boot/rtl/src/memory/cache.sv:6]
-INFO: [Synth 8-6157] synthesizing module 'clk_wiz_0' [D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/.Xil/Vivado-26172-DESKTOP-NCDM7BC/realtime/clk_wiz_0_stub.v:5]
-INFO: [Synth 8-6155] done synthesizing module 'clk_wiz_0' (0#1) [D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/.Xil/Vivado-26172-DESKTOP-NCDM7BC/realtime/clk_wiz_0_stub.v:5]
+INFO: [Synth 8-6157] synthesizing module 'clk_wiz_0' [D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/.Xil/Vivado-14444-DESKTOP-NCDM7BC/realtime/clk_wiz_0_stub.v:5]
+INFO: [Synth 8-6155] done synthesizing module 'clk_wiz_0' (0#1) [D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/.Xil/Vivado-14444-DESKTOP-NCDM7BC/realtime/clk_wiz_0_stub.v:5]
 INFO: [Synth 8-6157] synthesizing module 'cv32e40p_top' [D:/gitcls/air-soc-boot/cv32e40p/rtl/cv32e40p_top.sv:26]
 	Parameter COREV_PULP bound to: 1'b0 
 	Parameter COREV_CLUSTER bound to: 1'b0 
@@ -347,6 +348,9 @@ INFO: [Synth 8-6157] synthesizing module 'ram32' [D:/gitcls/air-soc-boot/rtl/src
 	Parameter INIT_FILE bound to: (null) - type: string 
 INFO: [Synth 8-6157] synthesizing module 'bootrom' [D:/gitcls/air-soc-boot/rtl/src/memory/bootrom.sv:1]
 INFO: [Synth 8-6155] done synthesizing module 'bootrom' (0#1) [D:/gitcls/air-soc-boot/rtl/src/memory/bootrom.sv:1]
+INFO: [Synth 8-6157] synthesizing module 'simpleuart' [D:/gitcls/air-soc-boot/rtl/src/memory/simpleuart.sv:20]
+	Parameter DEFAULT_DIV bound to: 217 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'simpleuart' (0#1) [D:/gitcls/air-soc-boot/rtl/src/memory/simpleuart.sv:20]
 INFO: [Synth 8-6155] done synthesizing module 'ram32' (0#1) [D:/gitcls/air-soc-boot/rtl/src/memory/ram.sv:5]
 INFO: [Synth 8-6157] synthesizing module 'obi_demux' [D:/gitcls/air-soc-boot/rtl/src/databus/obi_demux.sv:6]
 INFO: [Synth 8-155] case statement is not full and has no default [D:/gitcls/air-soc-boot/rtl/src/databus/obi_demux.sv:136]
@@ -646,18 +650,18 @@ WARNING: [Synth 8-7129] Port TIM_EVC[19] in module timer is either unconnected o
 WARNING: [Synth 8-7129] Port TIM_EVC[18] in module timer is either unconnected or has no load
 INFO: [Common 17-14] Message 'Synth 8-7129' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 ---------------------------------------------------------------------------------
-Finished RTL Elaboration : Time (s): cpu = 00:00:12 ; elapsed = 00:00:12 . Memory (MB): peak = 2031.000 ; gain = 618.781
+Finished RTL Elaboration : Time (s): cpu = 00:00:12 ; elapsed = 00:00:15 . Memory (MB): peak = 2038.449 ; gain = 622.508
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:00:13 ; elapsed = 00:00:13 . Memory (MB): peak = 2031.000 ; gain = 618.781
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:12 ; elapsed = 00:00:15 . Memory (MB): peak = 2038.449 ; gain = 622.508
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:13 ; elapsed = 00:00:13 . Memory (MB): peak = 2031.000 ; gain = 618.781
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:12 ; elapsed = 00:00:15 . Memory (MB): peak = 2038.449 ; gain = 622.508
 ---------------------------------------------------------------------------------
-Netlist sorting complete. Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.405 . Memory (MB): peak = 2031.000 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.411 . Memory (MB): peak = 2038.449 ; gain = 0.000
 INFO: [Netlist 29-17] Analyzing 5 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
@@ -667,34 +671,29 @@ Initializing timing engine
 Parsing XDC File [d:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0/clk_wiz_0_in_context.xdc] for cell 'dutclk'
 Finished Parsing XDC File [d:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0/clk_wiz_0_in_context.xdc] for cell 'dutclk'
 Parsing XDC File [D:/gitcls/air-soc-boot/xdc/basys3.xdc]
-WARNING: [Vivado 12-584] No ports matched 'prog_mode_led_o'. [D:/gitcls/air-soc-boot/xdc/basys3.xdc:13]
-WARNING: [Vivado 12-584] No ports matched 'prog_mode_led_o'. [D:/gitcls/air-soc-boot/xdc/basys3.xdc:14]
-WARNING: [Vivado 12-584] No ports matched 'program_rx_i'. [D:/gitcls/air-soc-boot/xdc/basys3.xdc:21]
-WARNING: [Vivado 12-584] No ports matched 'program_rx_i'. [D:/gitcls/air-soc-boot/xdc/basys3.xdc:22]
 Finished Parsing XDC File [D:/gitcls/air-soc-boot/xdc/basys3.xdc]
-WARNING: [Project 1-498] One or more constraints failed evaluation while reading constraint file [D:/gitcls/air-soc-boot/xdc/basys3.xdc] and the design contains unresolved black boxes. These constraints will be read post-synthesis (as long as their source constraint file is marked as used_in_implementation) and should be applied correctly then. You should review the constraints listed in the file [.Xil/air_soc_propImpl.xdc] and check the run log file to verify that these constraints were correctly applied.
 INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [D:/gitcls/air-soc-boot/xdc/basys3.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/air_soc_propImpl.xdc].
 Resolution: To avoid this warning, move constraints listed in [.Xil/air_soc_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
 Completed Processing XDC Constraints
 
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.003 . Memory (MB): peak = 2122.844 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.004 . Memory (MB): peak = 2128.328 ; gain = 0.000
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 4 instances were transformed.
   IOBUF => IOBUF (IBUF, OBUFT): 4 instances
 
-Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.040 . Memory (MB): peak = 2122.844 ; gain = 0.000
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.051 . Memory (MB): peak = 2128.328 ; gain = 0.000
 INFO: [Designutils 20-5440] No compile time benefit to using incremental synthesis; A full resynthesis will be run
 INFO: [Designutils 20-4379] Flow is switching to default flow due to incremental criteria not met. If you would like to alter this behaviour and have the flow terminate instead, please set the following parameter config_implementation {autoIncr.Synth.RejectBehavior Terminate}
 INFO: [Synth 8-11241] undeclared symbol 'REGCCE', assumed default net type 'wire' [D:/tools/Xilinx/Vivado/2022.2/data/verilog/src/unimacro/BRAM_SINGLE_MACRO.v:2170]
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:25 ; elapsed = 00:00:25 . Memory (MB): peak = 2122.844 ; gain = 710.625
+Finished Constraint Validation : Time (s): cpu = 00:00:25 ; elapsed = 00:00:30 . Memory (MB): peak = 2128.328 ; gain = 712.387
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
 Loading part: xc7a35tcpg236-1
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:25 ; elapsed = 00:00:25 . Memory (MB): peak = 2122.844 ; gain = 710.625
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:25 ; elapsed = 00:00:30 . Memory (MB): peak = 2128.328 ; gain = 712.387
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Applying 'set_property' XDC Constraints
@@ -703,11 +702,12 @@ Applied set_property IO_BUFFER_TYPE = NONE for clk_i. (constraint file  d:/gitcl
 Applied set_property CLOCK_BUFFER_TYPE = NONE for clk_i. (constraint file  d:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0/clk_wiz_0_in_context.xdc, line 4).
 Applied set_property KEEP_HIERARCHY = SOFT for dutclk. (constraint file  auto generated constraint).
 ---------------------------------------------------------------------------------
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:25 ; elapsed = 00:00:25 . Memory (MB): peak = 2122.844 ; gain = 710.625
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:25 ; elapsed = 00:00:30 . Memory (MB): peak = 2128.328 ; gain = 712.387
 ---------------------------------------------------------------------------------
 INFO: [Synth 8-802] inferred FSM for state register 'debug_fsm_cs_reg' in module 'cv32e40p_controller'
 INFO: [Synth 8-802] inferred FSM for state register 'State_SP_reg' in module 'cv32e40p_alu_div'
 INFO: [Synth 8-802] inferred FSM for state register 'mulh_CS_reg' in module 'cv32e40p_mult'
+INFO: [Synth 8-802] inferred FSM for state register 'state_prog_reg' in module 'ram32'
 INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'obi_demux'
 INFO: [Synth 8-802] inferred FSM for state register 'state_reg' in module 'uart_rx'
 WARNING: [Synth 8-327] inferring latch for variable 'clk_en_reg' [D:/gitcls/air-soc-boot/rtl/src/util/cv32e40p_clock_gate.sv:28]
@@ -772,6 +772,17 @@ INFO: [Synth 8-3354] encoded FSM with state register 'mulh_CS_reg' using encodin
 ---------------------------------------------------------------------------------------------------
                    State |                     New Encoding |                Previous Encoding 
 ---------------------------------------------------------------------------------------------------
+            SequenceWait |                           000001 |                              000
+         SequenceReceive |                           000010 |                              001
+           SequenceCheck |                           000100 |                              011
+      SequenceLengthCalc |                           001000 |                              010
+         SequenceProgram |                           010000 |                              110
+          SequenceFinish |                           100000 |                              100
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'state_prog_reg' using encoding 'one-hot' in module 'ram32'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
                     IDLE |                                0 | 00000000000000000000000000000000
                  WAITING |                                1 | 00000000000000000000000000000001
 ---------------------------------------------------------------------------------------------------
@@ -797,7 +808,7 @@ INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 
 ---------------------------------------------------------------------------------------------------
 INFO: [Synth 8-3354] encoded FSM with state register 'state_reg' using encoding 'sequential' in module 'uart_rx'
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:33 ; elapsed = 00:00:33 . Memory (MB): peak = 2122.844 ; gain = 710.625
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:33 ; elapsed = 00:00:38 . Memory (MB): peak = 2128.328 ; gain = 712.387
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start RTL Component Statistics 
@@ -806,15 +817,15 @@ Detailed RTL Component Info :
 +---Adders : 
 	   2 Input   64 Bit       Adders := 4     
 	   2 Input   37 Bit       Adders := 1     
-	   2 Input   32 Bit       Adders := 11    
+	   2 Input   32 Bit       Adders := 14    
 	   3 Input   32 Bit       Adders := 2     
 	   5 Input   32 Bit       Adders := 1     
 	   2 Input   16 Bit       Adders := 1     
 	   2 Input    6 Bit       Adders := 5     
 	   2 Input    5 Bit       Adders := 4     
-	   2 Input    4 Bit       Adders := 4     
+	   2 Input    4 Bit       Adders := 7     
 	   2 Input    3 Bit       Adders := 9     
-	   2 Input    2 Bit       Adders := 24    
+	   2 Input    2 Bit       Adders := 25    
 	   3 Input    2 Bit       Adders := 1     
 	   2 Input    1 Bit       Adders := 7     
 +---XORs : 
@@ -824,22 +835,24 @@ Detailed RTL Component Info :
 	   2 Input      1 Bit         XORs := 2     
 +---Registers : 
 	              256 Bit    Registers := 1     
+	               72 Bit    Registers := 1     
 	               64 Bit    Registers := 14    
-	               32 Bit    Registers := 65    
+	               32 Bit    Registers := 71    
 	               31 Bit    Registers := 1     
 	               27 Bit    Registers := 10    
 	               24 Bit    Registers := 2     
 	               16 Bit    Registers := 2     
 	               15 Bit    Registers := 1     
 	               12 Bit    Registers := 1     
-	                8 Bit    Registers := 2     
+	               10 Bit    Registers := 1     
+	                8 Bit    Registers := 4     
 	                7 Bit    Registers := 1     
 	                6 Bit    Registers := 9     
 	                5 Bit    Registers := 6     
-	                4 Bit    Registers := 12    
+	                4 Bit    Registers := 15    
 	                3 Bit    Registers := 5     
-	                2 Bit    Registers := 25    
-	                1 Bit    Registers := 164   
+	                2 Bit    Registers := 26    
+	                1 Bit    Registers := 168   
 +---Multipliers : 
 	              32x32  Multipliers := 1     
 +---RAMs : 
@@ -849,12 +862,14 @@ Detailed RTL Component Info :
 	   2 Input  256 Bit        Muxes := 65    
 	   8 Input  256 Bit        Muxes := 2     
 	   4 Input  256 Bit        Muxes := 1     
+	   2 Input   72 Bit        Muxes := 1     
+	   6 Input   72 Bit        Muxes := 1     
 	   2 Input   64 Bit        Muxes := 28    
 	   8 Input   64 Bit        Muxes := 1     
 	   4 Input   64 Bit        Muxes := 2     
 	   2 Input   36 Bit        Muxes := 6     
 	   2 Input   33 Bit        Muxes := 1     
-	   2 Input   32 Bit        Muxes := 203   
+	   2 Input   32 Bit        Muxes := 208   
 	   4 Input   32 Bit        Muxes := 21    
 	   3 Input   32 Bit        Muxes := 10    
 	   8 Input   32 Bit        Muxes := 11    
@@ -865,7 +880,7 @@ Detailed RTL Component Info :
 	  26 Input   32 Bit        Muxes := 1     
 	  14 Input   32 Bit        Muxes := 1     
 	  10 Input   32 Bit        Muxes := 1     
-	   6 Input   32 Bit        Muxes := 2     
+	   6 Input   32 Bit        Muxes := 6     
 	   7 Input   32 Bit        Muxes := 6     
 	   2 Input   31 Bit        Muxes := 1     
 	   2 Input   27 Bit        Muxes := 11    
@@ -875,16 +890,19 @@ Detailed RTL Component Info :
 	   2 Input   16 Bit        Muxes := 24    
 	   3 Input   16 Bit        Muxes := 1     
 	   9 Input   16 Bit        Muxes := 1     
+	   2 Input   14 Bit        Muxes := 1     
 	   5 Input   14 Bit        Muxes := 1     
 	   2 Input   12 Bit        Muxes := 1     
+	   2 Input   10 Bit        Muxes := 3     
 	   2 Input    8 Bit        Muxes := 151   
 	   9 Input    8 Bit        Muxes := 1     
 	   2 Input    7 Bit        Muxes := 1     
-	   2 Input    6 Bit        Muxes := 15    
+	   2 Input    6 Bit        Muxes := 17    
 	  10 Input    6 Bit        Muxes := 1     
 	  21 Input    6 Bit        Muxes := 2     
 	   4 Input    6 Bit        Muxes := 4     
 	   5 Input    6 Bit        Muxes := 1     
+	   6 Input    6 Bit        Muxes := 1     
 	   2 Input    5 Bit        Muxes := 41    
 	   4 Input    5 Bit        Muxes := 4     
 	  16 Input    5 Bit        Muxes := 1     
@@ -894,15 +912,15 @@ Detailed RTL Component Info :
 	  18 Input    5 Bit        Muxes := 1     
 	   5 Input    5 Bit        Muxes := 1     
 	  38 Input    5 Bit        Muxes := 1     
-	   2 Input    4 Bit        Muxes := 49    
+	   2 Input    4 Bit        Muxes := 55    
 	   7 Input    4 Bit        Muxes := 1     
 	   5 Input    4 Bit        Muxes := 3     
 	   3 Input    4 Bit        Muxes := 2     
 	   9 Input    4 Bit        Muxes := 1     
-	   6 Input    4 Bit        Muxes := 3     
+	   6 Input    4 Bit        Muxes := 4     
 	  10 Input    4 Bit        Muxes := 1     
 	   8 Input    4 Bit        Muxes := 1     
-	   4 Input    4 Bit        Muxes := 3     
+	   4 Input    4 Bit        Muxes := 4     
 	  15 Input    4 Bit        Muxes := 3     
 	   4 Input    3 Bit        Muxes := 5     
 	   2 Input    3 Bit        Muxes := 20    
@@ -911,7 +929,7 @@ Detailed RTL Component Info :
 	  16 Input    3 Bit        Muxes := 3     
 	   3 Input    3 Bit        Muxes := 2     
 	   5 Input    3 Bit        Muxes := 2     
-	   6 Input    3 Bit        Muxes := 1     
+	   6 Input    3 Bit        Muxes := 2     
 	   7 Input    3 Bit        Muxes := 1     
 	   8 Input    3 Bit        Muxes := 1     
 	   2 Input    2 Bit        Muxes := 76    
@@ -922,12 +940,12 @@ Detailed RTL Component Info :
 	   7 Input    2 Bit        Muxes := 2     
 	   9 Input    2 Bit        Muxes := 2     
 	  16 Input    2 Bit        Muxes := 3     
-	   6 Input    2 Bit        Muxes := 4     
+	   6 Input    2 Bit        Muxes := 5     
 	   8 Input    2 Bit        Muxes := 2     
-	   4 Input    1 Bit        Muxes := 24    
-	   2 Input    1 Bit        Muxes := 456   
+	   4 Input    1 Bit        Muxes := 28    
+	   2 Input    1 Bit        Muxes := 465   
 	   3 Input    1 Bit        Muxes := 12    
-	   6 Input    1 Bit        Muxes := 7     
+	   6 Input    1 Bit        Muxes := 17    
 	   7 Input    1 Bit        Muxes := 4     
 	   8 Input    1 Bit        Muxes := 6     
 	  12 Input    1 Bit        Muxes := 2     
@@ -976,7 +994,7 @@ DSP Report: Generating DSP mult_i/, operation Mode is: (PCIN>>17)+A*B.
 DSP Report: operator mult_i/ is absorbed into DSP mult_i/.
 DSP Report: operator mult_i/ is absorbed into DSP mult_i/.
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:02:44 ; elapsed = 00:02:45 . Memory (MB): peak = 2336.238 ; gain = 924.020
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:02:48 ; elapsed = 00:02:55 . Memory (MB): peak = 2363.094 ; gain = 947.152
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP, Shift Register and Retiming Reporting
@@ -995,7 +1013,7 @@ Distributed RAM: Preliminary Mapping Report (see note below)
 |Module Name  | RTL Object                           | Inference | Size (Depth x Width) | Primitives     | 
 +-------------+--------------------------------------+-----------+----------------------+----------------+
 |i_1/uart_dut | uart_iface_dut/uart_tx_dut/queue_reg | Implied   | 2 x 8                | RAM32M x 2     | 
-|air_soc      | main_memory/ram_reg                  | Implied   | 16 K x 32            | RAM64M x 2200  | 
+|air_soc      | main_memory/ram_reg                  | Implied   | 16 K x 32            | RAM64M x 4400  | 
 +-------------+--------------------------------------+-----------+----------------------+----------------+
 
 Note: The table above is a preliminary report that shows the Distributed RAMs at the current stage of the synthesis flow. Some Distributed RAMs may be reimplemented as non Distributed RAM primitives later in the synthesis flow. Multiple instantiated RAMs are reported only once.
@@ -1022,13 +1040,13 @@ Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
 Start Applying XDC Timing Constraints
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:02:54 ; elapsed = 00:02:55 . Memory (MB): peak = 2336.238 ; gain = 924.020
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:02:59 ; elapsed = 00:03:06 . Memory (MB): peak = 2363.094 ; gain = 947.152
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Timing Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:02:59 ; elapsed = 00:03:00 . Memory (MB): peak = 2336.238 ; gain = 924.020
+Finished Timing Optimization : Time (s): cpu = 00:03:02 ; elapsed = 00:03:09 . Memory (MB): peak = 2363.094 ; gain = 947.152
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP, Shift Register and Retiming Reporting
@@ -1039,7 +1057,7 @@ Distributed RAM: Final Mapping Report
 |Module Name  | RTL Object                           | Inference | Size (Depth x Width) | Primitives     | 
 +-------------+--------------------------------------+-----------+----------------------+----------------+
 |i_1/uart_dut | uart_iface_dut/uart_tx_dut/queue_reg | Implied   | 2 x 8                | RAM32M x 2     | 
-|air_soc      | main_memory/ram_reg                  | Implied   | 16 K x 32            | RAM64M x 2200  | 
+|air_soc      | main_memory/ram_reg                  | Implied   | 16 K x 32            | RAM64M x 4400  | 
 +-------------+--------------------------------------+-----------+----------------------+----------------+
 
 ---------------------------------------------------------------------------------
@@ -1049,7 +1067,7 @@ Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
 Start Technology Mapping
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:03:10 ; elapsed = 00:03:11 . Memory (MB): peak = 2336.238 ; gain = 924.020
+Finished Technology Mapping : Time (s): cpu = 00:03:14 ; elapsed = 00:03:21 . Memory (MB): peak = 2363.094 ; gain = 947.152
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start IO Insertion
@@ -1067,37 +1085,37 @@ Start Final Netlist Cleanup
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:03:17 ; elapsed = 00:03:19 . Memory (MB): peak = 2336.238 ; gain = 924.020
+Finished IO Insertion : Time (s): cpu = 00:03:21 ; elapsed = 00:03:28 . Memory (MB): peak = 2363.094 ; gain = 947.152
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:03:17 ; elapsed = 00:03:19 . Memory (MB): peak = 2336.238 ; gain = 924.020
+Finished Renaming Generated Instances : Time (s): cpu = 00:03:21 ; elapsed = 00:03:29 . Memory (MB): peak = 2363.094 ; gain = 947.152
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:03:21 ; elapsed = 00:03:22 . Memory (MB): peak = 2336.238 ; gain = 924.020
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:03:25 ; elapsed = 00:03:32 . Memory (MB): peak = 2363.094 ; gain = 947.152
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:03:21 ; elapsed = 00:03:22 . Memory (MB): peak = 2336.238 ; gain = 924.020
+Finished Renaming Generated Ports : Time (s): cpu = 00:03:25 ; elapsed = 00:03:32 . Memory (MB): peak = 2363.094 ; gain = 947.152
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:03:22 ; elapsed = 00:03:23 . Memory (MB): peak = 2336.238 ; gain = 924.020
+Finished Handling Custom Attributes : Time (s): cpu = 00:03:26 ; elapsed = 00:03:33 . Memory (MB): peak = 2363.094 ; gain = 947.152
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:03:22 ; elapsed = 00:03:23 . Memory (MB): peak = 2336.238 ; gain = 924.020
+Finished Renaming Generated Nets : Time (s): cpu = 00:03:26 ; elapsed = 00:03:33 . Memory (MB): peak = 2363.094 ; gain = 947.152
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Writing Synthesis Report
@@ -1128,43 +1146,43 @@ Report Cell Usage:
 +------+----------+------+
 |1     |clk_wiz   |     1|
 |2     |BUFG      |    12|
-|3     |CARRY4    |   212|
+|3     |CARRY4    |   257|
 |4     |DSP48E1   |     5|
-|6     |LUT1      |    12|
-|7     |LUT2      |   691|
-|8     |LUT3      |  2217|
-|9     |LUT4      |  1307|
-|10    |LUT5      |  1578|
-|11    |LUT6      |  7512|
-|12    |MUXF7     |  1282|
-|13    |MUXF8     |   469|
+|6     |LUT1      |    13|
+|7     |LUT2      |   909|
+|8     |LUT3      |  2108|
+|9     |LUT4      |  1462|
+|10    |LUT5      |  1751|
+|11    |LUT6      |  7539|
+|12    |MUXF7     |  1281|
+|13    |MUXF8     |   467|
 |14    |RAM32M    |     1|
 |15    |RAM32X1D  |     2|
 |16    |RAM64M    |  2200|
 |17    |STARTUPE2 |     1|
 |18    |FDCE      |  1878|
 |19    |FDPE      |   226|
-|20    |FDRE      |  1502|
-|21    |FDSE      |     2|
+|20    |FDRE      |  1780|
+|21    |FDSE      |     4|
 |22    |LD        |    33|
 |23    |LDC       |   992|
-|24    |IBUF      |     1|
+|24    |IBUF      |     2|
 |25    |IOBUF     |     4|
-|26    |OBUF      |     2|
+|26    |OBUF      |     3|
 +------+----------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:03:22 ; elapsed = 00:03:23 . Memory (MB): peak = 2336.238 ; gain = 924.020
+Finished Writing Synthesis Report : Time (s): cpu = 00:03:26 ; elapsed = 00:03:33 . Memory (MB): peak = 2363.094 ; gain = 947.152
 ---------------------------------------------------------------------------------
 Synthesis finished with 0 errors, 0 critical warnings and 33 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:03:03 ; elapsed = 00:03:18 . Memory (MB): peak = 2336.238 ; gain = 832.176
-Synthesis Optimization Complete : Time (s): cpu = 00:03:22 ; elapsed = 00:03:23 . Memory (MB): peak = 2336.238 ; gain = 924.020
+Synthesis Optimization Runtime : Time (s): cpu = 00:03:07 ; elapsed = 00:03:26 . Memory (MB): peak = 2363.094 ; gain = 857.273
+Synthesis Optimization Complete : Time (s): cpu = 00:03:26 ; elapsed = 00:03:33 . Memory (MB): peak = 2363.094 ; gain = 947.152
 INFO: [Project 1-571] Translating synthesized netlist
-Netlist sorting complete. Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.389 . Memory (MB): peak = 2336.238 ; gain = 0.000
-INFO: [Netlist 29-17] Analyzing 5201 Unisim elements for replacement
+Netlist sorting complete. Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.420 . Memory (MB): peak = 2363.094 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 5243 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 2 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 INFO: [Opt 31-138] Pushed 1 inverter(s) to 1 load pin(s).
-Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.014 . Memory (MB): peak = 2336.238 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.014 . Memory (MB): peak = 2363.094 ; gain = 0.000
 INFO: [Project 1-111] Unisim Transformation Summary:
   A total of 3232 instances were transformed.
   IOBUF => IOBUF (IBUF, OBUFT): 4 instances
@@ -1175,11 +1193,11 @@ INFO: [Project 1-111] Unisim Transformation Summary:
   RAM32X1D => RAM32X1D (RAMD32(x2)): 2 instances
   RAM64M => RAM64M (RAMD64E(x4)): 2200 instances
 
-Synth Design complete, checksum: 9c69bc86
+Synth Design complete, checksum: f7974c4e
 INFO: [Common 17-83] Releasing license: Synthesis
-191 Infos, 389 Warnings, 0 Critical Warnings and 0 Errors encountered.
+195 Infos, 384 Warnings, 0 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:03:34 ; elapsed = 00:03:36 . Memory (MB): peak = 2336.238 ; gain = 1299.855
+synth_design: Time (s): cpu = 00:03:39 ; elapsed = 00:03:57 . Memory (MB): peak = 2363.094 ; gain = 1324.633
 INFO: [Common 17-1381] The checkpoint 'D:/gitcls/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/air_soc.dcp' has been generated.
 INFO: [runtcl-4] Executing : report_utilization -file air_soc_utilization_synth.rpt -pb air_soc_utilization_synth.pb
-INFO: [Common 17-206] Exiting Vivado at Wed Apr  9 17:43:24 2025...
+INFO: [Common 17-206] Exiting Vivado at Thu Apr 10 02:44:27 2025...
