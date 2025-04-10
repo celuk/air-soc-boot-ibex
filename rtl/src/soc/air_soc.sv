@@ -12,8 +12,8 @@ module air_soc (
 
    //input  wire uart_rx_i,
    
-   //input  wire program_rx_i,
-   //output wire prog_mode_led_o,
+   input  wire program_rx_i,
+   output wire prog_mode_led_o,
    
    output wire uart_tx_o
 
@@ -330,9 +330,9 @@ module air_soc (
       .rvalid_o(mem_rvalid),
       .rdata_o (mem_rdata)
 
-      //,.program_rx_i(program_rx_i)
+      ,.program_rx_i(program_rx_i)
       ,.system_reset_o(system_reset_o)
-      //,.prog_mode_led_o(prog_mode_led_o)
+      ,.prog_mode_led_o(prog_mode_led_o)
    );
 
    obi_demux obi_demux_dut (
