@@ -98,7 +98,7 @@ module ram32 #(
    assign wr_addr_ram = (prog_mode_led_o && ram_prog_data_valid) ? prog_addr : mem_addr;
    assign wr_data_ram = (prog_mode_led_o && ram_prog_data_valid) ? ram_prog_data : wdata_i;
 
-   reg  prog_sys_rst_n = 1;
+   reg  prog_sys_rst_n;
    wire rst_n = rst_ni && prog_sys_rst_n;
 
    always @(posedge clk_i) begin
@@ -142,7 +142,7 @@ module ram32 #(
    
    assign ram_prog_data       = prog_instruction;
    assign ram_prog_data_valid = prog_inst_valid;
-   reg boot_rstn = 1;
+   reg boot_rstn;
    assign system_reset_o      = prog_sys_rst_n & boot_rstn;
    assign ram_prog_rd_en      = (state_prog != SequenceFinish);
    assign prog_mode_led_o     = (state_prog == SequenceProgram);
@@ -298,7 +298,26 @@ module ram32 #(
       .reg_dat_do  (prog_uart_do)
    );
 
-   reg programmed = 0;
+   reg programmed;
+
+   initial begin
+       prog_addr = 0;
+       state_prog = SequenceWait;
+       rdata_o = 0;
+       rvalid_o = 0;
+       instruction_byte_ctr = 2'b0;
+       prog_instruction     = 32'h0;
+       prog_intr_number     = 32'h0;
+       prog_intr_ctr        = 32'h0;
+       sequence_break_ctr   = 32'h0;
+       received_sequence    = 72'h0;
+       rcv_seq_ctr          = 4'h0;
+       prog_inst_valid      = 1'b0;
+       prog_sys_rst_n       = 1'b1;
+       boot_rom_addr        = 0;
+       boot_rstn           = 0;
+       programmed          = 0;
+   end
 
    always @(posedge clk_i) begin
       if (!rst_n) begin
@@ -317,7 +336,7 @@ module ram32 #(
           //programmed <= 0;
       end
       else begin
-          if (`USE_BOOTROM && !programmed && boot_rom_addr < RAM_DEPTH) begin
+          if (`USE_BOOTROM && boot_rom_addr < RAM_DEPTH && !programmed) begin
               //boot_rom_addr <= boot_index;
               ram[boot_rom_addr] <= boot_rom_rdata;
               boot_rom_addr <= boot_rom_addr + 1;
@@ -328,7 +347,7 @@ module ram32 #(
                       ram[wr_addr_ram][i*8+:8] <= wr_data_ram[i*8+:8];
           end
           rdata_o <= ram[mem_addr];
-          if (!(`USE_BOOTROM && !programmed && boot_rom_addr < RAM_DEPTH)) begin
+          if ((!`USE_BOOTROM && programmed) || !(boot_rom_addr < RAM_DEPTH)) begin
               rvalid_o <= req_i;
               //system_reset_o <= 1;
               boot_rstn <= 1;

@@ -46,6 +46,19 @@
 	reg [31:0] send_divcnt;
 	reg send_dummy;
 
+	initial begin
+		cfg_divider = DEFAULT_DIV;
+		recv_state = 0;
+		recv_divcnt = 0;
+		recv_pattern = 0;
+		recv_buf_data = 0;
+		recv_buf_valid = 0;
+		send_pattern = ~0;
+		send_bitcnt = 0;
+		send_divcnt = 0;
+		send_dummy = 1;
+	end
+
 	assign reg_div_do = cfg_divider;
 
 	assign reg_dat_do = recv_buf_valid ? {24'b0,recv_buf_data} : ~0;
