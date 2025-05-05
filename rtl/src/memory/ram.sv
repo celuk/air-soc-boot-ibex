@@ -315,12 +315,17 @@ module ram32 #(
        prog_inst_valid      = 1'b0;
        prog_sys_rst_n       = 1'b1;
        boot_rom_addr        = 0;
-       boot_rstn           = 0;
+       if (`USE_BOOTROM) begin
+           boot_rstn = 0;
+       end
+       else begin
+           boot_rstn = 1;
+       end
        programmed          = 0;
    end
 
    always @(posedge clk_i) begin
-      if (!rst_n) begin
+      if (!rst_ni) begin
           if (`USE_BOOTROM && !programmed) begin
               //boot_index <= 0;
               boot_rom_addr <= 0;
@@ -330,10 +335,15 @@ module ram32 #(
           //    for (int ram_index = 0; ram_index < RAM_DEPTH; ram_index = ram_index + 1)
           //       ram[ram_index] <= {(NB_COL*COL_WIDTH){1'b0}};
           //end
-          rdata_o <= 0;
-          rvalid_o <= 0;
+          //rdata_o <= 0;
+          //rvalid_o <= 0;
           //system_reset_o <= 0;
           //programmed <= 0;
+      end
+      
+      if (!rst_n) begin
+          rdata_o <= 0;
+          rvalid_o <= 0;
       end
       else begin
           if (`USE_BOOTROM && boot_rom_addr < RAM_DEPTH && !programmed) begin
@@ -347,9 +357,8 @@ module ram32 #(
                       ram[wr_addr_ram][i*8+:8] <= wr_data_ram[i*8+:8];
           end
           rdata_o <= ram[mem_addr];
-          if ((!`USE_BOOTROM && programmed) || !(boot_rom_addr < RAM_DEPTH)) begin
-              rvalid_o <= req_i;
-              //system_reset_o <= 1;
+          rvalid_o <= req_i;
+          if (!`USE_BOOTROM || programmed || !(boot_rom_addr < RAM_DEPTH)) begin
               boot_rstn <= 1;
           end
           if(prog_sys_rst_n == 1'b0) programmed <= 1;
