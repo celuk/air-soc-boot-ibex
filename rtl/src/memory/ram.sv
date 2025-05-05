@@ -321,41 +321,35 @@ module ram32 #(
        end
    end
 
-   always @(posedge clk_i) begin
+   always @(posedge clk_i or negedge rst_ni) begin
       if (!rst_ni) begin
           if (`USE_BOOTROM) begin
-              //boot_index <= 0;
               boot_rom_addr <= 0;
               boot_rstn <= 0;
           end
-          //else begin
-          //    for (int ram_index = 0; ram_index < RAM_DEPTH; ram_index = ram_index + 1)
-          //       ram[ram_index] <= {(NB_COL*COL_WIDTH){1'b0}};
-          //end
-          //rdata_o <= 0;
-          //rvalid_o <= 0;
-          //system_reset_o <= 0;
-      end
-      
-      if (!rst_n) begin
           rdata_o <= 0;
           rvalid_o <= 0;
       end
       else begin
-          if (`USE_BOOTROM && boot_rom_addr < RAM_DEPTH) begin
-              //boot_rom_addr <= boot_index;
-              ram[boot_rom_addr] <= boot_rom_rdata;
-              boot_rom_addr <= boot_rom_addr + 1;
+          if (!prog_sys_rst_n) begin
+              rdata_o <= 0;
+              rvalid_o <= 0;
           end
-          else if ((req_i && we_i) || (prog_mode_led_o && ram_prog_data_valid)) begin
-              for (int i = 0; i < 4; i++) 
-                  if (be_i[i] == 1'b1) 
-                      ram[wr_addr_ram][i*8+:8] <= wr_data_ram[i*8+:8];
-          end
-          rdata_o <= ram[mem_addr];
-          rvalid_o <= req_i;
-          if (!`USE_BOOTROM || !(boot_rom_addr < RAM_DEPTH)) begin
-              boot_rstn <= 1;
+          else begin
+              if (`USE_BOOTROM && boot_rom_addr < RAM_DEPTH) begin
+                  ram[boot_rom_addr] <= boot_rom_rdata;
+                  boot_rom_addr <= boot_rom_addr + 1;
+              end
+              else if ((req_i && we_i) || (prog_mode_led_o && ram_prog_data_valid)) begin
+                  for (int i = 0; i < 4; i++) 
+                      if (be_i[i] == 1'b1) 
+                          ram[wr_addr_ram][i*8+:8] <= wr_data_ram[i*8+:8];
+              end
+              rdata_o <= ram[mem_addr];
+              rvalid_o <= req_i;
+              if (!`USE_BOOTROM || !(boot_rom_addr < RAM_DEPTH)) begin
+                  boot_rstn <= 1;
+              end
           end
       end
    end
