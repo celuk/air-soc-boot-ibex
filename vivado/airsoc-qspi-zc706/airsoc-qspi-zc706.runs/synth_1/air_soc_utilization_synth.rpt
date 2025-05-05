@@ -1,7 +1,7 @@
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2022.2 (win64) Build 3671981 Fri Oct 14 05:00:03 MDT 2022
-| Date         : Thu Apr 10 03:54:34 2025
+| Date         : Mon May  5 03:13:01 2025
 | Host         : DESKTOP-NCDM7BC running 64-bit major release  (build 9200)
 | Command      : report_utilization -file air_soc_utilization_synth.rpt -pb air_soc_utilization_synth.pb
 | Design       : air_soc
@@ -31,13 +31,13 @@ Table of Contents
 +----------------------------+-------+-------+------------+-----------+-------+
 |          Site Type         |  Used | Fixed | Prohibited | Available | Util% |
 +----------------------------+-------+-------+------------+-----------+-------+
-| Slice LUTs*                | 20613 |     0 |          0 |     20800 | 99.10 |
-|   LUT as Logic             | 11805 |     0 |          0 |     20800 | 56.75 |
+| Slice LUTs*                | 20639 |     0 |          0 |     20800 | 99.23 |
+|   LUT as Logic             | 11831 |     0 |          0 |     20800 | 56.88 |
 |   LUT as Memory            |  8808 |     0 |          0 |      9600 | 91.75 |
 |     LUT as Distributed RAM |  8808 |     0 |            |           |       |
 |     LUT as Shift Register  |     0 |     0 |            |           |       |
-| Slice Registers            |  4928 |     0 |          0 |     41600 | 11.85 |
-|   Register as Flip Flop    |  3903 |     0 |          0 |     41600 |  9.38 |
+| Slice Registers            |  4914 |     0 |          0 |     41600 | 11.81 |
+|   Register as Flip Flop    |  3889 |     0 |          0 |     41600 |  9.35 |
 |   Register as Latch        |  1025 |     0 |          0 |     41600 |  2.46 |
 | F7 Muxes                   |  1281 |     0 |          0 |     16300 |  7.86 |
 | F8 Muxes                   |   467 |     0 |          0 |      8150 |  5.73 |
@@ -61,7 +61,7 @@ Warning! LUT value is adjusted to account for LUT combining.
 | 226   |          Yes |           - |          Set |
 | 2903  |          Yes |           - |        Reset |
 | 4     |          Yes |         Set |            - |
-| 1795  |          Yes |       Reset |            - |
+| 1781  |          Yes |       Reset |            - |
 +-------+--------------+-------------+--------------+
 
 
@@ -155,20 +155,20 @@ Warning! LUT value is adjusted to account for LUT combining.
 |  Ref Name | Used | Functional Category |
 +-----------+------+---------------------+
 | RAMD64E   | 8800 |  Distributed Memory |
-| LUT6      | 7761 |                 LUT |
-| LUT3      | 2089 |                 LUT |
+| LUT6      | 7600 |                 LUT |
+| LUT3      | 2147 |                 LUT |
 | FDCE      | 1878 |        Flop & Latch |
-| FDRE      | 1795 |        Flop & Latch |
-| LUT5      | 1587 |                 LUT |
-| LUT4      | 1429 |                 LUT |
+| FDRE      | 1781 |        Flop & Latch |
+| LUT5      | 1685 |                 LUT |
+| LUT4      | 1463 |                 LUT |
 | MUXF7     | 1281 |               MuxFx |
 | LDCE      | 1025 |        Flop & Latch |
-| LUT2      |  868 |                 LUT |
+| LUT2      |  869 |                 LUT |
 | MUXF8     |  467 |               MuxFx |
-| CARRY4    |  261 |          CarryLogic |
+| CARRY4    |  257 |          CarryLogic |
 | FDPE      |  226 |        Flop & Latch |
-| LUT1      |   12 |                 LUT |
 | BUFG      |   12 |               Clock |
+| LUT1      |   11 |                 LUT |
 | RAMD32    |   10 |  Distributed Memory |
 | IBUF      |    6 |                  IO |
 | DSP48E1   |    5 |    Block Arithmetic |
