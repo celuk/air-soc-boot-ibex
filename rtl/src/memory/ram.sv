@@ -298,8 +298,6 @@ module ram32 #(
       .reg_dat_do  (prog_uart_do)
    );
 
-   reg programmed;
-
    initial begin
        prog_addr = 0;
        state_prog = SequenceWait;
@@ -321,12 +319,11 @@ module ram32 #(
        else begin
            boot_rstn = 1;
        end
-       programmed          = 0;
    end
 
    always @(posedge clk_i) begin
       if (!rst_ni) begin
-          if (`USE_BOOTROM && !programmed) begin
+          if (`USE_BOOTROM) begin
               //boot_index <= 0;
               boot_rom_addr <= 0;
               boot_rstn <= 0;
@@ -338,7 +335,6 @@ module ram32 #(
           //rdata_o <= 0;
           //rvalid_o <= 0;
           //system_reset_o <= 0;
-          //programmed <= 0;
       end
       
       if (!rst_n) begin
@@ -346,7 +342,7 @@ module ram32 #(
           rvalid_o <= 0;
       end
       else begin
-          if (`USE_BOOTROM && boot_rom_addr < RAM_DEPTH && !programmed) begin
+          if (`USE_BOOTROM && boot_rom_addr < RAM_DEPTH) begin
               //boot_rom_addr <= boot_index;
               ram[boot_rom_addr] <= boot_rom_rdata;
               boot_rom_addr <= boot_rom_addr + 1;
@@ -358,10 +354,9 @@ module ram32 #(
           end
           rdata_o <= ram[mem_addr];
           rvalid_o <= req_i;
-          if (!`USE_BOOTROM || programmed || !(boot_rom_addr < RAM_DEPTH)) begin
+          if (!`USE_BOOTROM || !(boot_rom_addr < RAM_DEPTH)) begin
               boot_rstn <= 1;
           end
-          if(prog_sys_rst_n == 1'b0) programmed <= 1;
       end
    end
 
