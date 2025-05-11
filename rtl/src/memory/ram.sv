@@ -321,7 +321,7 @@ module ram32 #(
        end
    end
 
-   always @(posedge clk_i or negedge rst_ni) begin
+   always @(posedge clk_i) begin
       if (!rst_ni) begin
           if (`USE_BOOTROM) begin
               boot_rom_addr <= 0;
@@ -340,10 +340,12 @@ module ram32 #(
                   ram[boot_rom_addr] <= boot_rom_rdata;
                   boot_rom_addr <= boot_rom_addr + 1;
               end
-              else if ((req_i && we_i) || (prog_mode_led_o && ram_prog_data_valid)) begin
-                  for (int i = 0; i < 4; i++) 
-                      if (be_i[i] == 1'b1) 
-                          ram[wr_addr_ram][i*8+:8] <= wr_data_ram[i*8+:8];
+              else if ((req_i && we_i)) begin
+                 for (int i = 0; i < 4; i++) if (be_i[i] == 1'b1) ram[wr_addr_ram][i*8+:8] <= wr_data_ram[i*8+:8];
+              end
+              // while programming do not rely on req, we and be
+              else if ((prog_mode_led_o && ram_prog_data_valid)) begin
+                 for (int i = 0; i < 4; i++) ram[wr_addr_ram][i*8+:8] <= wr_data_ram[i*8+:8];
               end
               rdata_o <= ram[mem_addr];
               rvalid_o <= req_i;
