@@ -512,7 +512,7 @@ module air_soc (
 
    qspi_controller_obi qspi (
       .clk_i         (clkwiz_o),
-      .rst_ni        (rst_ni),
+      .rst_ni        (rst_n),
       .req_i         (qspi_req),
       .we_i          (qspi_we),
       .be_i          (qspi_be),
