@@ -245,8 +245,11 @@ module ram32 #(
         prog_sys_rst_n       <= 1'b1;
         prog_addr            <= 'h0;
       end else begin
+        if(!system_reset_o) begin
+          prog_addr <= 'h0;
+        end
         // Increment programming address when valid data
-        if (prog_mode_led_o && ram_prog_data_valid) begin
+        else if (prog_mode_led_o && ram_prog_data_valid) begin
           prog_addr <= prog_addr + 1'b1;
         end
         
