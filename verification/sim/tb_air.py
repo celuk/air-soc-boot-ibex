@@ -61,7 +61,7 @@ def load_verilog_hex_file():
 @cocotb.coroutine
 async def anabellek(dut):
     await RisingEdge(dut.clk_i)
-    dut.rst_ni.value = 0
+    dut.rst_ni.value = 1
     await RisingEdge(dut.clk_i)
     
     """
@@ -83,7 +83,7 @@ async def anabellek(dut):
         
     
     for test in tests:
-        dut.rst_ni.value = 0
+        dut.rst_ni.value = 1
         await RisingEdge(dut.clk_i)
         if test != "bootloader":
             for index, instruction in enumerate(tests[test]["instructions"]):
@@ -111,7 +111,7 @@ async def tair(dut):
     await read_instructions()
 
     await cocotb.start(Clock(dut.clk_i, 10, "ns").start(start_high=False))
-    dut.rst_ni.value = 0
+    dut.rst_ni.value = 1
     await RisingEdge(dut.clk_i)
     await RisingEdge(dut.clk_i)
     dut.rst_ni.value = 1
