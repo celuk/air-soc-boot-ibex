@@ -402,17 +402,5 @@ module ram32 #(
       prog_inst_valid = 1'b0;
       prog_sys_rst_n = 1'b1;
    end
-   
-   ila_0 your_instance_name (
-	.clk(clk_i), // input wire clk
-
-
-	.probe0(state_prog), // input wire [2:0]  probe0  
-	.probe1(boot_rom_addr), // input wire [31:0]  probe1 
-	.probe2(boot_in_progress), // input wire [0:0]  probe2 
-	.probe3(system_reset_o), // input wire [0:0]  probe3
-  .probe4(boot_done),
-  .probe5(prog_sys_rst_n)
-);
 
 endmodule
