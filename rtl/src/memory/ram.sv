@@ -46,7 +46,7 @@ module ram32 #(
    
    // RAM array declaration
    //(* ram_style = "block" *) // Optional directive to force BRAM
-   reg [(NB_COL*COL_WIDTH)-1:0] ram [RAM_DEPTH-1:0];
+   reg [(NB_COL*COL_WIDTH)-1:0] ram [RAM_DEPTH];
    
    // RAM initialization
    generate
@@ -387,8 +387,8 @@ module ram32 #(
    // Initial values
    initial begin
       boot_rom_addr = 0;
-      boot_in_progress = `USE_BOOTROM ? 1'b1 : 1'b0;
-      boot_done = `USE_BOOTROM ? 1'b0 : 1'b1;
+      boot_in_progress = `USE_BOOTROM && (INIT_FILE == "");
+      boot_done = ~`USE_BOOTROM || (INIT_FILE != "");
       prog_addr = 0;
       state_prog = SequenceWait;
       rvalid_r = 0;

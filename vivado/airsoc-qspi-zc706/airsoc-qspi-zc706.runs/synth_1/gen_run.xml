@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenRun Id="synth_1" LaunchPart="xc7a35tcpg236-1" LaunchTime="1747146751">
+<GenRun Id="synth_1" LaunchPart="xc7a35tcpg236-1" LaunchTime="1747262039">
   <File Type="VDS-TIMINGSUMMARY" Name="air_soc_timing_summary_synth.rpt"/>
   <File Type="RDS-DCP" Name="air_soc.dcp"/>
   <File Type="RDS-UTIL-PB" Name="air_soc_utilization_synth.pb"/>
