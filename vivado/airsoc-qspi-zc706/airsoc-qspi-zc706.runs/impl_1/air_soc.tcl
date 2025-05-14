@@ -122,6 +122,7 @@ start_step init_design
 set ACTIVE_STEP init_design
 set rc [catch {
   create_msg_db init_design.pb
+  set_param tcl.collectionResultDisplayLimit 0
   set_param xicom.use_bs_reader 1
   set_param chipscope.maxJobs 5
 OPTRACE "create in-memory project" START { }
@@ -134,11 +135,12 @@ OPTRACE "set parameters" START { }
   set_property parent.project_path /home/shc/projects/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.xpr [current_project]
   set_property ip_output_repo /home/shc/projects/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.cache/ip [current_project]
   set_property ip_cache_permissions {read write} [current_project]
-  set_property XPM_LIBRARIES XPM_CDC [current_project]
+  set_property XPM_LIBRARIES {XPM_CDC XPM_MEMORY} [current_project]
 OPTRACE "set parameters" END { }
 OPTRACE "add files" START { }
   add_files -quiet /home/shc/projects/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.runs/synth_1/air_soc.dcp
   read_ip -quiet /home/shc/projects/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.srcs/sources_1/ip/clk_wiz_0/clk_wiz_0.xci
+  read_ip -quiet /home/shc/projects/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.srcs/sources_1/ip/ila_0/ila_0.xci
 OPTRACE "read constraints: implementation" START { }
   read_xdc /home/shc/projects/air-soc-boot/xdc/basys3.xdc
 OPTRACE "read constraints: implementation" END { }
@@ -305,7 +307,7 @@ set rc [catch {
   create_msg_db write_bitstream.pb
 OPTRACE "read constraints: write_bitstream" START { }
 OPTRACE "read constraints: write_bitstream" END { }
-  set_property XPM_LIBRARIES XPM_CDC [current_project]
+  set_property XPM_LIBRARIES {XPM_CDC XPM_MEMORY} [current_project]
   catch { write_mem_info -force -no_partial_mmi air_soc.mmi }
 OPTRACE "write_bitstream setup" END { }
 OPTRACE "write_bitstream" START { }
