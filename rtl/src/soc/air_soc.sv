@@ -71,7 +71,7 @@ module air_soc (
       wire clk_ref;
       wire clk_ddr_dqs;
       wire clk_i;
-      clk_wiz_1 u_pll
+      clk_wiz_0 u_pll
       (
          .clk_in1_p(clk_p),
          .clk_in1_n(clk_n)
@@ -82,7 +82,7 @@ module air_soc (
          ,.clk_out2(clk_ddr)     // 400
          ,.clk_out3(clk_ref)     // 200
          ,.clk_out4(clk_ddr_dqs) // 400 (phase 90)
-         ,.clk_out5(clk_i)       // 50
+         ,.clk_out5(clk_i)       // 50 or 25
          ,.locked(pll_locked)
       );
 
@@ -484,6 +484,7 @@ module air_soc (
       .rdata_o (timer_rdata)
    );
 
+   `ifndef ZC706
    `ifdef QSPI_SIM
    wire qspi_cs_n_o;
    wire qspi_sck_o;
@@ -598,6 +599,7 @@ module air_soc (
       .qspi_cs_n_o   (qspi_cs_n_o),
       .qspi_sck_o    (qspi_sck_o)
    );
+   `endif
 
    `ifdef ZC706
    dram_controller_obi dram_dut (
