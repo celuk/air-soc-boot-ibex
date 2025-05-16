@@ -43,7 +43,7 @@
 
 `define ZC706
 `define DDR_MHZ 100
-`define DRAM_SIM
+//`define DRAM_SIM
 
 
 //`ifdef ZC706
