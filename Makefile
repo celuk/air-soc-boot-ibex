@@ -8,6 +8,29 @@ all:
 	@echo "What are you expecting? (￣ー￣)";
 	@echo "Read the makefile.";
 
+XILINX_VIVADO ?= /tools/Xilinx/Vivado/2022.2
+VIVADO_DIR    := ./vivado
+COMPILED_LIBS := compiled-libs
+
+.PHONY: compx
+compx:
+	@pushd $(VIVADO_DIR); \
+	mkdir -p $(COMPILED_LIBS); \
+	vlib $(COMPILED_LIBS); \
+	vmap $(COMPILED_LIBS) $(shell pwd)/$(COMPILED_LIBS); \
+	vcom -2008 -work $(COMPILED_LIBS) $(XILINX_VIVADO)/data/vhdl/src/unisims/unisim_VCOMP.vhd $(XILINX_VIVADO)/data/vhdl/src/unisims/unisim_VPKG.vhd; \
+	vlog -work $(COMPILED_LIBS) $(XILINX_VIVADO)/data/verilog/src/unisims/*.v; \
+	export XILINX_VIVADO=$(XILINX_VIVADO); \
+	vlog -work $(COMPILED_LIBS) -f $(XILINX_VIVADO)/data/secureip/secureip_cell.list.f; \
+	vlog -work $(COMPILED_LIBS) $(XILINX_VIVADO)/data/verilog/src/glbl.v; \
+	popd;
+	
+.PHONY: rmcompx
+rmcompx:
+	@pushd $(VIVADO_DIR); \
+	rm -rf $(COMPILED_LIBS) \
+	rm -f modelsim.ini; \
+	popd;
 
 #.PHONY: sim
 #sim:
