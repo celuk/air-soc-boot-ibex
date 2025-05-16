@@ -58,10 +58,10 @@ def load_verilog_hex_file():
     return memory
 
 @cocotb.coroutine
-async def anabellek(dut, start_address):
-    await RisingEdge(dut.clk_i)
+async def anabellek(dut, clk, start_address):
+    await RisingEdge(clk)
     dut.rst_ni.value = 0
-    await RisingEdge(dut.clk_i)
+    await RisingEdge(clk)
     
     if cfile != "bootloader":
         memory = load_verilog_hex_file()
@@ -75,12 +75,12 @@ async def anabellek(dut, start_address):
                 )
                 dut.main_memory.ram[address >> 2].value = word
     
-    await RisingEdge(dut.clk_i)
+    await RisingEdge(clk)
     dut.rst_ni.value = 1
 
     timeout = 0
     while True:
-        await RisingEdge(dut.clk_i)
+        await RisingEdge(clk)
         if timeout > TIMEOUT:
             break
         timeout += 1
@@ -88,7 +88,7 @@ async def anabellek(dut, start_address):
     """
     for test in tests:
         dut.rst_ni.value = 0
-        await RisingEdge(dut.clk_i)
+        await RisingEdge(clk)
         #if test != "bootloader":
         for index, instruction in enumerate(tests[test]["instructions"]):
             # fmt: off
@@ -99,12 +99,12 @@ async def anabellek(dut, start_address):
             # fmt: on
             dut.main_memory.ram[index + (start_address >> 2)].value = int(instruction, 16)
 
-        await RisingEdge(dut.clk_i)
+        await RisingEdge(clk)
         dut.rst_ni.value = 1
 
         timeout = 0
         while True:
-            await RisingEdge(dut.clk_i)
+            await RisingEdge(clk)
             if timeout > TIMEOUT:
                 break
             timeout += 1
@@ -112,17 +112,38 @@ async def anabellek(dut, start_address):
 
 @cocotb.test()
 async def tair(dut):
-    await read_instructions()
+    #await read_instructions()
 
     ## start address of hex file not boot address
     ## boot address is 0x80 always but the hex file start address can be different
     start_address = 0x00000000
     ## is not used now
 
-    await cocotb.start(Clock(dut.clk_i, 5, "ns").start(start_high=False))
+    if hasattr(dut, "clk_p") and hasattr(dut, "clk_n"):
+        # drive the positive pin
+        clk = dut.clk_p
+        cocotb.start_soon(Clock(clk, 5, "ns").start(start_high=False))
+
+        # in parallel, tie clk_n to the inverse of clk_p
+        async def drive_inverted():
+            # initialise
+            dut.clk_n.value = 1
+            while True:
+                await RisingEdge(clk)
+                dut.clk_n.value = 0
+                await FallingEdge(clk)
+                dut.clk_n.value = 1
+
+        cocotb.start_soon(drive_inverted())
+
+    else:
+        # fallback to single-ended
+        clk = dut.clk_i
+        cocotb.start_soon(Clock(clk, 10, "ns").start(start_high=False))
+
     dut.rst_ni.value = 0
-    await RisingEdge(dut.clk_i)
-    await RisingEdge(dut.clk_i)
+    await RisingEdge(clk)
+    await RisingEdge(clk)
     dut.rst_ni.value = 1
-    blk = cocotb.start_soon(anabellek(dut, start_address))
+    blk = cocotb.start_soon(anabellek(dut, clk, start_address))
     await blk

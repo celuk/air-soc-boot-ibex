@@ -38,11 +38,13 @@
 `define USE_BOOTROM 0
 
 //`define BASYS3
+//`define EXT_FLASH
+//`define QSPI_SIM
+
 `define ZC706
 `define DDR_MHZ 100
 `define DRAM_SIM
-//`define EXT_FLASH
-//`define QSPI_SIM
+
 
 //`ifdef ZC706
 //    `ifndef EXT_FLASH

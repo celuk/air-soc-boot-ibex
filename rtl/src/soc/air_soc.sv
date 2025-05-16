@@ -644,7 +644,7 @@ module air_soc (
 
    `ifdef ZC706
    dram_controller_obi dram_dut (
-      .clk_i   (clk_i),
+      .clk_i   (clkwiz_o),
       .rst_ni  (rst_n),
       .req_i   (dram_req),
       .we_i    (dram_we),
