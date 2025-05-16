@@ -40,6 +40,7 @@
 //`define BASYS3
 `define ZC706
 `define DDR_MHZ 100
+`define DRAM_SIM
 //`define EXT_FLASH
 //`define QSPI_SIM
 

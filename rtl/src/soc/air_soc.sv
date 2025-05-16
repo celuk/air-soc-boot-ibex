@@ -32,6 +32,7 @@ module air_soc (
    `endif
    `endif
 
+   `ifndef DRAM_SIM
    `ifdef ZC706
    ,output wire ddr3_reset_n
    ,output wire ddr3_cke
@@ -48,6 +49,7 @@ module air_soc (
    ,inout wire [1:0] ddr3_dqs_p
    ,inout wire [1:0] ddr3_dqs_n
    ,inout wire [15:0] ddr3_dq
+   `endif
    `endif
 );
 
@@ -598,6 +600,45 @@ module air_soc (
       .qspi_out_mod_o(qspi_out_mod_o),
       .qspi_cs_n_o   (qspi_cs_n_o),
       .qspi_sck_o    (qspi_sck_o)
+   );
+   `endif
+
+   `ifdef DRAM_SIM
+   wire ddr3_reset_n;
+   wire ddr3_cke;
+   wire ddr3_ck_p;
+   wire ddr3_ck_n;
+   wire ddr3_cs_n;
+   wire ddr3_ras_n;
+   wire ddr3_cas_n;
+   wire ddr3_we_n;
+   wire [2:0] ddr3_ba;
+   wire [13:0] ddr3_addr;
+   wire ddr3_odt;
+   wire [1:0] ddr3_dm;
+   wire [1:0] ddr3_dqs_p;
+   wire [1:0] ddr3_dqs_n;
+   wire [15:0] ddr3_dq;
+
+   `include "1024Mb_ddr3_parameters.vh"
+
+   ddr3 ddr3_dut (
+      .rst_n  (ddr3_reset_n),
+      .ck     (ddr3_ck_p),
+      .ck_n   (ddr3_ck_n),
+      .cke    (ddr3_cke),
+      .cs_n   (ddr3_cs_n),
+      .ras_n  (ddr3_ras_n),
+      .cas_n  (ddr3_cas_n),
+      .we_n   (ddr3_we_n),
+      .dm_tdqs(ddr3_dm),
+      .ba     (ddr3_ba),
+      .addr   (ddr3_addr),
+      .dq     (ddr3_dq),
+      .dqs    (ddr3_dqs_p),
+      .dqs_n  (ddr3_dqs_n),
+      .tdqs_n (),
+      .odt    (ddr3_odt)
    );
    `endif
 

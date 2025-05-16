@@ -119,7 +119,7 @@ async def tair(dut):
     start_address = 0x00000000
     ## is not used now
 
-    await cocotb.start(Clock(dut.clk_i, 1, "ns").start(start_high=False))
+    await cocotb.start(Clock(dut.clk_i, 5, "ns").start(start_high=False))
     dut.rst_ni.value = 0
     await RisingEdge(dut.clk_i)
     await RisingEdge(dut.clk_i)
