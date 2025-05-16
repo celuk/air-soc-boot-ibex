@@ -17,7 +17,7 @@ compx:
 	@pushd $(VIVADO_DIR); \
 	mkdir -p $(COMPILED_LIBS); \
 	vlib $(COMPILED_LIBS); \
-	vmap $(COMPILED_LIBS) $(shell pwd)/$(COMPILED_LIBS); \
+	vmap $(COMPILED_LIBS) $(shell pwd)/$(VIVADO_DIR)/$(COMPILED_LIBS); \
 	vcom -2008 -work $(COMPILED_LIBS) $(XILINX_VIVADO)/data/vhdl/src/unisims/unisim_VCOMP.vhd $(XILINX_VIVADO)/data/vhdl/src/unisims/unisim_VPKG.vhd; \
 	vlog -work $(COMPILED_LIBS) $(XILINX_VIVADO)/data/verilog/src/unisims/*.v; \
 	export XILINX_VIVADO=$(XILINX_VIVADO); \
