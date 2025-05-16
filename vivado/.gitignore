@@ -102,3 +102,7 @@ hw_handoff
 ipshared
 
 *.rpt
+
+modelsim.ini
+compiled-libs/
+

@@ -25,12 +25,20 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
     # submodule_include_dir = Path(SCRIPT_DIR / "../../cv32e40p/rtl/include")
     # submodule_include_files = submodule_dir.rglob("*.sv")
 
+    #vivado_ip_verilog_dir = Path("/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims")
+    #vivado_ip_verilog_files = vivado_ip_verilog_dir.rglob("*.v")
+    #vivado_ip_verilog_files = list(vivado_ip_verilog_files)
+    #vivado_ip_verilog_files.append("../../vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_sim_netlist.v")
+    #vivado_ip_verilog_files.append("/tools/Xilinx/Vivado/2022.2/data/verilog/src/glbl.v")
+    #vivado_ip_vhdls = ["/tools/Xilinx/Vivado/2022.2/data/vhdl/src/unisims/unisim_VCOMP.vhd", "/tools/Xilinx/Vivado/2022.2/data/vhdl/src/unisims/unisim_VPKG.vhd"]
+
     verilog_sources = (
         list(verilog_files)
         + list(system_verilog_files)
         + list(submodule_verilog_files)
         + list(submodule_system_verilog_files)
         #+ list(mem_files)
+        +list(["../../vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_sim_netlist.v"])
     )
     ## sort the sources to make sure that the def and pkg.sv files are at the beginning
     ## otherwise the simulator might not find the packages
@@ -63,13 +71,18 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
     runner = get_runner(simulator)
     runner.build(
         verilog_sources=verilog_sources,
+    #    vhdl_sources=vivado_ip_vhdls,
         includes=include_dirs,
         hdl_toplevel=top_module,
         always=True,
+    #    build_args=["-L", "../../vivado/compiled-libs"]
+        build_args=["-modelsimini", "../../../vivado/modelsim.ini"]
     )
 
     runner.test(
         hdl_toplevel=top_module,
+    #    hdl_toplevel_library="glbl",
+        hdl_toplevel_lang="verilog",
         test_module=str(test_file),
         waves=waves,
         plusargs=["+nowarnTSCALE"],
@@ -79,8 +92,12 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
             "CFILE": cfile,
         },
         pre_cmd=[
-            'set WildcardFilter {};set WildcardSizeThreshold "16777216"; coverage save -onexit covres.ucdb;'
+            'set WildcardFilter {};set WildcardSizeThreshold "16777216"; coverage save -onexit covres.ucdb;' #vmap compiled-libs "../../vivado/compiled-libs";'
         ],
+        #test_args=["-L", "compiled-libs"]
+        #test_args=["-L", "../../vivado/compiled-libs"]
+        #test_args=["-modelsimini ../../vivado/modelsim.ini"]
+        test_args=["-modelsimini", "../../../vivado/modelsim.ini", "-L", "compiled-libs", "top.glbl"]
     )
 
 
