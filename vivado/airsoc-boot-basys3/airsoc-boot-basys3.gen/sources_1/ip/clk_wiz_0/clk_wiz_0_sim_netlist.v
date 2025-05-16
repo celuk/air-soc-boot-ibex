@@ -4,7 +4,7 @@
 // Date        : Mon May 12 01:58:37 2025
 // Host        : karpuz running 64-bit Ubuntu 22.04.5 LTS
 // Command     : write_verilog -force -mode funcsim
-//               /home/shc/projects/air-soc-boot/vivado/airsoc-qspi-zc706/airsoc-qspi-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_sim_netlist.v
+//               /home/shc/projects/air-soc-boot/vivado/airsoc-boot-basys3/airsoc-boot-basys3.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_sim_netlist.v
 // Design      : clk_wiz_0
 // Purpose     : This verilog netlist is a functional simulation representation of the design and should not be modified
 //               or synthesized. This netlist cannot be used for SDF annotated simulation.
