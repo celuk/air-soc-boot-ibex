@@ -56,6 +56,17 @@ module obi_demux (
    ,input  wire        qspi_gnt_i
    ,input  wire        qspi_rvalid_i
    ,input  wire [31:0] qspi_rdata_i
+
+   `ifdef ZC706
+   ,output wire        dram_req_o
+   ,output wire [31:0] dram_addr_o
+   ,output wire        dram_we_o
+   ,output wire [ 3:0] dram_be_o
+   ,output wire [31:0] dram_wdata_o
+   ,input  wire        dram_gnt_i
+   ,input  wire        dram_rvalid_i
+   ,input  wire [31:0] dram_rdata_i
+   `endif
 );
 
    reg         data_req;
@@ -78,11 +89,13 @@ module obi_demux (
    assign uart_addr_o  = data_addr;
    assign timer_addr_o = data_addr;
    assign qspi_addr_o = data_addr;
+   assign dram_addr_o = data_addr;
 
    assign cache_wdata_o = data_wdata;
    assign uart_wdata_o  = data_wdata;
    assign timer_wdata_o = data_wdata;
    assign qspi_wdata_o = data_wdata;
+   assign dram_wdata_o = data_wdata;
 
    assign cache_req_o = (`MEM_BASE_ADDR  + `MEM_RANGE  > data_addr )   && (data_addr >= `MEM_BASE_ADDR)   ? (state == WAITING) & data_req : 'h0;
    assign cache_we_o  = (`MEM_BASE_ADDR  + `MEM_RANGE  > data_addr )   && (data_addr >= `MEM_BASE_ADDR)   ? data_we  : 'h0;
@@ -100,22 +113,31 @@ module obi_demux (
    assign qspi_we_o  = (`QSPI_BASE_ADDR + `QSPI_RANGE > data_addr ) && (data_addr >= `QSPI_BASE_ADDR) ? data_we  : 'h0;
    assign qspi_be_o  = (`QSPI_BASE_ADDR + `QSPI_RANGE > data_addr ) && (data_addr >= `QSPI_BASE_ADDR) ? data_be  : 'h0;
 
+   `ifdef ZC706
+   assign dram_req_o = (`DRAM_BASE_ADDR  + `DRAM_RANGE  > data_addr ) && (data_addr >= `DRAM_BASE_ADDR) ? (state == WAITING) & data_req : 'h0;
+   assign dram_we_o  = (`DRAM_BASE_ADDR  + `DRAM_RANGE  > data_addr ) && (data_addr >= `DRAM_BASE_ADDR) ? data_we  : 'h0;
+   assign dram_be_o  = (`DRAM_BASE_ADDR  + `DRAM_RANGE  > data_addr ) && (data_addr >= `DRAM_BASE_ADDR) ? data_be  : 'h0;
+   `endif
+
    assign data_rdata_o = (`MEM_BASE_ADDR+`MEM_RANGE     > data_addr) && (data_addr >= `MEM_BASE_ADDR  ) ? cache_rdata_i :
                          (`UART_BASE_ADDR+`UART_RANGE   > data_addr) && (data_addr >= `UART_BASE_ADDR ) ? uart_rdata_i  :
                          (`TIMER_BASE_ADDR+`TIMER_RANGE > data_addr) && (data_addr >= `TIMER_BASE_ADDR) ? timer_rdata_i :
                          (`QSPI_BASE_ADDR+`QSPI_RANGE   > data_addr) && (data_addr >= `QSPI_BASE_ADDR ) ? qspi_rdata_i  :
+                         `ifdef ZC706 (`DRAM_BASE_ADDR+`DRAM_RANGE   > data_addr) && (data_addr >= `DRAM_BASE_ADDR ) ? dram_rdata_i  : `endif
                                                                                                           32'h0         ;
 
    assign data_rvalid_o= (`MEM_BASE_ADDR+`MEM_RANGE     >= data_addr) && (data_addr >= `MEM_BASE_ADDR  ) ? cache_rvalid_i :
                          (`UART_BASE_ADDR+`UART_RANGE   >= data_addr) && (data_addr >= `UART_BASE_ADDR ) ? uart_rvalid_i  :
                          (`TIMER_BASE_ADDR+`TIMER_RANGE >= data_addr) && (data_addr >= `TIMER_BASE_ADDR) ? timer_rvalid_i :
                          (`QSPI_BASE_ADDR+`QSPI_RANGE   >= data_addr) && (data_addr >= `QSPI_BASE_ADDR ) ? qspi_rvalid_i  :
+                         `ifdef ZC706 (`DRAM_BASE_ADDR+`DRAM_RANGE   >= data_addr) && (data_addr >= `DRAM_BASE_ADDR ) ? dram_rvalid_i  : `endif
                                                                                                            1'h0           ;
 
    assign periph_gnt   = (`MEM_BASE_ADDR+`MEM_RANGE     > data_addr) && (data_addr >= `MEM_BASE_ADDR  ) ? cache_gnt_i :
                          (`UART_BASE_ADDR+`UART_RANGE   > data_addr) && (data_addr >= `UART_BASE_ADDR ) ? uart_gnt_i  :
                          (`TIMER_BASE_ADDR+`TIMER_RANGE > data_addr) && (data_addr >= `TIMER_BASE_ADDR) ? timer_gnt_i :
                          (`QSPI_BASE_ADDR+`QSPI_RANGE   > data_addr) && (data_addr >= `QSPI_BASE_ADDR ) ? qspi_gnt_i  :
+                         `ifdef ZC706 (`DRAM_BASE_ADDR+`DRAM_RANGE   > data_addr) && (data_addr >= `DRAM_BASE_ADDR ) ? dram_gnt_i  : `endif
                                                                                                           'h0         ;
 
    assign data_gnt_o = (state == IDLE) & periph_gnt;

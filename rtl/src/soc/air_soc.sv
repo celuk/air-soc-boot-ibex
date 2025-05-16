@@ -6,7 +6,12 @@
 `default_nettype none
 
 module air_soc (
+   `ifdef ZC706
+   input  wire clk_p,
+   input  wire clk_n,
+   `else
    input wire clk_i,
+   `endif
 
    input wire rst_ni,
 
@@ -17,6 +22,7 @@ module air_soc (
    
    output wire uart_tx_o
 
+   `ifndef ZC706
    `ifndef QSPI_SIM
    ,output wire qspi_cs_n_o
    `ifdef EXT_FLASH
@@ -24,24 +30,67 @@ module air_soc (
    `endif
    ,inout wire [3:0] qspi_data_io
    `endif
+   `endif
+
+   `ifdef ZC706
+   ,output wire ddr3_reset_n
+   ,output wire ddr3_cke
+   ,output wire ddr3_ck_p
+   ,output wire ddr3_ck_n
+   ,output wire ddr3_cs_n
+   ,output wire ddr3_ras_n
+   ,output wire ddr3_cas_n
+   ,output wire ddr3_we_n
+   ,output wire [2:0] ddr3_ba
+   ,output wire [13:0] ddr3_addr
+   ,output wire ddr3_odt
+   ,output wire [1:0] ddr3_dm
+   ,inout wire [1:0] ddr3_dqs_p
+   ,inout wire [1:0] ddr3_dqs_n
+   ,inout wire [15:0] ddr3_dq
+   `endif
 );
 
    wire uart_rx_i;
 
    logic system_reset_o;
    `ifdef BASYS3
-   wire clkwiz_o;
-   wire clkwiz_locked;
-   clk_wiz_0 dutclk (
-      .clk_out1(clkwiz_o),
-      .clk_in1(clk_i),
-      .reset(~rst_ni),
-      .locked(clkwiz_locked)
-   );
-   wire rst_n = rst_ni & system_reset_o & clkwiz_locked;
+      wire clkwiz_o;
+      wire clkwiz_locked;
+      clk_wiz_0 dutclk (
+         .clk_out1(clkwiz_o),
+         .clk_in1(clk_i),
+         .reset(~rst_ni),
+         .locked(clkwiz_locked)
+      );
+      wire rst_n = rst_ni & system_reset_o & clkwiz_locked;
+   `elsif ZC706
+      wire pll_locked;
+      wire clk100;
+      wire clk_ddr;
+      wire clk_ref;
+      wire clk_ddr_dqs;
+      wire clk_i;
+      clk_wiz_1 u_pll
+      (
+         .clk_in1_p(clk_p),
+         .clk_in1_n(clk_n)
+
+         ,.reset(~rst_ni)
+
+         ,.clk_out1(clk100)      // 100
+         ,.clk_out2(clk_ddr)     // 400
+         ,.clk_out3(clk_ref)     // 200
+         ,.clk_out4(clk_ddr_dqs) // 400 (phase 90)
+         ,.clk_out5(clk_i)       // 50
+         ,.locked(pll_locked)
+      );
+
+      wire clkwiz_o = clk_i;
+      wire rst_n = rst_ni & system_reset_o & pll_locked;
    `else
-   wire clkwiz_o = clk_i;
-   wire rst_n = rst_ni & system_reset_o;
+      wire clkwiz_o = clk_i;
+      wire rst_n = rst_ni & system_reset_o;
    `endif
 
    logic               mem_req;
@@ -104,6 +153,17 @@ module air_soc (
    logic                qspi_gnt;
    logic                qspi_rvalid;
    logic [`MEM_W  -1:0] qspi_rdata;
+
+   `ifdef ZC706
+   logic                dram_req;
+   logic [       31:0]  dram_addr;
+   logic                dram_we;
+   logic [`MEM_W/8-1:0] dram_be;
+   logic [`MEM_W  -1:0] dram_wdata;
+   logic                dram_gnt;
+   logic                dram_rvalid;
+   logic [`MEM_W  -1:0] dram_rdata;
+   `endif
 
    // instruction cache
    logic               imem_req;
@@ -383,6 +443,17 @@ module air_soc (
       ,.qspi_gnt_i   (qspi_gnt)
       ,.qspi_rvalid_i(qspi_rvalid)
       ,.qspi_rdata_i (qspi_rdata)
+
+      `ifdef ZC706
+      ,.dram_req_o   (dram_req)
+      ,.dram_addr_o  (dram_addr)
+      ,.dram_we_o    (dram_we)
+      ,.dram_be_o    (dram_be)
+      ,.dram_wdata_o (dram_wdata)
+      ,.dram_gnt_i   (dram_gnt)
+      ,.dram_rvalid_i(dram_rvalid)
+      ,.dram_rdata_i (dram_rdata)
+      `endif
    );
 
    uart_controller_obi uart_dut (
@@ -527,5 +598,41 @@ module air_soc (
       .qspi_cs_n_o   (qspi_cs_n_o),
       .qspi_sck_o    (qspi_sck_o)
    );
+
+   `ifdef ZC706
+   dram_controller_obi dram_dut (
+      .clk_i   (clk_i),
+      .rst_ni  (rst_n),
+      .req_i   (dram_req),
+      .we_i    (dram_we),
+      .be_i    (dram_be),
+      .addr_i  (dram_addr),
+      .wdata_i (dram_wdata),
+      .gnt_o   (dram_gnt),
+      .rvalid_o(dram_rvalid),
+      .rdata_o (dram_rdata)
+
+      ,.ddr3_reset_n(ddr3_reset_n)
+      ,.ddr3_cke(ddr3_cke)
+      ,.ddr3_ck_p(ddr3_ck_p)
+      ,.ddr3_ck_n(ddr3_ck_n)
+      ,.ddr3_cs_n(ddr3_cs_n)
+      ,.ddr3_ras_n(ddr3_ras_n)
+      ,.ddr3_cas_n(ddr3_cas_n)
+      ,.ddr3_we_n(ddr3_we_n)
+      ,.ddr3_ba(ddr3_ba)
+      ,.ddr3_addr(ddr3_addr)
+      ,.ddr3_odt(ddr3_odt)
+      ,.ddr3_dm(ddr3_dm)
+      ,.ddr3_dqs_p(ddr3_dqs_p)
+      ,.ddr3_dqs_n(ddr3_dqs_n)
+      ,.ddr3_dq(ddr3_dq)
+
+      ,.clk100(clk100)
+      ,.clk_ddr(clk_ddr)
+      ,.clk_ref(clk_ref)
+      ,.clk_ddr_dqs(clk_ddr_dqs)
+   );
+   `endif
 
 endmodule
