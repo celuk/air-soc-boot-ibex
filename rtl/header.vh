@@ -43,8 +43,8 @@
 
 `define ZC706
 `define DDR_MHZ 100
-//`define DRAM_SIM
-
+`define DRAM_SIM
+`define XILINX_SIMULATOR
 
 //`ifdef ZC706
 //    `ifndef EXT_FLASH
