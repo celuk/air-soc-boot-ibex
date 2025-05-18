@@ -3,9 +3,6 @@
 
 `include "header.vh"
 
-`define WDG_TIME 12000
-// 8000-12000 iken 3te, 50000 iken 2 ve 4te hata oldu, bunu dinamik ayarlayabiliriz
-
 module dram_controller (
    input wire clk_i,
    input wire rst_i,
@@ -154,14 +151,6 @@ module dram_controller (
    reg ram_ack_r = 1;
    `endif
 
-   reg [31:0] wdg_timer = `WDG_TIME;
-   reg [31:0] wdg_started = 0;
-
-   reg data_read_r = 0;
-
-   wire ram_accepted = ram_accept ? 1 : (wdg_timer == 0);
-   wire ram_acked = ram_ack ? 1 : (wdg_timer == 0);
-
    always @(posedge clk_i) begin
        if (rst_i) begin
            timer_r <= 32'h0;
@@ -173,9 +162,6 @@ module dram_controller (
            ram_accept_r <= 1;
            ram_ack_r <= 1;
            `endif
-
-           wdg_timer <= `WDG_TIME;
-           wdg_started <= 0;
        end else begin
            if(timer_rst_r) begin
                timer_r <= 32'h0;
@@ -184,16 +170,14 @@ module dram_controller (
                timer_r <= timer_r + 32'h1;
            end
 
-           if(ram_accepted) ram_accept_r <= 1;
+           if(ram_accept) ram_accept_r <= 1;
            else if(wb_cyc_i & ~wb_we_i & (wb_adr_i == 8'b00100000)) ram_accept_r <= 0; // ram_acc okudugu durumda sifirla
          
-           if(ram_acked) ram_ack_r <= 1;
+           if(ram_ack) ram_ack_r <= 1;
            else if(wb_cyc_i & ~wb_we_i & (wb_adr_i == 8'b00100100)) ram_ack_r <= 0;
          
-           if(!ram_accept && (we_r || re_r)) begin wdg_started <= 1; end
-           if(ram_acked) begin wdg_started <= 0; wdg_timer <= `WDG_TIME; end // ram_ack gelmeyebilir, o yüzden ram_acked
-           if(wdg_started) wdg_timer <= wdg_timer - 1;
-
+         
+         
            //re_r <= re_r_next;
            //we_r <= we_r_next;
            //if(wb_cyc_i & wb_stb_i & wb_we_i & !wb_ack_o & (wb_adr_i == 8'b00011000)) re_r_next <= 0;
@@ -222,12 +206,8 @@ module dram_controller (
            rwseq <= 13;
            //refcyc <= 781; //2600; //500; //781;
            power_up_r <= 1;
-
-           data_read_r <= 0;
        end
        else begin
-        if(ram_ack) data_read_r <= 1;
-        if(wdg_timer == 0) data_read_r <= 0;
        /*
            if(power_up_r == 0) begin
                adr_r <= 32'h0;
@@ -315,8 +295,7 @@ module dram_controller (
                else if(~wb_we_i) begin
                    case(wb_adr_i)
                        8'b00001100: begin // kodda 0x2003000c adresinden okunmali
-                        if((wdg_timer == 0) || data_read_r) wb_dat_o <= data_read_w;
-                        else wb_dat_o <= 0;
+                           wb_dat_o <= data_read_w;
                        end
                        8'b00010100: begin // kodda 0x20030014
                            wb_dat_o <= timer_r;
@@ -333,8 +312,8 @@ module dram_controller (
                    endcase
                end
            end
-           if(ram_accepted & !(wb_stb_i & wb_we_i & !wb_ack_o & (wb_adr_i == 8'b00011000))) re_r <= 0;
-           if(ram_accepted & !(wb_stb_i & wb_we_i & !wb_ack_o & (wb_adr_i == 8'b00011100))) we_r <= 0;
+           if(ram_accept & !(wb_stb_i & wb_we_i & !wb_ack_o & (wb_adr_i == 8'b00011000))) re_r <= 0;
+           if(ram_accept & !(wb_stb_i & wb_we_i & !wb_ack_o & (wb_adr_i == 8'b00011100))) we_r <= 0;
        end
    end
 

@@ -42,9 +42,10 @@
 //`define QSPI_SIM
 
 `define ZC706
+`define DDR_100MHZ
 `define DDR_MHZ 100
-`define DRAM_SIM
-`define XILINX_SIMULATOR
+//`define DRAM_SIM
+//`define XILINX_SIMULATOR
 
 //`ifdef ZC706
 //    `ifndef EXT_FLASH

@@ -97,7 +97,7 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
         #test_args=["-L", "compiled-libs"]
         #test_args=["-L", "../../vivado/compiled-libs"]
         #test_args=["-modelsimini ../../vivado/modelsim.ini"]
-        test_args=["-suppress", "14408", "-suppress", "16154", "-modelsimini", "../../../vivado/modelsim.ini", "-L", "compiled-libs", "top.glbl"]
+        test_args=["-suppress", "14408", "-suppress", "16154", "-suppress", "8630", "-modelsimini", "../../../vivado/modelsim.ini", "-L", "compiled-libs", "top.glbl"]
     )
 
 
