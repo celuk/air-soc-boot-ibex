@@ -39,11 +39,12 @@
 
 //`define BASYS3
 //`define EXT_FLASH
-//`define QSPI_SIM
+`define QSPI_SIM
 
-`define ZC706
-`define DDR_100MHZ
-`define DDR_MHZ 100
+//`define ZC706
+//`define DDR_100MHZ
+//`define DDR_MHZ 100
+
 //`define DRAM_SIM
 //`define XILINX_SIMULATOR
 

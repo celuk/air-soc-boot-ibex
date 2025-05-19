@@ -89,13 +89,13 @@ module obi_demux (
    assign uart_addr_o  = data_addr;
    assign timer_addr_o = data_addr;
    assign qspi_addr_o = data_addr;
-   assign dram_addr_o = data_addr;
+   `ifdef ZC706 assign dram_addr_o = data_addr; `endif
 
    assign cache_wdata_o = data_wdata;
    assign uart_wdata_o  = data_wdata;
    assign timer_wdata_o = data_wdata;
    assign qspi_wdata_o = data_wdata;
-   assign dram_wdata_o = data_wdata;
+   `ifdef ZC706 assign dram_wdata_o = data_wdata; `endif
 
    assign cache_req_o = (`MEM_BASE_ADDR  + `MEM_RANGE  > data_addr )   && (data_addr >= `MEM_BASE_ADDR)   ? (state == WAITING) & data_req : 'h0;
    assign cache_we_o  = (`MEM_BASE_ADDR  + `MEM_RANGE  > data_addr )   && (data_addr >= `MEM_BASE_ADDR)   ? data_we  : 'h0;
