@@ -117,6 +117,15 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
         return cmds
     Xcelium._test_command = fixed_test_command
 
+    runner_build_args = ["-modelsimini", "../../../vivado/modelsim.ini"]
+    runner_pre_cmd = ['set WildcardFilter {};set WildcardSizeThreshold "16777216"; coverage save -onexit covres.ucdb;']
+    runner_test_args = ["-suppress", "14408", "-suppress", "16154", "-suppress", "8630", "-modelsimini", "../../../vivado/modelsim.ini", "-L", "compiled-libs", "top.glbl"]
+
+    if simulator.lower() == "xcelium":
+        runner_build_args = ["-access", "+rwc", "-timescale", "1ns/1ps", "-ALLOWREDEFINITION", "-relax", "-sv"]
+        runner_pre_cmd = []
+        runner_test_args = []
+
     runner = get_runner(simulator)
     runner.build(
         verilog_sources=verilog_sources,
@@ -126,7 +135,7 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
         always=True,
     #    build_args=["-L", "../../vivado/compiled-libs"]
     #    build_args=["-modelsimini", "../../../vivado/modelsim.ini"]
-        build_args=["-access", "+rwc", "-timescale", "1ns/1ps", "-ALLOWREDEFINITION", "-relax", "-sv"]
+        build_args=runner_build_args
     )
 
     runner.test(
@@ -142,6 +151,7 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
             "COCOTB_HDL_TIMEPRECISION": "1ps",
             "CFILE": cfile,
         },
+        pre_cmd=runner_pre_cmd,
     #    pre_cmd=["probe -create -packed 131072 *;"]
         #pre_cmd=[
         #    'set WildcardFilter {};set WildcardSizeThreshold "16777216"; coverage save -onexit covres.ucdb;' #vmap compiled-libs "../../vivado/compiled-libs";'
@@ -150,6 +160,7 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
         ##test_args=["-L", "../../vivado/compiled-libs"]
         ##test_args=["-modelsimini ../../vivado/modelsim.ini"]
         #test_args=["-suppress", "14408", "-suppress", "16154", "-suppress", "8630", "-modelsimini", "../../../vivado/modelsim.ini", "-L", "compiled-libs", "top.glbl"]
+        test_args=runner_test_args
     )
 
 

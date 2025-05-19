@@ -5,7 +5,7 @@ all:
 
 .PHONY: air
 air:
-	python3 ./main.py --sim xcelium --test tb_air --top  air_soc --waves true --cfile=$(CFILE)
+	python3 ./main.py --sim questa --test tb_air --top  air_soc --waves true --cfile=$(CFILE)
 
 .PHONY: air_icarus
 air_icarus:
