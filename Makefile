@@ -11,9 +11,6 @@ all:
 XILINX_VIVADO ?= /tools/Xilinx/Vivado/2022.2
 VIVADO_DIR    := ./vivado
 COMPILED_LIBS := compiled-libs
-SECUREIP_LIST := $(XILINX_VIVADO)/data/secureip/secureip_cell.list.f
-ARCH	      := zynq
-SECUREIP_ARCH_LIST := secureip_cell_$(ARCH).list.f
 
 .PHONY: compx
 compx:
@@ -22,24 +19,12 @@ compx:
 	vlib $(COMPILED_LIBS); \
 	vmap $(COMPILED_LIBS) $(shell pwd)/$(VIVADO_DIR)/$(COMPILED_LIBS); \
 	vcom -2008 -work $(COMPILED_LIBS) $(XILINX_VIVADO)/data/vhdl/src/unisims/unisim_VCOMP.vhd $(XILINX_VIVADO)/data/vhdl/src/unisims/unisim_VPKG.vhd; \
-	vlog -work $(COMPILED_LIBS) $(XILINX_VIVADO)/data/verilog/src/unisims/OBUFDS.v; \
-	vlog -work $(COMPILED_LIBS) $(XILINX_VIVADO)/data/verilog/src/unisims/IOBUFDS.v; \
-	vlog -work $(COMPILED_LIBS) $(XILINX_VIVADO)/data/verilog/src/unisims/OSERDESE2.v; \
-	vlog -work $(COMPILED_LIBS) $(XILINX_VIVADO)/data/verilog/src/unisims/ISERDESE2.v; \
-	vlog -work $(COMPILED_LIBS) $(XILINX_VIVADO)/data/verilog/src/unisims/IOBUF.v; \
-	vlog -work $(COMPILED_LIBS) $(XILINX_VIVADO)/data/verilog/src/unisims/IDELAYE2.v; \
-	vlog -work $(COMPILED_LIBS) $(XILINX_VIVADO)/data/verilog/src/unisims/IDELAYCTRL.v; \
-	vlog -work $(COMPILED_LIBS) $(XILINX_VIVADO)/data/verilog/src/unisims/BUFG.v; \
-	vlog -work $(COMPILED_LIBS) $(XILINX_VIVADO)/data/verilog/src/unisims/IBUFDS.v; \
-	vlog -work $(COMPILED_LIBS) $(XILINX_VIVADO)/data/verilog/src/unisims/MMCME2_ADV.v; \
+	vlog -work $(COMPILED_LIBS) $(XILINX_VIVADO)/data/verilog/src/unisims/*.v; \
 	export XILINX_VIVADO=$(XILINX_VIVADO); \
-	grep -i '$(ARCH)' $(SECUREIP_LIST) > ./$(SECUREIP_ARCH_LIST); \
-	vlog -work $(COMPILED_LIBS) -f ./$(SECUREIP_ARCH_LIST); \
+	vlog -work $(COMPILED_LIBS) -f $(XILINX_VIVADO)/data/secureip/secureip_cell.list.f; \
 	vlog -work $(COMPILED_LIBS) $(XILINX_VIVADO)/data/verilog/src/glbl.v; \
 	popd;
-#vlog -work $(COMPILED_LIBS) $(XILINX_VIVADO)/data/verilog/src/unisims/*.v; \
-#vlog -work $(COMPILED_LIBS) -f $(SECUREIP_LIST); \
-
+	
 .PHONY: rmcompx
 rmcompx:
 	@pushd $(VIVADO_DIR); \
