@@ -24,3 +24,5 @@ vivado/compiled-libs/*
 
 venv/
 .simvision/
+
+verification/sim/pre_input.tcl
