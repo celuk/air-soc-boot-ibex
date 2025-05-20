@@ -149,8 +149,9 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
         extra_env={
         #    "COCOTB_LOG_LEVEL": "TRACE",
         #    "COCOTB_SCHEDULER_DEBUG": "1",
-        #    "SHM_UNPACKED_LIMIT": "131072",
-        #    "SHM_PACKED_LIMIT": "131072",
+            "SHM_RESET_DEFAULTS": "1",
+            "SHM_UNPACKED_LIMIT": "131072",
+            "SHM_PACKED_LIMIT": "131072",
             "COCOTB_HDL_TIMEUNIT": "1ns",
             "COCOTB_HDL_TIMEPRECISION": "1ps",
             "CFILE": cfile,
