@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 SUBMAKE := $(MAKE) --no-print-directory -C
 
 # All args except for the first one (which is the target name)
@@ -30,6 +32,28 @@ rmcompx:
 	@pushd $(VIVADO_DIR); \
 	rm -rf $(COMPILED_LIBS) \
 	rm -f modelsim.ini; \
+	popd;
+
+COMPILED_LIBS_X := compxip
+
+.PHONY: compxip
+compxip:
+	@pushd $(VIVADO_DIR); \
+	mkdir -p $(COMPILED_LIBS_X); \
+	echo "DEFINE $(COMPILED_LIBS_X) $(shell pwd)/$(VIVADO_DIR)/$(COMPILED_LIBS_X)" > cds.lib; \
+	xmvhdl -work $(COMPILED_LIBS_X) $(XILINX_VIVADO)/data/vhdl/src/unisims/unisim_VCOMP.vhd $(XILINX_VIVADO)/data/vhdl/src/unisims/unisim_VPKG.vhd; \
+	xmvlog -work $(COMPILED_LIBS_X) $(XILINX_VIVADO)/data/verilog/src/unisims/*.v; \
+	export XILINX_VIVADO=$(XILINX_VIVADO); \
+	xmvlog -work $(COMPILED_LIBS_X) -f $(XILINX_VIVADO)/data/secureip/secureip_cell.list.f; \
+	xmvlog -work $(COMPILED_LIBS_X) $(XILINX_VIVADO)/data/verilog/src/glbl.v; \
+	popd;
+
+.PHONY: rmcompxip
+rmcompxip:
+	@pushd $(VIVADO_DIR); \
+	rm -rf $(COMPILED_LIBS_X) \
+	rm -f cds.lib; \
+	rm -f *.log; \
 	popd;
 
 #.PHONY: sim
