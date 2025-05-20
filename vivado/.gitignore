@@ -104,3 +104,6 @@ ipshared
 *.rpt
 
 secureip_cell_zynq.list.f
+
+xcelium.d/
+xrun.*

@@ -39,6 +39,17 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
         + list(submodule_system_verilog_files)
         #+ list(mem_files)
         +list(["../../vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_sim_netlist.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/glbl.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/OBUFDS.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IOBUFDS.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/OSERDESE2.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/ISERDESE2.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IOBUF.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IDELAYE2.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IDELAYCTRL.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/BUFG.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IBUFDS.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/MMCME2_ADV.v"])
     )
     ## sort the sources to make sure that the def and pkg.sv files are at the beginning
     ## otherwise the simulator might not find the packages

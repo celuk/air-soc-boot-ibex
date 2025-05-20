@@ -41,11 +41,11 @@ compxip:
 	@pushd $(VIVADO_DIR); \
 	mkdir -p $(COMPILED_LIBS_X); \
 	echo "DEFINE $(COMPILED_LIBS_X) $(shell pwd)/$(VIVADO_DIR)/$(COMPILED_LIBS_X)" > cds.lib; \
-	xmvhdl -work $(COMPILED_LIBS_X) $(XILINX_VIVADO)/data/vhdl/src/unisims/unisim_VCOMP.vhd $(XILINX_VIVADO)/data/vhdl/src/unisims/unisim_VPKG.vhd; \
-	xmvlog -work $(COMPILED_LIBS_X) $(XILINX_VIVADO)/data/verilog/src/unisims/*.v; \
+	xrun -relax -work $(COMPILED_LIBS_X) $(XILINX_VIVADO)/data/vhdl/src/unisims/unisim_VCOMP.vhd $(XILINX_VIVADO)/data/vhdl/src/unisims/unisim_VPKG.vhd; \
+	xrun -sv -relax -work $(COMPILED_LIBS_X) $(XILINX_VIVADO)/data/verilog/src/unisims/*.v; \
 	export XILINX_VIVADO=$(XILINX_VIVADO); \
-	xmvlog -work $(COMPILED_LIBS_X) -f $(XILINX_VIVADO)/data/secureip/secureip_cell.list.f; \
-	xmvlog -work $(COMPILED_LIBS_X) $(XILINX_VIVADO)/data/verilog/src/glbl.v; \
+	xrun -sv -relax -work $(COMPILED_LIBS_X) -f $(XILINX_VIVADO)/data/secureip/secureip_cell.list.f; \
+	xrun -sv -relax -work $(COMPILED_LIBS_X) $(XILINX_VIVADO)/data/verilog/src/glbl.v; \
 	popd;
 
 #echo "SOFTINCLUDE ${CDS_XCELIUM}/tools.lnx86/inca/files/cds.lib" > cds.lib; \
