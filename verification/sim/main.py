@@ -124,9 +124,9 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
     if simulator.lower() == "xcelium":
         with open("pre_input.tcl", "w") as f:
             f.writelines(["set probe_packed_limit 0;\n", "set probe_unpacked_limit 0;\n"])
-        runner_build_args = ["-cdslib", "../../../vivado/airsoc-dram-zc706/airsoc-dram-zc706.cache/compile_simlib/xcelium", "-verbose", "-access", "+rwc", "-timescale", "1ns/1ps", "-ALLOWREDEFINITION", "-relax", "-sv"]
+        runner_build_args = ["-cdslib", "../../../vivado/cds.lib", "-verbose", "-access", "+rwc", "-timescale", "1ns/1ps", "-ALLOWREDEFINITION", "-relax", "-sv"]
         runner_pre_cmd = []
-        runner_test_args = ["-cdslib", "../../../vivado/airsoc-dram-zc706/airsoc-dram-zc706.cache/compile_simlib/xcelium", "-y", "../../../vivado/airsoc-dram-zc706/airsoc-dram-zc706.cache/compile_simlib/xcelium", "-pre_input", "../pre_input.tcl", "-top", "top.glbl"] #, "-work", "compxip" #["set probe_packed_limit 131072; set probe_unpacked_limit 131072;"] #["probe -create -packed 131072 *;"]
+        runner_test_args = ["-cdslib", "../../../vivado/cds.lib", "-y", "../../../vivado/compxip", "-pre_input", "../pre_input.tcl", "-work", "compxip", "-top", "top.glbl"] #["set probe_packed_limit 131072; set probe_unpacked_limit 131072;"] #["probe -create -packed 131072 *;"]
 
     runner = get_runner(simulator)
     runner.build(
