@@ -39,17 +39,17 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
         + list(submodule_system_verilog_files)
         #+ list(mem_files)
         +list(["../../vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_sim_netlist.v"])
-        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/glbl.v"])
-        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/OBUFDS.v"])
-        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IOBUFDS.v"])
-        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/OSERDESE2.v"])
-        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/ISERDESE2.v"])
-        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IOBUF.v"])
-        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IDELAYE2.v"])
-        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IDELAYCTRL.v"])
-        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/BUFG.v"])
-        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IBUFDS.v"])
-        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/MMCME2_ADV.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/glbl.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/OBUFDS.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IOBUFDS.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/OSERDESE2.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/ISERDESE2.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IOBUF.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IDELAYE2.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IDELAYCTRL.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/BUFG.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IBUFDS.v"])
+        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/MMCME2_ADV.v"])
     )
     ## sort the sources to make sure that the def and pkg.sv files are at the beginning
     ## otherwise the simulator might not find the packages
@@ -135,9 +135,9 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
     if simulator.lower() == "xcelium":
         with open("pre_input.tcl", "w") as f:
             f.writelines(["set probe_packed_limit 0;\n", "set probe_unpacked_limit 0;\n"])
-        runner_build_args = ["-cdslib", "../../../vivado/cds.lib", "-verbose", "-access", "+rwc", "-timescale", "1ns/1ps", "-ALLOWREDEFINITION", "-relax", "-sv"]
+        runner_build_args = ["-cdslib", "../../../vivado/cds.lib", "-hdlvar", "../../../vivado/hdl.var", "-reflib", "../../../vivado/compxip", "-verbose", "-access", "+rwc", "-timescale", "1ns/1ps", "-ALLOWREDEFINITION", "-relax", "-sv"]
         runner_pre_cmd = []
-        runner_test_args = ["-zlib", "../../../vivado/compxip/xm.lnx86.077.pak", "-cdslib", "../../../vivado/cds.lib", "-L../../../vivado/compxip", "-pre_input", "../pre_input.tcl", "-libname", "compxip", "-top", "top.glbl"] #["set probe_packed_limit 131072; set probe_unpacked_limit 131072;"] #["probe -create -packed 131072 *;"]
+        runner_test_args = ["-cdslib", "../../../vivado/cds.lib", "-hdlvar", "../../../vivado/hdl.var", "-reflib", "../../../vivado/compxip", "-pre_input", "../pre_input.tcl", "-top", "top.glbl"] #["set probe_packed_limit 131072; set probe_unpacked_limit 131072;"] #["probe -create -packed 131072 *;"]
 
     runner = get_runner(simulator)
     runner.build(

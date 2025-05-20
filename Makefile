@@ -40,8 +40,9 @@ COMPILED_LIBS_X := compxip
 compxip:
 	@pushd $(VIVADO_DIR); \
 	mkdir -p $(COMPILED_LIBS_X); \
-	echo "DEFINE $(COMPILED_LIBS_X) $(shell pwd)/$(VIVADO_DIR)/$(COMPILED_LIBS_X)" > cds.lib; \
-	xmvhdl -IEEE2008 -v2019 -CDSLIB ${CDS_XCELIUM}/tools/inca/files/cds.lib -CDSLIB ./cds.lib -HDLVAR ${CDS_XCELIUM}/tools.lnx86/inca/files/hdl.var -RELAX -work $(COMPILED_LIBS_X) $(XILINX_VIVADO)/data/vhdl/src/unisims/unisim_VCOMP.vhd $(XILINX_VIVADO)/data/vhdl/src/unisims/unisim_VPKG.vhd;
+	echo "SOFTINCLUDE ${CDS_XCELIUM}/tools/inca/files/cds.lib" > cds.lib; \
+	echo "DEFINE $(COMPILED_LIBS_X) $(shell pwd)/$(VIVADO_DIR)/$(COMPILED_LIBS_X)" >> cds.lib; \
+	xmvhdl -relax -work $(COMPILED_LIBS_X) $(XILINX_VIVADO)/data/vhdl/src/unisims/unisim_VCOMP.vhd $(XILINX_VIVADO)/data/vhdl/src/unisims/unisim_VPKG.vhd;
 
 #echo "DEFINE std ${CDS_XCELIUM}/tools/inca/files/STD" > cds.lib; \
 #echo "DEFINE ieee ${CDS_XCELIUM}/tools/inca/files/IEEE" >> cds.lib; \
