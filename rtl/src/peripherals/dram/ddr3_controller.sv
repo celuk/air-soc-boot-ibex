@@ -77,6 +77,9 @@ u_phy
     ,.clk_ref_i(clk_ref)
     ,.rst_i(rst_i)
 
+    ,.cfg_i(0)
+    ,.cfg_valid_i(0)
+
     ,.dfi_address_i(dfi_address)
     ,.dfi_bank_i(dfi_bank)
     ,.dfi_cas_n_i(dfi_cas_n)

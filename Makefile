@@ -48,6 +48,10 @@ compxip:
 	xmvlog -work $(COMPILED_LIBS_X) $(XILINX_VIVADO)/data/verilog/src/glbl.v; \
 	popd;
 
+#echo "SOFTINCLUDE ${CDS_XCELIUM}/tools.lnx86/inca/files/cds.lib" > cds.lib; \
+#echo "SOFTINCLUDE ${CDS_XCELIUM}/tools.lnx86/inca/files/hdl.var" >> cds.lib; \
+#echo "DEFINE $(COMPILED_LIBS_X) $(shell pwd)/$(VIVADO_DIR)/$(COMPILED_LIBS_X)" >> cds.lib; \
+
 .PHONY: rmcompxip
 rmcompxip:
 	@pushd $(VIVADO_DIR); \
