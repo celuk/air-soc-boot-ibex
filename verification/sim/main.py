@@ -119,12 +119,12 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
 
     runner_build_args = ["-modelsimini", "../../../vivado/modelsim.ini"]
     runner_pre_cmd = ['set WildcardFilter {};set WildcardSizeThreshold "16777216"; coverage save -onexit covres.ucdb;']
-    runner_test_args = ["-suppress", "14408", "-suppress", "16154", "-suppress", "8630", "-modelsimini", "../../../vivado/modelsim.ini", "-L", "compiled-libs", "top.glbl"]
+    runner_test_args = ["-suppress", "16154", "-suppress", "8630", "-modelsimini", "../../../vivado/modelsim.ini", "-L", "compiled-libs", "top.glbl"]
 
     if simulator.lower() == "xcelium":
-        runner_build_args = ["-access", "+rwc", "-timescale", "1ns/1ps", "-ALLOWREDEFINITION", "-relax", "-sv"]
+        runner_build_args = ["-verbose", "-access", "+rwc", "-timescale", "1ns/1ps", "-ALLOWREDEFINITION", "-relax", "-sv", "-NEW_VHPI_PROPAGATE_DELAY"]
         runner_pre_cmd = []
-        runner_test_args = []
+        runner_test_args = [] #["set probe_packed_limit 131072; set probe_unpacked_limit 131072;"] #["probe -create -packed 131072 *;"]
 
     runner = get_runner(simulator)
     runner.build(
@@ -147,6 +147,10 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
         gui=False,
         plusargs=["+nowarnTSCALE"],
         extra_env={
+        #    "COCOTB_LOG_LEVEL": "TRACE",
+        #    "COCOTB_SCHEDULER_DEBUG": "1",
+        #    "SHM_UNPACKED_LIMIT": "131072",
+        #    "SHM_PACKED_LIMIT": "131072",
             "COCOTB_HDL_TIMEUNIT": "1ns",
             "COCOTB_HDL_TIMEPRECISION": "1ps",
             "CFILE": cfile,

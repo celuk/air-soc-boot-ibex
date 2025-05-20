@@ -82,7 +82,8 @@ vmem2carr:
 
 .PHONY: show
 show:
-	vsim verification/sim/sim_build/vsim.wlf -do verification/sim/waveform/wave.do
+	simvision verification/sim/sim_build/cocotb_waves.shm/cocotb_waves.trn
+#	vsim verification/sim/sim_build/vsim.wlf -do verification/sim/waveform/wave.do
 #-do verification/sim/waveform/wave.do
 
 .PHONY: clean

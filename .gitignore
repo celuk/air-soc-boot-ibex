@@ -21,3 +21,6 @@
 
 vivado/modelsim.ini
 vivado/compiled-libs/*
+
+venv/
+.simvision/
