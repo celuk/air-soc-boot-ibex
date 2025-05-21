@@ -30,7 +30,7 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
     #vivado_ip_verilog_files = list(vivado_ip_verilog_files)
     #vivado_ip_verilog_files.append("../../vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_sim_netlist.v")
     #vivado_ip_verilog_files.append("/tools/Xilinx/Vivado/2022.2/data/verilog/src/glbl.v")
-    #vivado_ip_vhdls = ["/tools/Xilinx/Vivado/2022.2/data/vhdl/src/unisims/unisim_VCOMP.vhd", "/tools/Xilinx/Vivado/2022.2/data/vhdl/src/unisims/unisim_VPKG.vhd"]
+    vivado_ip_vhdls = ["/tools/Xilinx/Vivado/2022.2/data/vhdl/src/unisims/unisim_VCOMP.vhd", "/tools/Xilinx/Vivado/2022.2/data/vhdl/src/unisims/unisim_VPKG.vhd"]
 
     verilog_sources = (
         list(verilog_files)
@@ -39,17 +39,17 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
         + list(submodule_system_verilog_files)
         #+ list(mem_files)
         +list(["../../vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_sim_netlist.v"])
-        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/glbl.v"])
-        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/OBUFDS.v"])
-        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IOBUFDS.v"])
-        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/OSERDESE2.v"])
-        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/ISERDESE2.v"])
-        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IOBUF.v"])
-        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IDELAYE2.v"])
-        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IDELAYCTRL.v"])
-        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/BUFG.v"])
-        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IBUFDS.v"])
-        #+ list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/MMCME2_ADV.v"])
+        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/glbl.v"])
+        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/OBUFDS.v"])
+        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IOBUFDS.v"])
+        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/OSERDESE2.v"])
+        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/ISERDESE2.v"])
+        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IOBUF.v"])
+        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IDELAYE2.v"])
+        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IDELAYCTRL.v"])
+        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/BUFG.v"])
+        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/IBUFDS.v"])
+        + list(["/tools/Xilinx/Vivado/2022.2/data/verilog/src/unisims/MMCME2_ADV.v"])
     )
     ## sort the sources to make sure that the def and pkg.sv files are at the beginning
     ## otherwise the simulator might not find the packages
@@ -135,21 +135,23 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
     if simulator.lower() == "xcelium":
         with open("pre_input.tcl", "w") as f:
             f.writelines(["set probe_packed_limit 0;\n", "set probe_unpacked_limit 0;\n"])
-        runner_build_args = ["-v93", "-reflib", "/home/shc/projects/air-soc-boot/vivado/airsoc-dram-zc706/airsoc-dram-zc706.cache/compile_simlib/xcelium/unisim:unisims_ver",
+        runner_build_args = ["-v93",
+                             "-f", "/tools/Xilinx/Vivado/2022.2/data/secureip/secureip_cell.list.f",
+                             "-top", "glbl", "-namemap_mixgen", "-verbose", "-access", "+rwc", "-timescale", "1ns/1ps", "-ALLOWREDEFINITION", "-relax", "-sv",
+                             "-reflib", "/home/shc/projects/air-soc-boot/vivado/airsoc-dram-zc706/airsoc-dram-zc706.cache/compile_simlib/xcelium/unisim:unisim",
                              "-reflib", "/home/shc/projects/air-soc-boot/vivado/airsoc-dram-zc706/airsoc-dram-zc706.cache/compile_simlib/xcelium/unisims_ver:unisims_ver",
                              "-reflib", "/home/shc/projects/air-soc-boot/vivado/airsoc-dram-zc706/airsoc-dram-zc706.cache/compile_simlib/xcelium/simprims_ver:simprims_ver",
                              "-reflib", "/home/shc/projects/air-soc-boot/vivado/airsoc-dram-zc706/airsoc-dram-zc706.cache/compile_simlib/xcelium/secureip:secureip",
                              "-reflib", "/home/shc/projects/air-soc-boot/vivado/airsoc-dram-zc706/airsoc-dram-zc706.cache/compile_simlib/xcelium/unimacro:unimacro",
                              "-reflib", "/home/shc/projects/air-soc-boot/vivado/airsoc-dram-zc706/airsoc-dram-zc706.cache/compile_simlib/xcelium/unimacro_ver:unimacro_ver",
-                             '+incdir+"/home/shc/projects/air-soc-boot/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0"',
-                             "-top", "glbl", "-namemap_mixgen", "-verbose", "-access", "+rwc", "-timescale", "1ns/1ps", "-ALLOWREDEFINITION", "-relax", "-sv"]
+                             '+incdir+"/home/shc/projects/air-soc-boot/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0"']
         runner_pre_cmd = []
         runner_test_args = ["-cdslib", "/home/shc/projects/air-soc-boot/vivado/cds.lib", "-pre_input", "../pre_input.tcl"] #["set probe_packed_limit 131072; set probe_unpacked_limit 131072;"] #["probe -create -packed 131072 *;"]
 
     runner = get_runner(simulator)
     runner.build(
         verilog_sources=verilog_sources,
-    #    vhdl_sources=vivado_ip_vhdls,
+        vhdl_sources=vivado_ip_vhdls,
         includes=include_dirs,
         hdl_toplevel=top_module,
         always=True,
@@ -167,6 +169,7 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
         gui=False,
         plusargs=["+nowarnTSCALE"],
         extra_env={
+            "XILINX_VIVADO": "/tools/Xilinx/Vivado/2022.2",
         #    "COCOTB_LOG_LEVEL": "TRACE",
         #    "COCOTB_SCHEDULER_DEBUG": "1",
             "SHM_RESET_DEFAULTS": "1",
