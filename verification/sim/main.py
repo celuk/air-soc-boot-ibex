@@ -135,7 +135,14 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
     if simulator.lower() == "xcelium":
         with open("pre_input.tcl", "w") as f:
             f.writelines(["set probe_packed_limit 0;\n", "set probe_unpacked_limit 0;\n"])
-        runner_build_args = ["-reflib", "/home/shc/projects/air-soc-boot/vivado/compxip:compxip", "-reflib", "/home/shc/projects/air-soc-boot/vivado/compxip:unisim", "-reflib", "/home/shc/projects/air-soc-boot/vivado/compxip:unisims_ver", "-reflib", "/home/shc/projects/air-soc-boot/vivado/compxip:simprims_ver", "-reflib", "/home/shc/projects/air-soc-boot/vivado/compxip:secureip", "-top", "glbl", "-namemap_mixgen", "-verbose", "-access", "+rwc", "-timescale", "1ns/1ps", "-ALLOWREDEFINITION", "-relax", "-sv"]
+        runner_build_args = ["-v93", "-reflib", "/home/shc/projects/air-soc-boot/vivado/airsoc-dram-zc706/airsoc-dram-zc706.cache/compile_simlib/xcelium/unisim:unisims_ver",
+                             "-reflib", "/home/shc/projects/air-soc-boot/vivado/airsoc-dram-zc706/airsoc-dram-zc706.cache/compile_simlib/xcelium/unisims_ver:unisims_ver",
+                             "-reflib", "/home/shc/projects/air-soc-boot/vivado/airsoc-dram-zc706/airsoc-dram-zc706.cache/compile_simlib/xcelium/simprims_ver:simprims_ver",
+                             "-reflib", "/home/shc/projects/air-soc-boot/vivado/airsoc-dram-zc706/airsoc-dram-zc706.cache/compile_simlib/xcelium/secureip:secureip",
+                             "-reflib", "/home/shc/projects/air-soc-boot/vivado/airsoc-dram-zc706/airsoc-dram-zc706.cache/compile_simlib/xcelium/unimacro:unimacro",
+                             "-reflib", "/home/shc/projects/air-soc-boot/vivado/airsoc-dram-zc706/airsoc-dram-zc706.cache/compile_simlib/xcelium/unimacro_ver:unimacro_ver",
+                             '+incdir+"/home/shc/projects/air-soc-boot/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0"',
+                             "-top", "glbl", "-namemap_mixgen", "-verbose", "-access", "+rwc", "-timescale", "1ns/1ps", "-ALLOWREDEFINITION", "-relax", "-sv"]
         runner_pre_cmd = []
         runner_test_args = ["-cdslib", "/home/shc/projects/air-soc-boot/vivado/cds.lib", "-pre_input", "../pre_input.tcl"] #["set probe_packed_limit 131072; set probe_unpacked_limit 131072;"] #["probe -create -packed 131072 *;"]
 
