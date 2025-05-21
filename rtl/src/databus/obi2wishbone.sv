@@ -1,7 +1,6 @@
 // obi2wishbone.sv
 `timescale 1ns / 1ps
-//
-`default_nettype none
+//`default_nettype none
 
 module obi2wishbone (
    input  wire        clk_i,
