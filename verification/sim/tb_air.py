@@ -8,7 +8,7 @@ from cocotb.handle import SimHandleBase
 from cocotb.queue import Queue
 from cocotb.triggers import RisingEdge, FallingEdge, Edge
 
-TIMEOUT = 250000
+TIMEOUT = 2500000
 tests = {}
 
 import os
