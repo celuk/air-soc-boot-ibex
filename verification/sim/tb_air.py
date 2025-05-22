@@ -6,7 +6,7 @@ from cocotb.binary import BinaryValue
 from cocotb.clock import Clock
 from cocotb.handle import SimHandleBase
 from cocotb.queue import Queue
-from cocotb.triggers import RisingEdge, FallingEdge, Edge
+from cocotb.triggers import RisingEdge, FallingEdge, Edge, ClockCycles, Timer
 
 TIMEOUT = 2500000
 tests = {}
@@ -29,6 +29,47 @@ if cfile == "coremark":
     tests.update(coremark)
 else:
     tests.update(test_hex)
+
+@cocotb.coroutine
+async def uart_monitor(dut, clk, cpu_clk, baud_rate):
+    # Calculate number of clock cycles per UART bit
+    cycles_per_bit = int(cpu_clk / baud_rate)
+    half_bit = cycles_per_bit // 2
+
+    bit_time_ns = 1e9 / baud_rate
+    half_bit_time_ns = bit_time_ns / 2
+
+    bit_time_ns = int(bit_time_ns)
+    half_bit_time_ns = int(half_bit_time_ns)
+
+    print("UART Monitor started")
+    while True:
+        # Wait for start bit (falling edge)
+        await FallingEdge(dut.uart_tx_o)
+        # Wait half bit to sample in middle of first data bit
+        #await ClockCycles(clk, half_bit)
+        await Timer(half_bit_time_ns, 'ns')
+
+        # Read 8 data bits
+        data = 0
+        for i in range(8):
+            #await ClockCycles(clk, cycles_per_bit)
+            await Timer(bit_time_ns, 'ns')
+            bit = int(dut.uart_tx_o.value)
+            data |= (bit << i)
+
+        # Wait for stop bit
+        #await ClockCycles(clk, cycles_per_bit)
+        await Timer(bit_time_ns, 'ns')
+
+        # Convert to character
+        try:
+            char = chr(data)
+        except ValueError:
+            char = '?'
+
+        # Print to console like a terminal
+        print(char, end='', flush=True)
 
 @cocotb.coroutine
 async def read_instructions():
@@ -136,10 +177,14 @@ async def tair(dut):
     start_address = 0x00000000
     ## is not used now
 
+    clk_ns = 40
+    baud_rate = 115200
+
     if hasattr(dut, "clk_p") and hasattr(dut, "clk_n"):
+        clk_ns = 5
         # drive the positive pin
         clk = dut.clk_p
-        cocotb.start_soon(Clock(clk, 5, "ns").start(start_high=False))
+        cocotb.start_soon(Clock(clk, clk_ns, "ns").start(start_high=False))
 
         # in parallel, tie clk_n to the inverse of clk_p
         async def drive_inverted():
@@ -156,11 +201,12 @@ async def tair(dut):
     else:
         # fallback to single-ended
         clk = dut.clk_i
-        cocotb.start_soon(Clock(clk, 10, "ns").start(start_high=False))
+        cocotb.start_soon(Clock(clk, clk_ns, "ns").start(start_high=False))
 
     dut.rst_ni.value = 0
     await RisingEdge(clk)
     await RisingEdge(clk)
     dut.rst_ni.value = 1
+    cocotb.start_soon(uart_monitor(dut, clk, 40, baud_rate))
     blk = cocotb.start_soon(anabellek(dut, clk, start_address))
     await blk
