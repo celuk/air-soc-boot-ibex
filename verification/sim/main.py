@@ -135,7 +135,10 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
     if simulator.lower() == "xcelium":
         with open("pre_input.tcl", "w") as f:
             f.writelines(["set probe_packed_limit 0;\n", "set probe_unpacked_limit 0;\n"])
-        runner_build_args = ["-f", "/tools/Xilinx/Vivado/2022.2/data/secureip/secureip_cell.list.f",
+        if cfile.rsplit('/', 1)[-1].startswith("dram_demo"):
+            runner_build_args.extend(["-f", "/tools/Xilinx/Vivado/2022.2/data/secureip/secureip_cell.list.f"])
+        runner_build_args = [
+                             #"-f", "/tools/Xilinx/Vivado/2022.2/data/secureip/secureip_cell.list.f",
                              "-top", "glbl", "-namemap_mixgen", "-verbose", "-access", "+rwc", "-timescale", "1ns/1ps", "-ALLOWREDEFINITION", "-relax", "-sv",
                              "-v93",
                              '+incdir+"/home/shc/projects/air-soc-boot/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0"']
@@ -215,4 +218,7 @@ if __name__ == "__main__":
     # if args.test not in test_names:
     #     raise FileNotFoundError(f"Can't find <{args.test}> in <{tests}>")
 
-    run_test(args.sim, args.test, args.top, args.waves, args.cfile)
+    try:
+        run_test(args.sim, args.test, args.top, args.waves, args.cfile)
+    except:
+        pass

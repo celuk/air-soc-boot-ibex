@@ -57,6 +57,16 @@ def load_verilog_hex_file():
 
     return memory
 
+timeout = 0
+
+import signal
+def signal_handler(sig, frame):
+    global timeout
+    timeout = TIMEOUT
+    pass
+
+signal.signal(signal.SIGINT, signal_handler)
+
 @cocotb.coroutine
 async def anabellek(dut, clk, start_address):
     await RisingEdge(clk)
@@ -78,12 +88,19 @@ async def anabellek(dut, clk, start_address):
     await RisingEdge(clk)
     dut.rst_ni.value = 1
 
-    timeout = 0
+    global timeout
     while True:
-        await RisingEdge(clk)
-        if timeout > TIMEOUT:
-            break
-        timeout += 1
+        try:
+            await RisingEdge(clk)
+            if timeout > TIMEOUT:
+                break
+            timeout += 1
+        except:
+            pass
+            #timeout = TIMEOUT
+            ##await cocotb.triggers.Timer(1, units='ns')
+            ##cocotb.simulator.end_simulation()
+            #break
         
     """
     for test in tests:
