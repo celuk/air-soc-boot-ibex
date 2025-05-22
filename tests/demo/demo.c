@@ -5,6 +5,6 @@ int main()
 {
     init_uart();
     
-    print("EH\nello, world!\n");
+    print("Hello, world!\n");
     return 0;
 }

@@ -210,3 +210,4 @@ async def tair(dut):
     cocotb.start_soon(uart_monitor(dut, clk, 40, baud_rate))
     blk = cocotb.start_soon(anabellek(dut, clk, start_address))
     await blk
+    print()

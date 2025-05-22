@@ -83,19 +83,19 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
     from cocotb.runner import Xcelium
     def fixed_test_command(self):
         self.env["CDS_AUTO_64BIT"] = "all"
-    
+
         if self.pre_cmd:
             print("WARNING: pre_cmd is not implemented for Xcelium.")
-    
+
         verbosity_opts = []
         if self.verbose:
             verbosity_opts += ["-messages", "-status", "-gverbose", "-pliverbose", "-plidebug", "-plierr_verbose"]
         else:
             verbosity_opts += ["-quiet", "-plinowarn"]
-    
+
         tmpdir = f"implicit_tmpdir_{self.current_test_name}"
         xrun_top = ":" if self.hdl_toplevel_lang == "vhdl" else self.sim_hdl_toplevel
-    
+
         input_script = (
             f"@database -open cocotb_waves -default;"
             f"probe -database cocotb_waves -create {xrun_top} -all -memories -variables -depth all;"
@@ -105,7 +105,7 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
             if self.waves
             else "@run; exit;"
         )
-    
+
         cmds = [["mkdir", "-p", tmpdir]]
         cmds += [
             ["xrun"]
@@ -120,11 +120,11 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
             + (["-gui"] if self.gui else [])
             + ["-input", input_script]
         ]
-    
+
         self.env["GPI_EXTRA"] = (
             cocotb.config.lib_name_path("vhpi", "xcelium") + ":cocotbvhpi_entry_point"
         )
-    
+
         return cmds
     Xcelium._test_command = fixed_test_command
 
@@ -139,11 +139,12 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
             runner_build_args.extend(["-f", "/tools/Xilinx/Vivado/2022.2/data/secureip/secureip_cell.list.f"])
         runner_build_args = [
                              #"-f", "/tools/Xilinx/Vivado/2022.2/data/secureip/secureip_cell.list.f",
+                             "-newperf", "-plusperf",
                              "-top", "glbl", "-namemap_mixgen", "-verbose", "-access", "+rwc", "-timescale", "1ns/1ps", "-ALLOWREDEFINITION", "-relax", "-sv",
                              "-v93",
                              '+incdir+"/home/shc/projects/air-soc-boot/vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0"']
         runner_pre_cmd = []
-        runner_test_args = ["-top", "glbl", "-verbose", "-access", "+rwc", "-timescale", "1ns/1ps", "-pre_input", "../pre_input.tcl"] #["set probe_packed_limit 131072; set probe_unpacked_limit 131072;"] #["probe -create -packed 131072 *;"]
+        runner_test_args = ["-newperf", "-plusperf", "-top", "glbl", "-verbose", "-access", "+rwc", "-timescale", "1ns/1ps", "-pre_input", "../pre_input.tcl"] #["set probe_packed_limit 131072; set probe_unpacked_limit 131072;"] #["probe -create -packed 131072 *;"]
 
     runner = get_runner(simulator)
     runner.build(

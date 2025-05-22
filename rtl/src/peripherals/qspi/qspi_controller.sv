@@ -228,12 +228,13 @@ module qspi_controller (
                               //QSPI_CCR_DATA_MOD==X2 ? {2'b00, buffer[`MAX_BIT-1:`MAX_BIT-2]} :
                               //QSPI_CCR_DATA_MOD==X1 ? {3'b000, buffer[`MAX_BIT-1]}   : 4'b0000;
 
-         if (sclk) begin
-            sclk_next = 1'b0;
-         end 
-         else begin
-            sclk_next = 1'b1;
-            buffer_next = bit_rate==4 ? {buffer[`MAX_BIT-5:0], qspi_data_i[3:0]} : 
+         //if (~sclk) begin
+         //   sclk_next = 1'b1;
+         //end 
+         //else begin
+         //   sclk_next = 1'b0;
+         if(qspi_sck_o) begin
+                              buffer_next = bit_rate==4 ? {buffer[`MAX_BIT-5:0], qspi_data_i[3:0]} : 
                           bit_rate==2 ? {buffer[`MAX_BIT-3:0], qspi_data_i[1:0]} : 
                           bit_rate==1 ? {buffer[`MAX_BIT-2:0], qspi_data_i[1]}   : 0; // if single SO bit is 1 not 0 (SI)
 
@@ -1113,7 +1114,7 @@ module qspi_controller (
          state <= IDLE;
 
          qspi_cs_r <= 1'b1;
-         sclk <= 1'b0;
+         sclk <= 1'b1;
 
          data_out <= 4'b0000;
          data_out_enable <= 4'b0000;
@@ -1204,9 +1205,10 @@ module qspi_controller (
       end
    end
 
-   assign qspi_sck_o = sclk; //~qspi_cs_n_o & ~clk_i; //sck_r; //sclk; //(|bit_counter) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0; //sclk; //(state != IDLE) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0;
+   // while counting it is sending bits so enable while counting
+   // sclk will be enable after cs_n goes low
+   assign qspi_sck_o = ~qspi_cs_n_o & |bit_counter & ~clk_i; //sclk; //~qspi_cs_n_o & ~clk_i; //sck_r; //sclk; //(|bit_counter) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0; //sclk; //(state != IDLE) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0;
    
-
    /*
    wire cs_edge_detected;
    wire cs_edge;
