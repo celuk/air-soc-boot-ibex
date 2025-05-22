@@ -127,13 +127,6 @@ module dram_controller (
       .ddr3_cs_n(ddr3_cs_n)
 
       ,.ram_req_id(0)
-
-      ,.trcd(trcd)
-      ,.nonseq(nonseq)
-      ,.rwnonseq(rwnonseq)
-      ,.trp(trp)
-      ,.trfc(trfc)
-      ,.rwseq(rwseq)
    );
    `else
    wire [127:0]  ram_rd_data = 0;

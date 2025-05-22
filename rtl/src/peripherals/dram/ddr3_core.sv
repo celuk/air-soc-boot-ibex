@@ -75,13 +75,6 @@ module ddr3_core
     ,output          dfi_wrdata_en_o
     ,output [  3:0]  dfi_wrdata_mask_o
     ,output          dfi_rddata_en_o
-    
-    ,input [31:0] trcd
-    ,input [31:0] nonseq
-    ,input [31:0] rwnonseq
-    ,input [31:0] trp
-    ,input [31:0] trfc
-    ,input [31:0] rwseq
 );
 
 
@@ -609,13 +602,6 @@ u_seq
     ,.dfi_rddata_i(dfi_rddata_i)
     ,.dfi_rddata_valid_i(dfi_rddata_valid_i)
     ,.dfi_rddata_dnv_i(dfi_rddata_dnv_i)
-    
-    ,.trcd(trcd)
-    ,.nonseq(nonseq)
-    ,.rwnonseq(rwnonseq)
-    ,.trp(trp)
-    ,.trfc(trfc)
-    ,.rwseq(rwseq)
 );
 
 // Read data output

@@ -29,3 +29,5 @@ venv/
 .simvision/
 
 verification/sim/pre_input.tcl
+
+*.history

@@ -36,13 +36,6 @@ module ddr3_controller
     inout [1:0] ddr3_dqs_n,
     inout [15:0] ddr3_dq,
     output ddr3_cs_n
-    
-    ,input [31:0] trcd
-    ,input [31:0] nonseq
-    ,input [31:0] rwnonseq
-    ,input [31:0] trp
-    ,input [31:0] trfc
-    ,input [31:0] rwseq
 );
 
 wire  [ 14:0] dfi_address;
@@ -177,13 +170,6 @@ u_ddr_core
     ,.dfi_rddata_i(dfi_rddata)
     ,.dfi_rddata_valid_i(dfi_rddata_valid)
     ,.dfi_rddata_dnv_i(dfi_rddata_dnv)
-    
-    ,.trcd(trcd)
-    ,.nonseq(nonseq)
-    ,.rwnonseq(rwnonseq)
-    ,.trp(trp)
-    ,.trfc(trfc)
-    ,.rwseq(rwseq)
 );
     
 endmodule
