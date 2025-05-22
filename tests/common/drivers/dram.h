@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define DRAM_BASE_ADDR  0xFF060000
+#define DRAM_BASE_ADDR  0xFF070000
 #define DRAM_COMMAND_OFFSET 0x00
 #define DRAM_ADDRESS_OFFSET 0x04
 #define DRAM_DATA_WRITE_OFFSET 0x08

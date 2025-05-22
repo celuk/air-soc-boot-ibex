@@ -13,8 +13,8 @@ module timer_controller (
    input  wire        wb_stb_i,
    input  wire [ 3:0] wb_sel_i,
    input  wire        wb_cyc_i,
-   output reg         wb_ack_o,
-   output reg  [31:0] wb_dat_o
+   output         wb_ack_o,
+   output  [31:0] wb_dat_o
    
 );
 
