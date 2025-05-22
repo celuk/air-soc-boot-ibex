@@ -79,54 +79,54 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
     print("\nVERILOG_SOURCES:")
     print(verilog_sources)
 
-    #import cocotb
-    #from cocotb.runner import Xcelium
-    #def fixed_test_command(self):
-    #    self.env["CDS_AUTO_64BIT"] = "all"
-#
-    #    if self.pre_cmd:
-    #        print("WARNING: pre_cmd is not implemented for Xcelium.")
-#
-    #    verbosity_opts = []
-    #    if self.verbose:
-    #        verbosity_opts += ["-messages", "-status", "-gverbose", "-pliverbose", "-plidebug", "-plierr_verbose"]
-    #    else:
-    #        verbosity_opts += ["-quiet", "-plinowarn"]
-#
-    #    tmpdir = f"implicit_tmpdir_{self.current_test_name}"
-    #    xrun_top = ":" if self.hdl_toplevel_lang == "vhdl" else self.sim_hdl_toplevel
-#
-    #    input_script = (
-    #        f"@database -open cocotb_waves -default;"
-    #        f"probe -database cocotb_waves -create {xrun_top} -all -memories -variables -depth all;"
-    #    #    f"probe -create -packed 131072 *;"
-    #        f"run;"
-    #        f"exit;"
-    #        if self.waves
-    #        else "@run; exit;"
-    #    )
-#
-    #    cmds = [["mkdir", "-p", tmpdir]]
-    #    cmds += [
-    #        ["xrun"]
-    #        + ["-logfile", f"xrun_{self.current_test_name}.log"]
-    #        + ["-xmlibdirname", f"{self.build_dir}/xrun_snapshot"]
-    #        + ["-cds_implicit_tmpdir", tmpdir]
-    #        + ["-licqueue"]
-    #        + verbosity_opts
-    #        + ["-R"]
-    #        + self.test_args
-    #        + self.plusargs
-    #        + (["-gui"] if self.gui else [])
-    #        + ["-input", input_script]
-    #    ]
-#
-    #    self.env["GPI_EXTRA"] = (
-    #        cocotb.config.lib_name_path("vhpi", "xcelium") + ":cocotbvhpi_entry_point"
-    #    )
-#
-    #    return cmds
-    #Xcelium._test_command = fixed_test_command
+    import cocotb
+    from cocotb.runner import Xcelium
+    def fixed_test_command(self):
+        self.env["CDS_AUTO_64BIT"] = "all"
+    
+        if self.pre_cmd:
+            print("WARNING: pre_cmd is not implemented for Xcelium.")
+    
+        verbosity_opts = []
+        if self.verbose:
+            verbosity_opts += ["-messages", "-status", "-gverbose", "-pliverbose", "-plidebug", "-plierr_verbose"]
+        else:
+            verbosity_opts += ["-quiet", "-plinowarn"]
+    
+        tmpdir = f"implicit_tmpdir_{self.current_test_name}"
+        xrun_top = ":" if self.hdl_toplevel_lang == "vhdl" else self.sim_hdl_toplevel
+    
+        input_script = (
+            f"@database -open cocotb_waves -default;"
+            f"probe -database cocotb_waves -create {xrun_top} -all -memories -variables -depth all;"
+        #    f"probe -create -packed 131072 *;"
+            f"run;"
+            f"exit;"
+            if self.waves
+            else "@run; exit;"
+        )
+    
+        cmds = [["mkdir", "-p", tmpdir]]
+        cmds += [
+            ["xrun"]
+            + ["-logfile", f"xrun_{self.current_test_name}.log"]
+            + ["-xmlibdirname", f"{self.build_dir}/xrun_snapshot"]
+            + ["-cds_implicit_tmpdir", tmpdir]
+            + ["-licqueue"]
+            + verbosity_opts
+            + ["-R"]
+            + self.test_args
+            + self.plusargs
+            + (["-gui"] if self.gui else [])
+            + ["-input", input_script]
+        ]
+    
+        self.env["GPI_EXTRA"] = (
+            cocotb.config.lib_name_path("vhpi", "xcelium") + ":cocotbvhpi_entry_point"
+        )
+    
+        return cmds
+    Xcelium._test_command = fixed_test_command
 
     runner_build_args = ["-modelsimini", "../../../vivado/modelsim.ini"]
     runner_pre_cmd = ['set WildcardFilter {};set WildcardSizeThreshold "16777216"; coverage save -onexit covres.ucdb;']
