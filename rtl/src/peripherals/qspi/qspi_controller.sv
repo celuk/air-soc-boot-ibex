@@ -223,16 +223,17 @@ module qspi_controller (
          // commands and addresses sending just from IO0
          data_out_next[3:0] = data_out_enable==4'b1111 ? buffer[`MAX_BIT-1:`MAX_BIT-4]          :
                               data_out_enable==4'b0011 ? {2'b00, buffer[`MAX_BIT-1:`MAX_BIT-2]} :
-                              data_out_enable==4'b0001 ? {3'b000, buffer[`MAX_BIT-1]}           : 4'b0001;
+                              data_out_enable==4'b0001 ? {3'b000, buffer[`MAX_BIT-1]}           : 4'b0000;
                               //QSPI_CCR_DATA_MOD==X4 ? buffer[`MAX_BIT-1:`MAX_BIT-4] : 
                               //QSPI_CCR_DATA_MOD==X2 ? {2'b00, buffer[`MAX_BIT-1:`MAX_BIT-2]} :
                               //QSPI_CCR_DATA_MOD==X1 ? {3'b000, buffer[`MAX_BIT-1]}   : 4'b0000;
 
-         if (sclk) begin
-            sclk_next = 1'b0;
-         end 
-         else begin
-            sclk_next = 1'b1;
+         //if (sclk) begin
+         //   sclk_next = 1'b0;
+         //end 
+         //else begin
+         //   sclk_next = 1'b1;
+         if(~qspi_sck_o) begin
             buffer_next = bit_rate==4 ? {buffer[`MAX_BIT-5:0], qspi_data_i[3:0]} : 
                           bit_rate==2 ? {buffer[`MAX_BIT-3:0], qspi_data_i[1:0]} : 
                           bit_rate==1 ? {buffer[`MAX_BIT-2:0], qspi_data_i[1]}   : 0; // if single SO bit is 1 not 0 (SI)
@@ -1115,7 +1116,7 @@ module qspi_controller (
          qspi_cs_r <= 1'b1;
          sclk <= 1'b0;
 
-         data_out <= 4'b0001;
+         data_out <= 4'b0000;
          data_out_enable <= 4'b0000;
 
          buffer <= 0;
@@ -1204,7 +1205,7 @@ module qspi_controller (
       end
    end
 
-   assign qspi_sck_o = sclk; //~qspi_cs_n_o & ~clk_i; //sck_r; //sclk; //(|bit_counter) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0; //sclk; //(state != IDLE) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0;
+   assign qspi_sck_o = ~|bit_counter | qspi_cs_n_o | clk_i; //sclk; //~qspi_cs_n_o & ~clk_i; //sck_r; //sclk; //(|bit_counter) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0; //sclk; //(state != IDLE) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0;
    
 
    /*

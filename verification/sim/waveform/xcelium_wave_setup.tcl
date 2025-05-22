@@ -1,3 +1,17 @@
+# SimVision Command Script (Cum May 23 01:15:43 +03 2025)
+#
+# Version 24.03.s001
+#
+# You can restore this configuration with:
+#
+#     simvision -input simvision.svcf
+#  or simvision -input simvision.svcf database1 database2 ...
+#
+
+
+#
+# Preferences
+#
 preferences set plugin-enable-svdatabrowser-new 1
 preferences set plugin-enable-groupscope 0
 preferences set plugin-enable-interleaveandcompare 0
@@ -28,8 +42,8 @@ mmap new  -reuse -name {Example Map} -radix %x -contents {{%b=11???? -bgcolor or
 #
 # Waveform windows
 #
-if {[catch {window new WaveWindow -name "Waveform 1" -geometry 1920x1043+0+0}] != ""} {
-    window geometry "Waveform 1" 1920x1043+0+0
+if {[catch {window new WaveWindow -name "Waveform 1" -geometry 1920x675+128+74}] != ""} {
+    window geometry "Waveform 1" 1920x675+128+74
 }
 window target "Waveform 1" on
 waveform using {Waveform 1}
@@ -43,172 +57,31 @@ waveform set \
 waveform baseline set -time 0
 
 set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.adr_r[31:0]}]}
+	{$dbNames(realName1)::[format {air_soc.qspi.qspi_iface_dut.clk_i}]}
 	} ]]
 set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.clk100}]}
+	{$dbNames(realName1)::[format {air_soc.qspi.qspi_iface_dut.qspi_cs_n_o}]}
 	} ]]
 set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.clk_ddr}]}
+	{$dbNames(realName1)::[format {air_soc.qspi.qspi_iface_dut.qspi_sck_o}]}
 	} ]]
 set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.clk_ddr_dqs}]}
+	{$dbNames(realName1)::[format {air_soc.qspi.qspi_iface_dut.bit_counter[31:0]}]}
 	} ]]
 set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.clk_i}]}
+	{$dbNames(realName1)::[format {air_soc.qspi.qspi_iface_dut.qspi_data_i[3:0]}]}
 	} ]]
 set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.clk_ref}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.command_r}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.data_read_w[31:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.data_write_r[31:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ddr3_addr[13:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ddr3_ba[2:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ddr3_cas_n}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ddr3_ck_n}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ddr3_ck_p}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ddr3_cke}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ddr3_cs_n}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ddr3_dm[1:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ddr3_dq[15:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ddr3_dqs_n[1:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ddr3_dqs_p[1:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ddr3_odt}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ddr3_ras_n}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ddr3_reset_n}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ddr3_we_n}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.nonseq[31:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.power_up_r}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ram_accept}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ram_accept_r}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ram_ack}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ram_ack_r}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ram_addr[31:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ram_rd}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ram_rd_data[127:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ram_req_id[15:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ram_wr}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.ram_wr_data[127:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.re_r}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.reset_i}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.rst_i}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.rwnonseq[31:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.rwseq[31:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.timer_r[31:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.timer_rst_r}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.trcd[31:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.trfc[31:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.trp[31:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.wb_ack_o}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.wb_adr_i[7:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.wb_cyc_i}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.wb_dat_i[31:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.wb_dat_o[31:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.wb_sel_i[3:0]}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.wb_stb_i}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.wb_we_i}]}
-	} ]]
-set id [waveform add -signals [subst  {
-	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.we_r}]}
+	{$dbNames(realName1)::[format {air_soc.qspi.qspi_iface_dut.qspi_data_o[3:0]}]}
 	} ]]
 
-waveform xview limits 0 2000ns
+waveform xview limits 1012082.966ns 1013563.368ns
 
-console set -windowname Console
-window geometry Console 600x250+1467+222
+#
+# Waveform Window Links
+#
+
+#
+# Layout selection
+#
+
