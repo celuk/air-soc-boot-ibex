@@ -29,8 +29,8 @@ DRIVERS_PATH ?= $(COMMON_PATH)/drivers
 DRIVERS ?= $(DRIVERS_PATH)/uart.c $(DRIVERS_PATH)/timer.c $(DRIVERS_PATH)/qspi.c $(DRIVERS_PATH)/dram.c
 
 ifeq ($(USE_COREMARK), 1)
-	LINKER_SCRIPT := coremark/riscv32-baremetal/link.ld
-	START_ASM := coremark/riscv32-baremetal/crt0.S
+	LINKER_SCRIPT := coremark/riscv32-baremetal/link$(WITHBOOTLOADER).ld
+	START_ASM := coremark/riscv32-baremetal/crt0$(WITHBOOTLOADER).S
 	DRIVERS += coremark/riscv32-baremetal/syscalls.c coremark/riscv32-baremetal/ee_printf.c
 endif
 
