@@ -207,3 +207,8 @@ set id [waveform add -signals [subst  {
 set id [waveform add -signals [subst  {
 	{$dbNames(realName1)::[format {air_soc.dram_dut.dram_iface_dut.we_r}]}
 	} ]]
+
+waveform xview limits 0 2000ns
+
+console set -windowname Console
+window geometry Console 600x250+1467+222

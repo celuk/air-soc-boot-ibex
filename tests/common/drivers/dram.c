@@ -8,7 +8,7 @@ void init_dram(unsigned int wait_time){
     DRAM_NONSEQ = 16;
     DRAM_RWNONSEQ = 16;
     DRAM_RWSEQ = 13;
-    DRAM_PWRUP = 1;
+    //DRAM_PWRUP = 1;
     wait_for_dram(US(wait_time));
 }
 

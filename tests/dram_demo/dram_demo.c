@@ -5,7 +5,9 @@
 int main()
 {
     init_uart();
+    DRAM_PWRUP = 0;
     init_dram(500);
+    DRAM_PWRUP = 1;
 
     unsigned int address = 0x00002FFF;
     unsigned int data = 0x1234BAEF;

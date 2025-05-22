@@ -49,7 +49,7 @@ module dram_controller (
       logic rst_n;
    } command_t;
 
-   reg power_up_r = 1;
+   reg power_up_r = 0;
    wire reset_i = rst_i | ~power_up_r;
 
    reg [31:0] adr_r;
@@ -205,7 +205,7 @@ module dram_controller (
            trfc <= 26;
            rwseq <= 13;
            //refcyc <= 781; //2600; //500; //781;
-           power_up_r <= 1;
+           power_up_r <= 0;
        end
        else begin
        /*
