@@ -1,39 +1,9 @@
-// inspired and borrowed some parts from: https://github.com/agh-riscv/pixel_riscv_soc/tree/master/sw/bootloader
-
 #include <stdint.h>
 #include "qspi.h"
 //#include "uart.h"
 
-typedef struct {
-    uint32_t *mem;
-    uint32_t size;
-} Code_ram;
-
-/*
-union Code_ram_word {
-    uint8_t bytes[4];
-    uint32_t word;
-};
-*/
-
-static const uint32_t code_ram_base_address = 0x00002000; //0x00010000;
-static const uint32_t depth = 2048; //4096;
-static const uint8_t word_length = 4;
-static const uint32_t size = depth * word_length;
-
-Code_ram code_ram;
-
 #define CODE_RAM_BASE_ADDR 0x00002000 //0x00010000
 #define CODE_RAM (*(volatile uint32_t*) (CODE_RAM_BASE_ADDR))
-
-void Code_ram_init(Code_ram *self, uint32_t base_address, uint32_t size) {
-    self->mem = (uint32_t *)base_address;
-    self->size = size;
-}
-
-void initialize_code_ram() {
-    Code_ram_init(&code_ram, code_ram_base_address, size);
-}
 
 void secure_boot()
 {
@@ -132,7 +102,6 @@ static inline void jump_to_loaded_software()
 
 int main()
 {
-    initialize_code_ram();
     secure_boot();
     update_trap_vector_base_address();
     jump_to_loaded_software();
