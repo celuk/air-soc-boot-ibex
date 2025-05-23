@@ -19,8 +19,7 @@
 `define CPU_CLK 25_000_000
 `define BAUD_RATE 115200
 
-// TODO: Handle if DCACHE_SZ is 0
-// Cache sizes must be at least multiple of 64 --> e.g. 64, 128, 256, ...
+// Cache sizes must be multiple of 64 --> e.g. 0, 64, 128, 256, ...
 `define ICACHE_SZ 0
 `define DCACHE_SZ 0
 `define MEM_W 32
@@ -35,17 +34,17 @@
 `define MEM_BASE_ADDR   32'h0000_0000
 `define MEM_RANGE       32'h0F00_0000
 
-`define USE_BOOTROM 1
+`define USE_BOOTROM 0
 
 //`define BASYS3
 //`define EXT_FLASH
-`define QSPI_SIM
+//`define QSPI_SIM
 
-//`define ZC706
+`define ZC706
 //`define DDR_100MHZ
-//`define DDR_MHZ 100
+`define DDR_MHZ 100
 
-//`define DRAM_SIM
+`define DRAM_SIM
 //`define XILINX_SIMULATOR
 
 //`ifdef ZC706

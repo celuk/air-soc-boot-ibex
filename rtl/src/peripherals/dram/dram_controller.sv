@@ -256,7 +256,7 @@ module dram_controller (
             DRAM_WE <= 0;
             DRAM_ACCEPT <= 0;
             DRAM_ACK <= 0;
-            DRAM_WDG <= `CPU_CLK / 2000;
+            DRAM_WDG <= `CPU_CLK / 5000;
         end
         else begin
             wb_ack_r <= wb_ack_next_r;
