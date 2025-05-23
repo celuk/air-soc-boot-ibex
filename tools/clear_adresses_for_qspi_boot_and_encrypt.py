@@ -1,8 +1,6 @@
 import argparse
 
 def encrypt_byte_and_format(byte_val, key, current_key_round_index):
-    # current_key_round_index is the 0-indexed byte count from the start of the file.
-    # We use it to determine which key byte to use.
     key_byte_index = current_key_round_index % len(key)
     encrypted = byte_val ^ key[key_byte_index]
     return f'{encrypted:02X}'
@@ -11,61 +9,58 @@ def process_vmem_file(input_file, place_zero, bytes_per_output_line=16):
     with open(input_file, 'r') as file:
         lines = file.readlines()
 
-    # This list will store all *encrypted* byte strings in order
     all_encrypted_bytes = []
 
     key = [0xDE, 0xAD, 0xBE, 0xEF]
-    global_byte_index = 0 # This will keep track of the absolute byte index for XORing
+    global_byte_index = 0
 
-    previous_address = 0 # Initialize to 0, assuming the file starts at 0x00000000 if no @00000000 is present
-    previous_data_end_address = 0 # The address of the byte *after* the last processed data byte
+    previous_address = None
+    accumulated_data_length_for_block = 0
+
+    output_lines = []
 
     for line in lines:
         if line.startswith('@'):
             current_address = int(line[1:], 16)
 
-            # Handle gap filling for non-zero addresses
-            if place_zero:
-                # Calculate the gap from the end of the previous data block to the current address
-                gap = current_address - previous_data_end_address
-
+            if previous_address is not None and place_zero:
+                gap = current_address - (previous_address + accumulated_data_length_for_block)
                 if gap > 0:
+                    gap_encrypted_bytes = []
                     for _ in range(gap):
-                        all_encrypted_bytes.append(encrypt_byte_and_format(0x00, key, global_byte_index))
+                        #gap_encrypted_bytes.append(encrypt_byte_and_format(0x00, key, global_byte_index))
+                        output_lines.append(encrypt_byte_and_format(0x00, key, global_byte_index) + ' ')
                         global_byte_index += 1
-
+                        
+                    output_lines.append('\n')
+            
             previous_address = current_address
-            # For a new address line, previous_data_end_address just becomes current_address initially
-            # It will be updated as data bytes for this address are processed
-            previous_data_end_address = current_address
+            accumulated_data_length_for_block = 0 # Reset for the new address block
 
-        else: # This is a data line
-            data_bytes_str = line.strip().split()
+        else:
+            data_bytes_str = line.split()
+            data_encrypted_bytes = []
             for byte_str in data_bytes_str:
                 byte_val = int(byte_str, 16)
-                all_encrypted_bytes.append(encrypt_byte_and_format(byte_val, key, global_byte_index))
+                #data_encrypted_bytes.append(encrypt_byte_and_format(byte_val, key, global_byte_index))
+                output_lines.append(encrypt_byte_and_format(byte_val, key, global_byte_index) + ' ')
                 global_byte_index += 1
+                
+            output_lines.append('\n')
             
-            # Update previous_data_end_address based on the data just processed
-            previous_data_end_address = previous_address + len(data_bytes_str)
-            # For the next iteration, previous_address should be the start of the current data block
-            # This is already correctly handled by previous_address = current_address in the '@' block
+            accumulated_data_length_for_block += len(data_bytes_str) # Accumulate data length
 
-    # --- Construct the final output ---
-    output_lines = []
+    
+    output_lines.insert(0, ' '.join([f'{k:02X}' for k in key]) + '\n')
 
     # Add @00000000 at the top
-    output_lines.append('@00000000\n')
+    output_lines.insert(0, '@00000000\n')
 
-    # Add key (assuming this is part of the output file format, e.g., for decryption)
-    output_lines.append(' '.join([f'{k:02X}' for k in key]) + '\n')
 
-    # Format the encrypted bytes into lines
-    for i in range(0, len(all_encrypted_bytes), bytes_per_output_line):
-        line_of_bytes = all_encrypted_bytes[i : i + bytes_per_output_line]
-        output_lines.append(' '.join(line_of_bytes) + '\n')
+    #for i in range(0, len(all_encrypted_bytes), bytes_per_output_line):
+    #    line_of_bytes = all_encrypted_bytes[i : i + bytes_per_output_line]
+    #    output_lines.append(' '.join(line_of_bytes) + '\n')
 
-    # Print all processed lines to stdout
     for line in output_lines:
         print(line, end='')
 

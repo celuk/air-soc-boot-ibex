@@ -114,7 +114,7 @@ async def anabellek(dut, clk, start_address):
     dut.rst_ni.value = 0
     await RisingEdge(clk)
     
-    if cfile != "bootloader":
+    if cfile != "bootloader" or cfile != "secure_bootloader":
         memory = load_verilog_hex_file()
         for address, value in memory.items():
             if address % 4 == 0: # TODO: are all addresses 4 byte aligned?
