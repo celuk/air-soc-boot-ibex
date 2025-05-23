@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 #include "qspi.h"
-#include "uart.h"
+//#include "uart.h"
 
 typedef struct {
     uint32_t *mem;
@@ -41,19 +41,22 @@ void secure_boot()
     qspi_enable_quad_mode();
     uint32_t address = 0x00000000;
     uint32_t* data;
-    uint32_t *key_data;
+    uint32_t key_data[8];
 
     // Phase 1: get key from root of trust
     // TODO: generate key for first time boot that would be another phase
-    key_data = qspi_read_qor(address);
+    data = qspi_read_qor(address);
+    for (int i = 0; i < 8; i++) {
+        key_data[i] = data[i];
+    }
     if (key_data[0] == 0xFFFFFFFF) {
         return;
     }
 
     address += 4;
 
-    init_uart   ();
-    tekno_printf("key_data[0]: %x\n", key_data[0]);
+    //init_uart   ();
+    //tekno_printf("key_data[0]: %x\n", key_data[0]);
 
     // Phase 2: decrypt the code by the given key
     //address += (4 * 8);
@@ -67,7 +70,7 @@ void secure_boot()
         *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-4) = key_data[0] ^ data[0];
         address += 4;
 
-        tekno_printf("data[0]: %x, address: %x, key_data0: %x, dec: %x\n", data[0], address, key_data[0], key_data[0] ^ data[0]);
+        //tekno_printf("data[0]: %x, address: %x, key_data0: %x, dec: %x\n", data[0], address, key_data[0], key_data[0] ^ data[0]);
 
         if(data[1] == 0xFFFFFFFF) {
             break;
