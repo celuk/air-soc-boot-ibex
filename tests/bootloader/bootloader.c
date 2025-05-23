@@ -111,6 +111,8 @@ void load_code_through_qspi()
         address += 4;
     }
 
+    /*
+    // miss from cache part if exists
     for (uint32_t i = 0; i < 4096; i += 32) {
         //*Code_ram_set(&code_ram, address) = data[0];
         *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = 0x00000000;
@@ -137,6 +139,7 @@ void load_code_through_qspi()
         *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = 0x00000000;
         address += 4;
     }
+    */
 }
 
 static inline void update_trap_vector_base_address()
