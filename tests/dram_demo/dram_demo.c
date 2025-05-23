@@ -4,6 +4,7 @@
 
 int main()
 {
+    init_dram(500);
     unsigned int address = 0x00002FFF;
     unsigned int data = 0x1234BAEF;
  
