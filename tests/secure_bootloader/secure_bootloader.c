@@ -50,23 +50,10 @@ void secure_boot()
         return;
     }
 
-    *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ key_data[1];
-    address += 4;
-    *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ key_data[2];
-    address += 4;
-    *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ key_data[3];
-    address += 4;
-    *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ key_data[4];
-    address += 4;
-    *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ key_data[5];
-    address += 4;
-    *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ key_data[6];
-    address += 4;
-    *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ key_data[7];
     address += 4;
 
     init_uart   ();
-    tekno_printf("key_data[0]: %x\n", key_data[1]);
+    tekno_printf("key_data[0]: %x\n", key_data[0]);
 
     // Phase 2: decrypt the code by the given key
     //address += (4 * 8);
@@ -77,50 +64,52 @@ void secure_boot()
             break;
         }
         
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ data[0];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-4) = key_data[0] ^ data[0];
         address += 4;
+
+        tekno_printf("data[0]: %x, address: %x, key_data0: %x, dec: %x\n", data[0], address, key_data[0], key_data[0] ^ data[0]);
 
         if(data[1] == 0xFFFFFFFF) {
             break;
         }
 
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ data[1];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-4) = key_data[0] ^ data[1];
         address += 4;
 
         if(data[2] == 0xFFFFFFFF) {
             break;
         }
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ data[2];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-4) = key_data[0] ^ data[2];
         address += 4;
 
         if(data[3] == 0xFFFFFFFF) {
             break;
         }
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ data[3];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-4) = key_data[0] ^ data[3];
         address += 4;
 
         if(data[4] == 0xFFFFFFFF) {
             break;
         }
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ data[4];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-4) = key_data[0] ^ data[4];
         address += 4;
 
         if(data[5] == 0xFFFFFFFF) {
             break;
         }
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ data[5];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-4) = key_data[0] ^ data[5];
         address += 4;
 
         if(data[6] == 0xFFFFFFFF) {
             break;
         }
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ data[6];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-4) = key_data[0] ^ data[6];
         address += 4;
 
         if(data[7] == 0xFFFFFFFF) {
             break;
         }
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ data[7];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-4) = key_data[0] ^ data[7];
         address += 4;
     }
 }
