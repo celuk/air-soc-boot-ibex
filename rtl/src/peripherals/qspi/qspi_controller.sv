@@ -190,8 +190,8 @@ module qspi_controller (
       end
       else begin
          data_out[3:0] = data_out_enable==4'b1111 ? buffer[`MAX_BIT-1:`MAX_BIT-4]          :
-                              data_out_enable==4'b0011 ? {2'b00, buffer[`MAX_BIT-1:`MAX_BIT-2]} :
-                              data_out_enable==4'b0001 ? {3'b000, buffer[`MAX_BIT-1]}           : 4'b0000;
+                         data_out_enable==4'b0011 ? {2'b00, buffer[`MAX_BIT-1:`MAX_BIT-2]} :
+                         data_out_enable==4'b0001 ? {3'b000, buffer[`MAX_BIT-1]}           : 4'b0000;
       end
    end
 
@@ -1214,7 +1214,10 @@ module qspi_controller (
       end
    end
 
-   assign qspi_sck_o = ~|bit_counter | qspi_cs_n_o | clk_i; //sclk; //~qspi_cs_n_o & ~clk_i; //sck_r; //sclk; //(|bit_counter) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0; //sclk; //(state != IDLE) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0;
+   wire system_clock_sck = ~|bit_counter | qspi_cs_n_o | clk_i;
+   wire prescaled_sck = ~|bit_counter | qspi_cs_n_o | sck_r;
+
+   assign qspi_sck_o = (QSPI_CCR_PRESCALER == 0) ? system_clock_sck : prescaled_sck; //sclk; //~qspi_cs_n_o & ~clk_i; //sck_r; //sclk; //(|bit_counter) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0; //sclk; //(state != IDLE) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0;
    
 
    /*
