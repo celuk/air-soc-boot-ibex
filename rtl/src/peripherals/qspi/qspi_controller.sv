@@ -184,6 +184,17 @@ module qspi_controller (
 
    integer i;
 
+   always @(negedge qspi_sck_o) begin
+      if(rst_i) begin
+         data_out <= 0;
+      end
+      else begin
+         data_out[3:0] = data_out_enable==4'b1111 ? buffer[`MAX_BIT-1:`MAX_BIT-4]          :
+                              data_out_enable==4'b0011 ? {2'b00, buffer[`MAX_BIT-1:`MAX_BIT-2]} :
+                              data_out_enable==4'b0001 ? {3'b000, buffer[`MAX_BIT-1]}           : 4'b0000;
+      end
+   end
+
    always @* begin
       wb_ack_next_r = 1'b0;
       wb_read_data_next_r = wb_read_data_r;
@@ -221,9 +232,7 @@ module qspi_controller (
 
       if(|bit_counter) begin // if bit_counter is not 0
          // commands and addresses sending just from IO0
-         data_out_next[3:0] = data_out_enable==4'b1111 ? buffer[`MAX_BIT-1:`MAX_BIT-4]          :
-                              data_out_enable==4'b0011 ? {2'b00, buffer[`MAX_BIT-1:`MAX_BIT-2]} :
-                              data_out_enable==4'b0001 ? {3'b000, buffer[`MAX_BIT-1]}           : 4'b0000;
+         
                               //QSPI_CCR_DATA_MOD==X4 ? buffer[`MAX_BIT-1:`MAX_BIT-4] : 
                               //QSPI_CCR_DATA_MOD==X2 ? {2'b00, buffer[`MAX_BIT-1:`MAX_BIT-2]} :
                               //QSPI_CCR_DATA_MOD==X1 ? {3'b000, buffer[`MAX_BIT-1]}   : 4'b0000;
@@ -1116,7 +1125,7 @@ module qspi_controller (
          qspi_cs_r <= 1'b1;
          sclk <= 1'b0;
 
-         data_out <= 4'b0000;
+         //data_out <= 4'b0000;
          data_out_enable <= 4'b0000;
 
          buffer <= 0;
@@ -1148,7 +1157,7 @@ module qspi_controller (
          qspi_cs_r <= qspi_cs_next_r;
          sclk <= sclk_next;
 
-         data_out <= data_out_next;
+         //data_out <= data_out_next;
          data_out_enable <= data_out_enable_next;
 
          buffer <= buffer_next;
