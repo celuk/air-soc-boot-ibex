@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include "qspi.h"
+#include "uart.h"
 
 typedef struct {
     uint32_t *mem;
@@ -49,8 +50,26 @@ void secure_boot()
         return;
     }
 
+    *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ key_data[1];
+    address += 4;
+    *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ key_data[2];
+    address += 4;
+    *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ key_data[3];
+    address += 4;
+    *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ key_data[4];
+    address += 4;
+    *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ key_data[5];
+    address += 4;
+    *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ key_data[6];
+    address += 4;
+    *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address) = key_data[0] ^ key_data[7];
+    address += 4;
+
+    init_uart   ();
+    tekno_printf("key_data[0]: %x\n", key_data[1]);
+
     // Phase 2: decrypt the code by the given key
-    address += (4 * 8);
+    //address += (4 * 8);
     while(data[7] != 0xFFFFFFFF) {
         data = qspi_read_qor(address);
 
