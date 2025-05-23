@@ -9,6 +9,8 @@ ASM = 0
 # make compile demo BOOT=1
 BOOT ?= 0
 
+SECURE_BOOT ?= 0
+
 WITHBOOTLOADER ?=
 
 USE_COREMARK ?= 0
@@ -70,7 +72,16 @@ ifeq ($(BOOT), 1)
 	mv $(CPATH).tmp $(CPATH).vmem
 endif
 
+ifeq ($(SECURE_BOOT), 1)
+	python3 ../tools/clear_adresses_for_qspi_boot_and_encrypt.py -f $(CPATH).vmem --place_zero > $(CPATH).tmp
+	mv $(CPATH).tmp $(CPATH)_secure.vmem
+endif
+
 ifeq ($(CFILE), bootloader)
+	python3 ../tools/generate_bootrom.py -f $(CPATH).hex --addr_width 14 > ../rtl/src/memory/bootrom.sv
+endif
+
+ifeq ($(CFILE), secure_bootloader)
 	python3 ../tools/generate_bootrom.py -f $(CPATH).hex --addr_width 14 > ../rtl/src/memory/bootrom.sv
 endif
 
