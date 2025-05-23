@@ -1,8 +1,8 @@
 import argparse
 
 def encrypt_byte_and_format(byte_val, key, key_index):
-    encrypted = byte_val ^ key[key_index]
     key_index = (key_index + 1) % 4  # Cycle through 0, 1, 2, 3
+    encrypted = byte_val ^ key[key_index]
     return f'{encrypted:02X}'
 
 def process_vmem_file(input_file, place_zero):
@@ -41,6 +41,9 @@ def process_vmem_file(input_file, place_zero):
             #filtered_lines.append(line)
             #previous_data_length += len(line.split())
             previous_data_length += len(data_bytes_str)
+
+    # Add key
+    filtered_lines.insert(0, ' '.join([f'{k:02X}' for k in key]) + '\n')
 
     # Add @00000000 at the top
     filtered_lines.insert(0, '@00000000\n')
