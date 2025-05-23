@@ -1196,21 +1196,31 @@ module qspi_controller (
    reg [5:0] prescaler_counter;
    wire [5:0] prescaler = (QSPI_CCR_PRESCALER > 0) ? QSPI_CCR_PRESCALER : 1;
 
+   wire [6:0] n_total_cycles = prescaler + 1;
+   wire [5:0] n_high_cycles = n_total_cycles / 2;
+   wire [5:0] n_low_cycles = n_total_cycles - n_high_cycles;
+
    always @(posedge clk_i) begin
       if(rst_i) begin
          sck_r <= 1'b0;
          prescaler_counter <= 6'b0;
       end
       else begin
-         sck_r <= ~sck_r;
-         //if(prescaler_counter == prescaler - 1) begin
-         //   prescaler_counter <= 6'b0;
-         //   sck_r <= ~sck_r;
-         //end
-         //else begin
-         //   prescaler_counter <= prescaler_counter + 1;
-         //   sck_r <= sck_r;
-         //end
+         if (sck_r == 1'b1) begin 
+            if (prescaler_counter == n_high_cycles - 1) begin
+               sck_r <= 1'b0;
+               prescaler_counter <= 6'b0;
+            end else begin
+               prescaler_counter <= prescaler_counter + 1;
+            end
+         end else begin 
+            if (prescaler_counter == n_low_cycles - 1) begin
+               sck_r <= 1'b1;
+               prescaler_counter <= 6'b0;
+            end else begin
+               prescaler_counter <= prescaler_counter + 1;
+            end
+         end
       end
    end
 
@@ -1218,125 +1228,5 @@ module qspi_controller (
    wire prescaled_sck = ~|bit_counter | qspi_cs_n_o | sck_r;
 
    assign qspi_sck_o = (QSPI_CCR_PRESCALER == 0) ? system_clock_sck : prescaled_sck; //sclk; //~qspi_cs_n_o & ~clk_i; //sck_r; //sclk; //(|bit_counter) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0; //sclk; //(state != IDLE) ? ((QSPI_CCR_PRESCALER == 0) ? clk_i : sck_r) : 0;
-   
-
-   /*
-   wire cs_edge_detected;
-   wire cs_edge;
-
-   serial_clock_generator scg(
-      .sck(qspi_sck_o),
-      .rising_edge(),
-      .falling_edge(),
-      .clk(clk_i),
-      .rst_n(~rst_i),
-      //.en(cs_edge_detected & ~cs_edge),
-      .en(state != IDLE),
-      //.clk_divider_valid(1'b1),
-      .clk_divider_valid(state == IDLE),
-      .clk_divider({2'b00, QSPI_CCR_PRESCALER})
-   );
-   */
-
-   /*
-   edge_detector ed(
-      .edge_detected(cs_edge_detected),
-      .edge_type(cs_edge),
-      .clk(clk_i),
-      .rst_n(~rst_i),
-      .data_in(qspi_cs_n_o)
-   );
-   */
-
-endmodule
-
-module serial_clock_generator (
-    output reg      sck,
-    output reg      rising_edge,
-    output reg      falling_edge,
-
-    input wire       clk,
-    input wire       rst_n,
-    input wire       en,
-    input wire       clk_divider_valid,
-    input wire [7:0] clk_divider
-);
-
-reg       sck_nxt, rising_edge_nxt, falling_edge_nxt;
-reg [7:0] counter, counter_nxt, counter_target, counter_target_nxt;
-
-always @(posedge clk or negedge rst_n) begin
-    if (!rst_n) begin
-        sck <= 1'b0;
-        rising_edge <= 1'b0;
-        falling_edge <= 1'b0;
-        counter_target <= 8'b0;
-        counter <= 8'b0;
-    end
-    else begin
-        sck <= sck_nxt;
-        rising_edge <= rising_edge_nxt;
-        falling_edge <= falling_edge_nxt;
-        counter_target <= counter_target_nxt;
-        counter <= counter_nxt;
-    end
-end
-
-always @* begin
-    sck_nxt = 1'b0;
-    rising_edge_nxt = 1'b0;
-    falling_edge_nxt = 1'b0;
-    counter_target_nxt = counter_target;
-    counter_nxt = 8'b0;
-
-    if (clk_divider_valid) begin
-        counter_target_nxt = clk_divider;
-    end
-    else if (en) begin
-        sck_nxt = sck;
-        counter_nxt = counter + 1;
-
-        if (counter_target == 8'b0) begin
-            sck_nxt = ~sck;
-            rising_edge_nxt = ~sck;
-            falling_edge_nxt = sck;
-            counter_nxt = 8'b0;
-        end
-        else if (counter == counter_target) begin
-            sck_nxt = ~sck;
-            rising_edge_nxt = ~sck;
-            falling_edge_nxt = sck;
-            counter_nxt = 8'b0;
-        end
-    end
-end
-
-endmodule
-
-module edge_detector (
-    output wire edge_detected,
-    output wire edge_type, /* 0-falling, 1-rising */
-    input wire  clk,
-    input wire  rst_n,
-    input wire  data_in
-);
-
-reg data_in_prv, data_in_prv2, data_in_prv3;
-
-always @(posedge clk or negedge rst_n) begin
-    if (!rst_n) begin
-        data_in_prv <= 1'b0;
-        data_in_prv2 <= 1'b0;
-        data_in_prv3 <= 1'b0;
-    end
-    else begin
-        data_in_prv <= data_in;
-        data_in_prv2 <= data_in_prv;
-        data_in_prv3 <= data_in_prv2;
-    end
-end
-
-   assign edge_detected = data_in_prv2 ^ data_in_prv3;
-   assign edge_type = data_in_prv2;
 
 endmodule
