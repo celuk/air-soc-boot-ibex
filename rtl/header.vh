@@ -41,7 +41,7 @@
 //`define QSPI_SIM
 
 `define ZC706
-//`define DDR_100MHZ
+`define DDR_100MHZ
 `define DDR_MHZ 100
 
 `define DRAM_SIM

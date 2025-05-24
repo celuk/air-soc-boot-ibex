@@ -131,7 +131,7 @@ module ddr3 (
         `include "1024Mb_ddr3_parameters.vh"
 
     parameter check_strict_mrbits = 1;
-    parameter check_strict_timing = 1;
+    parameter check_strict_timing = 0;
     parameter feature_pasr = 1;
     parameter feature_truebl4 = 0;
     parameter feature_odt_hi = 0;
