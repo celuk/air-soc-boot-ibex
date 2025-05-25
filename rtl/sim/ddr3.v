@@ -1408,7 +1408,7 @@ module ddr3 (
                             $display ("%m: at time %t ERROR: %s Failure.  All banks must be Precharged.", $time, cmd_string[cmd]);
                             if (STOP_ON_ERROR) $stop(0);
                         end else begin
-                            if (DEBUG) $display ("%m: at time %t INFO: %s", $time, cmd_string[cmd]);
+                            //if (DEBUG) $display ("%m: at time %t INFO: %s", $time, cmd_string[cmd]);
                             er_trfc_max = 0;
                             ref_cntr = ref_cntr + 1;
                             tm_refresh <= $time;

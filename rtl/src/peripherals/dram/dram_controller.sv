@@ -54,18 +54,18 @@ module dram_controller (
     reg [31:0] DRAM_DATA_WRITE_NEXT;
     reg [31:0] DRAM_DATA_READ;
     reg [31:0] DRAM_DATA_READ_NEXT;
-    reg [0:0] DRAM_TIMER_RESET;
-    reg [0:0] DRAM_TIMER_RESET_NEXT;
+    reg DRAM_TIMER_RESET;
+    reg DRAM_TIMER_RESET_NEXT;
     reg [31:0] DRAM_TIMER;
     reg [31:0] DRAM_TIMER_NEXT;
-    reg [0:0] DRAM_RE;
-    reg [0:0] DRAM_RE_NEXT;
-    reg [0:0] DRAM_WE;
-    reg [0:0] DRAM_WE_NEXT;
-    reg [0:0] DRAM_ACCEPT;
-    reg [0:0] DRAM_ACCEPT_NEXT;
-    reg [0:0] DRAM_ACK;
-    reg [0:0] DRAM_ACK_NEXT;
+    reg DRAM_RE;
+    reg DRAM_RE_NEXT;
+    reg DRAM_WE;
+    reg DRAM_WE_NEXT;
+    reg DRAM_ACCEPT;
+    reg DRAM_ACCEPT_NEXT;
+    reg DRAM_ACK;
+    reg DRAM_ACK_NEXT;
     reg [31:0] DRAM_WDG;
     reg [31:0] DRAM_WDG_NEXT;
 
@@ -145,8 +145,8 @@ module dram_controller (
         DRAM_TIMER_NEXT = DRAM_TIMER;
         DRAM_RE_NEXT = DRAM_RE;
         DRAM_WE_NEXT = DRAM_WE;
-        DRAM_ACCEPT_NEXT = DRAM_ACCEPT;
-        DRAM_ACK_NEXT = DRAM_ACK;
+        //DRAM_ACCEPT_NEXT = DRAM_ACCEPT;
+        //DRAM_ACK_NEXT = DRAM_ACK;
     
         if(wb_cyc_i) begin
             wb_ack_next_r = wb_stb_i & !wb_ack_r;
@@ -191,12 +191,12 @@ module dram_controller (
                     8'h1C: begin
                         DRAM_WE_NEXT = wb_sel_i[0] ? wb_dat_i[0] : DRAM_WE;
                     end
-                    8'h20: begin
-                        DRAM_ACCEPT_NEXT = wb_sel_i[0] ? wb_dat_i[0] : DRAM_ACCEPT;
-                    end
-                    8'h24: begin
-                        DRAM_ACK_NEXT = wb_sel_i[0] ? wb_dat_i[0] : DRAM_ACK;
-                    end
+                    //8'h20: begin
+                    //    DRAM_ACCEPT_NEXT = wb_sel_i[0] ? wb_dat_i[0] : DRAM_ACCEPT;
+                    //end
+                    //8'h24: begin
+                    //    DRAM_ACK_NEXT = wb_sel_i[0] ? wb_dat_i[0] : DRAM_ACK;
+                    //end
                     8'h48: begin
                         DRAM_WDG_NEXT[7:0  ] = wb_sel_i[0] ? wb_dat_i[7:0  ] : DRAM_WDG[7:0  ];
                         DRAM_WDG_NEXT[15:8 ] = wb_sel_i[1] ? wb_dat_i[15:8 ] : DRAM_WDG[15:8 ];
@@ -223,8 +223,12 @@ module dram_controller (
         end
 
         DRAM_DATA_READ_NEXT = data_read_w;
-        DRAM_ACCEPT_NEXT = ram_accept;
-        DRAM_ACK_NEXT = ram_ack;
+        if(ram_accept) DRAM_ACCEPT_NEXT = 1;
+        if(ram_ack) DRAM_ACK_NEXT = 1;
+
+        // if their 1'ness is read by program, make them 0
+        //if(DRAM_ACCEPT & !(wb_stb_i & wb_we_i & !wb_ack_o) & (wb_adr_i == 8'h20)) DRAM_ACCEPT_NEXT = 0;
+        //if(DRAM_ACK & !(wb_stb_i & wb_we_i & !wb_ack_o) & (wb_adr_i == 8'h24)) DRAM_ACK_NEXT = 0;
 
         if (DRAM_WDG > 0) begin
             DRAM_WDG_NEXT = DRAM_WDG - 1;
@@ -237,8 +241,8 @@ module dram_controller (
             DRAM_TIMER_NEXT = DRAM_TIMER + 1;
         end
 
-        if(ram_accept & !(wb_stb_i & wb_we_i & !wb_ack_o & (wb_adr_i == 8'h18))) DRAM_RE_NEXT = 0;
-        if(ram_accept & !(wb_stb_i & wb_we_i & !wb_ack_o & (wb_adr_i == 8'h1C))) DRAM_WE_NEXT = 0;
+        if(DRAM_ACCEPT & !(wb_stb_i & wb_we_i & !wb_ack_o & (wb_adr_i == 8'h18))) DRAM_RE_NEXT = 0;
+        if(DRAM_ACCEPT & !(wb_stb_i & wb_we_i & !wb_ack_o & (wb_adr_i == 8'h1C))) DRAM_WE_NEXT = 0;
     end
     
     always_ff @(posedge clk_i) begin

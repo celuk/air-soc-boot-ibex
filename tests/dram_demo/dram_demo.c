@@ -5,7 +5,7 @@
 int main()
 {
     init_uart();
-    init_dram(US(500));
+    init_dram(US(250));
     unsigned int address = 0x00002FFF;
     unsigned int data = 0x1234BAEF;
  
