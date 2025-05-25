@@ -109,7 +109,7 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 @cocotb.coroutine
-async def anabellek(dut, clk, start_address):
+async def main_memory(dut, clk, start_address):
     await RisingEdge(clk)
     dut.rst_ni.value = 0
     await RisingEdge(clk)
@@ -177,7 +177,7 @@ async def tair(dut):
     start_address = 0x00000000
     ## is not used now
 
-    clk_ns = 40
+    clk_ns = 20
     baud_rate = 115200
 
     if hasattr(dut, "clk_p") and hasattr(dut, "clk_n"):
@@ -207,7 +207,7 @@ async def tair(dut):
     await RisingEdge(clk)
     await RisingEdge(clk)
     dut.rst_ni.value = 1
-    cocotb.start_soon(uart_monitor(dut, clk, 40, baud_rate))
-    blk = cocotb.start_soon(anabellek(dut, clk, start_address))
+    cocotb.start_soon(uart_monitor(dut, clk, clk_ns, baud_rate))
+    blk = cocotb.start_soon(main_memory(dut, clk, start_address))
     await blk
     print()

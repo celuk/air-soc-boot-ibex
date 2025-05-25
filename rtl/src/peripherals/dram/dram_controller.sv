@@ -63,9 +63,9 @@ module dram_controller (
     reg DRAM_WE;
     reg DRAM_WE_NEXT;
     reg DRAM_ACCEPT;
-    reg DRAM_ACCEPT_NEXT;
+    reg DRAM_ACCEPT_NEXT=0;
     reg DRAM_ACK;
-    reg DRAM_ACK_NEXT;
+    reg DRAM_ACK_NEXT=0;
     reg [31:0] DRAM_WDG;
     reg [31:0] DRAM_WDG_NEXT;
 
