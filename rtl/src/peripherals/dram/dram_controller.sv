@@ -63,9 +63,9 @@ module dram_controller (
     reg DRAM_WE;
     reg DRAM_WE_NEXT;
     reg DRAM_ACCEPT;
-    reg DRAM_ACCEPT_NEXT=0;
+    reg DRAM_ACCEPT_NEXT;
     reg DRAM_ACK;
-    reg DRAM_ACK_NEXT=0;
+    reg DRAM_ACK_NEXT;
     reg [31:0] DRAM_WDG;
     reg [31:0] DRAM_WDG_NEXT;
 
@@ -247,13 +247,6 @@ module dram_controller (
 
         DRAM_DATA_READ_NEXT = data_read_w;
 
-        // TODO: prevent 2 times read and write to dram
-        if(ram_accept) DRAM_ACCEPT_NEXT = 1;
-        if(ram_ack) DRAM_ACK_NEXT = 1;
-        // if their 1'ness is read by program, make them 0
-        if(DRAM_ACCEPT & wb_cyc_i & !(wb_stb_i & wb_we_i & !wb_ack_o) & !wb_we_i & (wb_adr_i == 8'h20)) DRAM_ACCEPT_NEXT = 0;
-        if(DRAM_ACK & wb_cyc_i & !(wb_stb_i & wb_we_i & !wb_ack_o) & !wb_we_i & (wb_adr_i == 8'h24)) DRAM_ACK_NEXT = 0;
-
         // if there is no write to RE and WE, and previous RE or WE accepted, then reset the RE and WE
         if(DRAM_ACCEPT & !(wb_stb_i & wb_we_i & !wb_ack_o & (wb_adr_i == 8'h18))) DRAM_RE_NEXT = 0;
         if(DRAM_ACCEPT & !(wb_stb_i & wb_we_i & !wb_ack_o & (wb_adr_i == 8'h1C))) DRAM_WE_NEXT = 0;
@@ -288,9 +281,13 @@ module dram_controller (
             DRAM_TIMER <= DRAM_TIMER_NEXT;
             DRAM_RE <= DRAM_RE_NEXT;
             DRAM_WE <= DRAM_WE_NEXT;
-            DRAM_ACCEPT <= DRAM_ACCEPT_NEXT;
-            DRAM_ACK <= DRAM_ACK_NEXT;
             DRAM_WDG <= DRAM_WDG_NEXT;
+
+            if(ram_accept) DRAM_ACCEPT <= 1;
+            else if(DRAM_ACCEPT & wb_cyc_i & !(wb_stb_i & wb_we_i & !wb_ack_o) & !wb_we_i & (wb_adr_i == 8'h20)) DRAM_ACCEPT <= 0;
+            if(ram_ack) DRAM_ACK <= 1;
+            else if(DRAM_ACK & wb_cyc_i & !(wb_stb_i & wb_we_i & !wb_ack_o) & !wb_we_i & (wb_adr_i == 8'h24)) DRAM_ACK <= 0;
+
         end
     end
 
