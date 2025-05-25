@@ -620,7 +620,7 @@ module air_soc (
    wire [1:0] ddr3_dqs_n;
    wire [15:0] ddr3_dq;
 
-   `define den1024Mb
+   //`define den1024Mb
    //`include "1024Mb_ddr3_parameters.vh"
 
    ddr3 ddr3_dut (

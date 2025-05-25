@@ -4,12 +4,14 @@
 
 int main()
 {
+    init_uart();
     init_dram(US(500));
     unsigned int address = 0x00002FFF;
     unsigned int data = 0x1234BAEF;
  
-    DRAM_ADDRESS = address;
-    DRAM_DATA_WRITE = data;
-    
+    dram_write(address, data);
+
+    ee_printf("data: %x\n", dram_read(0x00002FFF));
+
     return 0;
 }
