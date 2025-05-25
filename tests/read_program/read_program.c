@@ -12,9 +12,10 @@ int main(){
 
     unsigned int address = 0x00000000;
     unsigned int* data;
-    for (unsigned int i = 0; i < 3000; i += 32) {
+    for (unsigned int i = 0; i < 30000; i += 32) { // 7218*4 = 28872
         data = qspi_read_qor(address);
 
+        tekno_printf("address: %x\n", address);
         tekno_printf("DR0: %x\n", data[0]);
         tekno_printf("DR1: %x\n", data[1]);
         tekno_printf("DR2: %x\n", data[2]);
@@ -57,5 +58,16 @@ int main(){
         }
         address += 32;
     }
+
+    //data = qspi_read_qor(0x00008d98); // 36248
+//
+    //tekno_printf("DR0: %x\n", data[0]);
+    //tekno_printf("DR1: %x\n", data[1]);
+    //tekno_printf("DR2: %x\n", data[2]);
+    //tekno_printf("DR3: %x\n", data[3]);
+    //tekno_printf("DR4: %x\n", data[4]);
+    //tekno_printf("DR5: %x\n", data[5]);
+    //tekno_printf("DR6: %x\n", data[6]);
+    //tekno_printf("DR7: %x\n", data[7]);
 
 }
