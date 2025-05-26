@@ -73,8 +73,8 @@ module air_soc (
       wire clk_ref;
       wire clk_ddr_dqs;
       wire clk_i;
-      clk_wiz_0 u_pll
-      //clk_wiz_1 u_pll
+      //clk_wiz_0 u_pll
+      clk_wiz_1 u_pll
       (
          .clk_in1_p(clk_p),
          .clk_in1_n(clk_n)
