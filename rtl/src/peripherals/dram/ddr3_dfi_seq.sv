@@ -72,13 +72,6 @@ module ddr3_dfi_seq
     ,output          dfi_wrdata_en_o
     ,output [  3:0]  dfi_wrdata_mask_o
     ,output          dfi_rddata_en_o
-    
-    ,input [31:0] trcd
-    ,input [31:0] nonseq
-    ,input [31:0] rwnonseq
-    ,input [31:0] trp
-    ,input [31:0] trfc
-    ,input [31:0] rwseq
 );
 
 
@@ -163,8 +156,8 @@ else if (command_i == CMD_WRITE && delay_q == {DELAY_W{1'b0}})
 else
     wr_accept_q       <= {1'b0, wr_accept_q[CMD_ACCEPT_W-1:1]};
 
-wire read_early_accept_w  = (last_cmd_q == CMD_READ  && command_i == CMD_READ && delay_q == rwseq); //DDR_RW_SEQ_CYCLES);
-wire write_early_accept_w = (last_cmd_q == CMD_WRITE && command_i == CMD_WRITE && delay_q == rwseq); //DDR_RW_SEQ_CYCLES);
+wire read_early_accept_w  = (last_cmd_q == CMD_READ  && command_i == CMD_READ && delay_q == DDR_RW_SEQ_CYCLES);
+wire write_early_accept_w = (last_cmd_q == CMD_WRITE && command_i == CMD_WRITE && delay_q == DDR_RW_SEQ_CYCLES);
 
 assign accept_o  = (delay_q == {DELAY_W{1'b0}}) || read_early_accept_w || write_early_accept_w || (command_i == CMD_NOP);
 
@@ -215,14 +208,14 @@ begin
         if (command_i == CMD_ACTIVE)
         begin
             // tRCD (ACTIVATE -> READ / WRITE)
-            delay_r = trcd; //DDR_TRCD_CYCLES;        
+            delay_r = DDR_TRCD_CYCLES;        
         end
         //-----------------------------------------
         // READ / WRITE
         //-----------------------------------------
         else if (command_i == CMD_READ || command_i == CMD_WRITE)
         begin
-            delay_r = nonseq; //DDR_RW_NONSEQ_CYCLES;
+            delay_r = DDR_RW_NONSEQ_CYCLES;
         end
         //-----------------------------------------
         // PRECHARGE
@@ -230,7 +223,7 @@ begin
         else if (command_i == CMD_PRECHARGE)
         begin
             // tRP (PRECHARGE -> ACTIVATE)
-            delay_r = trp; //DDR_TRP_CYCLES;
+            delay_r = DDR_TRP_CYCLES;
         end
         //-----------------------------------------
         // REFRESH
@@ -238,7 +231,7 @@ begin
         else if (command_i == CMD_REFRESH)
         begin
             // tRFC
-            delay_r = trfc; //DDR_TRFC_CYCLES;
+            delay_r = DDR_TRFC_CYCLES;
         end
         //-----------------------------------------
         // Others
@@ -253,7 +246,7 @@ begin
         // Read to Read, Write to Write
         if (read_early_accept_w || write_early_accept_w)
         begin
-            delay_r = rwnonseq; //DDR_RW_NONSEQ_CYCLES;
+            delay_r = DDR_RW_NONSEQ_CYCLES;
         end
     end
 end

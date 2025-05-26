@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define DRAM_BASE_ADDR  0xFF060000
+#define DRAM_BASE_ADDR  0xFF070000
 #define DRAM_COMMAND_OFFSET 0x00
 #define DRAM_ADDRESS_OFFSET 0x04
 #define DRAM_DATA_WRITE_OFFSET 0x08
@@ -21,6 +21,7 @@
 #define DRAM_TRP_OFFSET 0x3C
 #define DRAM_TRFC_OFFSET 0x40
 #define DRAM_RWSEQ_OFFSET 0x44
+#define DRAM_WDG_OFFSET 0x48
 
 #define DRAM_COMMAND (*(volatile uint32_t*) (DRAM_BASE_ADDR + DRAM_COMMAND_OFFSET))
 #define DRAM_ADDRESS (*(volatile uint32_t*) (DRAM_BASE_ADDR + DRAM_ADDRESS_OFFSET))
@@ -39,6 +40,7 @@
 #define DRAM_TRP (*(volatile uint32_t*) (DRAM_BASE_ADDR + DRAM_TRP_OFFSET))
 #define DRAM_TRFC (*(volatile uint32_t*) (DRAM_BASE_ADDR + DRAM_TRFC_OFFSET))
 #define DRAM_RWSEQ (*(volatile uint32_t*) (DRAM_BASE_ADDR + DRAM_RWSEQ_OFFSET))
+#define DRAM_WDG (*(volatile uint32_t*) (DRAM_BASE_ADDR + DRAM_WDG_OFFSET))
 
 typedef union
 {

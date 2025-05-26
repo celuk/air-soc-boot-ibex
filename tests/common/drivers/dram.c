@@ -2,13 +2,6 @@
 #include "defines.h"
 
 void init_dram(unsigned int wait_time){
-    DRAM_TRCD = 2;
-    DRAM_TRFC = 15; // smaller than 26?
-    DRAM_TRP = 2;
-    DRAM_NONSEQ = 16;
-    DRAM_RWNONSEQ = 16;
-    DRAM_RWSEQ = 13;
-    DRAM_PWRUP = 1;
     wait_for_dram(US(wait_time));
 }
 
