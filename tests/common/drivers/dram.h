@@ -23,10 +23,6 @@
 #define DRAM_RWSEQ_OFFSET 0x44
 #define DRAM_WDG_OFFSET 0x48
 
-#define DRAM_DATA_WRITE1_OFFSET 0x4C
-#define DRAM_DATA_WRITE2_OFFSET 0x50
-#define DRAM_DATA_WRITE3_OFFSET 0x54
-
 #define DRAM_COMMAND (*(volatile uint32_t*) (DRAM_BASE_ADDR + DRAM_COMMAND_OFFSET))
 #define DRAM_ADDRESS (*(volatile uint32_t*) (DRAM_BASE_ADDR + DRAM_ADDRESS_OFFSET))
 #define DRAM_DATA_WRITE (*(volatile uint32_t*) (DRAM_BASE_ADDR + DRAM_DATA_WRITE_OFFSET))
@@ -45,10 +41,6 @@
 #define DRAM_TRFC (*(volatile uint32_t*) (DRAM_BASE_ADDR + DRAM_TRFC_OFFSET))
 #define DRAM_RWSEQ (*(volatile uint32_t*) (DRAM_BASE_ADDR + DRAM_RWSEQ_OFFSET))
 #define DRAM_WDG (*(volatile uint32_t*) (DRAM_BASE_ADDR + DRAM_WDG_OFFSET))
-
-#define DRAM_DATA_WRITE1 (*(volatile uint32_t*) (DRAM_BASE_ADDR + DRAM_DATA_WRITE1_OFFSET))
-#define DRAM_DATA_WRITE2 (*(volatile uint32_t*) (DRAM_BASE_ADDR + DRAM_DATA_WRITE2_OFFSET))
-#define DRAM_DATA_WRITE3 (*(volatile uint32_t*) (DRAM_BASE_ADDR + DRAM_DATA_WRITE3_OFFSET))
 
 typedef union
 {
