@@ -56,9 +56,6 @@ static const uint32_t Rcon[10] = {
     0x20000000, 0x40000000, 0x80000000, 0x1b000000, 0x36000000
 };
 
-// Static buffer for the result
-static uint32_t result_block[AES_Nb];
-
 // Helper: xtime for Galois Field multiplication GF(2^8)
 // Multiplies by x (equals to 2 in GF(2^8))
 static uint8_t xtime(uint8_t x) {
@@ -167,8 +164,8 @@ static void InvMixColumns(uint8_t state[4][4]) {
     }
 }
 
-uint32_t* aes_decrypt(uint32_t block_part0, uint32_t block_part1, uint32_t block_part2, uint32_t block_part3,
-                      uint32_t key_part0, uint32_t key_part1, uint32_t key_part2, uint32_t key_part3) {
+void aes_decrypt(uint32_t block_part0, uint32_t block_part1, uint32_t block_part2, uint32_t block_part3,
+                      uint32_t key_part0, uint32_t key_part1, uint32_t key_part2, uint32_t key_part3, uint32_t* result_block) {
     uint8_t state[4][4];
     uint32_t initial_key[AES_Nk];
     uint32_t round_keys[AES_Nb * (AES_Nr + 1)];
@@ -196,7 +193,6 @@ uint32_t* aes_decrypt(uint32_t block_part0, uint32_t block_part1, uint32_t block
     AddRoundKey(state, &round_keys[0]);
 
     state_to_block(state, result_block);
-    return result_block;
 }
 
 void secure_boot()
@@ -206,7 +202,7 @@ void secure_boot()
     uint32_t address = 0x00000000;
     uint32_t* data;
     uint32_t key_data[8];
-    uint32_t* decrypted_block;
+    uint32_t decrypted_block[AES_Nb];
 
     // Phase 1: get key from root of trust
     // TODO: generate key for first time boot that would be another phase
@@ -241,8 +237,8 @@ void secure_boot()
             break;
         }
 
-        decrypted_block = aes_decrypt(data[0], data[1], data[2], data[3],
-                    key_data[0], key_data[1], key_data[2], key_data[3]);
+        aes_decrypt(data[0], data[1], data[2], data[3],
+                    key_data[0], key_data[1], key_data[2], key_data[3], decrypted_block);
         
         *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = decrypted_block[0];
         address += 4;
@@ -252,6 +248,11 @@ void secure_boot()
         address += 4;
         *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = decrypted_block[3];
         address += 4;
+
+        init_uart();
+        tekno_printf("Decrypted block at address %x: %x %x %x %x\n",
+                    address-16, decrypted_block[0], decrypted_block[1],
+                    decrypted_block[2], decrypted_block[3]);
 
         if(data[4] == 0xFFFFFFFF) {
             break;
@@ -265,8 +266,8 @@ void secure_boot()
         if(data[7] == 0xFFFFFFFF) {
             break;
         }
-        decrypted_block = aes_decrypt(data[4], data[5], data[6], data[7],
-                    key_data[4], key_data[5], key_data[6], key_data[7]);
+        aes_decrypt(data[4], data[5], data[6], data[7],
+                    key_data[4], key_data[5], key_data[6], key_data[7], decrypted_block);
 
         *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = decrypted_block[0];
         address += 4;
