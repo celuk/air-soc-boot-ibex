@@ -195,6 +195,13 @@ void aes_decrypt(uint32_t block_part0, uint32_t block_part1, uint32_t block_part
     state_to_block(state, result_block);
 }
 
+uint32_t little_endian(uint32_t value) {
+    return ((value & 0x000000FF) << 24) |
+           ((value & 0x0000FF00) << 8)  |
+           ((value & 0x00FF0000) >> 8)  |
+           ((value & 0xFF000000) >> 24);
+}
+
 void secure_boot()
 {
     qspi_init();
@@ -218,6 +225,9 @@ void secure_boot()
 
     //init_uart   ();
     //tekno_printf("key_data[0]: %x\n", key_data[0]);
+    //tekno_printf("key_data[1]: %x\n", key_data[1]);
+    //tekno_printf("key_data[2]: %x\n", key_data[2]);
+    //tekno_printf("key_data[3]: %x\n", key_data[3]);
 
     // Phase 2: decrypt the code by the given key
     //address += (4 * 8);
@@ -240,19 +250,18 @@ void secure_boot()
         aes_decrypt(data[0], data[1], data[2], data[3],
                     key_data[0], key_data[1], key_data[2], key_data[3], decrypted_block);
         
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = decrypted_block[0];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = little_endian(decrypted_block[0]);
         address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = decrypted_block[1];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = little_endian(decrypted_block[1]);
         address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = decrypted_block[2];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = little_endian(decrypted_block[2]);
         address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = decrypted_block[3];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = little_endian(decrypted_block[3]);
         address += 4;
 
-        init_uart();
-        tekno_printf("Decrypted block at address %x: %x %x %x %x\n",
-                    address-16, decrypted_block[0], decrypted_block[1],
-                    decrypted_block[2], decrypted_block[3]);
+        //tekno_printf("Decrypted block at address %x: %x %x %x %x\n",
+        //            address-32, little_endian(decrypted_block[0]), little_endian(decrypted_block[1]),
+        //            little_endian(decrypted_block[2]), little_endian(decrypted_block[3]));
 
         if(data[4] == 0xFFFFFFFF) {
             break;
@@ -267,16 +276,20 @@ void secure_boot()
             break;
         }
         aes_decrypt(data[4], data[5], data[6], data[7],
-                    key_data[4], key_data[5], key_data[6], key_data[7], decrypted_block);
+                    key_data[0], key_data[1], key_data[2], key_data[3], decrypted_block);
 
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = decrypted_block[0];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = little_endian(decrypted_block[0]);
         address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = decrypted_block[1];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = little_endian(decrypted_block[1]);
         address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = decrypted_block[2];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = little_endian(decrypted_block[2]);
         address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = decrypted_block[3];
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = little_endian(decrypted_block[3]);
         address += 4;
+
+        //tekno_printf("Decrypted block at address %x: %x %x %x %x\n",
+        //    address-32, little_endian(decrypted_block[0]), little_endian(decrypted_block[1]),
+        //    little_endian(decrypted_block[2]), little_endian(decrypted_block[3]));
     }
 }
 

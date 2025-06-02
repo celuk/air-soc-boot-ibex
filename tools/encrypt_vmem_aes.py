@@ -258,14 +258,20 @@ def process_vmem_file_for_aes_encryption(input_file):
 
         e0, e1, e2, e3 = aes_encrypt(b0, b1, b2, b3, k0, k1, k2, k3)
 
-        encrypted_bytes.extend(bytes_from_u32(e0))
-        encrypted_bytes.extend(bytes_from_u32(e1))
-        encrypted_bytes.extend(bytes_from_u32(e2))
-        encrypted_bytes.extend(bytes_from_u32(e3))
+        #if i < 10 * 16:
+        #    print("Encrypting block:")
+        #    print(f"  Data : {b0:08X} {b1:08X} {b2:08X} {b3:08X}")
+        #    print(f"  Key  : {k0:08X} {k1:08X} {k2:08X} {k3:08X}")
+        #    print(f"  Encrypted: {e0:08X} {e1:08X} {e2:08X} {e3:08X}")
+
+        encrypted_bytes.extend(bytes_from_u32(e0)[::-1])
+        encrypted_bytes.extend(bytes_from_u32(e1)[::-1])
+        encrypted_bytes.extend(bytes_from_u32(e2)[::-1])
+        encrypted_bytes.extend(bytes_from_u32(e3)[::-1])
 
     # Output in VMEM format
     print('@00000000')
-    key_bytes = sum([bytes_from_u32(k) for k in [k0, k1, k2, k3]], [])
+    key_bytes = sum([bytes_from_u32(k)[::-1] for k in [k0, k1, k2, k3]], [])
     print(' '.join(f'{b:02X}' for b in key_bytes))
 
     for i in range(0, len(encrypted_bytes), 16):
