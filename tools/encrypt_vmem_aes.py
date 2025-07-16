@@ -245,6 +245,12 @@ def process_vmem_file_for_aes_encryption(input_file):
     k1 = 0x28aed2a6
     k2 = 0xabf71588
     k3 = 0x09cf4f3c
+    #k0 = 0xc0a1d2e3
+    #k1 = 0x34f9851b
+    #k2 = 0x2a47c932
+    #k3 = 0x6fbd8a7e
+
+    
 
     encrypted_bytes = []
 
