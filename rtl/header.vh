@@ -31,10 +31,7 @@
 `define RAM_FPATH "" //"../../../tests/bootloader/bootloader.hex" //"../../../tests/qspi_demo/qspi_demo.hex"
 `define RAM_SIZE 'h8000 //131072 //32'h0002_0000 //131072 //256 * 1024
 
-`define MEM_BASE_ADDR   32'h0000_0000
-`define MEM_RANGE       32'h0F00_0000
-
-`define USE_BOOTROM 0
+`define USE_BOOTROM 1
 
 //`define BASYS3
 //`define EXT_FLASH
@@ -72,3 +69,13 @@ PERIPHERALS
 `define TIMER_RANGE     32'h0000_FFFF
 `define DRAM_BASE_ADDR  32'hFF07_0000
 `define DRAM_RANGE      32'h0000_FFFF
+
+// boot memory
+`define MEM_BASE_ADDR   32'h0000_0000
+//`define MEM_RANGE       32'h0F00_0000 //32'h0000_1FFF
+
+`define MEM_RANGE       32'h0000_1FFF
+`define SECOND_SRAM
+
+`define CODE_RAM_BASE_ADDR 32'h00002000
+`define CODE_RAM_RANGE 32'h0F00_0000
