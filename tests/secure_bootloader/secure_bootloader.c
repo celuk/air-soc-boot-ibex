@@ -6,9 +6,9 @@
 #define CODE_RAM (*(volatile uint32_t*) (CODE_RAM_BASE_ADDR))
 
 // AES constants
-#define AES_Nk 4  // Number of 32-bit words in the key (AES-128)
+#define AES_Nk 8  // Number of 32-bit words in the key (AES-256)
 #define AES_Nb 4  // Number of 32-bit words in a block (always 4 for AES)
-#define AES_Nr 10 // Number of rounds for AES-128
+#define AES_Nr 14 // Number of rounds for AES-256
 
 // S-Box
 static const uint8_t s_box[256] = {
@@ -50,10 +50,11 @@ static const uint8_t inv_s_box[256] = {
     0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d
 };
 
-// Rcon (Round Constant)
-static const uint32_t Rcon[10] = {
+// Rcon (Round Constant) - extended for AES-256
+static const uint32_t Rcon[14] = {
     0x01000000, 0x02000000, 0x04000000, 0x08000000, 0x10000000,
-    0x20000000, 0x40000000, 0x80000000, 0x1b000000, 0x36000000
+    0x20000000, 0x40000000, 0x80000000, 0x1b000000, 0x36000000,
+    0x6c000000, 0xd8000000, 0xab000000, 0x4d000000
 };
 
 // Helper: xtime for Galois Field multiplication GF(2^8)
@@ -94,8 +95,10 @@ static void KeyExpansion(uint32_t* expanded_keys, const uint32_t* key) {
     for (i = AES_Nk; i < AES_Nb * (AES_Nr + 1); i++) {
         temp = expanded_keys[i - 1];
         if (i % AES_Nk == 0) {
-            temp = SubWord(RotWord(temp)) ^ Rcon[i/AES_Nk - 1];
-        } else if (AES_Nk > 6 && i % AES_Nk == 4) { // Only for AES-256
+            temp = SubWord(RotWord(temp)) ^ Rcon[i / AES_Nk - 1];
+        }
+        // For AES-256, apply SubWord to every 4th word after the first 6 rounds
+        if (AES_Nk > 6 && (i % AES_Nk == 4)) {
             temp = SubWord(temp);
         }
         expanded_keys[i] = expanded_keys[i - AES_Nk] ^ temp;
@@ -165,13 +168,17 @@ static void InvMixColumns(uint8_t state[4][4]) {
 }
 
 void aes_decrypt(uint32_t block_part0, uint32_t block_part1, uint32_t block_part2, uint32_t block_part3,
-                      uint32_t key_part0, uint32_t key_part1, uint32_t key_part2, uint32_t key_part3, uint32_t* result_block) {
+                      uint32_t key_part0, uint32_t key_part1, uint32_t key_part2, uint32_t key_part3,
+                      uint32_t key_part4, uint32_t key_part5, uint32_t key_part6, uint32_t key_part7, 
+                      uint32_t* result_block) {
     uint8_t state[4][4];
     uint32_t initial_key[AES_Nk];
     uint32_t round_keys[AES_Nb * (AES_Nr + 1)];
 
     initial_key[0] = key_part0; initial_key[1] = key_part1;
     initial_key[2] = key_part2; initial_key[3] = key_part3;
+    initial_key[4] = key_part4; initial_key[5] = key_part5;
+    initial_key[6] = key_part6; initial_key[7] = key_part7;
     
     block_to_state(block_part0, block_part1, block_part2, block_part3, state);
 
@@ -221,7 +228,7 @@ void secure_boot()
         return;
     }
 
-    address += 16;
+    address += 32;
 
     //init_uart   ();
     //tekno_printf("key_data[0]: %x\n", key_data[0]);
@@ -248,15 +255,16 @@ void secure_boot()
         }
 
         aes_decrypt(data[0], data[1], data[2], data[3],
-                    key_data[0], key_data[1], key_data[2], key_data[3], decrypted_block);
+                    key_data[0], key_data[1], key_data[2], key_data[3],
+                    key_data[4], key_data[5], key_data[6], key_data[7], decrypted_block);
         
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = little_endian(decrypted_block[0]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-32) = little_endian(decrypted_block[0]);
         address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = little_endian(decrypted_block[1]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-32) = little_endian(decrypted_block[1]);
         address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = little_endian(decrypted_block[2]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-32) = little_endian(decrypted_block[2]);
         address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = little_endian(decrypted_block[3]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-32) = little_endian(decrypted_block[3]);
         address += 4;
 
         //tekno_printf("Decrypted block at address %x: %x %x %x %x\n",
@@ -276,15 +284,16 @@ void secure_boot()
             break;
         }
         aes_decrypt(data[4], data[5], data[6], data[7],
-                    key_data[0], key_data[1], key_data[2], key_data[3], decrypted_block);
+                    key_data[0], key_data[1], key_data[2], key_data[3],
+                    key_data[4], key_data[5], key_data[6], key_data[7], decrypted_block);
 
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = little_endian(decrypted_block[0]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-32) = little_endian(decrypted_block[0]);
         address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = little_endian(decrypted_block[1]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-32) = little_endian(decrypted_block[1]);
         address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = little_endian(decrypted_block[2]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-32) = little_endian(decrypted_block[2]);
         address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-16) = little_endian(decrypted_block[3]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-32) = little_endian(decrypted_block[3]);
         address += 4;
 
         //tekno_printf("Decrypted block at address %x: %x %x %x %x\n",

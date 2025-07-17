@@ -670,8 +670,8 @@ module air_soc (
    wire [3:0] qspi_data_io;
 
    s25fl128s #(
-      .mem_file_name("../../../tests/demo/demo.vmem"),
-      //.mem_file_name("../../../tests/demo/demo_secure.vmem"),
+      //.mem_file_name("../../../tests/demo/demo.vmem"),
+      .mem_file_name("../../../tests/demo/demo_secure.vmem"),
       //.mem_file_name("../../../rtl/sim/s25fl128s.mem"),
       //.mem_file_name("none"),
       .otp_file_name("none"),
