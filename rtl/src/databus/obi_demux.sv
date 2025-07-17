@@ -77,6 +77,12 @@ module obi_demux (
 
    wire        periph_gnt;
 
+   `ifdef SECOND_SRAM
+   wire is_mem_space;
+   assign is_mem_space = ((`MEM_BASE_ADDR + `MEM_RANGE > data_addr) && (data_addr >= `MEM_BASE_ADDR)) ||
+                         ((`CODE_RAM_BASE_ADDR + `CODE_RAM_RANGE > data_addr) && (data_addr >= `CODE_RAM_BASE_ADDR));
+   `endif
+
    typedef enum {
       IDLE,
       WAITING
@@ -97,9 +103,15 @@ module obi_demux (
    assign qspi_wdata_o = data_wdata;
    `ifdef ZC706 assign dram_wdata_o = data_wdata; `endif
 
-   assign cache_req_o = (`MEM_BASE_ADDR  + `MEM_RANGE  > data_addr )   && (data_addr >= `MEM_BASE_ADDR)   ? (state == WAITING) & data_req : 'h0;
-   assign cache_we_o  = (`MEM_BASE_ADDR  + `MEM_RANGE  > data_addr )   && (data_addr >= `MEM_BASE_ADDR)   ? data_we  : 'h0;
-   assign cache_be_o  = (`MEM_BASE_ADDR  + `MEM_RANGE  > data_addr )   && (data_addr >= `MEM_BASE_ADDR)   ? data_be  : 'h0;
+   `ifdef SECOND_SRAM
+     assign cache_req_o = is_mem_space ? (state == WAITING) & data_req : 'h0;
+     assign cache_we_o  = is_mem_space ? data_we : 'h0;
+     assign cache_be_o  = is_mem_space ? data_be : 'h0;
+   `else
+     assign cache_req_o = (`MEM_BASE_ADDR  + `MEM_RANGE  > data_addr )   && (data_addr >= `MEM_BASE_ADDR)   ? (state == WAITING) & data_req : 'h0;
+     assign cache_we_o  = (`MEM_BASE_ADDR  + `MEM_RANGE  > data_addr )   && (data_addr >= `MEM_BASE_ADDR)   ? data_we  : 'h0;
+     assign cache_be_o  = (`MEM_BASE_ADDR  + `MEM_RANGE  > data_addr )   && (data_addr >= `MEM_BASE_ADDR)   ? data_be  : 'h0;
+   `endif
   
    assign uart_req_o  = (`UART_BASE_ADDR + `UART_RANGE > data_addr )   && (data_addr >= `UART_BASE_ADDR)  ? (state == WAITING) & data_req : 'h0;
    assign uart_we_o   = (`UART_BASE_ADDR + `UART_RANGE > data_addr )   && (data_addr >= `UART_BASE_ADDR)  ? data_we  : 'h0;
@@ -119,26 +131,54 @@ module obi_demux (
    assign dram_be_o  = (`DRAM_BASE_ADDR  + `DRAM_RANGE  > data_addr ) && (data_addr >= `DRAM_BASE_ADDR) ? data_be  : 'h0;
    `endif
 
-   assign data_rdata_o = (`MEM_BASE_ADDR+`MEM_RANGE     > data_addr) && (data_addr >= `MEM_BASE_ADDR  ) ? cache_rdata_i :
-                         (`UART_BASE_ADDR+`UART_RANGE   > data_addr) && (data_addr >= `UART_BASE_ADDR ) ? uart_rdata_i  :
-                         (`TIMER_BASE_ADDR+`TIMER_RANGE > data_addr) && (data_addr >= `TIMER_BASE_ADDR) ? timer_rdata_i :
-                         (`QSPI_BASE_ADDR+`QSPI_RANGE   > data_addr) && (data_addr >= `QSPI_BASE_ADDR ) ? qspi_rdata_i  :
-                         `ifdef ZC706 (`DRAM_BASE_ADDR+`DRAM_RANGE   > data_addr) && (data_addr >= `DRAM_BASE_ADDR ) ? dram_rdata_i  : `endif
-                                                                                                          32'h0         ;
+   `ifdef SECOND_SRAM
+     assign data_rdata_o = is_mem_space ? cache_rdata_i :
+                           (`UART_BASE_ADDR+`UART_RANGE   > data_addr) && (data_addr >= `UART_BASE_ADDR ) ? uart_rdata_i  :
+                           (`TIMER_BASE_ADDR+`TIMER_RANGE > data_addr) && (data_addr >= `TIMER_BASE_ADDR) ? timer_rdata_i :
+                           (`QSPI_BASE_ADDR+`QSPI_RANGE   > data_addr) && (data_addr >= `QSPI_BASE_ADDR ) ? qspi_rdata_i  :
+                           `ifdef ZC706 (`DRAM_BASE_ADDR+`DRAM_RANGE   > data_addr) && (data_addr >= `DRAM_BASE_ADDR ) ? dram_rdata_i  : `endif
+                                                                                                            32'h0         ;
+   `else
+     assign data_rdata_o = (`MEM_BASE_ADDR+`MEM_RANGE     > data_addr) && (data_addr >= `MEM_BASE_ADDR  ) ? cache_rdata_i :
+                           (`UART_BASE_ADDR+`UART_RANGE   > data_addr) && (data_addr >= `UART_BASE_ADDR ) ? uart_rdata_i  :
+                           (`TIMER_BASE_ADDR+`TIMER_RANGE > data_addr) && (data_addr >= `TIMER_BASE_ADDR) ? timer_rdata_i :
+                           (`QSPI_BASE_ADDR+`QSPI_RANGE   > data_addr) && (data_addr >= `QSPI_BASE_ADDR ) ? qspi_rdata_i  :
+                           `ifdef ZC706 (`DRAM_BASE_ADDR+`DRAM_RANGE   > data_addr) && (data_addr >= `DRAM_BASE_ADDR ) ? dram_rdata_i  : `endif
+                                                                                                            32'h0         ;
+   `endif
 
-   assign data_rvalid_o= (`MEM_BASE_ADDR+`MEM_RANGE     >= data_addr) && (data_addr >= `MEM_BASE_ADDR  ) ? cache_rvalid_i :
-                         (`UART_BASE_ADDR+`UART_RANGE   >= data_addr) && (data_addr >= `UART_BASE_ADDR ) ? uart_rvalid_i  :
-                         (`TIMER_BASE_ADDR+`TIMER_RANGE >= data_addr) && (data_addr >= `TIMER_BASE_ADDR) ? timer_rvalid_i :
-                         (`QSPI_BASE_ADDR+`QSPI_RANGE   >= data_addr) && (data_addr >= `QSPI_BASE_ADDR ) ? qspi_rvalid_i  :
-                         `ifdef ZC706 (`DRAM_BASE_ADDR+`DRAM_RANGE   >= data_addr) && (data_addr >= `DRAM_BASE_ADDR ) ? dram_rvalid_i  : `endif
-                                                                                                           1'h0           ;
+   `ifdef SECOND_SRAM
+     assign data_rvalid_o= is_mem_space ? cache_rvalid_i :
+                           (`UART_BASE_ADDR+`UART_RANGE   >= data_addr) && (data_addr >= `UART_BASE_ADDR ) ? uart_rvalid_i  :
+                           (`TIMER_BASE_ADDR+`TIMER_RANGE >= data_addr) && (data_addr >= `TIMER_BASE_ADDR) ? timer_rvalid_i :
+                           (`QSPI_BASE_ADDR+`QSPI_RANGE   >= data_addr) && (data_addr >= `QSPI_BASE_ADDR ) ? qspi_rvalid_i  :
+                           `ifdef ZC706 (`DRAM_BASE_ADDR+`DRAM_RANGE   >= data_addr) && (data_addr >= `DRAM_BASE_ADDR ) ? dram_rvalid_i  : `endif
+                                                                                                             1'h0           ;
+   `else
+     assign data_rvalid_o= (`MEM_BASE_ADDR+`MEM_RANGE     >= data_addr) && (data_addr >= `MEM_BASE_ADDR  ) ? cache_rvalid_i :
+                           (`UART_BASE_ADDR+`UART_RANGE   >= data_addr) && (data_addr >= `UART_BASE_ADDR ) ? uart_rvalid_i  :
+                           (`TIMER_BASE_ADDR+`TIMER_RANGE >= data_addr) && (data_addr >= `TIMER_BASE_ADDR) ? timer_rvalid_i :
+                           (`QSPI_BASE_ADDR+`QSPI_RANGE   >= data_addr) && (data_addr >= `QSPI_BASE_ADDR ) ? qspi_rvalid_i  :
+                           `ifdef ZC706 (`DRAM_BASE_ADDR+`DRAM_RANGE   >= data_addr) && (data_addr >= `DRAM_BASE_ADDR ) ? dram_rvalid_i  : `endif
+                                                                                                             1'h0           ;
+   `endif
 
-   assign periph_gnt   = (`MEM_BASE_ADDR+`MEM_RANGE     > data_addr) && (data_addr >= `MEM_BASE_ADDR  ) ? cache_gnt_i :
-                         (`UART_BASE_ADDR+`UART_RANGE   > data_addr) && (data_addr >= `UART_BASE_ADDR ) ? uart_gnt_i  :
-                         (`TIMER_BASE_ADDR+`TIMER_RANGE > data_addr) && (data_addr >= `TIMER_BASE_ADDR) ? timer_gnt_i :
-                         (`QSPI_BASE_ADDR+`QSPI_RANGE   > data_addr) && (data_addr >= `QSPI_BASE_ADDR ) ? qspi_gnt_i  :
-                         `ifdef ZC706 (`DRAM_BASE_ADDR+`DRAM_RANGE   > data_addr) && (data_addr >= `DRAM_BASE_ADDR ) ? dram_gnt_i  : `endif
-                                                                                                          'h0         ;
+   `ifdef SECOND_SRAM
+     assign periph_gnt   = is_mem_space ? cache_gnt_i :
+                           (`UART_BASE_ADDR+`UART_RANGE   > data_addr) && (data_addr >= `UART_BASE_ADDR ) ? uart_gnt_i  :
+                           (`TIMER_BASE_ADDR+`TIMER_RANGE > data_addr) && (data_addr >= `TIMER_BASE_ADDR) ? timer_gnt_i :
+                           (`QSPI_BASE_ADDR+`QSPI_RANGE   > data_addr) && (data_addr >= `QSPI_BASE_ADDR ) ? qspi_gnt_i  :
+                           `ifdef ZC706 (`DRAM_BASE_ADDR+`DRAM_RANGE   > data_addr) && (data_addr >= `DRAM_BASE_ADDR ) ? dram_gnt_i  : `endif
+                                                                                                            'h0         ;
+   `else
+     assign periph_gnt   = (`MEM_BASE_ADDR+`MEM_RANGE     > data_addr) && (data_addr >= `MEM_BASE_ADDR  ) ? cache_gnt_i :
+                           (`UART_BASE_ADDR+`UART_RANGE   > data_addr) && (data_addr >= `UART_BASE_ADDR ) ? uart_gnt_i  :
+                           (`TIMER_BASE_ADDR+`TIMER_RANGE > data_addr) && (data_addr >= `TIMER_BASE_ADDR) ? timer_gnt_i :
+                           (`QSPI_BASE_ADDR+`QSPI_RANGE   > data_addr) && (data_addr >= `QSPI_BASE_ADDR ) ? qspi_gnt_i  :
+                           `ifdef ZC706 (`DRAM_BASE_ADDR+`DRAM_RANGE   > data_addr) && (data_addr >= `DRAM_BASE_ADDR ) ? dram_gnt_i  : `endif
+                                                                                                            'h0         ;
+   `endif
+
 
    assign data_gnt_o = (state == IDLE) & periph_gnt;
 

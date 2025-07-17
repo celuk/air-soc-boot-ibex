@@ -186,6 +186,16 @@ module air_soc (
    logic                dmem_wvalid;
    logic [`MEM_W  -1:0] dmem_rdata;
 
+   `ifdef SECOND_SRAM
+   logic                mem_req2000;
+   logic [       31:0] mem_addr2000;
+   logic                mem_we2000;
+   logic [        3:0] mem_be2000;
+   logic [`MEM_W  -1:0] mem_wdata2000;
+   logic                mem_rvalid2000;
+   logic [`MEM_W  -1:0] mem_rdata2000;
+   `endif
+
    cv32e40p_top #(
        .COREV_PULP               ( `COREV_PULP ),
        .COREV_CLUSTER            ( `COREV_CLUSTER ),
@@ -328,114 +338,185 @@ module air_soc (
 
    ///////////////////////////////////////////////////////////////////////////
    // MEMORY ARBITER
-
-   logic               mem_req0;
-   logic [       31:0] mem_addr0;
-   logic               mem_we0;
-   logic [        3:0] mem_be0;
-   logic [       31:0] mem_wdata0;
-   logic               mem_rvalid0;
-   logic [       31:0] mem_rdata0;
-
+   generate
    `ifdef SECOND_SRAM
-   logic               mem_req2000;
-   logic [       31:0] mem_addr2000;
-   logic               mem_we2000;
-   logic [        3:0] mem_be2000;
-   logic [       31:0] mem_wdata2000;
-   logic               mem_rvalid2000;
-   logic [       31:0] mem_rdata2000;
+      logic mem_rvalid_combined;
+      logic [`MEM_W-1:0] mem_rdata_combined;
+      logic [31:0] combined_mem_addr;
 
-   wire is_mem2000 = ((`CODE_RAM_BASE_ADDR+`CODE_RAM_RANGE) > mem_addr) && (mem_addr >= `CODE_RAM_BASE_ADDR);
-
-   assign mem_addr0 = mem_addr;
-   assign mem_we0   = is_mem2000 ? 0 : mem_we;
-   assign mem_be0   = mem_be;
-   assign mem_wdata0 = mem_wdata;
-   assign mem_req0 = is_mem2000 ? 0 : mem_req;
-
-   assign mem_addr2000 = mem_addr - 'h2000;
-   assign mem_we2000   = is_mem2000 ? mem_we : 0;
-   assign mem_be2000   = mem_be;
-   assign mem_wdata2000 = mem_wdata;
-   assign mem_req2000 = is_mem2000 ? mem_req : 0;
-
-   assign mem_rvalid = is_mem2000 ? mem_rvalid2000 : mem_rvalid0;
-   assign mem_rdata = is_mem2000 ? mem_rdata2000 : mem_rdata0;
-   `else
-   assign mem_addr0 = mem_addr;
-   assign mem_we0   = mem_we;
-   assign mem_be0   = mem_be;
-   assign mem_wdata0 = mem_wdata;
-   assign mem_req0 = mem_req;
-   assign mem_rvalid = mem_rvalid0;
-   assign mem_rdata = mem_rdata0;
-   `endif
-
-   always_comb begin
-      mem_req   = imem_req | dmem_req;
-      mem_addr  = imem_addr;
-      mem_we    = 1'b0;
-      mem_be    = dmem_be;
-      mem_wdata = dmem_wdata;
-      if (dmem_req) begin
-         mem_we   = dmem_we;
-         mem_addr = dmem_addr;
-      end
-   end
-   assign imem_gnt = imem_req & ~dmem_req;
-   assign dmem_gnt = dmem_req;
-
-   // shift register keeping track of the source of mem requests for up to 32 cycles
-   logic        req_sources  [32];
-   logic        req_write    [32];  // keeping track of whether the request was a write
-   logic [31:0] imem_req_addr[32];  // keeping track of address for instruction memory requests
-   logic [ 4:0] req_count;
-   always_ff @(posedge clkwiz_o or negedge rst_n) begin
-      if (~rst_n) begin
-         req_count <= '0;
-      end else begin
-         if (mem_rvalid) begin
-            for (int i = 0; i < 31; i++) begin
-               req_sources[i]   <= req_sources[i+1];
-               req_write[i]     <= req_write[i+1];
-               imem_req_addr[i] <= imem_req_addr[i+1];
-            end
-            if (~imem_gnt & ~dmem_gnt) begin
-               req_count <= req_count - 1;
+      always_comb begin
+         if (dmem_req) begin
+            combined_mem_addr = dmem_addr;
+            if (dmem_addr >= `CODE_RAM_BASE_ADDR) begin
+               mem_req2000   = dmem_req;
+               mem_addr2000  = dmem_addr;
+               mem_we2000    = dmem_we;
+               mem_be2000    = dmem_be;
+               mem_wdata2000 = dmem_wdata;
+               mem_req   = 1'b0;
+               mem_addr  = 32'h0;
+               mem_we    = 1'b0;
+               mem_be    = 4'b0;
+               mem_wdata = 32'h0;
             end else begin
-               req_sources[req_count-1]   <= dmem_gnt;
-               req_write[req_count-1]     <= dmem_we;
-               imem_req_addr[req_count-1] <= imem_addr;
+               mem_req   = dmem_req;
+               mem_addr  = dmem_addr;
+               mem_we    = dmem_we;
+               mem_be    = dmem_be;
+               mem_wdata = dmem_wdata;
+               mem_req2000   = 1'b0;
+               mem_addr2000  = 32'h0;
+               mem_we2000    = 1'b0;
+               mem_be2000    = 4'b0;
+               mem_wdata2000 = 32'h0;
             end
-         end else if (imem_gnt | dmem_gnt) begin
-            req_sources[req_count]   <= dmem_gnt;
-            req_write[req_count]     <= dmem_we;
-            imem_req_addr[req_count] <= imem_addr;
-            req_count                <= req_count + 1;
+         end else if (imem_req) begin
+            combined_mem_addr = imem_addr;
+            if (imem_addr >= `CODE_RAM_BASE_ADDR) begin
+               mem_req2000   = imem_req;
+               mem_addr2000  = imem_addr;
+               mem_we2000    = 1'b0;
+               mem_be2000    = 4'b0;
+               mem_wdata2000 = 32'h0;
+               mem_req   = 1'b0;
+               mem_addr  = 32'h0;
+               mem_we    = 1'b0;
+               mem_be    = 4'b0;
+               mem_wdata = 32'h0;
+            end else begin
+               mem_req   = imem_req;
+               mem_addr  = imem_addr;
+               mem_req2000   = 1'b0;
+               mem_addr2000  = 32'h0;
+               mem_we2000    = 1'b0;
+               mem_be2000    = 4'b0;
+               mem_wdata2000 = 32'h0;
+               mem_we    = 1'b0;
+               mem_be    = 4'b0;
+               mem_wdata = 32'h0;
+            end
+         end else begin
+            mem_req   = 1'b0;
+            mem_addr  = 32'h0;
+            mem_we    = 1'b0;
+            mem_be    = 4'b0;
+            mem_wdata = 32'h0;
+            mem_req2000   = 1'b0;
+            mem_addr2000  = 32'h0;
+            mem_we2000    = 1'b0;
+            mem_be2000    = 4'b0;
+            mem_wdata2000 = 32'h0;
+            combined_mem_addr = 32'h0;
          end
       end
-   end
-   assign imem_rvalid = mem_rvalid & ~req_sources[0];
-   assign dmem_rvalid = mem_rvalid & req_sources[0] & ~req_write[0];
-   assign dmem_wvalid = mem_rvalid & req_sources[0] & req_write[0];
-   assign imem_rdata  = (`ICACHE_SZ > 0) ? mem_rdata : mem_rdata[(imem_req_addr[0][$clog2(`MEM_W)-1:0] & {3'b000, {($clog2(`MEM_W/8)-2){1'b1}}, 2'b00})*8 +: 32];
-   assign dmem_rdata  = mem_rdata;
+
+      assign imem_gnt = imem_req & ~dmem_req;
+      assign dmem_gnt = dmem_req;
+
+      assign mem_rvalid_combined = mem_rvalid | mem_rvalid2000;
+      assign mem_rdata_combined  = mem_rvalid ? mem_rdata : mem_rdata2000;
+
+      logic        req_sources  [32];
+      logic        req_write    [32];
+      logic [31:0] imem_req_addr[32];
+      logic [ 4:0] req_count;
+      always_ff @(posedge clkwiz_o or negedge rst_n) begin
+         if (~rst_n) begin
+            req_count <= '0;
+         end else begin
+            if (mem_rvalid_combined) begin
+               for (int i = 0; i < 31; i++) begin
+                  req_sources[i]   <= req_sources[i+1];
+                  req_write[i]     <= req_write[i+1];
+                  imem_req_addr[i] <= imem_req_addr[i+1];
+               end
+               if (~imem_gnt & ~dmem_gnt) begin
+                  req_count <= req_count - 1;
+               end else begin
+                  req_sources[req_count-1]   <= dmem_gnt;
+                  req_write[req_count-1]     <= dmem_we | mem_we2000;
+                  imem_req_addr[req_count-1] <= combined_mem_addr;
+               end
+            end else if (imem_gnt | dmem_gnt) begin
+               req_sources[req_count]   <= dmem_gnt;
+               req_write[req_count]     <= dmem_we | mem_we2000;
+               imem_req_addr[req_count] <= combined_mem_addr;
+               req_count                <= req_count + 1;
+            end
+         end
+      end
+      assign imem_rvalid = mem_rvalid_combined & ~req_sources[0];
+      assign dmem_rvalid = mem_rvalid_combined & req_sources[0] & ~req_write[0];
+      assign dmem_wvalid = mem_rvalid_combined & req_sources[0] & req_write[0];
+      assign imem_rdata  = (`ICACHE_SZ > 0) ? mem_rdata_combined : mem_rdata_combined[(imem_req_addr[0][$clog2(`MEM_W)-1:0] & {3'b000, {($clog2(`MEM_W/8)-2){1'b1}}, 2'b00})*8 +: 32];
+      assign dmem_rdata  = mem_rdata_combined;
+
+   `else
+      always_comb begin
+         mem_req   = imem_req | dmem_req;
+         mem_addr  = imem_addr;
+         mem_we    = 1'b0;
+         mem_be    = dmem_be;
+         mem_wdata = dmem_wdata;
+         if (dmem_req) begin
+            mem_we   = dmem_we;
+            mem_addr = dmem_addr;
+         end
+      end
+      assign imem_gnt = imem_req & ~dmem_req;
+      assign dmem_gnt = dmem_req;
+
+      logic        req_sources  [32];
+      logic        req_write    [32];
+      logic [31:0] imem_req_addr[32];
+      logic [ 4:0] req_count;
+      always_ff @(posedge clkwiz_o or negedge rst_n) begin
+         if (~rst_n) begin
+            req_count <= '0;
+         end else begin
+            if (mem_rvalid) begin
+               for (int i = 0; i < 31; i++) begin
+                  req_sources[i]   <= req_sources[i+1];
+                  req_write[i]     <= req_write[i+1];
+                  imem_req_addr[i] <= imem_req_addr[i+1];
+               end
+               if (~imem_gnt & ~dmem_gnt) begin
+                  req_count <= req_count - 1;
+               end else begin
+                  req_sources[req_count-1]   <= dmem_gnt;
+                  req_write[req_count-1]     <= dmem_we;
+                  imem_req_addr[req_count-1] <= imem_addr;
+               end
+            end else if (imem_gnt | dmem_gnt) begin
+               req_sources[req_count]   <= dmem_gnt;
+               req_write[req_count]     <= dmem_we;
+               imem_req_addr[req_count] <= imem_addr;
+               req_count                <= req_count + 1;
+            end
+         end
+      end
+      assign imem_rvalid = mem_rvalid & ~req_sources[0];
+      assign dmem_rvalid = mem_rvalid & req_sources[0] & ~req_write[0];
+      assign dmem_wvalid = mem_rvalid & req_sources[0] & req_write[0];
+      assign imem_rdata  = (`ICACHE_SZ > 0) ? mem_rdata : mem_rdata[(imem_req_addr[0][$clog2(`MEM_W)-1:0] & {3'b000, {($clog2(`MEM_W/8)-2){1'b1}}, 2'b00})*8 +: 32];
+      assign dmem_rdata  = mem_rdata;
+   `endif
+   endgenerate
+
 
    ram32 #(
       .SIZE     (`RAM_SIZE / 4),
-      .INIT_FILE(`RAM_FPATH),
-      .USE_BOOTROM(`USE_BOOTROM)
+      .INIT_FILE(`RAM_FPATH)
    ) main_memory (
       .clk_i   (clkwiz_o),
       .rst_ni  (rst_ni),
-      .req_i   (mem_req0),
-      .we_i    (mem_req0 & mem_we0),
-      .be_i    (mem_be0),
-      .addr_i  (mem_addr0),
-      .wdata_i (mem_wdata0),
-      .rvalid_o(mem_rvalid0),
-      .rdata_o (mem_rdata0)
+      .req_i   (mem_req),
+      .we_i    (mem_req & mem_we),
+      .be_i    (mem_be),
+      .addr_i  (mem_addr),
+      .wdata_i (mem_wdata),
+      .rvalid_o(mem_rvalid),
+      .rdata_o (mem_rdata)
 
       ,.program_rx_i(program_rx_i)
       ,.system_reset_o(system_reset_o)
@@ -445,7 +526,7 @@ module air_soc (
    `ifdef SECOND_SRAM
    ram32 #(
       .SIZE     (`RAM_SIZE / 4),
-      .INIT_FILE(`RAM_FPATH),
+      .INIT_FILE(""),
       .USE_BOOTROM(0)
    ) main_memory2000 (
       .clk_i   (clkwiz_o),
@@ -453,12 +534,12 @@ module air_soc (
       .req_i   (mem_req2000),
       .we_i    (mem_req2000 & mem_we2000),
       .be_i    (mem_be2000),
-      .addr_i  (mem_addr2000),
+      .addr_i  (mem_addr2000 - `CODE_RAM_BASE_ADDR),
       .wdata_i (mem_wdata2000),
       .rvalid_o(mem_rvalid2000),
       .rdata_o (mem_rdata2000)
 
-      ,.program_rx_i()
+      ,.program_rx_i(1'b0)
       ,.system_reset_o()
       ,.prog_mode_led_o()
    );
@@ -560,7 +641,7 @@ module air_soc (
    wire [3:0] qspi_data_io;
 
    s25fl128s #(
-      .mem_file_name("../../../tests/demo/demo.vmem"),  
+      .mem_file_name("../../../tests/demo/demo.vmem"),
       //.mem_file_name("../../../tests/demo/demo_secure.vmem"),
       //.mem_file_name("../../../rtl/sim/s25fl128s.mem"),
       //.mem_file_name("none"),
