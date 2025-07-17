@@ -329,6 +329,49 @@ module air_soc (
    ///////////////////////////////////////////////////////////////////////////
    // MEMORY ARBITER
 
+   logic               mem_req0;
+   logic [       31:0] mem_addr0;
+   logic               mem_we0;
+   logic [        3:0] mem_be0;
+   logic [       31:0] mem_wdata0;
+   logic               mem_rvalid0;
+   logic [       31:0] mem_rdata0;
+
+   `ifdef SECOND_SRAM
+   logic               mem_req2000;
+   logic [       31:0] mem_addr2000;
+   logic               mem_we2000;
+   logic [        3:0] mem_be2000;
+   logic [       31:0] mem_wdata2000;
+   logic               mem_rvalid2000;
+   logic [       31:0] mem_rdata2000;
+
+   wire is_mem2000 = ((`CODE_RAM_BASE_ADDR+`CODE_RAM_RANGE) > mem_addr) && (mem_addr >= `CODE_RAM_BASE_ADDR);
+
+   assign mem_addr0 = mem_addr;
+   assign mem_we0   = is_mem2000 ? 0 : mem_we;
+   assign mem_be0   = mem_be;
+   assign mem_wdata0 = mem_wdata;
+   assign mem_req0 = is_mem2000 ? 0 : mem_req;
+
+   assign mem_addr2000 = mem_addr - 'h2000;
+   assign mem_we2000   = is_mem2000 ? mem_we : 0;
+   assign mem_be2000   = mem_be;
+   assign mem_wdata2000 = mem_wdata;
+   assign mem_req2000 = is_mem2000 ? mem_req : 0;
+
+   assign mem_rvalid = is_mem2000 ? mem_rvalid2000 : mem_rvalid0;
+   assign mem_rdata = is_mem2000 ? mem_rdata2000 : mem_rdata0;
+   `else
+   assign mem_addr0 = mem_addr;
+   assign mem_we0   = mem_we;
+   assign mem_be0   = mem_be;
+   assign mem_wdata0 = mem_wdata;
+   assign mem_req0 = mem_req;
+   assign mem_rvalid = mem_rvalid0;
+   assign mem_rdata = mem_rdata0;
+   `endif
+
    always_comb begin
       mem_req   = imem_req | dmem_req;
       mem_addr  = imem_addr;
@@ -379,52 +422,6 @@ module air_soc (
    assign imem_rdata  = (`ICACHE_SZ > 0) ? mem_rdata : mem_rdata[(imem_req_addr[0][$clog2(`MEM_W)-1:0] & {3'b000, {($clog2(`MEM_W/8)-2){1'b1}}, 2'b00})*8 +: 32];
    assign dmem_rdata  = mem_rdata;
 
-   /*
-   `ifdef SECOND_SRAM
-   logic               mem_req2000;
-   logic [       31:0] mem_addr2000;
-   logic               mem_we2000;
-   logic [        3:0] mem_be2000;
-   logic [       31:0] mem_wdata2000;
-   logic               mem_rvalid2000;
-   logic [       31:0] mem_rdata2000;
-   logic mem_gnt2000 = 1'b1;
-
-   ram32 #(
-      .SIZE     (`RAM_SIZE / 4),
-      .INIT_FILE(`RAM_FPATH),
-      .USE_BOOTROM(0)
-   ) main_memory2000 (
-      .clk_i   (clkwiz_o),
-      .rst_ni  (rst_n),
-      .req_i   (mem_req2000),
-      .we_i    (mem_req2000 & mem_we2000),
-      .be_i    (mem_be2000),
-      .addr_i  (mem_addr2000 - 'h2000),
-      .wdata_i (mem_wdata2000),
-      .rvalid_o(mem_rvalid2000),
-      .rdata_o (mem_rdata2000)
-
-      ,.program_rx_i()
-      ,.system_reset_o()
-      ,.prog_mode_led_o()
-   );
-
-   logic current_req_is_mem2000 = (mem_addr >= `CODE_RAM_BASE_ADDR) && (mem_addr <= `CODE_RAM_RANGE);  
-   assign imem_rvalid = (current_req_is_mem2000 ? mem_rvalid2000 : mem_rvalid) & ~req_sources[0];
-   assign dmem_rvalid = (current_req_is_mem2000 ? mem_rvalid2000 : mem_rvalid) & req_sources[0] & ~req_write[0];
-   assign dmem_wvalid = (current_req_is_mem2000 ? mem_rvalid2000 : mem_rvalid) & req_sources[0] & req_write[0];
-   assign imem_rdata  = (`ICACHE_SZ > 0) ? (current_req_is_mem2000 ? mem_rdata2000 : mem_rdata) : (current_req_is_mem2000 ? mem_rdata2000[(imem_req_addr[0][$clog2(`MEM_W)-1:0] & {3'b000, {($clog2(`MEM_W/8)-2){1'b1}}, 2'b00})*8 +: 32] : mem_rdata[(imem_req_addr[0][$clog2(`MEM_W)-1:0] & {3'b000, {($clog2(`MEM_W/8)-2){1'b1}}, 2'b00})*8 +: 32]);
-   assign dmem_rdata  = current_req_is_mem2000 ? mem_rdata2000 : mem_rdata;
-   `else
-   assign imem_rvalid = mem_rvalid & ~req_sources[0];
-   assign dmem_rvalid = mem_rvalid & req_sources[0] & ~req_write[0];
-   assign dmem_wvalid = mem_rvalid & req_sources[0] & req_write[0];
-   assign imem_rdata  = (`ICACHE_SZ > 0) ? mem_rdata : mem_rdata[(imem_req_addr[0][$clog2(`MEM_W)-1:0] & {3'b000, {($clog2(`MEM_W/8)-2){1'b1}}, 2'b00})*8 +: 32];
-   assign dmem_rdata  = mem_rdata;
-   `endif
-   */
-
    ram32 #(
       .SIZE     (`RAM_SIZE / 4),
       .INIT_FILE(`RAM_FPATH),
@@ -432,13 +429,13 @@ module air_soc (
    ) main_memory (
       .clk_i   (clkwiz_o),
       .rst_ni  (rst_ni),
-      .req_i   (mem_req),
-      .we_i    (mem_req & mem_we),
-      .be_i    (mem_be),
-      .addr_i  (mem_addr),
-      .wdata_i (mem_wdata),
-      .rvalid_o(mem_rvalid),
-      .rdata_o (mem_rdata)
+      .req_i   (mem_req0),
+      .we_i    (mem_req0 & mem_we0),
+      .be_i    (mem_be0),
+      .addr_i  (mem_addr0),
+      .wdata_i (mem_wdata0),
+      .rvalid_o(mem_rvalid0),
+      .rdata_o (mem_rdata0)
 
       ,.program_rx_i(program_rx_i)
       ,.system_reset_o(system_reset_o)
@@ -446,15 +443,6 @@ module air_soc (
    );
 
    `ifdef SECOND_SRAM
-   logic               mem_req2000;
-   logic [       31:0] mem_addr2000;
-   logic               mem_we2000;
-   logic [        3:0] mem_be2000;
-   logic [       31:0] mem_wdata2000;
-   logic               mem_rvalid2000;
-   logic [       31:0] mem_rdata2000;
-   logic mem_gnt2000 = 1'b1;
-
    ram32 #(
       .SIZE     (`RAM_SIZE / 4),
       .INIT_FILE(`RAM_FPATH),
@@ -465,7 +453,7 @@ module air_soc (
       .req_i   (mem_req2000),
       .we_i    (mem_req2000 & mem_we2000),
       .be_i    (mem_be2000),
-      .addr_i  (mem_addr2000 - 'h2000),
+      .addr_i  (mem_addr2000),
       .wdata_i (mem_wdata2000),
       .rvalid_o(mem_rvalid2000),
       .rdata_o (mem_rdata2000)
@@ -525,17 +513,6 @@ module air_soc (
       ,.qspi_rvalid_i(qspi_rvalid)
       ,.qspi_rdata_i (qspi_rdata)
 
-      `ifdef SECOND_SRAM
-      ,.mem_req_o   (mem_req2000)
-      ,.mem_addr_o  (mem_addr2000)
-      ,.mem_we_o    (mem_we2000)
-      ,.mem_be_o    (mem_be2000)
-      ,.mem_wdata_o (mem_wdata2000)
-      ,.mem_gnt_i   (mem_gnt2000)
-      ,.mem_rvalid_i(mem_rvalid2000)
-      ,.mem_rdata_i (mem_rdata2000)
-      `endif
-
       `ifdef ZC706
       ,.dram_req_o   (dram_req)
       ,.dram_addr_o  (dram_addr)
@@ -583,7 +560,7 @@ module air_soc (
    wire [3:0] qspi_data_io;
 
    s25fl128s #(
-      .mem_file_name("../../../tests/demo/demo.vmem"),   
+      .mem_file_name("../../../tests/demo/demo.vmem"),  
       //.mem_file_name("../../../tests/demo/demo_secure.vmem"),
       //.mem_file_name("../../../rtl/sim/s25fl128s.mem"),
       //.mem_file_name("none"),

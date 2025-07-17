@@ -57,17 +57,6 @@ module obi_demux (
    ,input  wire        qspi_rvalid_i
    ,input  wire [31:0] qspi_rdata_i
 
-   `ifdef SECOND_SRAM
-   ,output wire        mem_req_o
-   ,output wire [31:0] mem_addr_o
-   ,output wire        mem_we_o
-   ,output wire [ 3:0] mem_be_o
-   ,output wire [31:0] mem_wdata_o
-   ,input  wire        mem_gnt_i
-   ,input  wire        mem_rvalid_i
-   ,input  wire [31:0] mem_rdata_i
-   `endif
-
    `ifdef ZC706
    ,output wire        dram_req_o
    ,output wire [31:0] dram_addr_o
@@ -100,14 +89,12 @@ module obi_demux (
    assign uart_addr_o  = data_addr;
    assign timer_addr_o = data_addr;
    assign qspi_addr_o = data_addr;
-   `ifdef SECOND_SRAM assign mem_addr_o = data_addr; `endif
    `ifdef ZC706 assign dram_addr_o = data_addr; `endif
 
    assign cache_wdata_o = data_wdata;
    assign uart_wdata_o  = data_wdata;
    assign timer_wdata_o = data_wdata;
    assign qspi_wdata_o = data_wdata;
-   `ifdef SECOND_SRAM assign mem_wdata_o = data_wdata; `endif
    `ifdef ZC706 assign dram_wdata_o = data_wdata; `endif
 
    assign cache_req_o = (`MEM_BASE_ADDR  + `MEM_RANGE  > data_addr )   && (data_addr >= `MEM_BASE_ADDR)   ? (state == WAITING) & data_req : 'h0;
@@ -126,12 +113,6 @@ module obi_demux (
    assign qspi_we_o  = (`QSPI_BASE_ADDR + `QSPI_RANGE > data_addr ) && (data_addr >= `QSPI_BASE_ADDR) ? data_we  : 'h0;
    assign qspi_be_o  = (`QSPI_BASE_ADDR + `QSPI_RANGE > data_addr ) && (data_addr >= `QSPI_BASE_ADDR) ? data_be  : 'h0;
 
-   `ifdef SECOND_SRAM
-   assign mem_req_o = (`CODE_RAM_BASE_ADDR + `CODE_RAM_RANGE > data_addr ) && (data_addr >= `CODE_RAM_BASE_ADDR) ? (state == WAITING) & data_req : 'h0;
-   assign mem_we_o  = (`CODE_RAM_BASE_ADDR + `CODE_RAM_RANGE > data_addr ) && (data_addr >= `CODE_RAM_BASE_ADDR) ? data_we  : 'h0;
-   assign mem_be_o  = (`CODE_RAM_BASE_ADDR + `CODE_RAM_RANGE > data_addr ) && (data_addr >= `CODE_RAM_BASE_ADDR) ? data_be  : 'h0;
-   `endif
-
    `ifdef ZC706
    assign dram_req_o = (`DRAM_BASE_ADDR  + `DRAM_RANGE  > data_addr ) && (data_addr >= `DRAM_BASE_ADDR) ? (state == WAITING) & data_req : 'h0;
    assign dram_we_o  = (`DRAM_BASE_ADDR  + `DRAM_RANGE  > data_addr ) && (data_addr >= `DRAM_BASE_ADDR) ? data_we  : 'h0;
@@ -142,7 +123,6 @@ module obi_demux (
                          (`UART_BASE_ADDR+`UART_RANGE   > data_addr) && (data_addr >= `UART_BASE_ADDR ) ? uart_rdata_i  :
                          (`TIMER_BASE_ADDR+`TIMER_RANGE > data_addr) && (data_addr >= `TIMER_BASE_ADDR) ? timer_rdata_i :
                          (`QSPI_BASE_ADDR+`QSPI_RANGE   > data_addr) && (data_addr >= `QSPI_BASE_ADDR ) ? qspi_rdata_i  :
-                         `ifdef SECOND_SRAM (`CODE_RAM_BASE_ADDR+`CODE_RAM_RANGE > data_addr) && (data_addr >= `CODE_RAM_BASE_ADDR) ? mem_rdata_i  : `endif
                          `ifdef ZC706 (`DRAM_BASE_ADDR+`DRAM_RANGE   > data_addr) && (data_addr >= `DRAM_BASE_ADDR ) ? dram_rdata_i  : `endif
                                                                                                           32'h0         ;
 
@@ -150,7 +130,6 @@ module obi_demux (
                          (`UART_BASE_ADDR+`UART_RANGE   >= data_addr) && (data_addr >= `UART_BASE_ADDR ) ? uart_rvalid_i  :
                          (`TIMER_BASE_ADDR+`TIMER_RANGE >= data_addr) && (data_addr >= `TIMER_BASE_ADDR) ? timer_rvalid_i :
                          (`QSPI_BASE_ADDR+`QSPI_RANGE   >= data_addr) && (data_addr >= `QSPI_BASE_ADDR ) ? qspi_rvalid_i  :
-                         `ifdef SECOND_SRAM (`CODE_RAM_BASE_ADDR+`CODE_RAM_RANGE >= data_addr) && (data_addr >= `CODE_RAM_BASE_ADDR) ? mem_rvalid_i  : `endif
                          `ifdef ZC706 (`DRAM_BASE_ADDR+`DRAM_RANGE   >= data_addr) && (data_addr >= `DRAM_BASE_ADDR ) ? dram_rvalid_i  : `endif
                                                                                                            1'h0           ;
 
@@ -158,7 +137,6 @@ module obi_demux (
                          (`UART_BASE_ADDR+`UART_RANGE   > data_addr) && (data_addr >= `UART_BASE_ADDR ) ? uart_gnt_i  :
                          (`TIMER_BASE_ADDR+`TIMER_RANGE > data_addr) && (data_addr >= `TIMER_BASE_ADDR) ? timer_gnt_i :
                          (`QSPI_BASE_ADDR+`QSPI_RANGE   > data_addr) && (data_addr >= `QSPI_BASE_ADDR ) ? qspi_gnt_i  :
-                         `ifdef SECOND_SRAM (`CODE_RAM_BASE_ADDR+`CODE_RAM_RANGE > data_addr) && (data_addr >= `CODE_RAM_BASE_ADDR) ? mem_gnt_i  : `endif
                          `ifdef ZC706 (`DRAM_BASE_ADDR+`DRAM_RANGE   > data_addr) && (data_addr >= `DRAM_BASE_ADDR ) ? dram_gnt_i  : `endif
                                                                                                           'h0         ;
 
