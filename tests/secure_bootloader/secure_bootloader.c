@@ -173,7 +173,7 @@ void aes_decrypt(uint32_t block_part0, uint32_t block_part1, uint32_t block_part
                       uint32_t* result_block) {
     uint8_t state[4][4];
     uint32_t initial_key[AES_Nk];
-    uint32_t round_keys[AES_Nb * (AES_Nr + 1)];
+    static uint32_t round_keys[AES_Nb * (AES_Nr + 1)];
 
     initial_key[0] = key_part0; initial_key[1] = key_part1;
     initial_key[2] = key_part2; initial_key[3] = key_part3;
