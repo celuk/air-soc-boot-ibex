@@ -192,8 +192,10 @@ module air_soc (
    logic                mem_we2000;
    logic [        3:0] mem_be2000;
    logic [`MEM_W  -1:0] mem_wdata2000;
+   logic [`MEM_W  -1:0] mem_wdata2000_encrypted;
    logic                mem_rvalid2000;
    logic [`MEM_W  -1:0] mem_rdata2000;
+   logic [`MEM_W  -1:0] mem_rdata2000_decrypted;
    `endif
 
    cv32e40p_top #(
@@ -414,7 +416,7 @@ module air_soc (
       assign dmem_gnt = dmem_req;
 
       assign mem_rvalid_combined = mem_rvalid | mem_rvalid2000;
-      assign mem_rdata_combined  = mem_rvalid ? mem_rdata : mem_rdata2000;
+      assign mem_rdata_combined  = mem_rvalid ? mem_rdata : mem_rdata2000_decrypted;
 
       logic        req_sources  [32];
       logic        req_write    [32];
@@ -524,6 +526,33 @@ module air_soc (
    );
 
    `ifdef SECOND_SRAM
+   // On-The-Fly Encryption/Decryption
+   // hold address for one cycle to meet timing of sram for decryption
+   reg [31:0] addr_holder;
+   always_ff @(posedge clkwiz_o or negedge rst_n) begin
+      if (~rst_n) begin
+         addr_holder <= 32'h0;
+      end
+      else begin
+         addr_holder <= mem_addr2000 - `CODE_RAM_BASE_ADDR;
+      end
+   end
+
+   ctr_encoder_decoder #(.KEY(32'hDEADBEEF)) ctr_dec (
+      .row_number(addr_holder),
+      .data_in(mem_rdata2000),
+      .data_out(mem_rdata2000_decrypted)
+   );
+
+   ctr_encoder_decoder #(.KEY(32'hDEADBEEF)) ctr_enc (
+      .row_number(mem_addr2000 - `CODE_RAM_BASE_ADDR),
+      .data_in(mem_wdata2000),
+      .data_out(mem_wdata2000_encrypted)
+   );
+   
+   //assign mem_rdata2000_decrypted = mem_rdata2000;
+   //assign mem_wdata2000_encrypted = mem_wdata2000;
+
    ram32 #(
       .SIZE     (`RAM_SIZE / 4),
       .INIT_FILE(""),
@@ -535,11 +564,11 @@ module air_soc (
       .we_i    (mem_req2000 & mem_we2000),
       .be_i    (mem_be2000),
       .addr_i  (mem_addr2000 - `CODE_RAM_BASE_ADDR),
-      .wdata_i (mem_wdata2000),
+      .wdata_i (mem_wdata2000_encrypted),
       .rvalid_o(mem_rvalid2000),
       .rdata_o (mem_rdata2000)
 
-      ,.program_rx_i(1'b0)
+      ,.program_rx_i()
       ,.system_reset_o()
       ,.prog_mode_led_o()
    );
