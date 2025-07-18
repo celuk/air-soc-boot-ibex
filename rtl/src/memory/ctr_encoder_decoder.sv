@@ -1,5 +1,4 @@
-
-module ctr_encoder_decoder #(parameter KEY = 32'hDEADBEEF) (
+module ctr_encoder_decoder #(parameter KEY = 256'hDEADBEEFCAFEF00DBAADF00D1234567887654321ABCDEF01FEDCBA9876543210) (
     input  wire [31:0] row_number,
     input  wire [31:0] data_in,
     output wire [31:0] data_out

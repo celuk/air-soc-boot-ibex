@@ -618,13 +618,15 @@ module air_soc (
       end
    end
 
-   ctr_encoder_decoder #(.KEY(32'hDEADBEEF)) ctr_dec (
+   localparam CTR_KEY = 256'hDEADBEEFCAFEF00DBAADF00D1234567887654321ABCDEF01FEDCBA9876543210;
+
+   ctr_encoder_decoder #(.KEY(CTR_KEY)) ctr_dec (
       .row_number(addr_holder),
       .data_in(mem_rdata2000),
       .data_out(mem_rdata2000_decrypted)
    );
 
-   ctr_encoder_decoder #(.KEY(32'hDEADBEEF)) ctr_enc (
+   ctr_encoder_decoder #(.KEY(CTR_KEY)) ctr_enc (
       .row_number(mem_addr2000 - `CODE_RAM_BASE_ADDR),
       .data_in(mem_wdata2000),
       .data_out(mem_wdata2000_encrypted)
