@@ -198,6 +198,7 @@ module air_soc (
    logic [`MEM_W  -1:0] mem_rdata2000_decrypted;
    `endif
 
+   `ifdef CORE_CV32E40P
    cv32e40p_top #(
        .COREV_PULP               ( `COREV_PULP ),
        .COREV_CLUSTER            ( `COREV_CLUSTER ),
@@ -255,6 +256,85 @@ module air_soc (
        .fetch_enable_i           (1'b1),
        .core_sleep_o             ()
    );
+   `elsif CORE_IBEX
+   ibex_top #(
+       //.PMPEnable                    (PMPEnable),
+       //.PMPGranularity               (PMPGranularity),
+       //.PMPNumRegions                (PMPNumRegions),
+       //.MHPMCounterNum               (NUM_MHPMCOUNTERS),
+       //.MHPMCounterWidth             (MHPMCounterWidth),
+       //.PMPRstCfg                    (PMPRstCfg),
+       //.PMPRstAddr                   (PMPRstAddr),
+       //.PMPRstMsecCfg                (PMPRstMsecCfg),
+       //.RV32E                        (RV32E),
+       //.RV32M                        (RV32M),
+       //.RV32B                        (RV32B),
+       //.RegFile                      (RegFile),
+       //.BranchTargetALU              (BranchTargetALU),
+       //.WritebackStage               (WritebackStage),
+       //.ICache                       (ICache),
+       //.ICacheECC                    (ICacheECC),
+       //.BranchPredictor              (BranchPredictor),
+       //.DbgTriggerEn                 (DbgTriggerEn),
+       //.DbgHwBreakNum                (DbgHwBreakNum),
+       //.SecureIbex                   (SecureIbex),
+       //.ICacheScramble               (ICacheScramble),
+       //.ICacheScrNumPrinceRoundsHalf (ICacheScrNumPrinceRoundsHalf),
+       //.RndCnstLfsrSeed              (RndCnstLfsrSeed),
+       //.RndCnstLfsrPerm              (RndCnstLfsrPerm),
+       .DmBaseAddr                   (0),
+       //.DmAddrMask                   (DmAddrMask),
+       .DmHaltAddr                   (`DM_HALT_ADDR),
+       .DmExceptionAddr              (`DM_EXCEPTION_ADDR)
+       //,.RndCnstIbexKey               (RndCnstIbexKey),
+       //.RndCnstIbexNonce             (RndCnstIbexNonce),
+       //.CsrMvendorId                 (CsrMvendorId),
+       //.CsrMimpId                    (CsrMimpId)
+   ) ibex_core_ip (
+       .clk_i                        (clkwiz_o),
+       .rst_ni                       (rst_n),
+       .test_en_i                    (`SCAN_CG_EN),
+       .ram_cfg_i                    (prim_ram_1p_pkg::ram_1p_cfg_t'('0)),
+       .hart_id_i                    (`HART_ID),
+       .boot_addr_i                  (`BOOT_ADDR - 'h80), // ibex always assume there is a vector table until 0x80
+       .instr_req_o                  (instr_req),
+       .instr_gnt_i                  (instr_gnt),
+       .instr_rvalid_i               (instr_rvalid),
+       .instr_addr_o                 (instr_addr),
+       .instr_rdata_i                (instr_rdata),
+       .instr_rdata_intg_i           (0),
+       .instr_err_i                  (0),
+       .data_req_o                   (data_req),
+       .data_gnt_i                   (data_gnt),
+       .data_rvalid_i                (data_rvalid),
+       .data_we_o                    (data_we),
+       .data_be_o                    (data_be),
+       .data_addr_o                  (data_addr),
+       .data_wdata_o                 (data_wdata),
+       .data_wdata_intg_o            (),
+       .data_rdata_i                 (data_rdata),
+       .data_rdata_intg_i            (0),
+       .data_err_i                   (0),
+       .irq_software_i               (0),
+       .irq_timer_i                  (0),
+       .irq_external_i               (0),
+       .irq_fast_i                   (0),
+       .irq_nm_i                     (0),
+       .scramble_key_valid_i         (0),
+       .scramble_key_i               (0),
+       .scramble_nonce_i             (0),
+       .scramble_req_o               (),
+       .debug_req_i                  (1'b0),
+       .crash_dump_o                 (),
+       .double_fault_seen_o          (),
+       .fetch_enable_i               (1'b1),
+       .alert_minor_o                (),
+       .alert_major_internal_o       (),
+       .alert_major_bus_o            (),
+       .core_sleep_o                 (),
+       .scan_rst_ni                  (1'b1)
+   );
+   `endif
 
    generate
       if(`ICACHE_SZ > 0) begin

@@ -17,11 +17,23 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
     verilog_headers = hdl_dir.rglob("*.vh")
     system_verilog_headers = hdl_dir.rglob("*.svh")
 
-    submodule_dir = Path(SCRIPT_DIR / "../../cv32e40p/rtl")
-    submodule_verilog_files = submodule_dir.rglob("*.v")
-    submodule_system_verilog_files = submodule_dir.rglob("*.sv")
-    submodule_verilog_headers = submodule_dir.rglob("*.vh")
-    submodule_system_verilog_headers = submodule_dir.rglob("*.svh")
+    submodule_dirs = [
+    #    Path(SCRIPT_DIR / "../../cv32e40p/rtl"),
+        Path(SCRIPT_DIR / "../../ibex/rtl"),
+        #Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/ip/prim/rtl"),
+        #Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/dv/sv/dv_utils")
+    ]
+    
+    submodule_verilog_files = []
+    submodule_system_verilog_files = []
+    submodule_verilog_headers = []
+    submodule_system_verilog_headers = []
+    for submodule_dir in submodule_dirs:
+        submodule_verilog_files.extend(submodule_dir.rglob("*.v"))
+        submodule_system_verilog_files.extend(submodule_dir.rglob("*.sv"))
+        submodule_verilog_headers.extend(submodule_dir.rglob("*.vh"))
+        submodule_system_verilog_headers.extend(submodule_dir.rglob("*.svh"))
+    
     # submodule_include_dir = Path(SCRIPT_DIR / "../../cv32e40p/rtl/include")
     # submodule_include_files = submodule_dir.rglob("*.sv")
 
@@ -37,6 +49,19 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
         + list(system_verilog_files)
         + list(submodule_verilog_files)
         + list(submodule_system_verilog_files)
+        + list([Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/dv/sv/dv_utils/dv_fcov_macros.svh")])
+        + list([Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/ip/prim/rtl/prim_assert_standard_macros.svh")])
+        + list([Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/ip/prim/rtl/prim_assert_sec_cm.svh")])
+        + list([Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/ip/prim/rtl/prim_flop_macros.sv")])
+        + list([Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/ip/prim/rtl/prim_assert.sv")])
+        + list([Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/ip/prim/rtl/prim_ram_1p_pkg.sv")])
+        + list([Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/ip/prim/rtl/prim_secded_pkg.sv")])
+        #+ list([Path(SCRIPT_DIR / "../../ibex/syn/rtl/prim_clock_gating.v")])
+        + list([Path(SCRIPT_DIR / "../../ibex/dv/uvm/core_ibex/common/prim/prim_pkg.sv")])
+        + list([Path(SCRIPT_DIR / "../../ibex/dv/uvm/core_ibex/common/prim/prim_clock_gating.sv")])
+        + list([Path(SCRIPT_DIR / "../../ibex/dv/uvm/core_ibex/common/prim/prim_buf.sv")])
+        + list([Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/ip/prim_generic/rtl/prim_generic_buf.sv")])
+        + list([Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/ip/prim_generic/rtl/prim_generic_clock_gating.sv")])
         #+ list(mem_files)
         #+ list(["../../vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_1/clk_wiz_1_sim_netlist.v"])
         + list(["../../vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0/clk_wiz_0_sim_netlist.v"])
@@ -55,10 +80,12 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
     )
     ## sort the sources to make sure that the def and pkg.sv files are at the beginning
     ## otherwise the simulator might not find the packages
-    def_sv_paths = [path for path in verilog_sources if str(path).rsplit('/', 1)[-1].startswith("def")]
-    pkg_sv_paths = [path for path in verilog_sources if str(path).endswith("pkg.sv")]
+    def_sv_paths = [path for path in verilog_sources if str(path).rsplit('/', 1)[-1].startswith("def") or str(path).endswith("prim_ram_1p_pkg.sv")]
+    pkg_sv_paths = [path for path in verilog_sources if str(path).endswith("pkg.sv") or str(path).endswith("prim_assert.sv") or str(path).endswith("dv_fcov_macros.svh")]
     other_paths = [path for path in verilog_sources if not str(path).rsplit('/', 1)[-1].startswith("def") and not str(path).endswith("pkg.sv")]
     verilog_sources = list(def_sv_paths) + list(pkg_sv_paths) + list(other_paths)
+
+    verilog_sources = list(dict.fromkeys(verilog_sources))
 
     include_dirs = [
         header.parent
@@ -74,6 +101,9 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
     subdirectories = [x[0] for x in os.walk(submodule_dir)]
     include_dirs.extend(subdirectories)
     include_dirs.extend([sim_dir])
+    include_dirs.extend([Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/dv/sv/dv_utils")])
+    include_dirs.extend([Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/ip/prim/rtl")])
+    include_dirs.extend([Path(SCRIPT_DIR / "../../ibex/dv/uvm/core_ibex/common/prim")])
     #include_dirs.extend(mem_files)
 
     print("\nINCLUDE_DIRS:")
