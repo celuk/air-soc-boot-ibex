@@ -18,8 +18,8 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
     system_verilog_headers = hdl_dir.rglob("*.svh")
 
     submodule_dirs = [
-    #    Path(SCRIPT_DIR / "../../cv32e40p/rtl"),
-        Path(SCRIPT_DIR / "../../ibex/rtl"),
+        Path(SCRIPT_DIR / "../../cv32e40p/rtl"),
+    #    Path(SCRIPT_DIR / "../../ibex/rtl"),
         #Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/ip/prim/rtl"),
         #Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/dv/sv/dv_utils")
     ]
