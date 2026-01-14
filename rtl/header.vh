@@ -80,11 +80,12 @@ PERIPHERALS
 `define CODE_RAM_BASE_ADDR 32'h00002000
 `define CODE_RAM_RANGE 32'h0F00_0000
 
-`define CORE_CV32E40P
-//`define CORE_IBEX
+//`define CORE_CV32E40P
+`define CORE_IBEX
 
 `define SYNTHESIS
 
 `ifdef QSPI_SIM
     `define CV32E40P_TRACE_EXECUTION
+    `define RVFI
 `endif

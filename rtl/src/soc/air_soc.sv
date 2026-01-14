@@ -328,7 +328,7 @@ module air_soc (
       `endif
 
    `elsif CORE_IBEX
-   ibex_top #(
+   ibex_top_tracing #(
        //.PMPEnable                    (PMPEnable),
        //.PMPGranularity               (PMPGranularity),
        //.PMPNumRegions                (PMPNumRegions),

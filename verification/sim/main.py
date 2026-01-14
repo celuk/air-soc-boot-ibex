@@ -6,6 +6,7 @@ from cocotb.runner import get_runner
 
 SCRIPT_DIR = Path(os.path.realpath(__file__)).parent.absolute()
 
+CORE = "ibex"
 
 def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfile: str):
     hdl_dir = Path(SCRIPT_DIR / "../../rtl")
@@ -17,9 +18,13 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
     verilog_headers = hdl_dir.rglob("*.vh")
     system_verilog_headers = hdl_dir.rglob("*.svh")
 
+    if CORE == "ibex":
+        core_dir = Path(SCRIPT_DIR / "../../ibex/rtl")
+    else:
+        core_dir = Path(SCRIPT_DIR / "../../cv32e40p/rtl")
+
     submodule_dirs = [
-        Path(SCRIPT_DIR / "../../cv32e40p/rtl"),
-    #    Path(SCRIPT_DIR / "../../ibex/rtl"),
+        core_dir,
         #Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/ip/prim/rtl"),
         #Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/dv/sv/dv_utils")
     ]
@@ -44,13 +49,16 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
     #vivado_ip_verilog_files.append("/tools/Xilinx/Vivado/2022.2/data/verilog/src/glbl.v")
     vivado_ip_vhdls = ["/tools/Xilinx/Vivado/2022.2/data/vhdl/src/unisims/unisim_VCOMP.vhd", "/tools/Xilinx/Vivado/2022.2/data/vhdl/src/unisims/unisim_VPKG.vhd"]
 
+    tracer_srcs = []
+    if CORE == "cv32e40p":
+        tracer_srcs = list([Path(SCRIPT_DIR / "../../cv32e40p/bhv/include/cv32e40p_tracer_pkg.sv")]) + list([Path(SCRIPT_DIR / "../../rtl/sim/cv32e40p_tracer.sv")])
+
     verilog_sources = (
         list(verilog_files)
         + list(system_verilog_files)
         + list(submodule_verilog_files)
         + list(submodule_system_verilog_files)
-        + list([Path(SCRIPT_DIR / "../../cv32e40p/bhv/include/cv32e40p_tracer_pkg.sv")])
-        + list([Path(SCRIPT_DIR / "../../rtl/sim/cv32e40p_tracer.sv")])
+        + tracer_srcs
         #+ list([Path(SCRIPT_DIR / "../../cv32e40p/bhv/cv32e40p_tracer.sv")])
         + list([Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/dv/sv/dv_utils/dv_fcov_macros.svh")])
         + list([Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/ip/prim/rtl/prim_assert_standard_macros.svh")])
@@ -85,7 +93,10 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
     ## otherwise the simulator might not find the packages
     def_sv_paths = [path for path in verilog_sources if str(path).rsplit('/', 1)[-1].startswith("def") or str(path).endswith("prim_ram_1p_pkg.sv")]
     pkg_sv_paths = [path for path in verilog_sources if str(path).endswith("pkg.sv") or str(path).endswith("prim_assert.sv") or str(path).endswith("dv_fcov_macros.svh")]
-    other_paths = [path for path in verilog_sources if not str(path).rsplit('/', 1)[-1].startswith("def") and not str(path).endswith("pkg.sv")]
+    if CORE == "ibex":
+        other_paths = [path for path in verilog_sources if not str(path).rsplit('/', 1)[-1].startswith("def") and not str(path).endswith("pkg.sv") and not str(path).endswith("cv32e40p_tracer.sv") and not str(path).endswith("cv32e40p_tracer_pkg.sv")]
+    else:
+        other_paths = [path for path in verilog_sources if not str(path).rsplit('/', 1)[-1].startswith("def") and not str(path).endswith("pkg.sv")]
     verilog_sources = list(def_sv_paths) + list(pkg_sv_paths) + list(other_paths)
 
     verilog_sources = list(dict.fromkeys(verilog_sources))
@@ -204,7 +215,7 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
         test_module=str(test_file),
         waves=waves,
         gui=False,
-        plusargs=["+nowarnTSCALE"],
+        plusargs=["+nowarnTSCALE", "+ibex_tracer_enable"],
         extra_env={
             "XILINX_VIVADO": "/tools/Xilinx/Vivado/2022.2",
         #    "COCOTB_LOG_LEVEL": "TRACE",
