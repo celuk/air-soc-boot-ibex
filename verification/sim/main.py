@@ -49,6 +49,9 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
         + list(system_verilog_files)
         + list(submodule_verilog_files)
         + list(submodule_system_verilog_files)
+        + list([Path(SCRIPT_DIR / "../../cv32e40p/bhv/include/cv32e40p_tracer_pkg.sv")])
+        + list([Path(SCRIPT_DIR / "../../rtl/sim/cv32e40p_tracer.sv")])
+        #+ list([Path(SCRIPT_DIR / "../../cv32e40p/bhv/cv32e40p_tracer.sv")])
         + list([Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/dv/sv/dv_utils/dv_fcov_macros.svh")])
         + list([Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/ip/prim/rtl/prim_assert_standard_macros.svh")])
         + list([Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/ip/prim/rtl/prim_assert_sec_cm.svh")])
@@ -104,6 +107,7 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
     include_dirs.extend([Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/dv/sv/dv_utils")])
     include_dirs.extend([Path(SCRIPT_DIR / "../../ibex/vendor/lowrisc_ip/ip/prim/rtl")])
     include_dirs.extend([Path(SCRIPT_DIR / "../../ibex/dv/uvm/core_ibex/common/prim")])
+    include_dirs.extend([Path(SCRIPT_DIR / "../../cv32e40p/bhv")])
     #include_dirs.extend(mem_files)
 
     print("\nINCLUDE_DIRS:")
@@ -174,7 +178,8 @@ def run_test(simulator: str, test_file: Path, top_module: str, waves: bool, cfil
                              "-newperf", "-plusperf",
                              "-top", "glbl", "-namemap_mixgen", "-verbose", "-access", "+rwc", "-timescale", "1ns/1ps", "-ALLOWREDEFINITION", "-relax", "-sv",
                              "-v93",
-                             '+incdir+"../../../vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0"']
+                             '+incdir+"../../../vivado/airsoc-dram-zc706/airsoc-dram-zc706.gen/sources_1/ip/clk_wiz_0"',
+                             "+define+CV32E40P_TRACE_EXECUTION"]
         if "dram" in cfile:
             runner_build_args.extend(["-f", "/tools/Xilinx/Vivado/2022.2/data/secureip/secureip_cell.list.f"])
         runner_pre_cmd = []

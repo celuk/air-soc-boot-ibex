@@ -84,3 +84,7 @@ PERIPHERALS
 //`define CORE_IBEX
 
 `define SYNTHESIS
+
+`ifdef QSPI_SIM
+    `define CV32E40P_TRACE_EXECUTION
+`endif
