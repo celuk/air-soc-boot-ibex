@@ -496,9 +496,24 @@ module air_soc (
       logic mem_rvalid_combined;
       logic [`MEM_W-1:0] mem_rdata_combined;
       logic [31:0] combined_mem_addr;
+      
+      // Delay mem_rvalid2000 by 1 cycle to match CTR decoder latency
+      logic mem_rvalid2000_delayed;
+      always_ff @(posedge clkwiz_o or negedge rst_n) begin
+         if (~rst_n)
+            mem_rvalid2000_delayed <= 1'b0;
+         else
+            mem_rvalid2000_delayed <= mem_rvalid2000;
+      end
+      
+      // Stall when RAM2000 has responded but CTR decode is not yet complete
+      // mem_rvalid2000 is high for 1 cycle when RAM responds
+      // mem_rvalid2000_delayed is high 1 cycle later when CTR is done
+      // We need to stall during the cycle when mem_rvalid2000 is high (CTR is processing)
+      wire mem2000_stall = mem_rvalid2000;
 
       always_comb begin
-         if (dmem_req) begin
+         if (dmem_req & ~mem2000_stall) begin
             combined_mem_addr = dmem_addr;
             if (dmem_addr >= `CODE_RAM_BASE_ADDR) begin
                mem_req2000   = dmem_req;
@@ -523,7 +538,7 @@ module air_soc (
                mem_be2000    = 4'b0;
                mem_wdata2000 = 32'h0;
             end
-         end else if (imem_req) begin
+         end else if (imem_req & ~mem2000_stall) begin
             combined_mem_addr = imem_addr;
             if (imem_addr >= `CODE_RAM_BASE_ADDR) begin
                mem_req2000   = imem_req;
@@ -563,10 +578,10 @@ module air_soc (
          end
       end
 
-      assign imem_gnt = imem_req & ~dmem_req;
-      assign dmem_gnt = dmem_req;
+      assign imem_gnt = imem_req & ~dmem_req & ~mem2000_stall;
+      assign dmem_gnt = dmem_req & ~mem2000_stall;
 
-      assign mem_rvalid_combined = mem_rvalid | mem_rvalid2000;
+      assign mem_rvalid_combined = mem_rvalid | mem_rvalid2000_delayed;
       assign mem_rdata_combined  = mem_rvalid ? mem_rdata : mem_rdata2000_decrypted;
 
       logic        req_sources  [32];
@@ -692,12 +707,16 @@ module air_soc (
    localparam CTR_KEY = 256'hDEADBEEFCAFEF00DBAADF00D1234567887654321ABCDEF01FEDCBA9876543210;
 
    ctr_encoder_decoder #(.KEY(CTR_KEY)) ctr_dec (
+      .clk_i(clkwiz_o),
+      .rst_ni(rst_n),
       .row_number(addr_holder),
       .data_in(mem_rdata2000),
       .data_out(mem_rdata2000_decrypted)
    );
 
    ctr_encoder_decoder #(.KEY(CTR_KEY)) ctr_enc (
+      .clk_i(clkwiz_o),
+      .rst_ni(rst_n),
       .row_number(mem_addr2000 - `CODE_RAM_BASE_ADDR),
       .data_in(mem_wdata2000),
       .data_out(mem_wdata2000_encrypted)
