@@ -510,7 +510,43 @@ module air_soc (
       // mem_rvalid2000 is high for 1 cycle when RAM responds
       // mem_rvalid2000_delayed is high 1 cycle later when CTR is done
       // We need to stall during the cycle when mem_rvalid2000 is high (CTR is processing)
-      wire mem2000_stall = mem_rvalid2000;
+      // Also stall during write staging (CTR encrypt takes 1 cycle)
+      logic write_req_staged;   // Write request staged, CTR encrypting
+      logic write_req_execute;  // CTR output ready, issue RAM write
+      
+      // Separate read and write request signals from arbiter
+      wire mem_req2000_read  = mem_req2000 & ~mem_we2000;
+      wire mem_req2000_write = mem_req2000 & mem_we2000;
+      
+      // Write staging: delay writes by 1 cycle so CTR encoder can produce encrypted data
+      logic [31:0] write_addr_staged;
+      logic [31:0] write_data_staged;
+      logic [3:0]  write_be_staged;
+      
+      always_ff @(posedge clkwiz_o or negedge rst_n) begin
+         if (~rst_n) begin
+            write_req_staged <= 1'b0;
+            write_req_execute <= 1'b0;
+            write_addr_staged <= 32'h0;
+            write_data_staged <= 32'h0;
+            write_be_staged <= 4'b0;
+         end else begin
+            // Pipeline: staged -> execute
+            write_req_execute <= write_req_staged;
+            
+            // Accept new write if not busy
+            if (mem_req2000_write & ~write_req_staged & ~write_req_execute) begin
+               write_req_staged <= 1'b1;
+               write_addr_staged <= mem_addr2000 - `CODE_RAM_BASE_ADDR;
+               write_data_staged <= mem_wdata2000;
+               write_be_staged <= mem_be2000;
+            end else begin
+               write_req_staged <= 1'b0;
+            end
+         end
+      end
+      
+      wire mem2000_stall = mem_rvalid2000 | write_req_staged | write_req_execute;
 
       always_comb begin
          if (dmem_req & ~mem2000_stall) begin
@@ -581,16 +617,55 @@ module air_soc (
       assign imem_gnt = imem_req & ~dmem_req & ~mem2000_stall;
       assign dmem_gnt = dmem_req & ~mem2000_stall;
 
-      assign mem_rvalid_combined = mem_rvalid | mem_rvalid2000_delayed;
-      assign mem_rdata_combined  = mem_rvalid ? mem_rdata : mem_rdata2000_decrypted;
-
       logic        req_sources  [32];
       logic        req_write    [32];
       logic [31:0] imem_req_addr[32];
       logic [ 4:0] req_count;
+      
+      // Track write execution separately - when write_req_execute goes high, 
+      // that's when the actual RAM write happens, and we'll get rvalid 1 cycle later
+      logic write_rvalid_pending;  // A write is executing in RAM, response coming
+      always_ff @(posedge clkwiz_o or negedge rst_n) begin
+         if (~rst_n)
+            write_rvalid_pending <= 1'b0;
+         else
+            write_rvalid_pending <= write_req_execute;
+      end
+      
+      // Track read pending - a read was issued to RAM2000, waiting for response + CTR decode
+      // read_rvalid_stage1 = read issued to RAM, waiting for RAM response
+      // read_rvalid_stage2 = RAM responded, CTR decoding, will be done next cycle
+      logic read_rvalid_stage1;
+      logic read_rvalid_stage2;
+      always_ff @(posedge clkwiz_o or negedge rst_n) begin
+         if (~rst_n) begin
+            read_rvalid_stage1 <= 1'b0;
+            read_rvalid_stage2 <= 1'b0;
+         end else begin
+            read_rvalid_stage1 <= mem_req2000_read;
+            // When RAM responds to a read (not a write), move to stage2
+            read_rvalid_stage2 <= read_rvalid_stage1 & mem_rvalid2000 & ~write_rvalid_pending;
+         end
+      end
+      
+      // For writes, RAM responds with mem_rvalid2000 when write_rvalid_pending is high
+      // Use that immediately (no CTR decode needed)
+      // For reads, use read_rvalid_stage2 which indicates CTR decode is complete
+      wire mem_rvalid2000_write = mem_rvalid2000 & write_rvalid_pending;
+      wire mem_rvalid2000_read_done = read_rvalid_stage2;
+      wire mem_rvalid2000_for_arbiter = mem_rvalid2000_write | mem_rvalid2000_read_done;
+      
+      assign mem_rvalid_combined = mem_rvalid | mem_rvalid2000_for_arbiter;
+      assign mem_rdata_combined  = mem_rvalid ? mem_rdata : mem_rdata2000_decrypted;
+
       always_ff @(posedge clkwiz_o or negedge rst_n) begin
          if (~rst_n) begin
             req_count <= '0;
+            for (int i = 0; i < 32; i++) begin
+               req_sources[i]   <= 1'b0;
+               req_write[i]     <= 1'b0;
+               imem_req_addr[i] <= 32'h0;
+            end
          end else begin
             if (mem_rvalid_combined) begin
                for (int i = 0; i < 31; i++) begin
@@ -693,20 +768,27 @@ module air_soc (
 
    `ifdef SECOND_SRAM
    // On-The-Fly Encryption/Decryption
+   localparam CTR_KEY = 256'hDEADBEEFCAFEF00DBAADF00D1234567887654321ABCDEF01FEDCBA9876543210;
+   
    // hold address for one cycle to meet timing of sram for decryption
-   // Only update when there's an actual request to mem2000
+   // Only update when there's an actual request to mem2000 (read)
    reg [31:0] addr_holder;
    always_ff @(posedge clkwiz_o or negedge rst_n) begin
       if (~rst_n) begin
          addr_holder <= 32'h0;
       end
-      else if (mem_req2000) begin
+      else if (mem_req2000_read) begin
          addr_holder <= mem_addr2000 - `CODE_RAM_BASE_ADDR;
       end
    end
+   
+   // Actual signals to RAM: reads go through immediately, writes delayed by 1 cycle
+   wire mem_req2000_ram = mem_req2000_read | write_req_execute;
+   wire mem_we2000_ram  = write_req_execute;
+   wire [31:0] mem_addr2000_ram = write_req_execute ? write_addr_staged : (mem_addr2000 - `CODE_RAM_BASE_ADDR);
+   wire [3:0]  mem_be2000_ram   = write_req_execute ? write_be_staged : mem_be2000;
 
-   localparam CTR_KEY = 256'hDEADBEEFCAFEF00DBAADF00D1234567887654321ABCDEF01FEDCBA9876543210;
-
+   // CTR decoder for reads (uses addr_holder which was set when read was issued)
    ctr_encoder_decoder #(.KEY(CTR_KEY)) ctr_dec (
       .clk_i(clkwiz_o),
       .rst_ni(rst_n),
@@ -715,15 +797,14 @@ module air_soc (
       .data_out(mem_rdata2000_decrypted)
    );
 
-   // For encryption (writes), we need combinational output since RAM writes immediately
-   // Use keystream generator directly and XOR combinationally
-   wire [31:0] enc_keystream;
-   ctr_keystream_generator keygen_enc (
-      .key        (CTR_KEY),
-      .row_number (mem_addr2000 - `CODE_RAM_BASE_ADDR),
-      .keystream  (enc_keystream)
+   // CTR encoder for writes (uses staged address/data, output ready 1 cycle after staging)
+   ctr_encoder_decoder #(.KEY(CTR_KEY)) ctr_enc (
+      .clk_i(clkwiz_o),
+      .rst_ni(rst_n),
+      .row_number(write_addr_staged),
+      .data_in(write_data_staged),
+      .data_out(mem_wdata2000_encrypted)
    );
-   assign mem_wdata2000_encrypted = mem_wdata2000 ^ enc_keystream;
    
    //assign mem_rdata2000_decrypted = mem_rdata2000;
    //assign mem_wdata2000_encrypted = mem_wdata2000;
@@ -735,10 +816,10 @@ module air_soc (
    ) main_memory2000 (
       .clk_i   (clkwiz_o),
       .rst_ni  (rst_n),
-      .req_i   (mem_req2000),
-      .we_i    (mem_req2000 & mem_we2000),
-      .be_i    (mem_be2000),
-      .addr_i  (mem_addr2000 - `CODE_RAM_BASE_ADDR),
+      .req_i   (mem_req2000_ram),
+      .we_i    (mem_we2000_ram),
+      .be_i    (mem_be2000_ram),
+      .addr_i  (mem_addr2000_ram),
       .wdata_i (mem_wdata2000_encrypted),
       .rvalid_o(mem_rvalid2000),
       .rdata_o (mem_rdata2000)
