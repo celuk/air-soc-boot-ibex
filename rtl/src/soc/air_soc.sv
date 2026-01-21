@@ -694,12 +694,13 @@ module air_soc (
    `ifdef SECOND_SRAM
    // On-The-Fly Encryption/Decryption
    // hold address for one cycle to meet timing of sram for decryption
+   // Only update when there's an actual request to mem2000
    reg [31:0] addr_holder;
    always_ff @(posedge clkwiz_o or negedge rst_n) begin
       if (~rst_n) begin
          addr_holder <= 32'h0;
       end
-      else begin
+      else if (mem_req2000) begin
          addr_holder <= mem_addr2000 - `CODE_RAM_BASE_ADDR;
       end
    end
@@ -714,13 +715,15 @@ module air_soc (
       .data_out(mem_rdata2000_decrypted)
    );
 
-   ctr_encoder_decoder #(.KEY(CTR_KEY)) ctr_enc (
-      .clk_i(clkwiz_o),
-      .rst_ni(rst_n),
-      .row_number(mem_addr2000 - `CODE_RAM_BASE_ADDR),
-      .data_in(mem_wdata2000),
-      .data_out(mem_wdata2000_encrypted)
+   // For encryption (writes), we need combinational output since RAM writes immediately
+   // Use keystream generator directly and XOR combinationally
+   wire [31:0] enc_keystream;
+   ctr_keystream_generator keygen_enc (
+      .key        (CTR_KEY),
+      .row_number (mem_addr2000 - `CODE_RAM_BASE_ADDR),
+      .keystream  (enc_keystream)
    );
+   assign mem_wdata2000_encrypted = mem_wdata2000 ^ enc_keystream;
    
    //assign mem_rdata2000_decrypted = mem_rdata2000;
    //assign mem_wdata2000_encrypted = mem_wdata2000;
