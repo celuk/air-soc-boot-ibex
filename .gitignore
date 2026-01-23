@@ -31,3 +31,5 @@ venv/
 verification/sim/pre_input.tcl
 
 *.history
+
+*.txt
