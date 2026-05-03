@@ -338,13 +338,13 @@ void secure_boot()
         decrypted[2] = data[2] ^ encrypted_block[2];
         decrypted[3] = data[3] ^ encrypted_block[3];
 
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-32) = little_endian(decrypted[0]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-64) = little_endian(decrypted[0]);
         address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-32) = little_endian(decrypted[1]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-64) = little_endian(decrypted[1]);
         address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-32) = little_endian(decrypted[2]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-64) = little_endian(decrypted[2]);
         address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-32) = little_endian(decrypted[3]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-64) = little_endian(decrypted[3]);
         address += 4;
 
         if(data[4] == 0xFFFFFFFF) break;
@@ -374,13 +374,13 @@ void secure_boot()
         decrypted[2] = data[6] ^ encrypted_block[2];
         decrypted[3] = data[7] ^ encrypted_block[3];
 
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-32) = little_endian(decrypted[0]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-64) = little_endian(decrypted[0]);
         address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-32) = little_endian(decrypted[1]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-64) = little_endian(decrypted[1]);
         address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-32) = little_endian(decrypted[2]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-64) = little_endian(decrypted[2]);
         address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-32) = little_endian(decrypted[3]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-64) = little_endian(decrypted[3]);
         address += 4;
     }
 
