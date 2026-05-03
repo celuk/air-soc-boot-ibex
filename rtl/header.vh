@@ -72,10 +72,10 @@ PERIPHERALS
 
 // boot memory
 `define MEM_BASE_ADDR   32'h0000_0000
-//`define MEM_RANGE       32'h0F00_0000 //32'h0000_1FFF
+`define MEM_RANGE       32'h0F00_0000 //32'h0000_1FFF
 
-`define MEM_RANGE       32'h0000_1FFF
-`define SECOND_SRAM
+//`define MEM_RANGE       32'h0000_1FFF
+//`define SECOND_SRAM
 
 `define CODE_RAM_BASE_ADDR 32'h00002000
 `define CODE_RAM_RANGE 32'h0F00_0000
