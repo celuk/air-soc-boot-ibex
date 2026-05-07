@@ -186,40 +186,6 @@ uint32_t little_endian(uint32_t value) {
            ((value & 0xFF000000) >> 24);
 }
 
-// GF(2^128) multiplication for GHASH
-static void gf128_mul(uint8_t* x, const uint8_t* y, uint8_t* result) {
-    uint8_t v[16];
-    uint8_t z[16];
-    int i, j;
-
-    for (i = 0; i < 16; i++) {
-        v[i] = y[i];
-        z[i] = 0;
-    }
-
-    for (i = 0; i < 128; i++) {
-        if (x[i / 8] & (0x80 >> (i % 8))) {
-            for (j = 0; j < 16; j++)
-                z[j] ^= v[j];
-        }
-        uint8_t lsb = v[15] & 1;
-        for (j = 15; j > 0; j--)
-            v[j] = (v[j] >> 1) | (v[j-1] << 7);
-        v[0] >>= 1;
-        if (lsb)
-            v[0] ^= 0xE1;  // reduction polynomial
-    }
-
-    for (i = 0; i < 16; i++)
-        result[i] = z[i];
-}
-
-// XOR 16-byte blocks
-static void xor_block(uint8_t* dst, const uint8_t* src) {
-    for (int i = 0; i < 16; i++)
-        dst[i] ^= src[i];
-}
-
 // Convert uint32_t to big-endian bytes
 static void u32_to_bytes(uint32_t val, uint8_t* out) {
     out[0] = (val >> 24) & 0xFF;
@@ -281,29 +247,8 @@ void secure_boot()
     u32_to_bytes(iv_data[2], &counter[8]);
     counter[12] = 0x00; counter[13] = 0x00; counter[14] = 0x00; counter[15] = 0x01;
 
-    // Compute H = AES_K(0^128)
-    uint8_t H[16];
-    uint32_t h_block[4];
-    aes_encrypt(0, 0, 0, 0,
-                key_data[0], key_data[1], key_data[2], key_data[3],
-                key_data[4], key_data[5], key_data[6], key_data[7], h_block);
-    u32_to_bytes(h_block[0], &H[0]);
-    u32_to_bytes(h_block[1], &H[4]);
-    u32_to_bytes(h_block[2], &H[8]);
-    u32_to_bytes(h_block[3], &H[12]);
-
-    // Encrypt J0 = AES_K(IV || 0x00000001) for tag verification
-    uint32_t j0_block[4];
-    aes_encrypt(bytes_to_u32(&counter[0]), bytes_to_u32(&counter[4]),
-                bytes_to_u32(&counter[8]), bytes_to_u32(&counter[12]),
-                key_data[0], key_data[1], key_data[2], key_data[3],
-                key_data[4], key_data[5], key_data[6], key_data[7], j0_block);
-
     // GCM decryption via CTR mode (counter starts at 2)
     inc32(counter);
-
-    uint8_t ghash_state[16] = {0};
-    uint32_t total_cipher_bytes = 0;
 
     while(data[7] != 0xFFFFFFFF) {
         data = qspi_read_qor(address);
@@ -312,18 +257,6 @@ void secure_boot()
         if(data[1] == 0xFFFFFFFF) break;
         if(data[2] == 0xFFFFFFFF) break;
         if(data[3] == 0xFFFFFFFF) break;
-
-        // GHASH: accumulate ciphertext block
-        uint8_t cipher_block[16];
-        u32_to_bytes(data[0], &cipher_block[0]);
-        u32_to_bytes(data[1], &cipher_block[4]);
-        u32_to_bytes(data[2], &cipher_block[8]);
-        u32_to_bytes(data[3], &cipher_block[12]);
-        xor_block(ghash_state, cipher_block);
-        uint8_t tmp[16];
-        gf128_mul(ghash_state, H, tmp);
-        for (int i = 0; i < 16; i++) ghash_state[i] = tmp[i];
-        total_cipher_bytes += 16;
 
         // CTR decrypt: encrypt counter, XOR with ciphertext
         aes_encrypt(bytes_to_u32(&counter[0]), bytes_to_u32(&counter[4]),
@@ -352,16 +285,6 @@ void secure_boot()
         if(data[6] == 0xFFFFFFFF) break;
         if(data[7] == 0xFFFFFFFF) break;
 
-        // GHASH: accumulate second ciphertext block
-        u32_to_bytes(data[4], &cipher_block[0]);
-        u32_to_bytes(data[5], &cipher_block[4]);
-        u32_to_bytes(data[6], &cipher_block[8]);
-        u32_to_bytes(data[7], &cipher_block[12]);
-        xor_block(ghash_state, cipher_block);
-        gf128_mul(ghash_state, H, tmp);
-        for (int i = 0; i < 16; i++) ghash_state[i] = tmp[i];
-        total_cipher_bytes += 16;
-
         // CTR decrypt second block
         aes_encrypt(bytes_to_u32(&counter[0]), bytes_to_u32(&counter[4]),
                     bytes_to_u32(&counter[8]), bytes_to_u32(&counter[12]),
@@ -382,44 +305,6 @@ void secure_boot()
         address += 4;
         *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-64) = little_endian(decrypted[3]);
         address += 4;
-    }
-
-    // Finalize GHASH: process length block (no AAD, so aad_len=0)
-    uint8_t len_block[16] = {0};
-    uint64_t cipher_bits = (uint64_t)total_cipher_bytes * 8;
-    len_block[8]  = (cipher_bits >> 56) & 0xFF;
-    len_block[9]  = (cipher_bits >> 48) & 0xFF;
-    len_block[10] = (cipher_bits >> 40) & 0xFF;
-    len_block[11] = (cipher_bits >> 32) & 0xFF;
-    len_block[12] = (cipher_bits >> 24) & 0xFF;
-    len_block[13] = (cipher_bits >> 16) & 0xFF;
-    len_block[14] = (cipher_bits >>  8) & 0xFF;
-    len_block[15] = (cipher_bits >>  0) & 0xFF;
-    xor_block(ghash_state, len_block);
-    uint8_t final_hash[16];
-    gf128_mul(ghash_state, H, final_hash);
-
-    // Compute expected tag: GHASH XOR E(K, J0)
-    uint8_t computed_tag[16];
-    uint8_t j0_bytes[16];
-    u32_to_bytes(j0_block[0], &j0_bytes[0]);
-    u32_to_bytes(j0_block[1], &j0_bytes[4]);
-    u32_to_bytes(j0_block[2], &j0_bytes[8]);
-    u32_to_bytes(j0_block[3], &j0_bytes[12]);
-    for (int i = 0; i < 16; i++)
-        computed_tag[i] = final_hash[i] ^ j0_bytes[i];
-
-    // Verify tag
-    uint8_t expected_tag[16];
-    u32_to_bytes(tag_data[0], &expected_tag[0]);
-    u32_to_bytes(tag_data[1], &expected_tag[4]);
-    u32_to_bytes(tag_data[2], &expected_tag[8]);
-    u32_to_bytes(tag_data[3], &expected_tag[12]);
-
-    for (int i = 0; i < 16; i++) {
-        if (computed_tag[i] != expected_tag[i]) {
-            return; // Tag mismatch, authentication failed
-        }
     }
 }
 
