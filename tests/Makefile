@@ -78,7 +78,8 @@ ifeq ($(SECURE_BOOT), 1)
 	mv $(CPATH).tmp $(CPATH).vmem
 #	python3 ../tools/encrypt_vmem.py -f $(CPATH).vmem > $(CPATH).tmp
 #	python3 ../tools/encrypt_vmem_aes256.py -f $(CPATH).vmem > $(CPATH).tmp
-	python3 ../tools/encrypt_vmem_aes256_gcm.py -f $(CPATH).vmem > $(CPATH).tmp
+#	python3 ../tools/encrypt_vmem_aes256_ctr_gcm.py -f $(CPATH).vmem > $(CPATH).tmp
+	python3 ../tools/encrypt_vmem_aes256_ccm.py -f $(CPATH).vmem > $(CPATH).tmp
 	mv $(CPATH).tmp $(CPATH)_secure.vmem
 endif
 
@@ -90,7 +91,15 @@ ifeq ($(CFILE), secure_bootloader)
 	python3 ../tools/generate_bootrom.py -f $(CPATH).hex --addr_width 14 > ../rtl/src/memory/bootrom.sv
 endif
 
+ifeq ($(CFILE), secure_bootloader_ctr)
+	python3 ../tools/generate_bootrom.py -f $(CPATH).hex --addr_width 14 > ../rtl/src/memory/bootrom.sv
+endif
+
 ifeq ($(CFILE), secure_bootloader_gcm)
+	python3 ../tools/generate_bootrom.py -f $(CPATH).hex --addr_width 14 > ../rtl/src/memory/bootrom.sv
+endif
+
+ifeq ($(CFILE), secure_bootloader_ccm)
 	python3 ../tools/generate_bootrom.py -f $(CPATH).hex --addr_width 14 > ../rtl/src/memory/bootrom.sv
 endif
 

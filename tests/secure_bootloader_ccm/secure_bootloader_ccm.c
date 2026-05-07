@@ -246,17 +246,7 @@ void secure_boot()
     }
     address += 32;
 
-    // Pre-calculate message length by scanning until 0xFFFFFFFF
-    uint32_t scan_addr = address;
-    uint32_t msg_len = 0;
-    while (1) {
-        uint32_t* scan_data = qspi_read_qor(scan_addr);
-        if (scan_data[0] == 0xFFFFFFFF) break;
-        msg_len += 16;
-        if (scan_data[4] == 0xFFFFFFFF) break;
-        msg_len += 16;
-        scan_addr += 32;
-    }
+    uint32_t msg_len = iv_data[3]; // Message length stored in the 4th word of the IV block
 
     // A0 formatting (Counter for tag encryption)
     // Flags for A0: L-1 = 2 (for L=3, nonce=12 bytes)
@@ -303,13 +293,9 @@ void secure_boot()
     u32_to_bytes(mac_encrypted[2], &mac_state[8]);
     u32_to_bytes(mac_encrypted[3], &mac_state[12]);
 
-    while(data[7] != 0xFFFFFFFF) {
+    uint32_t processed_len = 0;
+    while(processed_len < msg_len) {
         data = qspi_read_qor(address);
-
-        if(data[0] == 0xFFFFFFFF) break;
-        if(data[1] == 0xFFFFFFFF) break;
-        if(data[2] == 0xFFFFFFFF) break;
-        if(data[3] == 0xFFFFFFFF) break;
 
         // CTR decrypt: encrypt counter, XOR with ciphertext
         aes_encrypt(bytes_to_u32(&counter[0]), bytes_to_u32(&counter[4]),
@@ -351,11 +337,9 @@ void secure_boot()
         address += 4;
         *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-64) = little_endian(decrypted[3]);
         address += 4;
-
-        if(data[4] == 0xFFFFFFFF) break;
-        if(data[5] == 0xFFFFFFFF) break;
-        if(data[6] == 0xFFFFFFFF) break;
-        if(data[7] == 0xFFFFFFFF) break;
+        
+        processed_len += 16;
+        if (processed_len >= msg_len) break;
 
         // CTR decrypt second block
         aes_encrypt(bytes_to_u32(&counter[0]), bytes_to_u32(&counter[4]),
@@ -395,6 +379,8 @@ void secure_boot()
         address += 4;
         *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-64) = little_endian(decrypted[3]);
         address += 4;
+        
+        processed_len += 16;
     }
 
     // In CCM, the authentication tag is generated from mac_state and XOR'd with the encrypted B0 block
