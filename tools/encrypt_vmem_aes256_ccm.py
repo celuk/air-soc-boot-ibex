@@ -124,7 +124,7 @@ def add_round_key(state, round_key_words_for_round): # round_key_words is a list
         state[2][c] ^= (key_col_word >>  8) & 0xFF
         state[3][c] ^= (key_col_word >>  0) & 0xFF
 
-# AES-ECB encrypt a single block (used by GCM's CTR mode)
+# AES-ECB encrypt a single block (used by CCM's CTR mode and CBC-MAC)
 def aes_encrypt(block_part0, block_part1, block_part2, block_part3,
                 key_part0, key_part1, key_part2, key_part3,
                 key_part4, key_part5, key_part6, key_part7):
@@ -157,16 +157,84 @@ def u32_from_bytes(b0, b1, b2, b3):
 def bytes_from_u32(word):
     return [(word >> shift) & 0xFF for shift in (24, 16, 8, 0)]
 
-# Increment the counter (last 32 bits of the 128-bit block)
-def inc32(counter_bytes):
-    counter = list(counter_bytes)
-    val = (counter[12] << 24) | (counter[13] << 16) | (counter[14] << 8) | counter[15]
-    val = (val + 1) & 0xFFFFFFFF
-    counter[12] = (val >> 24) & 0xFF
-    counter[13] = (val >> 16) & 0xFF
-    counter[14] = (val >>  8) & 0xFF
-    counter[15] = (val >>  0) & 0xFF
-    return counter
+# XOR two 16-byte lists
+def xor_block(a, b):
+    return [a[i] ^ b[i] for i in range(16)]
+
+# AES-ECB encrypt a 16-byte block, returns 16-byte list
+def aes_encrypt_block(block_bytes, k0, k1, k2, k3, k4, k5, k6, k7):
+    b0 = u32_from_bytes(*block_bytes[0:4])
+    b1 = u32_from_bytes(*block_bytes[4:8])
+    b2 = u32_from_bytes(*block_bytes[8:12])
+    b3 = u32_from_bytes(*block_bytes[12:16])
+    r0, r1, r2, r3 = aes_encrypt(b0, b1, b2, b3, k0, k1, k2, k3, k4, k5, k6, k7)
+    result = []
+    for w in [r0, r1, r2, r3]:
+        result.extend(bytes_from_u32(w))
+    return result
+
+# CCM: Format B0 block
+# Flags = 64*Adata + 8*((t-2)/2) + (L-1)
+# B0 = Flags || Nonce || Q (message length encoded in L bytes)
+# With nonce_len=12, L=3, tag_len=16:
+#   Flags = 0 + 8*((16-2)/2) + (3-1) = 0 + 8*7 + 2 = 58 = 0x3A
+# No AAD (Adata=0)
+def ccm_format_b0(nonce, msg_len, tag_len=16):
+    L = 15 - len(nonce)  # L = 3 for 12-byte nonce
+    flags = 8 * ((tag_len - 2) // 2) + (L - 1)  # No AAD so Adata bit = 0
+    b0 = [flags] + list(nonce)
+    # Encode message length in L bytes (big-endian)
+    for i in range(L - 1, -1, -1):
+        b0.append((msg_len >> (8 * i)) & 0xFF)
+    return b0
+
+# CCM: Format counter blocks
+# A_i = Flags || Nonce || Counter_i
+# Flags for counter = L-1
+def ccm_format_ctr(nonce, counter_val):
+    L = 15 - len(nonce)  # L = 3 for 12-byte nonce
+    flags = L - 1  # Counter flags
+    ctr_block = [flags] + list(nonce)
+    # Encode counter in L bytes (big-endian)
+    for i in range(L - 1, -1, -1):
+        ctr_block.append((counter_val >> (8 * i)) & 0xFF)
+    return ctr_block
+
+# CCM: CBC-MAC computation over B0 || plaintext blocks
+def ccm_cbc_mac(nonce, plaintext_bytes, tag_len, k0, k1, k2, k3, k4, k5, k6, k7):
+    msg_len = len(plaintext_bytes)
+    b0 = ccm_format_b0(nonce, msg_len, tag_len)
+
+    # Start CBC-MAC: X_1 = E(K, B_0)
+    x = aes_encrypt_block(b0, k0, k1, k2, k3, k4, k5, k6, k7)
+
+    # Process plaintext blocks: X_{i+1} = E(K, X_i XOR B_i)
+    for i in range(0, len(plaintext_bytes), 16):
+        block = plaintext_bytes[i:i+16]
+        # Pad last block with zeros if needed
+        if len(block) < 16:
+            block = block + [0] * (16 - len(block))
+        x = aes_encrypt_block(xor_block(x, block), k0, k1, k2, k3, k4, k5, k6, k7)
+
+    # Return first tag_len bytes as CBC-MAC value (T)
+    return x[:tag_len]
+
+# CCM: CTR mode encryption
+def ccm_ctr_encrypt(nonce, plaintext_bytes, k0, k1, k2, k3, k4, k5, k6, k7):
+    encrypted = []
+    counter = 1  # CTR starts at 1 for payload (A_0 is for tag encryption)
+
+    for i in range(0, len(plaintext_bytes), 16):
+        block = plaintext_bytes[i:i+16]
+        ctr_block = ccm_format_ctr(nonce, counter)
+        keystream = aes_encrypt_block(ctr_block, k0, k1, k2, k3, k4, k5, k6, k7)
+
+        for j in range(len(block)):
+            encrypted.append(block[j] ^ keystream[j])
+
+        counter += 1
+
+    return encrypted
 
 def process_vmem_file_for_aes_ccm_encryption(input_file):
     data_bytes = []
@@ -182,9 +250,7 @@ def process_vmem_file_for_aes_ccm_encryption(input_file):
     while len(data_bytes) % 16 != 0:
         data_bytes.append(0x00)
 
-    msg_len = len(data_bytes)
-
-    # AES key parts (256-bit key, same as encrypt_vmem_aes256.py)
+    # AES key parts (256-bit key, same as GCM version)
     k0 = 0x2b7e1516
     k1 = 0x28aed2a6
     k2 = 0xabf71588
@@ -194,72 +260,32 @@ def process_vmem_file_for_aes_ccm_encryption(input_file):
     k6 = 0x2a47c932
     k7 = 0x6fbd8a7e
 
-    # 96-bit IV/nonce for CCM
-    iv = [0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB]
+    # 12-byte nonce for CCM (same as GCM IV)
+    nonce = [0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB]
+    tag_len = 16  # 128-bit tag
 
-    # Helper lambda to encrypt 16 bytes
-    def aes_enc_bytes(blk):
-        w = aes_encrypt(u32_from_bytes(*blk[0:4]), u32_from_bytes(*blk[4:8]),
-                        u32_from_bytes(*blk[8:12]), u32_from_bytes(*blk[12:16]),
-                        k0, k1, k2, k3, k4, k5, k6, k7)
-        return sum([bytes_from_u32(x) for x in w], [])
+    # Step 1: Compute CBC-MAC tag (T) over plaintext
+    T = ccm_cbc_mac(nonce, data_bytes, tag_len, k0, k1, k2, k3, k4, k5, k6, k7)
 
-    # A0 block: Flags=0x02, Nonce=12 bytes, Counter=0
-    a0_block = [0x02] + iv + [0x00, 0x00, 0x00]
-    
-    # Encrypt A0 block to get J0
-    j0_bytes = aes_enc_bytes(a0_block)
+    # Step 2: Encrypt tag with counter A_0
+    a0 = ccm_format_ctr(nonce, 0)
+    s0 = aes_encrypt_block(a0, k0, k1, k2, k3, k4, k5, k6, k7)
+    tag = xor_block(T, s0)  # Encrypted tag
 
-    # B0 block: Flags=0x3A, Nonce=12 bytes, Length=3 bytes
-    b0_block = [0x3A] + iv + [(msg_len >> 16) & 0xFF, (msg_len >> 8) & 0xFF, msg_len & 0xFF]
-    
-    # Compute initial MAC state (Encrypt B0)
-    mac_state = aes_enc_bytes(b0_block)
+    # Step 3: CTR-encrypt the plaintext (counters A_1, A_2, ...)
+    encrypted_bytes = ccm_ctr_encrypt(nonce, data_bytes, k0, k1, k2, k3, k4, k5, k6, k7)
 
-    # Compute MAC over plaintext (CBC-MAC)
-    for i in range(0, msg_len, 16):
-        block = data_bytes[i:i+16]
-        # XOR plaintext block with current MAC state
-        mac_state = [mac_state[j] ^ block[j] for j in range(16)]
-        # Encrypt the result
-        mac_state = aes_enc_bytes(mac_state)
-
-    # Determine TAG by XORing computed CBC-MAC with encrypted A0 block
-    tag = [mac_state[i] ^ j0_bytes[i] for i in range(16)]
-
-    # Initial counter: A1 block (Counter=1)
-    counter = list(a0_block)
-    counter[15] = 0x01
-    encrypted_bytes = []
-
-    # CCM encryption (CTR mode)
-    for i in range(0, msg_len, 16):
-        block = data_bytes[i:i+16]
-
-        # Encrypt the counter block
-        keystream = aes_enc_bytes(counter)
-
-        # XOR plaintext with encrypted counter to produce ciphertext
-        for j in range(16):
-            encrypted_bytes.append(block[j] ^ keystream[j])
-
-        counter = inc32(counter)
-
-    # Output in VMEM format: key (32B) + IV & length (16B) + tag (16B) + ciphertext
+    # Output in VMEM format: key (32B) + nonce (12B padded to 16B) + tag (16B) + ciphertext
     print('@00000000')
     key_bytes = sum([bytes_from_u32(k)[::-1] for k in [k0, k1, k2, k3, k4, k5, k6, k7]], [])
     print(' '.join(f'{b:02X}' for b in key_bytes))
 
-    # IV (12 bytes) + 4 bytes of Message Length (big endian encoded)
-    # The bootloader reads the 4th word from QSPI and converts little endian.
-    # Therefore, if we pack msg_len as a standard big endian 32-bit int byte array and output it little endian,
-    # C will read it properly.
-    msg_len_bytes = bytes_from_u32(msg_len)
-    iv_line = list(iv) + msg_len_bytes
-    iv_line_le = []
+    # Nonce (12 bytes) + 4 padding bytes
+    nonce_line = list(nonce) + [0x00, 0x00, 0x00, 0x00]
+    nonce_line_le = []
     for w_idx in range(0, 16, 4):
-        iv_line_le.extend(iv_line[w_idx:w_idx+4][::-1])
-    print(' '.join(f'{b:02X}' for b in iv_line_le))
+        nonce_line_le.extend(nonce_line[w_idx:w_idx+4][::-1])
+    print(' '.join(f'{b:02X}' for b in nonce_line_le))
 
     # Tag (16 bytes)
     tag_le = []
@@ -267,6 +293,7 @@ def process_vmem_file_for_aes_ccm_encryption(input_file):
         tag_le.extend(tag[w_idx:w_idx+4][::-1])
     print(' '.join(f'{b:02X}' for b in tag_le))
 
+    # Ciphertext
     for i in range(0, len(encrypted_bytes), 16):
         line_bytes = encrypted_bytes[i:i+16]
         line_le = []

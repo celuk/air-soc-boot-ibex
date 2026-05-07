@@ -1,14 +1,18 @@
 #include <stdint.h>
 #include "qspi.h"
-//#include "uart.h"
 
-#define CODE_RAM_BASE_ADDR 0x2000 //0x80000000 //0x00010000
+#define CODE_RAM_BASE_ADDR 0x2000
 #define CODE_RAM (*(volatile uint32_t*) (CODE_RAM_BASE_ADDR))
 
 // AES constants
-#define AES_Nk 8  // Number of 32-bit words in the key (AES-256)
-#define AES_Nb 4  // Number of 32-bit words in a block (always 4 for AES)
-#define AES_Nr 14 // Number of rounds for AES-256
+#define AES_Nk 8
+#define AES_Nb 4
+#define AES_Nr 14
+
+// CCM parameters: 12-byte nonce => L=3, 16-byte tag
+#define CCM_NONCE_LEN 12
+#define CCM_L         3
+#define CCM_TAG_LEN   16
 
 // S-Box
 static const uint8_t s_box[256] = {
@@ -30,107 +34,76 @@ static const uint8_t s_box[256] = {
     0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16
 };
 
-// Rcon (Round Constant) - extended for AES-256
 static const uint32_t Rcon[14] = {
     0x01000000, 0x02000000, 0x04000000, 0x08000000, 0x10000000,
     0x20000000, 0x40000000, 0x80000000, 0x1b000000, 0x36000000,
     0x6c000000, 0xd8000000, 0xab000000, 0x4d000000
 };
 
-// Helper: xtime for Galois Field multiplication GF(2^8)
 static uint8_t xtime(uint8_t x) {
     return ((x << 1) ^ ((x & 0x80) ? 0x1B : 0x00));
 }
-
 static uint8_t mul_by_02(uint8_t num) { return xtime(num); }
 static uint8_t mul_by_03(uint8_t num) { return xtime(num) ^ num; }
 
-// Key Expansion helpers
-static uint32_t RotWord(uint32_t word) {
-    return (word << 8) | (word >> 24);
-}
+static uint32_t RotWord(uint32_t word) { return (word << 8) | (word >> 24); }
 
 static uint32_t SubWord(uint32_t word) {
-    uint32_t result = 0;
-    result |= (uint32_t)s_box[(word >> 24) & 0xFF] << 24;
-    result |= (uint32_t)s_box[(word >> 16) & 0xFF] << 16;
-    result |= (uint32_t)s_box[(word >>  8) & 0xFF] <<  8;
-    result |= (uint32_t)s_box[(word >>  0) & 0xFF] <<  0;
-    return result;
+    return ((uint32_t)s_box[(word >> 24) & 0xFF] << 24) |
+           ((uint32_t)s_box[(word >> 16) & 0xFF] << 16) |
+           ((uint32_t)s_box[(word >>  8) & 0xFF] <<  8) |
+           ((uint32_t)s_box[(word >>  0) & 0xFF] <<  0);
 }
 
-// Key Expansion function
 static void KeyExpansion(uint32_t* expanded_keys, const uint32_t* key) {
     int i;
     uint32_t temp;
-
-    for (i = 0; i < AES_Nk; i++) {
-        expanded_keys[i] = key[i];
-    }
-
+    for (i = 0; i < AES_Nk; i++) expanded_keys[i] = key[i];
     for (i = AES_Nk; i < AES_Nb * (AES_Nr + 1); i++) {
         temp = expanded_keys[i - 1];
-        if (i % AES_Nk == 0) {
-            temp = SubWord(RotWord(temp)) ^ Rcon[i / AES_Nk - 1];
-        }
-        // For AES-256, apply SubWord to every 4th word after the first 6 rounds
-        if (AES_Nk > 6 && (i % AES_Nk == 4)) {
-            temp = SubWord(temp);
-        }
+        if (i % AES_Nk == 0) temp = SubWord(RotWord(temp)) ^ Rcon[i / AES_Nk - 1];
+        if (AES_Nk > 6 && (i % AES_Nk == 4)) temp = SubWord(temp);
         expanded_keys[i] = expanded_keys[i - AES_Nk] ^ temp;
     }
 }
 
-// Convert input block parts to state matrix (state[row][col])
 static void block_to_state(uint32_t b0, uint32_t b1, uint32_t b2, uint32_t b3, uint8_t state[4][4]) {
-    uint32_t block_parts[4] = {b0, b1, b2, b3};
+    uint32_t bp[4] = {b0, b1, b2, b3};
     for (int c = 0; c < 4; ++c) {
-        state[0][c] = (block_parts[c] >> 24) & 0xFF;
-        state[1][c] = (block_parts[c] >> 16) & 0xFF;
-        state[2][c] = (block_parts[c] >>  8) & 0xFF;
-        state[3][c] = (block_parts[c] >>  0) & 0xFF;
+        state[0][c] = (bp[c] >> 24) & 0xFF;
+        state[1][c] = (bp[c] >> 16) & 0xFF;
+        state[2][c] = (bp[c] >>  8) & 0xFF;
+        state[3][c] = (bp[c] >>  0) & 0xFF;
     }
 }
 
-// Convert state matrix to output block array
-static void state_to_block(const uint8_t state[4][4], uint32_t* block_array) {
-    for (int c = 0; c < 4; ++c) {
-        block_array[c] = ((uint32_t)state[0][c] << 24) |
-                         ((uint32_t)state[1][c] << 16) |
-                         ((uint32_t)state[2][c] <<  8) |
-                         ((uint32_t)state[3][c] <<  0);
-    }
+static void state_to_block(const uint8_t state[4][4], uint32_t* out) {
+    for (int c = 0; c < 4; ++c)
+        out[c] = ((uint32_t)state[0][c] << 24) | ((uint32_t)state[1][c] << 16) |
+                 ((uint32_t)state[2][c] <<  8) | ((uint32_t)state[3][c]);
 }
 
-static void AddRoundKey(uint8_t state[4][4], const uint32_t* round_key_words) {
+static void AddRoundKey(uint8_t state[4][4], const uint32_t* rk) {
     for (int c = 0; c < AES_Nb; ++c) {
-        state[0][c] ^= (round_key_words[c] >> 24) & 0xFF;
-        state[1][c] ^= (round_key_words[c] >> 16) & 0xFF;
-        state[2][c] ^= (round_key_words[c] >>  8) & 0xFF;
-        state[3][c] ^= (round_key_words[c] >>  0) & 0xFF;
+        state[0][c] ^= (rk[c] >> 24) & 0xFF;
+        state[1][c] ^= (rk[c] >> 16) & 0xFF;
+        state[2][c] ^= (rk[c] >>  8) & 0xFF;
+        state[3][c] ^= (rk[c] >>  0) & 0xFF;
     }
 }
 
-// GCM uses forward AES encryption (not inverse)
 static void SubBytes(uint8_t state[4][4]) {
-    for (int r = 0; r < 4; ++r) {
-        for (int c = 0; c < 4; ++c) {
+    for (int r = 0; r < 4; ++r)
+        for (int c = 0; c < 4; ++c)
             state[r][c] = s_box[state[r][c]];
-        }
-    }
 }
 
 static void ShiftRows(uint8_t state[4][4]) {
-    uint8_t temp;
-    // Row 1: 1 byte left shift
-    temp = state[1][0];
-    state[1][0] = state[1][1]; state[1][1] = state[1][2]; state[1][2] = state[1][3]; state[1][3] = temp;
-    // Row 2: 2 bytes left shift
-    temp = state[2][0]; state[2][0] = state[2][2]; state[2][2] = temp;
-    temp = state[2][1]; state[2][1] = state[2][3]; state[2][3] = temp;
-    // Row 3: 3 bytes left shift (1 byte right shift)
-    temp = state[3][3];
-    state[3][3] = state[3][2]; state[3][2] = state[3][1]; state[3][1] = state[3][0]; state[3][0] = temp;
+    uint8_t t;
+    t = state[1][0]; state[1][0] = state[1][1]; state[1][1] = state[1][2]; state[1][2] = state[1][3]; state[1][3] = t;
+    t = state[2][0]; state[2][0] = state[2][2]; state[2][2] = t;
+    t = state[2][1]; state[2][1] = state[2][3]; state[2][3] = t;
+    t = state[3][3]; state[3][3] = state[3][2]; state[3][2] = state[3][1]; state[3][1] = state[3][0]; state[3][0] = t;
 }
 
 static void MixColumns(uint8_t state[4][4]) {
@@ -144,73 +117,81 @@ static void MixColumns(uint8_t state[4][4]) {
     }
 }
 
-// AES-ECB forward encryption (used by GCM's CTR mode)
-void aes_encrypt(uint32_t block_part0, uint32_t block_part1, uint32_t block_part2, uint32_t block_part3,
-                 uint32_t key_part0, uint32_t key_part1, uint32_t key_part2, uint32_t key_part3,
-                 uint32_t key_part4, uint32_t key_part5, uint32_t key_part6, uint32_t key_part7,
-                 uint32_t* result_block) {
+void aes_encrypt(uint32_t b0, uint32_t b1, uint32_t b2, uint32_t b3,
+                 uint32_t k0, uint32_t k1, uint32_t k2, uint32_t k3,
+                 uint32_t k4, uint32_t k5, uint32_t k6, uint32_t k7,
+                 uint32_t* result) {
     uint8_t state[4][4];
-    uint32_t initial_key[AES_Nk];
-    static uint32_t round_keys[AES_Nb * (AES_Nr + 1)];
-
-    initial_key[0] = key_part0; initial_key[1] = key_part1;
-    initial_key[2] = key_part2; initial_key[3] = key_part3;
-    initial_key[4] = key_part4; initial_key[5] = key_part5;
-    initial_key[6] = key_part6; initial_key[7] = key_part7;
-
-    block_to_state(block_part0, block_part1, block_part2, block_part3, state);
-
-    KeyExpansion(round_keys, initial_key);
-
-    AddRoundKey(state, &round_keys[0]);
-
-    for (int round = 1; round < AES_Nr; ++round) {
-        SubBytes(state);
-        ShiftRows(state);
-        MixColumns(state);
-        AddRoundKey(state, &round_keys[round * AES_Nb]);
+    uint32_t ik[AES_Nk];
+    static uint32_t rk[AES_Nb * (AES_Nr + 1)];
+    ik[0]=k0; ik[1]=k1; ik[2]=k2; ik[3]=k3; ik[4]=k4; ik[5]=k5; ik[6]=k6; ik[7]=k7;
+    block_to_state(b0, b1, b2, b3, state);
+    KeyExpansion(rk, ik);
+    AddRoundKey(state, &rk[0]);
+    for (int r = 1; r < AES_Nr; ++r) {
+        SubBytes(state); ShiftRows(state); MixColumns(state);
+        AddRoundKey(state, &rk[r * AES_Nb]);
     }
-
-    // Final round (no MixColumns)
-    SubBytes(state);
-    ShiftRows(state);
-    AddRoundKey(state, &round_keys[AES_Nr * AES_Nb]);
-
-    state_to_block(state, result_block);
+    SubBytes(state); ShiftRows(state);
+    AddRoundKey(state, &rk[AES_Nr * AES_Nb]);
+    state_to_block(state, result);
 }
 
 uint32_t little_endian(uint32_t value) {
-    return ((value & 0x000000FF) << 24) |
-           ((value & 0x0000FF00) << 8)  |
-           ((value & 0x00FF0000) >> 8)  |
-           ((value & 0xFF000000) >> 24);
+    return ((value & 0x000000FF) << 24) | ((value & 0x0000FF00) << 8) |
+           ((value & 0x00FF0000) >> 8)  | ((value & 0xFF000000) >> 24);
 }
 
-// XOR 16-byte blocks
-static void xor_block(uint8_t* dst, const uint8_t* src) {
-    for (int i = 0; i < 16; i++)
-        dst[i] ^= src[i];
-}
-
-// Convert uint32_t to big-endian bytes
 static void u32_to_bytes(uint32_t val, uint8_t* out) {
-    out[0] = (val >> 24) & 0xFF;
-    out[1] = (val >> 16) & 0xFF;
-    out[2] = (val >>  8) & 0xFF;
-    out[3] = (val >>  0) & 0xFF;
+    out[0] = (val >> 24) & 0xFF; out[1] = (val >> 16) & 0xFF;
+    out[2] = (val >>  8) & 0xFF; out[3] = (val >>  0) & 0xFF;
 }
 
-// Convert big-endian bytes to uint32_t
 static uint32_t bytes_to_u32(const uint8_t* b) {
     return ((uint32_t)b[0] << 24) | ((uint32_t)b[1] << 16) |
            ((uint32_t)b[2] << 8)  | ((uint32_t)b[3]);
 }
 
-// Increment last 32 bits of 16-byte counter block
-static void inc32(uint8_t* counter) {
-    uint32_t val = bytes_to_u32(&counter[12]);
-    val++;
-    u32_to_bytes(val, &counter[12]);
+static void xor_block(uint8_t* dst, const uint8_t* src) {
+    for (int i = 0; i < 16; i++) dst[i] ^= src[i];
+}
+
+// AES-ECB encrypt a 16-byte block in-place using byte arrays
+static void aes_encrypt_bytes(uint8_t* block, uint32_t* key_data) {
+    uint32_t result[4];
+    aes_encrypt(bytes_to_u32(&block[0]), bytes_to_u32(&block[4]),
+                bytes_to_u32(&block[8]), bytes_to_u32(&block[12]),
+                key_data[0], key_data[1], key_data[2], key_data[3],
+                key_data[4], key_data[5], key_data[6], key_data[7], result);
+    u32_to_bytes(result[0], &block[0]);
+    u32_to_bytes(result[1], &block[4]);
+    u32_to_bytes(result[2], &block[8]);
+    u32_to_bytes(result[3], &block[12]);
+}
+
+// Format CCM counter block: Flags || Nonce || Counter (L bytes big-endian)
+// Flags for counter = L-1 = 2
+static void ccm_format_ctr(uint8_t* ctr_block, const uint8_t* nonce, uint32_t counter_val) {
+    ctr_block[0] = CCM_L - 1;  // flags = 2
+    for (int i = 0; i < CCM_NONCE_LEN; i++)
+        ctr_block[i + 1] = nonce[i];
+    // Counter in L=3 bytes, big-endian
+    ctr_block[13] = (counter_val >> 16) & 0xFF;
+    ctr_block[14] = (counter_val >>  8) & 0xFF;
+    ctr_block[15] = (counter_val >>  0) & 0xFF;
+}
+
+// Format CCM B0 block: Flags || Nonce || Q (msg length in L bytes)
+// Flags = 8*((t-2)/2) + (L-1), no AAD => Adata=0
+static void ccm_format_b0(uint8_t* b0, const uint8_t* nonce, uint32_t msg_len) {
+    uint8_t flags = 8 * ((CCM_TAG_LEN - 2) / 2) + (CCM_L - 1);  // = 58 = 0x3A
+    b0[0] = flags;
+    for (int i = 0; i < CCM_NONCE_LEN; i++)
+        b0[i + 1] = nonce[i];
+    // Message length in L=3 bytes, big-endian
+    b0[13] = (msg_len >> 16) & 0xFF;
+    b0[14] = (msg_len >>  8) & 0xFF;
+    b0[15] = (msg_len >>  0) & 0xFF;
 }
 
 void secure_boot()
@@ -220,188 +201,144 @@ void secure_boot()
     uint32_t address = 0x00000000;
     uint32_t* data;
     uint32_t key_data[8];
-    uint32_t iv_data[4];
+    uint32_t nonce_data[4];
     uint32_t tag_data[4];
     uint32_t encrypted_block[AES_Nb];
 
-    // Get key from root of trust
+    // Read key (32 bytes = 8 words)
     data = qspi_read_qor(address);
-    for (int i = 0; i < 8; i++) {
-        key_data[i] = data[i];
-    }
-    if (key_data[0] == 0xFFFFFFFF) {
-        return;
-    }
+    for (int i = 0; i < 8; i++) key_data[i] = data[i];
+    if (key_data[0] == 0xFFFFFFFF) return;
     address += 32;
 
-    // Read IV (12 bytes in first 3 words, 4th word is padding)
+    // Read nonce (12 bytes in first 3 words, 4th word is padding) + tag (16 bytes)
     data = qspi_read_qor(address);
-    for (int i = 0; i < 4; i++) {
-        iv_data[i] = data[i];
-    }
-
-    // Read tag (16 bytes)
-    for (int i = 0; i < 4; i++) {
-        tag_data[i] = data[i + 4];
-    }
+    for (int i = 0; i < 4; i++) nonce_data[i] = data[i];
+    for (int i = 0; i < 4; i++) tag_data[i] = data[i + 4];
     address += 32;
 
-    uint32_t msg_len = iv_data[3]; // Message length stored in the 4th word of the IV block
+    // Extract nonce bytes (12 bytes)
+    uint8_t nonce[CCM_NONCE_LEN];
+    u32_to_bytes(nonce_data[0], &nonce[0]);
+    u32_to_bytes(nonce_data[1], &nonce[4]);
+    u32_to_bytes(nonce_data[2], &nonce[8]);
 
-    // A0 formatting (Counter for tag encryption)
-    // Flags for A0: L-1 = 2 (for L=3, nonce=12 bytes)
-    uint8_t a0_block[16];
-    a0_block[0] = 0x02; // Flags
-    u32_to_bytes(iv_data[0], &a0_block[1]);
-    u32_to_bytes(iv_data[1], &a0_block[5]);
-    u32_to_bytes(iv_data[2], &a0_block[9]);
-    a0_block[13] = 0x00; a0_block[14] = 0x00; a0_block[15] = 0x00; // Counter starts at 0 for A0
+    // === PASS 1: CTR-decrypt ciphertext and write plaintext to CODE_RAM ===
+    // Also count total ciphertext bytes for CBC-MAC B0 block
+    uint32_t pass1_address = address;
+    uint32_t ctr_counter = 1;  // A_1, A_2, ... for payload
+    uint32_t total_plain_bytes = 0;
+    uint8_t ctr_block[16];
+    uint8_t keystream[16];
 
-    // Build initial counter block A1 for data decryption
-    uint8_t counter[16];
-    for (int i = 0; i < 16; i++) counter[i] = a0_block[i];
-    counter[15] = 0x01; // Counter starts at 1
+    while(1) {
+        data = qspi_read_qor(pass1_address);
 
-    // Encrypt J0 (which is A0 in CCM) for tag verification
-    uint32_t j0_block[4];
-    aes_encrypt(bytes_to_u32(&a0_block[0]), bytes_to_u32(&a0_block[4]),
-                bytes_to_u32(&a0_block[8]), bytes_to_u32(&a0_block[12]),
-                key_data[0], key_data[1], key_data[2], key_data[3],
-                key_data[4], key_data[5], key_data[6], key_data[7], j0_block);
-
-    uint8_t mac_state[16] = {0};
-    uint32_t total_cipher_bytes = 0;
-
-    // Initialization of mac_state (B0 block)
-    // Flags for B0: Adata=0, (t-2)/2=7, L-1=2 -> 0x3A
-    mac_state[0] = 0x3A;
-    u32_to_bytes(iv_data[0], &mac_state[1]);
-    u32_to_bytes(iv_data[1], &mac_state[5]);
-    u32_to_bytes(iv_data[2], &mac_state[9]);
-    // Append message length (L=3 bytes)
-    mac_state[13] = (msg_len >> 16) & 0xFF;
-    mac_state[14] = (msg_len >> 8) & 0xFF;
-    mac_state[15] = msg_len & 0xFF;
-    
-    uint32_t mac_encrypted[4];
-    aes_encrypt(bytes_to_u32(&mac_state[0]), bytes_to_u32(&mac_state[4]),
-                bytes_to_u32(&mac_state[8]), bytes_to_u32(&mac_state[12]),
-                key_data[0], key_data[1], key_data[2], key_data[3],
-                key_data[4], key_data[5], key_data[6], key_data[7], mac_encrypted);
-    u32_to_bytes(mac_encrypted[0], &mac_state[0]);
-    u32_to_bytes(mac_encrypted[1], &mac_state[4]);
-    u32_to_bytes(mac_encrypted[2], &mac_state[8]);
-    u32_to_bytes(mac_encrypted[3], &mac_state[12]);
-
-    uint32_t processed_len = 0;
-    while(processed_len < msg_len) {
-        data = qspi_read_qor(address);
+        // First 16-byte block in the 32-byte read
+        if (data[0] == 0xFFFFFFFF) break;
+        if (data[1] == 0xFFFFFFFF) break;
+        if (data[2] == 0xFFFFFFFF) break;
+        if (data[3] == 0xFFFFFFFF) break;
 
         // CTR decrypt: encrypt counter, XOR with ciphertext
-        aes_encrypt(bytes_to_u32(&counter[0]), bytes_to_u32(&counter[4]),
-                    bytes_to_u32(&counter[8]), bytes_to_u32(&counter[12]),
+        ccm_format_ctr(ctr_block, nonce, ctr_counter);
+        aes_encrypt(bytes_to_u32(&ctr_block[0]), bytes_to_u32(&ctr_block[4]),
+                    bytes_to_u32(&ctr_block[8]), bytes_to_u32(&ctr_block[12]),
                     key_data[0], key_data[1], key_data[2], key_data[3],
                     key_data[4], key_data[5], key_data[6], key_data[7], encrypted_block);
-        inc32(counter);
+        ctr_counter++;
 
-        uint32_t decrypted[4];
-        decrypted[0] = data[0] ^ encrypted_block[0];
-        decrypted[1] = data[1] ^ encrypted_block[1];
-        decrypted[2] = data[2] ^ encrypted_block[2];
-        decrypted[3] = data[3] ^ encrypted_block[3];
+        uint32_t dec[4];
+        dec[0] = data[0] ^ encrypted_block[0];
+        dec[1] = data[1] ^ encrypted_block[1];
+        dec[2] = data[2] ^ encrypted_block[2];
+        dec[3] = data[3] ^ encrypted_block[3];
 
-        // CBC-MAC: accumulate plaintext block
-        uint8_t plain_block[16];
-        u32_to_bytes(decrypted[0], &plain_block[0]);
-        u32_to_bytes(decrypted[1], &plain_block[4]);
-        u32_to_bytes(decrypted[2], &plain_block[8]);
-        u32_to_bytes(decrypted[3], &plain_block[12]);
-        xor_block(mac_state, plain_block);
-        
-        aes_encrypt(bytes_to_u32(&mac_state[0]), bytes_to_u32(&mac_state[4]),
-                    bytes_to_u32(&mac_state[8]), bytes_to_u32(&mac_state[12]),
-                    key_data[0], key_data[1], key_data[2], key_data[3],
-                    key_data[4], key_data[5], key_data[6], key_data[7], mac_encrypted);
-        u32_to_bytes(mac_encrypted[0], &mac_state[0]);
-        u32_to_bytes(mac_encrypted[1], &mac_state[4]);
-        u32_to_bytes(mac_encrypted[2], &mac_state[8]);
-        u32_to_bytes(mac_encrypted[3], &mac_state[12]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + pass1_address - 64) = little_endian(dec[0]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + pass1_address - 60) = little_endian(dec[1]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + pass1_address - 56) = little_endian(dec[2]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + pass1_address - 52) = little_endian(dec[3]);
+        pass1_address += 16;
+        total_plain_bytes += 16;
 
-        total_cipher_bytes += 16;
+        // Second 16-byte block in the 32-byte read
+        if (data[4] == 0xFFFFFFFF) break;
+        if (data[5] == 0xFFFFFFFF) break;
+        if (data[6] == 0xFFFFFFFF) break;
+        if (data[7] == 0xFFFFFFFF) break;
 
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-64) = little_endian(decrypted[0]);
-        address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-64) = little_endian(decrypted[1]);
-        address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-64) = little_endian(decrypted[2]);
-        address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-64) = little_endian(decrypted[3]);
-        address += 4;
-        
-        processed_len += 16;
-        if (processed_len >= msg_len) break;
-
-        // CTR decrypt second block
-        aes_encrypt(bytes_to_u32(&counter[0]), bytes_to_u32(&counter[4]),
-                    bytes_to_u32(&counter[8]), bytes_to_u32(&counter[12]),
+        ccm_format_ctr(ctr_block, nonce, ctr_counter);
+        aes_encrypt(bytes_to_u32(&ctr_block[0]), bytes_to_u32(&ctr_block[4]),
+                    bytes_to_u32(&ctr_block[8]), bytes_to_u32(&ctr_block[12]),
                     key_data[0], key_data[1], key_data[2], key_data[3],
                     key_data[4], key_data[5], key_data[6], key_data[7], encrypted_block);
-        inc32(counter);
+        ctr_counter++;
 
-        decrypted[0] = data[4] ^ encrypted_block[0];
-        decrypted[1] = data[5] ^ encrypted_block[1];
-        decrypted[2] = data[6] ^ encrypted_block[2];
-        decrypted[3] = data[7] ^ encrypted_block[3];
+        dec[0] = data[4] ^ encrypted_block[0];
+        dec[1] = data[5] ^ encrypted_block[1];
+        dec[2] = data[6] ^ encrypted_block[2];
+        dec[3] = data[7] ^ encrypted_block[3];
 
-        // CBC-MAC: accumulate second plaintext block
-        u32_to_bytes(decrypted[0], &plain_block[0]);
-        u32_to_bytes(decrypted[1], &plain_block[4]);
-        u32_to_bytes(decrypted[2], &plain_block[8]);
-        u32_to_bytes(decrypted[3], &plain_block[12]);
-        xor_block(mac_state, plain_block);
-        
-        aes_encrypt(bytes_to_u32(&mac_state[0]), bytes_to_u32(&mac_state[4]),
-                    bytes_to_u32(&mac_state[8]), bytes_to_u32(&mac_state[12]),
-                    key_data[0], key_data[1], key_data[2], key_data[3],
-                    key_data[4], key_data[5], key_data[6], key_data[7], mac_encrypted);
-        u32_to_bytes(mac_encrypted[0], &mac_state[0]);
-        u32_to_bytes(mac_encrypted[1], &mac_state[4]);
-        u32_to_bytes(mac_encrypted[2], &mac_state[8]);
-        u32_to_bytes(mac_encrypted[3], &mac_state[12]);
-
-        total_cipher_bytes += 16;
-
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-64) = little_endian(decrypted[0]);
-        address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-64) = little_endian(decrypted[1]);
-        address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-64) = little_endian(decrypted[2]);
-        address += 4;
-        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + address-64) = little_endian(decrypted[3]);
-        address += 4;
-        
-        processed_len += 16;
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + pass1_address - 64) = little_endian(dec[0]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + pass1_address - 60) = little_endian(dec[1]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + pass1_address - 56) = little_endian(dec[2]);
+        *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + pass1_address - 52) = little_endian(dec[3]);
+        pass1_address += 16;
+        total_plain_bytes += 16;
     }
 
-    // In CCM, the authentication tag is generated from mac_state and XOR'd with the encrypted B0 block
-    // Compute expected tag: CBC-MAC XOR E(K, A0)
-    // where A0 has flags = q-1. We substitute j0_block for A0 encryption.
-    uint8_t computed_tag[16];
-    uint8_t j0_bytes[16];
-    u32_to_bytes(j0_block[0], &j0_bytes[0]);
-    u32_to_bytes(j0_block[1], &j0_bytes[4]);
-    u32_to_bytes(j0_block[2], &j0_bytes[8]);
-    u32_to_bytes(j0_block[3], &j0_bytes[12]);
-    for (int i = 0; i < 16; i++)
-        computed_tag[i] = mac_state[i] ^ j0_bytes[i];
+    // === PASS 2: CBC-MAC over decrypted plaintext (read back from CODE_RAM) ===
+    // Format B0
+    uint8_t b0[16];
+    ccm_format_b0(b0, nonce, total_plain_bytes);
 
-    // Verify tag
+    // X_1 = E(K, B0)
+    uint8_t mac_state[16];
+    for (int i = 0; i < 16; i++) mac_state[i] = b0[i];
+    aes_encrypt_bytes(mac_state, key_data);
+
+    // Process plaintext blocks from CODE_RAM
+    for (uint32_t offset = 0; offset < total_plain_bytes; offset += 16) {
+        uint8_t plain_block[16];
+        // Read back decrypted words from CODE_RAM (they were stored in little-endian)
+        for (int w = 0; w < 4; w++) {
+            uint32_t word = *(volatile uint32_t*)(CODE_RAM_BASE_ADDR + offset + w * 4);
+            // Reverse the little_endian() that was applied during write
+            word = little_endian(word);
+            u32_to_bytes(word, &plain_block[w * 4]);
+        }
+        xor_block(mac_state, plain_block);
+        aes_encrypt_bytes(mac_state, key_data);
+    }
+
+    // mac_state now holds T (the CBC-MAC value)
+    // Encrypt A_0 to get S_0 for tag verification
+    uint8_t a0[16];
+    ccm_format_ctr(a0, nonce, 0);
+    uint32_t s0_block[4];
+    aes_encrypt(bytes_to_u32(&a0[0]), bytes_to_u32(&a0[4]),
+                bytes_to_u32(&a0[8]), bytes_to_u32(&a0[12]),
+                key_data[0], key_data[1], key_data[2], key_data[3],
+                key_data[4], key_data[5], key_data[6], key_data[7], s0_block);
+    uint8_t s0_bytes[16];
+    u32_to_bytes(s0_block[0], &s0_bytes[0]);
+    u32_to_bytes(s0_block[1], &s0_bytes[4]);
+    u32_to_bytes(s0_block[2], &s0_bytes[8]);
+    u32_to_bytes(s0_block[3], &s0_bytes[12]);
+
+    // Computed tag = T XOR S_0
+    uint8_t computed_tag[16];
+    for (int i = 0; i < 16; i++)
+        computed_tag[i] = mac_state[i] ^ s0_bytes[i];
+
+    // Expected tag from flash
     uint8_t expected_tag[16];
     u32_to_bytes(tag_data[0], &expected_tag[0]);
     u32_to_bytes(tag_data[1], &expected_tag[4]);
     u32_to_bytes(tag_data[2], &expected_tag[8]);
     u32_to_bytes(tag_data[3], &expected_tag[12]);
 
+    // Verify tag
     for (int i = 0; i < 16; i++) {
         if (computed_tag[i] != expected_tag[i]) {
             return; // Tag mismatch, authentication failed
@@ -412,7 +349,6 @@ void secure_boot()
 static inline void update_trap_vector_base_address()
 {
     asm volatile (
-        //"li    t0, 0x80000000    \n"
         "li    t0, 0x2000    \n"
         "csrrw t0, mtvec,  t0 \n"
     );
@@ -421,7 +357,6 @@ static inline void update_trap_vector_base_address()
 static inline void jump_to_loaded_software()
 {
     asm volatile (
-        //"li    t0, 0x80000100 \n"
         "li    t0, 0x2100 \n"
         "jalr  x0, t0, 0 \n"
     );
