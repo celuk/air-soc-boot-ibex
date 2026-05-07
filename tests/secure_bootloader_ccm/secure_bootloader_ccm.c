@@ -246,33 +246,52 @@ void secure_boot()
     }
     address += 32;
 
-    // Build initial counter block: IV || 0x00000001
-    uint8_t counter[16];
-    u32_to_bytes(iv_data[0], &counter[0]);
-    u32_to_bytes(iv_data[1], &counter[4]);
-    u32_to_bytes(iv_data[2], &counter[8]);
-    counter[12] = 0x00; counter[13] = 0x00; counter[14] = 0x00; counter[15] = 0x01;
+    // Pre-calculate message length by scanning until 0xFFFFFFFF
+    uint32_t scan_addr = address;
+    uint32_t msg_len = 0;
+    while (1) {
+        uint32_t* scan_data = qspi_read_qor(scan_addr);
+        if (scan_data[0] == 0xFFFFFFFF) break;
+        msg_len += 16;
+        if (scan_data[4] == 0xFFFFFFFF) break;
+        msg_len += 16;
+        scan_addr += 32;
+    }
 
-    // Encrypt J0 = AES_K(IV || 0x00000001) for tag verification
+    // A0 formatting (Counter for tag encryption)
+    // Flags for A0: L-1 = 2 (for L=3, nonce=12 bytes)
+    uint8_t a0_block[16];
+    a0_block[0] = 0x02; // Flags
+    u32_to_bytes(iv_data[0], &a0_block[1]);
+    u32_to_bytes(iv_data[1], &a0_block[5]);
+    u32_to_bytes(iv_data[2], &a0_block[9]);
+    a0_block[13] = 0x00; a0_block[14] = 0x00; a0_block[15] = 0x00; // Counter starts at 0 for A0
+
+    // Build initial counter block A1 for data decryption
+    uint8_t counter[16];
+    for (int i = 0; i < 16; i++) counter[i] = a0_block[i];
+    counter[15] = 0x01; // Counter starts at 1
+
+    // Encrypt J0 (which is A0 in CCM) for tag verification
     uint32_t j0_block[4];
-    aes_encrypt(bytes_to_u32(&counter[0]), bytes_to_u32(&counter[4]),
-                bytes_to_u32(&counter[8]), bytes_to_u32(&counter[12]),
+    aes_encrypt(bytes_to_u32(&a0_block[0]), bytes_to_u32(&a0_block[4]),
+                bytes_to_u32(&a0_block[8]), bytes_to_u32(&a0_block[12]),
                 key_data[0], key_data[1], key_data[2], key_data[3],
                 key_data[4], key_data[5], key_data[6], key_data[7], j0_block);
-
-    // CCM decryption via CTR mode (counter starts at 2)
-    inc32(counter);
 
     uint8_t mac_state[16] = {0};
     uint32_t total_cipher_bytes = 0;
 
-    // Initialization of mac_state (B0 block placeholder)
-    // Normally CCM requires formatting B0 block containing flags, nonce, and length.
-    // For simplicity, we just use IV.
-    u32_to_bytes(iv_data[0], &mac_state[0]);
-    u32_to_bytes(iv_data[1], &mac_state[4]);
-    u32_to_bytes(iv_data[2], &mac_state[8]);
-    mac_state[12] = 0; mac_state[13] = 0; mac_state[14] = 0; mac_state[15] = 0;
+    // Initialization of mac_state (B0 block)
+    // Flags for B0: Adata=0, (t-2)/2=7, L-1=2 -> 0x3A
+    mac_state[0] = 0x3A;
+    u32_to_bytes(iv_data[0], &mac_state[1]);
+    u32_to_bytes(iv_data[1], &mac_state[5]);
+    u32_to_bytes(iv_data[2], &mac_state[9]);
+    // Append message length (L=3 bytes)
+    mac_state[13] = (msg_len >> 16) & 0xFF;
+    mac_state[14] = (msg_len >> 8) & 0xFF;
+    mac_state[15] = msg_len & 0xFF;
     
     uint32_t mac_encrypted[4];
     aes_encrypt(bytes_to_u32(&mac_state[0]), bytes_to_u32(&mac_state[4]),
